@@ -1,0 +1,3 @@
+rootProject.name = "StipopSample"
+include ':app'
+include ':Stipop'

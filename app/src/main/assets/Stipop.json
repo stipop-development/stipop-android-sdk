@@ -1,0 +1,72 @@
+{
+	"api_key": "f1487146b30e92fc07ae42f44de3c5d7",
+	"StickerIcon": {
+		"normal": {
+			"light" : "icStickerNormal",
+			"dark" : "icStickerNormalDark"
+		},
+		"active": {
+			"light" : "icStickerActive",
+			"dark" : "icStickerActiveDark"
+		}
+	},
+	"Theme": {
+		"color" : {
+			"light" : "#f7f8f9",
+			"datk" : "#f7f8f9"
+		},
+		"groupedBgColor" : {
+			"light" : "#f7f8f9",
+			"datk" : "#f7f8f9"
+		}
+	},
+	"Search": {
+		"searchbarIcon": "searchbarIcon.png",
+		"searchbarDeleteIcon": "searchbarDeleteIcon.png",
+		"searchbarColor": "#ec5428",
+		"searchbarRadius": 3,
+		"numOfColumns": 3,
+		"searchTags": {
+			"hidden": false,
+			"color": "#ec5428"
+		},
+		"limit" : {
+			"searchLimit" : 20,
+			"trendingLimit" : 20
+		}
+	},
+	"Keyboard": {
+		"liteStoreIcon": "liteStoreIcon.png",
+		"numOfColumns": 3
+	},
+	"StorePolicy" : {
+		"allowPremium" : "Y or N or S",
+		"price" : {
+			"png" : 0.99,
+			"gif" : 1.99
+		}
+	},
+	"LiteStore": {
+		"trendingCellsOpacity": 0.7,
+		"listType": "singular or horizontal",
+		"downloadIcon": "downloadIcon.png",
+		"completeIcon": "completeIcon.png"
+	},
+	"MySticker": {
+		"orderIcon": "orderIcon.png",
+		"hideIcon": "hideIcon.png"
+	},
+	"Sticker": {
+		"backIcon": "backIcon.png",
+		"closeIcon": "closeIcon.png",
+		"shareIcon": "shareIcon.png",
+		"downloadButtonColor": "#ec5428",
+		"numOfColumns": 3
+		
+	},
+	"Send": {
+		"preview": false,
+		"favoritesIcon": "favoritesIcon.png",
+		"closeIcon": "closeIcon.png"
+	}
+}

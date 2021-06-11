@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/search_background"
+        android:paddingHorizontal="12dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@mipmap/search_bar_basic">
+
+            <EditText
+                android:id="@+id/keywordET"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="50dp"
+                android:maxLines="1"
+                android:imeOptions="actionSearch"
+                android:background="@null" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/c_374553"
+            android:text="Recommended Tag"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/keywordRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="25dp"
+            android:layout_marginTop="10dp"/>
+
+        <GridView
+            android:id="@+id/stickerGV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="3"
+            android:verticalSpacing="9dp"
+            android:horizontalSpacing="32dp"
+            android:layout_marginTop="24dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

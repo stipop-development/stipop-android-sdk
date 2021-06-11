@@ -1,0 +1,58 @@
+package io.stipop.adapter
+
+import android.content.Context
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+import io.stipop.R
+import io.stipop.Utils
+import org.json.JSONObject
+
+class StickerAdapter(context: Context, var view: Int, var data: ArrayList<JSONObject>): ArrayAdapter<JSONObject>(context, view, data) {
+
+    private lateinit var item: ViewHolder
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        lateinit var retView: View
+
+        if (convertView == null) {
+            retView = View.inflate(context, view, null)
+            item = ViewHolder(retView)
+            retView.tag = item
+        } else {
+            retView = convertView
+            item = convertView.tag as ViewHolder
+            if (item == null) {
+                retView = View.inflate(context, view, null)
+                item = ViewHolder(retView)
+                retView.tag = item
+            }
+        }
+
+        val json = data.get(position)
+
+        val stickerImg = Utils.getString(json, "stickerImg")
+        Glide.with(context).load(stickerImg).into(item.imageIV)
+
+        return retView
+    }
+
+    override fun getItem(position: Int): JSONObject {
+        return data.get(position)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getCount(): Int {
+        return data.count()
+    }
+
+    class ViewHolder(v: View) {
+        val imageIV: ImageView = v.findViewById(R.id.imageIV) as ImageView
+    }
+
+}
