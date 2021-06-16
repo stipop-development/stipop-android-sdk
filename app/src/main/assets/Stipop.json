@@ -1,5 +1,16 @@
 {
 	"api_key": "f1487146b30e92fc07ae42f44de3c5d7",
+	"Theme": {
+		"useLightMode" : true,
+		"color" : {
+			"light" : "#f7f8f9",
+			"dark" : "#f7f8f9"
+		},
+		"groupedBgColor" : {
+			"light" : "#f7f8f9",
+			"dark" : "#f7f8f9"
+		}
+	},
 	"StickerIcon": {
 		"normal": {
 			"light" : "icStickerNormal",
@@ -10,33 +21,62 @@
 			"dark" : "icStickerActiveDark"
 		}
 	},
-	"Theme": {
-		"color" : {
-			"light" : "#f7f8f9",
-			"datk" : "#f7f8f9"
-		},
-		"groupedBgColor" : {
-			"light" : "#f7f8f9",
-			"datk" : "#f7f8f9"
-		}
-	},
 	"Search": {
-		"searchbarIcon": "searchbarIcon.png",
-		"searchbarDeleteIcon": "searchbarDeleteIcon.png",
-		"searchbarColor": "#ec5428",
+		"searchbarIcon": {
+			"light" : "searchbarIcon",
+			"dark" : "searchbarIconDark"
+		},
+		"searchbarDeleteIcon": {
+			"light" : "searchbarDeleteIcon",
+			"dark" : "searchbarDeleteIconDark"
+		},
+		"searchbarColor": {
+			"light" : "searchbarColor",
+			"dark" : "searchbarColorDark"
+		},
 		"searchbarRadius": 3,
-		"numOfColumns": 3,
 		"searchTags": {
 			"hidden": false,
-			"color": "#ec5428"
+			"color": {
+				"light" : "#ec5428",
+				"dark" : "#ec5428"
+			}
 		},
-		"limit" : {
-			"searchLimit" : 20,
-			"trendingLimit" : 20
+		"numOfColumns": 3,
+		"searchLimit" : 20,
+		"trendingLimit" : 20
+	},
+	"LiteStore": {
+		"trending" : {
+			"useBackgroundColor" : true,
+			"backgroundColor" : "#eeeeee",
+			"opacity": 0.7
+		},
+		"listType": "singular or horizontal",
+		"downloadIcon": {
+			"light" : "downloadIcon",
+			"dark" : "downloadIconDark"
+		},
+		"completeIcon": {
+			"light" : "completeIcon",
+			"dark" : "completeIconDark"
+		}
+	},
+	"MySticker": {
+		"orderIcon": {
+			"light" : "orderIcon",
+			"dark" : "orderIconDark"
+		},
+		"hideIcon": {
+			"light" : "hideIcon",
+			"dark" : "hideIconDark"
 		}
 	},
 	"Keyboard": {
-		"liteStoreIcon": "liteStoreIcon.png",
+		"liteStoreIcon": {
+			"light" : "liteStoreIcon",
+			"dark" : "liteStoreIconDark"
+		},
 		"numOfColumns": 3
 	},
 	"StorePolicy" : {
@@ -46,27 +86,35 @@
 			"gif" : 1.99
 		}
 	},
-	"LiteStore": {
-		"trendingCellsOpacity": 0.7,
-		"listType": "singular or horizontal",
-		"downloadIcon": "downloadIcon.png",
-		"completeIcon": "completeIcon.png"
-	},
-	"MySticker": {
-		"orderIcon": "orderIcon.png",
-		"hideIcon": "hideIcon.png"
-	},
 	"Sticker": {
-		"backIcon": "backIcon.png",
-		"closeIcon": "closeIcon.png",
-		"shareIcon": "shareIcon.png",
-		"downloadButtonColor": "#ec5428",
+		"backIcon": {
+			"light" : "backIcon",
+			"dark" : "backIconDark"
+		},
+		"closeIcon": {
+			"light" : "closeIcon",
+			"dark" : "closeIconDark"
+		},
+		"shareIcon": {
+			"light" : "shareIcon",
+			"dark" : "shareIconDark"
+		},
+		"downloadButtonColor": {
+			"light" : "#ec5428",
+			"dark" : "#ec5428"
+		},
 		"numOfColumns": 3
 		
 	},
 	"Send": {
 		"preview": false,
-		"favoritesIcon": "favoritesIcon.png",
-		"closeIcon": "closeIcon.png"
+		"favoritesIcon": {
+			"light" : "favoritesIcon",
+			"dark" : "favoritesIconDark"
+		},
+		"closeIcon": {
+			"light" : "closeIcon",
+			"dark" : "closeIconDark"
+		}
 	}
 }
