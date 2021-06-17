@@ -1,4 +1,4 @@
-package io.stipop
+package io.stipop.extend
 
 import android.graphics.Rect
 import android.view.View

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.stipop.*
 import io.stipop.adapter.KeywordAdapter
 import io.stipop.adapter.StickerAdapter
+import io.stipop.extend.RecyclerDecoration
 import kotlinx.android.synthetic.main.activity_search.*
 import org.json.JSONObject
 import java.io.IOException
@@ -28,6 +29,10 @@ class SearchActivity: AppCompatActivity() {
         setContentView(R.layout.activity_search)
 
         this.context = this
+
+        clearTextLL.setOnClickListener {
+            keywordET.setText("")
+        }
 
         keywordET.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {

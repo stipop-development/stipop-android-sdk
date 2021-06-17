@@ -16,16 +16,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:background="@mipmap/search_bar_basic">
+            android:background="@mipmap/search_bar_basic"
+            android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/keywordET"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="50dp"
-                android:maxLines="1"
+                android:layout_weight="1"
+                android:layout_marginLeft="50dp"
+                android:background="@null"
                 android:imeOptions="actionSearch"
-                android:background="@null" />
+                android:maxLines="1" />
+
+            <LinearLayout
+                android:id="@+id/clearTextLL"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
 

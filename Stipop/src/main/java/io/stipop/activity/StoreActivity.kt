@@ -28,30 +28,6 @@ class StoreActivity: FragmentActivity() {
 
         this.context = this
 
-        var params = JSONObject()
-        // params.put("lang", Stipop.lang)
-        // params.put("countryCode", Stipop.countryCode)
-        APIClient.get(
-            this,
-            APIClient.APIPath.SEARCH_KEYWORD.rawValue,
-            params
-        ) { response: JSONObject?, e: IOException? ->
-            println(response)
-        }
-
-
-
-        params = JSONObject()
-        params.put("userId", Stipop.userId)
-        params.put("lang", Stipop.lang)
-        params.put("countryCode", Stipop.countryCode)
-        APIClient.get(
-            this,
-            APIClient.APIPath.SEARCH.rawValue,
-            params
-        ) { response: JSONObject?, e: IOException? ->
-            println(response)
-        }
 
         val fm: FragmentManager = supportFragmentManager
         fragmentTransaction = fm.beginTransaction()

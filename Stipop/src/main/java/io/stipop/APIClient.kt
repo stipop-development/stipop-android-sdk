@@ -12,7 +12,10 @@ class APIClient {
 
     enum class APIPath(val rawValue: String) {
         SEARCH("/search"),
-        SEARCH_KEYWORD("/search/keyword")
+        SEARCH_KEYWORD("/search/keyword"),
+        PACKAGE("/package"),
+        MY_STICKER("/mysticker"),
+        MY_STICKER_ORDER("/mysticker/order")
     }
 
     companion object {
