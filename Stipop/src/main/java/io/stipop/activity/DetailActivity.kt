@@ -2,6 +2,7 @@ package io.stipop.activity
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -37,7 +38,7 @@ class DetailActivity: Activity() {
 
         downloadTV.setOnClickListener {
             if (downloadTV.tag as Boolean) {
-                Toast.makeText(context, "이미 다운로드한 스티커입니다!", Toast.LENGTH_LONG).show()
+                // Toast.makeText(context, "이미 다운로드한 스티커입니다!", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
             downloadPackage()
@@ -80,8 +81,10 @@ class DetailActivity: Activity() {
 
                     if (pack.isDownload) {
                         downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
+                        downloadTV.setText("DOWNLOADED")
                     } else {
                         downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background)
+                        downloadTV.setText("DOWNLOAD")
                     }
 
                     downloadTV.tag = pack.isDownload
@@ -101,7 +104,7 @@ class DetailActivity: Activity() {
 
         var params = JSONObject()
         params.put("userId", Stipop.userId)
-        params.put("isPurchase", "N")
+        params.put("isPurchase", Config.allowPremium)
 
         APIClient.post(this, APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
             println(response)
@@ -113,7 +116,12 @@ class DetailActivity: Activity() {
                 if (Utils.getString(header, "status") == "success") {
                     Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
 
+                    downloadTV.setText("DOWNLOADED")
                     downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
+
+                    val intent = Intent()
+                    intent.putExtra("packageId", packageId)
+                    setResult(RESULT_OK, intent)
                 }
 
             } else {

@@ -2,8 +2,10 @@ package io.stipop.fragment
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -12,7 +14,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
+import io.stipop.activity.DetailActivity
 import io.stipop.adapter.MyStickerAdapter
+import io.stipop.adapter.PackageAdapter
 import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
 import io.stipop.extend.dragdrop.SimpleItemTouchHelperCallback
 import io.stipop.model.SPPackage
@@ -64,10 +68,26 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
             }
         })
 
+
         myStickerAdapter.setOnRecyclerAdapterEventListener(this)
         val callback = SimpleItemTouchHelperCallback(myStickerAdapter)
         itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(listRV)
+        listRV.addOnItemTouchListener(object: RecyclerView.OnItemTouchListener {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                println("TEST===============")
+                return  false
+            }
+
+            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+                println("TEST@@@@@@@@@@@@@@@@")
+            }
+
+            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+                println("TEST!!!!!!!!!!!!!!!!!!")
+            }
+
+        })
 
         loadMySticker()
     }
@@ -95,8 +115,10 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                 if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
                     val body = response.getJSONObject("body")
 
-                    val pageMap = body.getJSONObject("pageMap")
-                    totalPage = Utils.getInt(pageMap, "pageCount")
+                    if (!response.isNull("pageMap")) {
+                        val pageMap = body.getJSONObject("pageMap")
+                        totalPage = Utils.getInt(pageMap, "pageCount")
+                    }
 
                     if (!body.isNull("packageList")) {
                         val packageList = body.getJSONArray("packageList")
@@ -106,6 +128,8 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                             data.add(SPPackage(packageList.get(i) as JSONObject))
                         }
 
+                        println(data)
+
                         myStickerAdapter.notifyDataSetChanged()
                     }
                 }
@@ -114,10 +138,17 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         }
     }
 
-    fun myStickerOrder(from: Int, to: Int) {
+    fun myStickerOrder(fromPosition: Int, toPosition: Int) {
+
+        val fromPackageObj = data[fromPosition]
+        val toPackageObj = data[toPosition]
+
+        val fromOrder = fromPackageObj.order
+        val toOrder = toPackageObj.order
+
         val params = JSONObject()
-        params.put("currentOrder", from)
-        params.put("newOrder", to)
+        params.put("currentOrder", fromOrder)
+        params.put("newOrder", toOrder)
 
         APIClient.put(
             activity as Activity,
@@ -134,6 +165,13 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
 
                 if (status == "fail") {
                     Toast.makeText(myContext, "ERROR!!", Toast.LENGTH_LONG).show()
+                } else {
+                    // order 변경
+                    fromPackageObj.order = toOrder
+                    toPackageObj.order = fromOrder
+
+                    println("myStickerOrder============")
+                    println(data.toString())
                 }
 
             }

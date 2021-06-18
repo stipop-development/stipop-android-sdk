@@ -17,7 +17,7 @@ class SPPackage() {
     var packageName: String? = null
     var wish: String? = null
     var view: String? = null
-    var order: Int? = -1
+    var order: Int = -1
     var stickers = ArrayList<SPSticker>()
     val isDownload: Boolean
         get() = this.download == "Y"
@@ -77,7 +77,8 @@ class SPPackage() {
     }
 
     override fun toString(): String {
-        return "packageId: $packageId, packageName: $packageName, packageImg: $packageImg, packageCategory: $packageCategory, packageKeywords: $packageKeywords, packageAnimated: $packageAnimated, new: $new, artistName: $artistName, language: $language, download: $download, wish: $wish, view: $view, order: $order"
+//        return "[packageId: $packageId, packageName: $packageName, packageImg: $packageImg, packageCategory: $packageCategory, packageKeywords: $packageKeywords, packageAnimated: $packageAnimated, new: $new, artistName: $artistName, language: $language, download: $download, wish: $wish, view: $view, order: $order]"
+        return "[packageId: $packageId, order: $order]"
     }
 
 }

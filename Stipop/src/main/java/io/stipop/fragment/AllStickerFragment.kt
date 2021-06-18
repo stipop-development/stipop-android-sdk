@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +27,7 @@ import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import org.json.JSONObject
 import java.io.IOException
 
-class AllStickerFragment: Fragment() {
+class AllStickerFragment : Fragment() {
 
     lateinit var myContext: Context
 
@@ -100,14 +102,16 @@ class AllStickerFragment: Fragment() {
 
         if (Config.allStickerType == "B") {
             // B Type
-            allStickerAdapter = AllStickerAdapter(myContext, R.layout.item_all_sticker_type_b, allStickerData)
+            allStickerAdapter =
+                AllStickerAdapter(myContext, R.layout.item_all_sticker_type_b, allStickerData)
         } else {
             // A Type
-            allStickerAdapter = AllStickerAdapter(myContext, R.layout.item_all_sticker_type_a, allStickerData)
+            allStickerAdapter =
+                AllStickerAdapter(myContext, R.layout.item_all_sticker_type_a, allStickerData)
         }
 
         stickerLV.adapter = allStickerAdapter
-        stickerLV.setOnScrollListener(object: AbsListView.OnScrollListener {
+        stickerLV.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
                     packagePage += 1
@@ -115,8 +119,14 @@ class AllStickerFragment: Fragment() {
                 }
             }
 
-            override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
-                lastItemVisibleFlag = (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount);
+            override fun onScroll(
+                view: AbsListView?,
+                firstVisibleItem: Int,
+                visibleItemCount: Int,
+                totalItemCount: Int
+            ) {
+                lastItemVisibleFlag =
+                    (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount);
             }
 
         })
@@ -138,10 +148,35 @@ class AllStickerFragment: Fragment() {
         loadPackageData(packagePage)
     }
 
+    val startForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data // Handle the Intent //do stuff here
+                if (null != intent) {
+                    val packageId = intent.getIntExtra("packageId", -1)
+                    if (packageId < 0) {
+                        return@registerForActivityResult
+                    }
+
+                    for (i in 0 until allStickerData.size) {
+                        val item = allStickerData[i]
+                        if (item.packageId == packageId) {
+                            item.download = "Y"
+                            break
+                        }
+                    }
+
+                    allStickerAdapter.notifyDataSetChanged()
+
+                }
+            }
+        }
+
     fun goDetail(packageId: Int) {
         val intent = Intent(myContext, DetailActivity::class.java)
         intent.putExtra("packageId", packageId)
-        startActivity(intent)
+        // startActivity(intent)
+        startForResult.launch(intent)
     }
 
     fun reloadData() {
@@ -209,9 +244,13 @@ class AllStickerFragment: Fragment() {
 
         var params = JSONObject()
         params.put("userId", Stipop.userId)
-        params.put("isPurchase", "N")
+        params.put("isPurchase", Config.allowPremium)
 
-        APIClient.post(activity as Activity, APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
+        APIClient.post(
+            activity as Activity,
+            APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId",
+            params
+        ) { response: JSONObject?, e: IOException? ->
             println(response)
 
             if (null != response) {

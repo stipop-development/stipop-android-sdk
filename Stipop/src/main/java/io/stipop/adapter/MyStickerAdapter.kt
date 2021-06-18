@@ -1,6 +1,7 @@
 package io.stipop.adapter
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.*
@@ -39,6 +41,8 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
+        val containerLL: LinearLayout
+
         val packageIV: ImageView
         val packageNameTV: TextView
         val artistNameTV: TextView
@@ -50,6 +54,8 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
         val addLL: LinearLayout
 
         init {
+            containerLL = view.findViewById(R.id.containerLL)
+
             moveLL = view.findViewById(R.id.moveLL)
             packageIV = view.findViewById(R.id.packageIV)
             packageNameTV = view.findViewById(R.id.packageNameTV)
@@ -90,13 +96,17 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
             holder.addLL.visibility = View.VISIBLE
         }
 
-
+        holder.containerLL.setBackgroundColor(Color.WHITE)
         holder.moveLL.setOnTouchListener { _, event ->
+            holder.containerLL.setBackgroundColor(ContextCompat.getColor(context, R.color.c_f7f8f9))
             if (event.action == MotionEvent.ACTION_DOWN) {
                 onEventListener?.onDragStarted(holder)
             }
             return@setOnTouchListener false
         }
+//        holder.moveLL.setOnClickListener {
+//            myStickerFragment.myStickerOrder(0, 3)
+//        }
     }
 
     override fun getItemCount(): Int {
@@ -126,6 +136,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
         Collections.swap(dataList, from, to)
         notifyItemMoved(from, to)
+
     }
 
     override fun finishedDragAndDrop() {
@@ -139,10 +150,14 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
             return
         }
 
-        myStickerFragment.myStickerOrder(this.fromPosition + 1, this.toPosition + 1)
+         myStickerFragment.myStickerOrder(this.fromPosition, this.toPosition)
+
+        println("dataList: " + dataList.toString())
 
         this.fromPosition = -1
         this.toPosition = -1
+
+        notifyDataSetChanged()
     }
 
 }

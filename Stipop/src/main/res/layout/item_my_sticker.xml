@@ -4,6 +4,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/containerLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"

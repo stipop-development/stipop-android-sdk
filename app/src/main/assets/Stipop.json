@@ -80,7 +80,7 @@
 		"numOfColumns": 3
 	},
 	"StorePolicy" : {
-		"allowPremium" : "Y or N or S",
+		"allowPremium" : "N",
 		"price" : {
 			"png" : 0.99,
 			"gif" : 1.99

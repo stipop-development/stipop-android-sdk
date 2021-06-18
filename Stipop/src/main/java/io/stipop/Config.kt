@@ -15,10 +15,15 @@ class Config {
         var stickerIconActiveLight = "ic_sticker_active"
 
         lateinit var allStickerType:String
+        lateinit var allowPremium:String
 
         fun parse(json: JSONObject) {
             Config.apikey = Utils.getString(json, "api_key")
             Config.allStickerType = "A"
+
+            val storePolicy = json.getJSONObject("StorePolicy")
+            allowPremium = Utils.getString(storePolicy, "allowPremium")
+
 
             val stickerIcon = json.getJSONObject("StickerIcon")
 

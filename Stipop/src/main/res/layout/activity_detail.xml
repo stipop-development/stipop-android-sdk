@@ -108,7 +108,7 @@
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:text="DOWNLOAD"
+                    android:text="DOWNLOADED"
                     android:background="@drawable/detail_download_btn_background_disable"/>
 
             </LinearLayout>
@@ -123,7 +123,8 @@
             android:numColumns="3"
             android:verticalSpacing="9dp"
             android:horizontalSpacing="32dp"
-            android:layout_marginTop="24dp" />
+            android:layout_marginTop="24dp"
+            android:scrollbars="none" />
 
     </LinearLayout>
 
