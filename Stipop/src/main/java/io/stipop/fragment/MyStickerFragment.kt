@@ -28,7 +28,8 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
     private lateinit var itemTouchHelper: ItemTouchHelper
 
     var data = ArrayList<SPPackage>()
-    var page = 2
+    var page = 1
+    var totalPage = 1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,7 +56,7 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                 val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 val itemTotalCount = data.size
 
-                if (lastVisibleItemPosition + 1 == itemTotalCount) {
+                if (lastVisibleItemPosition + 1 == itemTotalCount && totalPage > page) {
                     // 리스트 마지막 도착! 다음 페이지 로드!
                     page += 1
                     loadMySticker()
@@ -76,16 +77,9 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         params.put("pageNumber", page)
         params.put("limit", 20)
 
-
-
-//        params.put("userId", Stipop.userId)
-//        params.put("lang", Stipop.lang)
-//        params.put("countryCode", Stipop.countryCode)
-
         APIClient.get(
             activity as Activity,
-            APIClient.APIPath.MY_STICKER.rawValue + "/" + Stipop.userId,
-//            APIClient.APIPath.PACKAGE.rawValue,
+            APIClient.APIPath.MY_STICKER.rawValue + "/${Stipop.userId}",
             params
         ) { response: JSONObject?, e: IOException? ->
 
@@ -96,30 +90,25 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
 
             if (null != response) {
 
-                println(response)
-
                 val header = response.getJSONObject("header")
-                val status = Utils.getString(header, "status")
 
-                if (status != "fail") {
-                    if (!response.isNull("body")) {
-                        val body = response.getJSONObject("body")
+                if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
+                    val body = response.getJSONObject("body")
 
-                        if (!body.isNull("packageList")) {
-                            val packageList = body.getJSONArray("packageList")
+                    val pageMap = body.getJSONObject("pageMap")
+                    totalPage = Utils.getInt(pageMap, "pageCount")
 
-                            for (i in 0 until packageList.length()) {
-                                val item = packageList.get(i) as JSONObject
-                                val spPackage = SPPackage(item)
-                                data.add(spPackage)
-                            }
+                    if (!body.isNull("packageList")) {
+                        val packageList = body.getJSONArray("packageList")
+                        println(packageList.toString())
 
-                            myStickerAdapter.notifyDataSetChanged()
+                        for (i in 0 until packageList.length()) {
+                            data.add(SPPackage(packageList.get(i) as JSONObject))
                         }
 
+                        myStickerAdapter.notifyDataSetChanged()
                     }
                 }
-
             }
 
         }
@@ -130,9 +119,35 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         params.put("currentOrder", from)
         params.put("newOrder", to)
 
-        APIClient.get(
+        APIClient.put(
             activity as Activity,
-            APIClient.APIPath.MY_STICKER_ORDER.rawValue + "/" + Stipop.userId,
+            APIClient.APIPath.MY_STICKER_ORDER.rawValue + "/${Stipop.userId}",
+            params
+        ) { response: JSONObject?, e: IOException? ->
+
+            if (null != response) {
+
+                println(response)
+
+                val header = response.getJSONObject("header")
+                val status = Utils.getString(header, "status")
+
+                if (status == "fail") {
+                    Toast.makeText(myContext, "ERROR!!", Toast.LENGTH_LONG).show()
+                }
+
+            }
+
+        }
+
+    }
+
+    fun hidePackage(packageId: Int) {
+        val params = JSONObject()
+
+        APIClient.put(
+            activity as Activity,
+            APIClient.APIPath.MY_STICKER_HIDE.rawValue + "/${Stipop.userId}/$packageId",
             params
         ) { response: JSONObject?, e: IOException? ->
 

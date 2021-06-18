@@ -46,7 +46,6 @@ class AllStickerAdapter(context: Context, var view: Int, var data: ArrayList<SPP
             item.downloadIV.setImageResource(R.mipmap.ic_download)
         }
 
-
         if (Config.allStickerType == "A") {
             item.stickersLL?.removeAllViews()
 

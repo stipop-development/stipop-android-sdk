@@ -52,6 +52,12 @@ class PackageAdapter(private val dataList: ArrayList<SPPackage>, val context: Co
         val packageImg = item.packageImg
 
         Glide.with(context).load(packageImg).into(holder.imageIV)
+
+        holder.backgroundLL.setOnClickListener {
+            if (mListener != null) {
+                mListener!!.onItemClick(position)
+            }
+        }
     }
 
     override fun getItemCount(): Int {

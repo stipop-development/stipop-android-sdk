@@ -10,6 +10,7 @@ import io.stipop.*
 import io.stipop.adapter.KeywordAdapter
 import io.stipop.adapter.StickerAdapter
 import io.stipop.extend.RecyclerDecoration
+import io.stipop.model.SPSticker
 import kotlinx.android.synthetic.main.activity_search.*
 import org.json.JSONObject
 import java.io.IOException
@@ -22,7 +23,7 @@ class SearchActivity: AppCompatActivity() {
     lateinit var stickerAdapter: StickerAdapter
 
     var keywords = ArrayList<JSONObject>()
-    var stickerData = ArrayList<JSONObject>()
+    var stickerData = ArrayList<SPSticker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,7 +130,7 @@ class SearchActivity: AppCompatActivity() {
                         val stickerList = body.getJSONArray("stickerList")
 
                         for (i in 0 until stickerList.length()) {
-                            stickerData.add(stickerList.get(i) as JSONObject)
+                            stickerData.add(SPSticker(stickerList.get(i) as JSONObject))
                         }
                     }
 

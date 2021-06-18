@@ -45,6 +45,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
         val isViewLL: LinearLayout
         val moveLL: LinearLayout
+        val hideLL: LinearLayout
 
         val addLL: LinearLayout
 
@@ -54,6 +55,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
             packageNameTV = view.findViewById(R.id.packageNameTV)
             artistNameTV = view.findViewById(R.id.artistNameTV)
             isViewLL = view.findViewById(R.id.isViewLL)
+            hideLL = view.findViewById(R.id.hideLL)
             addLL = view.findViewById(R.id.addLL)
         }
 
@@ -78,11 +80,16 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
         holder.isViewLL.visibility = View.GONE
         holder.addLL.visibility = View.GONE
-        if (spPackage.isView || position < 5) {
+        if (spPackage.isView) {
             holder.isViewLL.visibility = View.VISIBLE
+
+            holder.hideLL.setOnClickListener {
+                myStickerFragment.hidePackage(spPackage.packageId)
+            }
         } else {
             holder.addLL.visibility = View.VISIBLE
         }
+
 
         holder.moveLL.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
@@ -131,7 +138,8 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
             this.toPosition = -1
             return
         }
-        myStickerFragment.myStickerOrder(this.fromPosition, this.toPosition)
+
+        myStickerFragment.myStickerOrder(this.fromPosition + 1, this.toPosition + 1)
 
         this.fromPosition = -1
         this.toPosition = -1

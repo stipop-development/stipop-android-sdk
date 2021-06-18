@@ -17,6 +17,7 @@ class SPPackage() {
     var packageName: String? = null
     var wish: String? = null
     var view: String? = null
+    var order: Int? = -1
     var stickers = ArrayList<SPSticker>()
     val isDownload: Boolean
         get() = this.download == "Y"
@@ -64,12 +65,19 @@ class SPPackage() {
         this.language = Utils.getString(json, "language")
         this.download = Utils.getString(json, "isDownload")
         this.wish = Utils.getString(json, "isWish")
-        this.view = Utils.getString(json, "isWish")
+        this.view = Utils.getString(json, "isView")
+        this.order = Utils.getInt(json, "order")
 
-        val stickers = json.getJSONArray("stickers")
-        for (i in 0 until stickers.length()) {
-            this.stickers.add(SPSticker(stickers.get(i) as JSONObject))
+        if (!json.isNull("stickers")) {
+            val stickers = json.getJSONArray("stickers")
+            for (i in 0 until stickers.length()) {
+                this.stickers.add(SPSticker(stickers.get(i) as JSONObject))
+            }
         }
+    }
+
+    override fun toString(): String {
+        return "packageId: $packageId, packageName: $packageName, packageImg: $packageImg, packageCategory: $packageCategory, packageKeywords: $packageKeywords, packageAnimated: $packageAnimated, new: $new, artistName: $artistName, language: $language, download: $download, wish: $wish, view: $view, order: $order"
     }
 
 }

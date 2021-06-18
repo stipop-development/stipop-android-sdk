@@ -8,9 +8,10 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import io.stipop.R
 import io.stipop.Utils
+import io.stipop.model.SPSticker
 import org.json.JSONObject
 
-class StickerAdapter(context: Context, var view: Int, var data: ArrayList<JSONObject>): ArrayAdapter<JSONObject>(context, view, data) {
+class StickerAdapter(context: Context, var view: Int, var data: ArrayList<SPSticker>): ArrayAdapter<SPSticker>(context, view, data) {
 
     private lateinit var item: ViewHolder
 
@@ -31,16 +32,15 @@ class StickerAdapter(context: Context, var view: Int, var data: ArrayList<JSONOb
             }
         }
 
-        val json = data.get(position)
+        val sticker = data[position]
 
-        val stickerImg = Utils.getString(json, "stickerImg")
-        Glide.with(context).load(stickerImg).into(item.imageIV)
+        Glide.with(context).load(sticker.stickerImg).into(item.imageIV)
 
         return retView
     }
 
-    override fun getItem(position: Int): JSONObject {
-        return data.get(position)
+    override fun getItem(position: Int): SPSticker {
+        return data[position]
     }
 
     override fun getItemId(position: Int): Long {

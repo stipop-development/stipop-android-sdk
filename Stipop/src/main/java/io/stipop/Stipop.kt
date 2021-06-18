@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.ImageView
+import io.stipop.activity.DetailActivity
 import io.stipop.activity.SearchActivity
 import io.stipop.activity.StoreActivity
 import org.json.JSONException
@@ -81,6 +82,16 @@ class Stipop {
             this.enableStickerIcon()
 
             val intent = Intent(this.activity, StoreActivity::class.java)
+            this.activity.startActivity(intent)
+        }
+
+        fun detail(packageId: Int) {
+            if (!this.connected) {
+                return
+            }
+
+            val intent = Intent(this.activity, DetailActivity::class.java)
+            intent.putExtra("packageId", packageId)
             this.activity.startActivity(intent)
         }
 

@@ -2,6 +2,7 @@ package io.stipop.fragment
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,14 +10,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
+import io.stipop.activity.DetailActivity
 import io.stipop.adapter.AllStickerAdapter
 import io.stipop.adapter.PackageAdapter
 import io.stipop.extend.RecyclerDecoration
 import io.stipop.model.SPPackage
+import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import org.json.JSONObject
 import java.io.IOException
@@ -50,10 +54,10 @@ class AllStickerFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val header = View.inflate(myContext, R.layout.header_all_sticker, null)
-        packageRV = header.findViewById(R.id.packageRV)
+        val headerV = View.inflate(myContext, R.layout.header_all_sticker, null)
+        packageRV = headerV.findViewById(R.id.packageRV)
 
-        stickerLV.addHeaderView(header)
+        stickerLV.addHeaderView(headerV)
 
         clearTextLL.setOnClickListener {
             keywordET.setText("")
@@ -88,8 +92,9 @@ class AllStickerFragment: Fragment() {
                     return
                 }
 
-                val item = packageData[position]
+                val packageObj = packageData[position]
 
+                goDetail(packageObj.packageId)
             }
         })
 
@@ -115,12 +120,28 @@ class AllStickerFragment: Fragment() {
             }
 
         })
+        stickerLV.setOnItemClickListener { adapterView, view, i, l ->
+            // position - 1 : addHeaderView 해줬기 때문!
+            val position = i - 1
+            if (position < 0 && position > allStickerData.size) {
+                return@setOnItemClickListener
+            }
+
+            val packageObj = allStickerData[position]
+            goDetail(packageObj.packageId)
+        }
 
         allStickerAdapter.notifyDataSetChanged()
 
         loadPackageData(1)
 
         loadPackageData(packagePage)
+    }
+
+    fun goDetail(packageId: Int) {
+        val intent = Intent(myContext, DetailActivity::class.java)
+        intent.putExtra("packageId", packageId)
+        startActivity(intent)
     }
 
     fun reloadData() {
@@ -183,4 +204,31 @@ class AllStickerFragment: Fragment() {
 
         }
     }
+
+    fun downloadPackage(packageId: Int) {
+
+        var params = JSONObject()
+        params.put("userId", Stipop.userId)
+        params.put("isPurchase", "N")
+
+        APIClient.post(activity as Activity, APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
+            println(response)
+
+            if (null != response) {
+
+                val header = response.getJSONObject("header")
+
+                if (Utils.getString(header, "status") == "success") {
+                    Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
+
+                    downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
+                }
+
+            } else {
+
+            }
+        }
+
+    }
+
 }

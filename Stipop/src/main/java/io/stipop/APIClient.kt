@@ -8,6 +8,7 @@ import java.net.URL
 import java.net.URLEncoder
 import kotlin.concurrent.thread
 
+
 class APIClient {
 
     enum class APIPath(val rawValue: String) {
@@ -15,7 +16,9 @@ class APIClient {
         SEARCH_KEYWORD("/search/keyword"),
         PACKAGE("/package"),
         MY_STICKER("/mysticker"),
-        MY_STICKER_ORDER("/mysticker/order")
+        MY_STICKER_ORDER("/mysticker/order"),
+        MY_STICKER_HIDE("/mysticker/hide"),
+        DOWNLOAD("/download")
     }
 
     companion object {
@@ -84,6 +87,91 @@ class APIClient {
                 result.append(URLEncoder.encode(value, "UTF-8"))
             }
             return result.toString()
+        }
+
+        fun post(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
+            thread(start = true) {
+                var resolvedPath = Config.baseUrl + path
+                if (parameters != null && parameters.keys().hasNext()) {
+                    resolvedPath += "?"
+                    resolvedPath += getQuery(parameters)
+                }
+
+                println(resolvedPath)
+
+                val url = URL(resolvedPath)
+
+                val huc = url.openConnection() as HttpURLConnection
+                huc.requestMethod = "POST"
+                huc.setRequestProperty("apikey", Config.apikey)
+
+
+                val buffered = if (huc.responseCode in 100..399) {
+                    BufferedReader(InputStreamReader(huc.inputStream))
+                } else {
+                    BufferedReader(InputStreamReader(huc.errorStream))
+                }
+
+                val content = StringBuilder()
+                while (true) {
+                    val data = buffered.readLine() ?: break
+                    content.append(data)
+                }
+
+                buffered.close()
+                huc.disconnect()
+
+                activity.runOnUiThread {
+                    val response = JSONObject(content.toString())
+                    responseCallback(response, null)
+                }
+            }
+        }
+
+        fun put(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
+            thread(start = true) {
+                val resolvedPath = Config.baseUrl + path
+
+                println(resolvedPath)
+                println(parameters.toString())
+
+                val url = URL(resolvedPath)
+
+                val huc = url.openConnection() as HttpURLConnection
+                huc.requestMethod = "PUT"
+                huc.doOutput = true
+                huc.doInput = true
+
+                huc.setRequestProperty("apikey", Config.apikey)
+                huc.setRequestProperty("Content-Type","application/json;charset=utf-8");
+                huc.setRequestProperty("Accept","application/json");
+
+
+                val writer = OutputStreamWriter(huc.outputStream)
+                writer.write(parameters.toString())
+                writer.flush()
+                writer.close()
+
+                val buffered = if (huc.responseCode in 100..399) {
+                    BufferedReader(InputStreamReader(huc.inputStream))
+                } else {
+                    BufferedReader(InputStreamReader(huc.errorStream))
+                }
+
+                val content = StringBuilder()
+                while (true) {
+                    val data = buffered.readLine() ?: break
+                    content.append(data)
+                }
+
+                buffered.close()
+                huc.disconnect()
+
+                activity.runOnUiThread {
+                    val response = JSONObject(content.toString())
+                    responseCallback(response, null)
+                }
+            }
         }
     }
 }

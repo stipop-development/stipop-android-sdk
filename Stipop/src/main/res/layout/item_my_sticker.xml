@@ -51,13 +51,14 @@
             android:visibility="gone">
 
             <LinearLayout
+                android:id="@+id/hideLL"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:padding="5dp"
                 android:gravity="center">
 
                 <ImageView
-                    android:id="@+id/viewIV"
+                    android:id="@+id/hideIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@mipmap/ic_hide" />
