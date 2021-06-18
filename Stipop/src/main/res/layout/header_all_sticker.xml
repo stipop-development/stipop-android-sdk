@@ -4,28 +4,36 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20.5dp"
-        android:textSize="16sp"
-        android:textColor="#646f7c"
-        android:text="Trending"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/packageRV"
+    <LinearLayout
+        android:id="@+id/trendingLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20.5dp"
+            android:textSize="16sp"
+            android:textColor="#646f7c"
+            android:text="Trending"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="25dp"
-        android:background="#eaebee"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/packageRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="25dp"
+            android:background="#eaebee"/>
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"

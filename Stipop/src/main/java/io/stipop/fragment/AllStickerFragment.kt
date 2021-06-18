@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,6 +25,7 @@ import io.stipop.extend.RecyclerDecoration
 import io.stipop.model.SPPackage
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
+import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import org.json.JSONObject
 import java.io.IOException
 
@@ -32,6 +34,7 @@ class AllStickerFragment : Fragment() {
     lateinit var myContext: Context
 
     var packagePage = 2 // 1 Page -> Trending List
+    var totalPage = 2
     lateinit var packageAdapter: PackageAdapter
     var packageData = ArrayList<SPPackage>()
 
@@ -41,6 +44,7 @@ class AllStickerFragment : Fragment() {
     private var lastItemVisibleFlag = false
 
     lateinit var packageRV: RecyclerView
+    lateinit var trendingLL: LinearLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,6 +62,7 @@ class AllStickerFragment : Fragment() {
 
         val headerV = View.inflate(myContext, R.layout.header_all_sticker, null)
         packageRV = headerV.findViewById(R.id.packageRV)
+        trendingLL = headerV.findViewById(R.id.trendingLL)
 
         stickerLV.addHeaderView(headerV)
 
@@ -75,7 +80,8 @@ class AllStickerFragment : Fragment() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                reloadData()
+                val keyword = Utils.getString(keywordET)
+                reloadData(keyword.length < 1)
             }
         })
 
@@ -113,9 +119,10 @@ class AllStickerFragment : Fragment() {
         stickerLV.adapter = allStickerAdapter
         stickerLV.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
-                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag) {
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > packagePage) {
                     packagePage += 1
-                    loadPackageData(packagePage)
+                    val keyword = Utils.getString(keywordET)
+                    loadPackageData(packagePage, keyword.length > 0)
                 }
             }
 
@@ -143,9 +150,9 @@ class AllStickerFragment : Fragment() {
 
         allStickerAdapter.notifyDataSetChanged()
 
-        loadPackageData(1)
+        loadPackageData(1, false)
 
-        loadPackageData(packagePage)
+        loadPackageData(packagePage, false)
     }
 
     val startForResult =
@@ -179,14 +186,20 @@ class AllStickerFragment : Fragment() {
         startForResult.launch(intent)
     }
 
-    fun reloadData() {
-        loadPackageData(1)
+    fun reloadData(all: Boolean) {
+        if (all) {
+            loadPackageData(1, false)
 
-        packagePage = 2
-        loadPackageData(packagePage)
+            packagePage = 2
+        } else {
+            packagePage = 1
+        }
+
+        totalPage = packagePage
+        loadPackageData(packagePage, !all)
     }
 
-    fun loadPackageData(page: Int) {
+    fun loadPackageData(page: Int, search: Boolean) {
 
         val params = JSONObject()
         params.put("userId", Stipop.userId)
@@ -202,12 +215,25 @@ class AllStickerFragment : Fragment() {
             params
         ) { response: JSONObject?, e: IOException? ->
 
-            if (page == 1) {
+            if (search) {
+                trendingLL.visibility = View.GONE
+
                 packageData.clear()
                 packageAdapter.notifyDataSetChanged()
-            } else if (page == 2) {
-                allStickerData.clear()
-                allStickerAdapter.notifyDataSetChanged()
+
+                if (page == 1) {
+                    allStickerData.clear()
+                    allStickerAdapter.notifyDataSetChanged()
+                }
+            } else {
+                trendingLL.visibility = View.VISIBLE
+                if (page == 1) {
+                    packageData.clear()
+                    packageAdapter.notifyDataSetChanged()
+                } else if (page == 2) {
+                    allStickerData.clear()
+                    allStickerAdapter.notifyDataSetChanged()
+                }
             }
 
             if (null != response) {
@@ -215,26 +241,36 @@ class AllStickerFragment : Fragment() {
                 if (!response.isNull("body")) {
                     val body = response.getJSONObject("body")
 
-                    val packageList = body.getJSONArray("packageList")
-
-                    for (i in 0 until packageList.length()) {
-                        val item = packageList.get(i) as JSONObject
-
-                        val spPackage = SPPackage(item)
-                        if (page == 1) {
-                            packageData.add(spPackage)
-                        } else {
-                            allStickerData.add(spPackage)
-                        }
+                    if (!body.isNull("pageMap")) {
+                        val pageMap = body.getJSONObject("pageMap")
+                        totalPage = Utils.getInt(pageMap, "pageCount")
                     }
 
-                    if (page == 1) {
-                        packageAdapter.notifyDataSetChanged()
-                    } else {
-                        allStickerAdapter.notifyDataSetChanged()
+                    if (!body.isNull("packageList")) {
+                        val packageList = body.getJSONArray("packageList")
+
+                        for (i in 0 until packageList.length()) {
+                            val item = packageList.get(i) as JSONObject
+
+                            val spPackage = SPPackage(item)
+                            if (page == 1 && !search) {
+                                packageData.add(spPackage)
+                            } else {
+                                allStickerData.add(spPackage)
+                            }
+                        }
+
+                        if (page == 1 && !search) {
+                            packageAdapter.notifyDataSetChanged()
+                        } else {
+                            allStickerAdapter.notifyDataSetChanged()
+                        }
+
+                        stickerLV.smoothScrollToPosition(0);
                     }
 
                 }
+
             }
 
         }
