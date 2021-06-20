@@ -1,12 +1,9 @@
 package io.stipop.activity
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.os.Build
 import android.transition.Slide
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import io.stipop.R
@@ -29,8 +26,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             return
         }
 
-        val inflater: LayoutInflater = this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.keyboard, null)
+        val view = View.inflate(this.activity, R.layout.keyboard,null)
 
         val popupWindow = PopupWindow(
             view,
