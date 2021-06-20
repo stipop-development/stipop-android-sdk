@@ -17,6 +17,37 @@ class Config {
         lateinit var allStickerType:String
         lateinit var allowPremium:String
 
+        fun configure(context:Context) {
+
+            val jsonString = getJsonDataFromAsset(context) ?: return
+
+            try {
+                val json = JSONObject(jsonString)
+                Config.parse(json)
+            } catch (e: JSONException) {
+                e.printStackTrace()
+
+                println("")
+                println("")
+                println("==========================================")
+                println("Stipop configuration check-out failed.")
+                println("==========================================")
+                println("")
+                println("")
+            }
+        }
+
+        private fun getJsonDataFromAsset(context: Context): String? {
+            val jsonString: String
+            try {
+                jsonString = context.assets.open("Stipop.json").bufferedReader().use { it.readText() }
+            } catch (ioException: IOException) {
+                ioException.printStackTrace()
+                return null
+            }
+            return jsonString
+        }
+
         fun parse(json: JSONObject) {
             Config.apikey = Utils.getString(json, "api_key")
             Config.allStickerType = "A"
