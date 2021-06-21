@@ -266,7 +266,9 @@ class AllStickerFragment : Fragment() {
                             allStickerAdapter.notifyDataSetChanged()
                         }
 
-                        stickerLV.smoothScrollToPosition(0);
+                        if (page == 1) {
+                            stickerLV.smoothScrollToPosition(0);
+                        }
                     }
 
                 }

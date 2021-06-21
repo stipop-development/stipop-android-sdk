@@ -11,18 +11,29 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginHorizontal="12dp"
             android:layout_marginTop="12.5dp"
             android:orientation="horizontal"
-            android:background="@mipmap/search_bar_basic">
+            android:background="@drawable/search_bar">
+
+            <LinearLayout
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_search"/>
+
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/keywordET"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_marginLeft="50dp"
                 android:inputType="text"
                 android:maxLines="1"
                 android:background="@null"/>
@@ -30,7 +41,15 @@
             <LinearLayout
                 android:id="@+id/clearTextLL"
                 android:layout_width="50dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_erase"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

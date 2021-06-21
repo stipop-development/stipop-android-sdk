@@ -14,17 +14,28 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginTop="15dp"
-            android:background="@mipmap/search_bar_basic"
+            android:background="@drawable/search_bar"
             android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_search"/>
+
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/keywordET"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_marginLeft="50dp"
                 android:background="@null"
                 android:imeOptions="actionSearch"
                 android:maxLines="1" />
@@ -32,7 +43,15 @@
             <LinearLayout
                 android:id="@+id/clearTextLL"
                 android:layout_width="50dp"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_erase"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -59,7 +78,8 @@
             android:numColumns="3"
             android:verticalSpacing="9dp"
             android:horizontalSpacing="32dp"
-            android:layout_marginTop="24dp" />
+            android:layout_marginTop="24dp"
+            android:scrollbars="none"/>
 
     </LinearLayout>
 
