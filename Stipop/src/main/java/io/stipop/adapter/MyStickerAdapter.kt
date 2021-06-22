@@ -90,23 +90,33 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
             holder.isViewLL.visibility = View.VISIBLE
 
             holder.hideLL.setOnClickListener {
-                myStickerFragment.hidePackage(spPackage.packageId)
+                myStickerFragment.hidePackage(spPackage.packageId, position)
             }
         } else {
             holder.addLL.visibility = View.VISIBLE
+
+            holder.addLL.setOnClickListener {
+                myStickerFragment.hidePackage(spPackage.packageId, position)
+            }
         }
 
         holder.containerLL.setBackgroundColor(Color.WHITE)
-        holder.moveLL.setOnTouchListener { _, event ->
-            holder.containerLL.setBackgroundColor(ContextCompat.getColor(context, R.color.c_f7f8f9))
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                onEventListener?.onDragStarted(holder)
-            }
-            return@setOnTouchListener false
-        }
-//        holder.moveLL.setOnClickListener {
-//            myStickerFragment.myStickerOrder(0, 3)
+//        holder.moveLL.setOnTouchListener { _, event ->
+//            holder.containerLL.setBackgroundColor(ContextCompat.getColor(context, R.color.c_f7f8f9))
+//            if (event.action == MotionEvent.ACTION_DOWN) {
+//                onEventListener?.onDragStarted(holder)
+//            }
+//            return@setOnTouchListener false
 //        }
+
+        holder.moveLL.setOnLongClickListener {
+            holder.containerLL.setBackgroundColor(ContextCompat.getColor(context, R.color.c_f7f8f9))
+
+            onEventListener?.onDragStarted(holder)
+
+            return@setOnLongClickListener true
+        }
+
     }
 
     override fun getItemCount(): Int {

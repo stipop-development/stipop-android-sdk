@@ -3,6 +3,7 @@ package io.stipop.fragment
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -63,7 +64,11 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                 if (lastVisibleItemPosition + 1 == itemTotalCount && totalPage > page) {
                     // 리스트 마지막 도착! 다음 페이지 로드!
                     page += 1
-                    loadMySticker()
+                    if (stickerTypeTV.tag == 1) {
+                        loadMySticker()
+                    } else {
+                        loadMyHiddenSticker()
+                    }
                 }
             }
         })
@@ -73,23 +78,31 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         val callback = SimpleItemTouchHelperCallback(myStickerAdapter)
         itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(listRV)
-        listRV.addOnItemTouchListener(object: RecyclerView.OnItemTouchListener {
-            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                println("TEST===============")
-                return  false
-            }
 
-            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-                println("TEST@@@@@@@@@@@@@@@@")
-            }
+        stickerTypeTV.setOnClickListener {
+            stickerTypeTV.tag = if (stickerTypeTV.tag == 1) { 2 } else { 1 }
 
-            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-                println("TEST!!!!!!!!!!!!!!!!!!")
-            }
-
-        })
+            reloadData()
+        }
 
         loadMySticker()
+    }
+
+    fun reloadData() {
+        page = 1
+        totalPage = 1
+
+        if (stickerTypeTV.tag == 1) {
+            stickerTypeTV.setText("View Hidden Stickers")
+            stickerTypeTV.setBackgroundColor(Color.parseColor("#eaebee"))
+
+            loadMySticker()
+        } else {
+            stickerTypeTV.setText("View Active Stickers")
+            stickerTypeTV.setBackgroundColor(Color.parseColor("#f8d4c7"))
+
+            loadMyHiddenSticker()
+        }
     }
 
     fun loadMySticker() {
@@ -122,13 +135,53 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
 
                     if (!body.isNull("packageList")) {
                         val packageList = body.getJSONArray("packageList")
-                        println(packageList.toString())
 
                         for (i in 0 until packageList.length()) {
                             data.add(SPPackage(packageList.get(i) as JSONObject))
                         }
 
-                        println(data)
+                        myStickerAdapter.notifyDataSetChanged()
+                    }
+                }
+            }
+
+        }
+    }
+
+    fun loadMyHiddenSticker() {
+        val params = JSONObject()
+        params.put("pageNumber", page)
+        params.put("limit", 20)
+
+        APIClient.get(
+            activity as Activity,
+            APIClient.APIPath.MY_STICKER_HIDE.rawValue + "/${Stipop.userId}",
+            params
+        ) { response: JSONObject?, e: IOException? ->
+
+            if (page == 1) {
+                data.clear()
+                myStickerAdapter.notifyDataSetChanged()
+            }
+
+            if (null != response) {
+
+                val header = response.getJSONObject("header")
+
+                if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
+                    val body = response.getJSONObject("body")
+
+                    if (!response.isNull("pageMap")) {
+                        val pageMap = body.getJSONObject("pageMap")
+                        totalPage = Utils.getInt(pageMap, "pageCount")
+                    }
+
+                    if (!body.isNull("packageList")) {
+                        val packageList = body.getJSONArray("packageList")
+
+                        for (i in 0 until packageList.length()) {
+                            data.add(SPPackage(packageList.get(i) as JSONObject))
+                        }
 
                         myStickerAdapter.notifyDataSetChanged()
                     }
@@ -197,7 +250,7 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
 
     }
 
-    fun hidePackage(packageId: Int) {
+    fun hidePackage(packageId: Int, position: Int) {
         val params = JSONObject()
 
         APIClient.put(
@@ -207,16 +260,15 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         ) { response: JSONObject?, e: IOException? ->
 
             if (null != response) {
-
-                println(response)
-
                 val header = response.getJSONObject("header")
                 val status = Utils.getString(header, "status")
 
-                if (status == "fail") {
+                if (status == "success") {
+                    data.removeAt(position)
+                    myStickerAdapter.notifyDataSetChanged()
+                } else {
                     Toast.makeText(myContext, "ERROR!!", Toast.LENGTH_LONG).show()
                 }
-
             }
 
         }
