@@ -173,7 +173,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         }
 
         favoriteRL.setOnClickListener {
-            favoriteRL.setBackgroundColor(Color.parseColor(Config.themeColor))
+            favoriteRL.setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
 
             if (selectedPackageId < 0) {
                 favoriteRL.tag = !(favoriteRL.tag as Boolean)

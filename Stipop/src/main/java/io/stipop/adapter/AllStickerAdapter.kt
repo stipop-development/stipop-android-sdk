@@ -1,6 +1,7 @@
 package io.stipop.adapter
 
 import android.content.Context
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -14,7 +15,7 @@ import io.stipop.R
 import io.stipop.Utils
 import io.stipop.model.SPPackage
 
-class AllStickerAdapter(context: Context, var view: Int, var data: ArrayList<SPPackage>): ArrayAdapter<SPPackage>(context, view, data) {
+class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayList<SPPackage>): ArrayAdapter<SPPackage>(myContext, view, data) {
 
     private lateinit var item: ViewHolder
 
@@ -22,14 +23,14 @@ class AllStickerAdapter(context: Context, var view: Int, var data: ArrayList<SPP
         lateinit var retView: View
 
         if (convertView == null) {
-            retView = View.inflate(context, view, null)
+            retView = View.inflate(myContext, view, null)
             item = ViewHolder(retView)
             retView.tag = item
         } else {
             retView = convertView
             item = convertView.tag as ViewHolder
             if (item == null) {
-                retView = View.inflate(context, view, null)
+                retView = View.inflate(myContext, view, null)
                 item = ViewHolder(retView)
                 retView.tag = item
             }
@@ -37,16 +38,22 @@ class AllStickerAdapter(context: Context, var view: Int, var data: ArrayList<SPP
 
         val packageObj = data.get(position)
 
+        item.packageNameTV.setTextColor(Config.getAllStickerPackageNameTextColor(myContext))
+        item.artistNameTV.setTextColor(Config.getAllStickerArtistNameTextColor(myContext))
+
+
         item.packageNameTV.setText(packageObj.packageName)
         item.artistNameTV.setText(packageObj.artistName)
 
         if (packageObj.isDownload) {
-            item.downloadIV.setImageResource(R.mipmap.ic_downloaded)
+            item.downloadIV.setImageResource(Config.getCompleteIconResourceId(myContext))
         } else {
-            item.downloadIV.setImageResource(R.mipmap.ic_download)
+            item.downloadIV.setImageResource(Config.getDownloadIconResourceId(myContext))
         }
 
-        if (Config.allStickerType == "A") {
+        if (Config.storeListType == "singular") {
+            Glide.with(myContext).load(packageObj.packageImg).into(item.packageIV!!)
+        } else {
             item.stickersLL?.removeAllViews()
 
             for (i in 0 until packageObj.stickers.size) {
@@ -55,15 +62,13 @@ class AllStickerAdapter(context: Context, var view: Int, var data: ArrayList<SPP
                 val layoutParams = ViewGroup.MarginLayoutParams(Utils.dpToPx(55f).toInt(), Utils.dpToPx(55f).toInt())
                 layoutParams.rightMargin = Utils.dpToPx(8f).toInt()
 
-                val iv = ImageView(context)
+                val iv = ImageView(myContext)
                 iv.layoutParams = layoutParams
 
-                Glide.with(context).load(stickerObj.stickerImg).into(iv)
+                Glide.with(myContext).load(stickerObj.stickerImg).into(iv)
 
                 item.stickersLL?.addView(iv)
             }
-        } else if (Config.allStickerType == "B") {
-            Glide.with(context).load(packageObj.packageImg).into(item.packageIV!!)
         }
 
         return retView

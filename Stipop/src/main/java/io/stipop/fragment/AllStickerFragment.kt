@@ -3,6 +3,8 @@ package io.stipop.fragment
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,9 +13,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +28,7 @@ import io.stipop.adapter.PackageAdapter
 import io.stipop.extend.RecyclerDecoration
 import io.stipop.model.SPPackage
 import kotlinx.android.synthetic.main.activity_detail.*
+import kotlinx.android.synthetic.main.activity_store.*
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import org.json.JSONObject
@@ -60,7 +65,21 @@ class AllStickerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        val drawable = searchbarLL.background as GradientDrawable
+        drawable.setColor(Color.parseColor(Config.searchbarBgColor)) // solid  color
+
+        searchIconIV.setImageResource(Config.getSearchbarResourceId(myContext))
+        eraseIV.setImageResource(Config.getEraseResourceId(myContext))
+
+
         val headerV = View.inflate(myContext, R.layout.header_all_sticker, null)
+
+        headerV.findViewById<View>(R.id.underLineV).setBackgroundColor(Config.getUnderLineColor(myContext))
+        headerV.findViewById<TextView>(R.id.trendingTV).setTextColor(Config.getTitleTextColor(myContext))
+        headerV.findViewById<TextView>(R.id.stickersTV).setTextColor(Config.getTitleTextColor(myContext))
+
+
         packageRV = headerV.findViewById(R.id.packageRV)
         trendingLL = headerV.findViewById(R.id.trendingLL)
 
@@ -106,7 +125,7 @@ class AllStickerFragment : Fragment() {
             }
         })
 
-        if (Config.allStickerType == "B") {
+        if (Config.storeListType == "singular") {
             // B Type
             allStickerAdapter =
                 AllStickerAdapter(myContext, R.layout.item_all_sticker_type_b, allStickerData)

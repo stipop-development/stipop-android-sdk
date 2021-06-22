@@ -59,7 +59,7 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
 
 
         if (keyboard.selectedPackageId == item.packageId) {
-            holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeColor))
+            holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
         } else {
             holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
         }

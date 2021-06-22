@@ -11,6 +11,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/trendingTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20.5dp"
@@ -28,6 +29,7 @@
         </androidx.recyclerview.widget.RecyclerView>
 
         <View
+            android:id="@+id/underLineV"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="25dp"
@@ -36,6 +38,7 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/stickersTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="11dp"

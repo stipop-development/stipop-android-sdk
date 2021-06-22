@@ -9,6 +9,10 @@
 		"groupedBgColor" : {
 			"light" : "#f7f8f9",
 			"dark" : "#1e2427"
+		},
+		"contentsBgColor" : {
+			"light" : "#ffffff",
+			"dark" : "#2e363a"
 		}
 	},
 	"StickerIcon": {
@@ -23,16 +27,16 @@
 	},
 	"Search": {
 		"searchbarIcon": {
-			"light" : "searchbarIcon",
-			"dark" : "searchbarIconDark"
+			"light" : "",
+			"dark" : ""
 		},
 		"searchbarDeleteIcon": {
-			"light" : "searchbarDeleteIcon",
-			"dark" : "searchbarDeleteIconDark"
+			"light" : "",
+			"dark" : ""
 		},
 		"searchbarColor": {
-			"light" : "searchbarColor",
-			"dark" : "searchbarColorDark"
+			"light" : "#ffffff",
+			"dark" : "#2e363a"
 		},
 		"searchbarRadius": 3,
 		"searchTags": {
@@ -52,14 +56,14 @@
 			"backgroundColor" : "#eeeeee",
 			"opacity": 0.7
 		},
-		"listType": "singular or horizontal",
+		"listType": "singular",
 		"downloadIcon": {
-			"light" : "downloadIcon",
-			"dark" : "downloadIconDark"
+			"light" : "",
+			"dark" : ""
 		},
 		"completeIcon": {
-			"light" : "completeIcon",
-			"dark" : "completeIconDark"
+			"light" : "",
+			"dark" : ""
 		}
 	},
 	"MySticker": {
@@ -104,7 +108,7 @@
 			"dark" : "#ec5428"
 		},
 		"numOfColumns": 3
-		
+
 	},
 	"Send": {
 		"preview": false,
