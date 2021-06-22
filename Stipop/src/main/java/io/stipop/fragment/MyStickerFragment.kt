@@ -167,11 +167,28 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                     Toast.makeText(myContext, "ERROR!!", Toast.LENGTH_LONG).show()
                 } else {
                     // order 변경
-                    fromPackageObj.order = toOrder
-                    toPackageObj.order = fromOrder
 
-                    println("myStickerOrder============")
-                    println(data.toString())
+                    if (!response.isNull("body")) {
+                        val body = response.getJSONObject("body")
+                        if (!body.isNull("packageList")) {
+                            val packageList = body.getJSONArray("packageList")
+
+                            for (i in 0 until packageList.length()) {
+                                val resPackage = SPPackage(packageList[i] as JSONObject)
+                                for (j in 0 until data.size) {
+                                    if (resPackage.packageId == data[j].packageId) {
+                                        data[j].order = resPackage.order
+                                        break
+                                    }
+                                }
+                            }
+
+                            data.sortBy { data -> data.order }
+
+                            myStickerAdapter.notifyDataSetChanged()
+                        }
+                    }
+
                 }
 
             }

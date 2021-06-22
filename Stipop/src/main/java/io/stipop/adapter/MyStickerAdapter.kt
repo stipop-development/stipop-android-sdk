@@ -134,7 +134,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
         this.toPosition = to
 
-        Collections.swap(dataList, from, to)
+        // Collections.swap(dataList, from, to)
         notifyItemMoved(from, to)
 
     }
@@ -152,12 +152,8 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
          myStickerFragment.myStickerOrder(this.fromPosition, this.toPosition)
 
-        println("dataList: " + dataList.toString())
-
         this.fromPosition = -1
         this.toPosition = -1
-
-        notifyDataSetChanged()
     }
 
 }
