@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import io.stipop.Config
 import io.stipop.R
 import io.stipop.Utils
 import io.stipop.activity.Keyboard
@@ -58,9 +59,9 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
 
 
         if (keyboard.selectedPackageId == item.packageId) {
-            holder.containerLL.setBackgroundColor(Color.parseColor("#FFFFFF"))
+            holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeColor))
         } else {
-            holder.containerLL.setBackgroundColor(Color.parseColor("#f7f8f9"))
+            holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
         }
 
         holder.containerLL.setOnClickListener {

@@ -1,7 +1,9 @@
 package io.stipop.activity
 
 import android.app.Activity
-import android.content.Context
+import android.content.Intent
+import android.content.res.Resources
+import android.graphics.Color
 import android.os.Build
 import android.transition.Slide
 import android.view.Gravity
@@ -9,19 +11,22 @@ import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.stipop.APIClient
-import io.stipop.R
-import io.stipop.Stipop
-import io.stipop.Utils
+import io.stipop.*
 import io.stipop.adapter.*
 import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker
+import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import org.json.JSONObject
 import java.io.IOException
 
 class Keyboard(val activity: Activity) : PopupWindow() {
 
     private lateinit var rootView: View
+
+    private lateinit var favoriteRL: RelativeLayout
+    private lateinit var recentlyIV: ImageView
+    private lateinit var favoriteIV: ImageView
+    private lateinit var storeIV: ImageView
 
     private lateinit var packageRV: RecyclerView
     private lateinit var stickerGV: GridView
@@ -35,6 +40,10 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     var selectedPackageId = -1
     var page = 1
     var totalPage = 1
+
+    private var lastItemVisibleFlag = false
+    var stickerPage = 1
+    var stickerTotalPage = 1
 
     companion object {
         fun show(activity: Activity) {
@@ -76,9 +85,28 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         // set size
         popupWindow.height = Stipop.keyboardHeight
 
+        view.findViewById<LinearLayout>(R.id.containerLL).setBackgroundColor(Color.parseColor(Config.themeColor))
+        view.findViewById<LinearLayout>(R.id.packageListLL).setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
+
+        favoriteRL = view.findViewById(R.id.favoriteRL)
+        recentlyIV = view.findViewById(R.id.recentlyIV)
+        favoriteIV = view.findViewById(R.id.favoriteIV)
+        storeIV = view.findViewById(R.id.storeIV)
+
         packageRV = view.findViewById(R.id.packageRV)
         stickerGV = view.findViewById(R.id.stickerGV)
 
+
+        storeIV.setImageResource(Config.getKeyboardStoreResourceId(this.activity))
+
+
+        ///////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////
+        // Events
+
+        favoriteRL.tag = false
+        setThemeImageIcon()
 
         val mLayoutManager = LinearLayoutManager(this.activity)
         mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
@@ -119,16 +147,47 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
 
         stickerAdapter = StickerAdapter(this.activity, R.layout.item_sticker, stickerData)
+        stickerGV.numColumns = Config.keyboardNumOfColumns
         stickerGV.adapter = stickerAdapter
+        stickerGV.setOnScrollListener(object : AbsListView.OnScrollListener {
+            override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && stickerTotalPage > stickerPage) {
+                    stickerPage += 1
+                    loadFavoriteRecently()
+                }
+            }
 
+            override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+                lastItemVisibleFlag = (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount)
+            }
 
-        ///////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////
-        // Events
+        })
 
         view.findViewById<Button>(R.id.button_popup).setOnClickListener {
             popupWindow.dismiss()
+        }
+
+        view.findViewById<LinearLayout>(R.id.storeLL).setOnClickListener {
+            val intent = Intent(this.activity, StoreActivity::class.java)
+            this.activity.startActivity(intent)
+        }
+
+        favoriteRL.setOnClickListener {
+            favoriteRL.setBackgroundColor(Color.parseColor(Config.themeColor))
+
+            if (selectedPackageId < 0) {
+                favoriteRL.tag = !(favoriteRL.tag as Boolean)
+            }
+
+            selectedPackageId = -1
+            packageAdapter.notifyDataSetChanged()
+
+            stickerPage = 1
+
+            stickerData.clear()
+            stickerAdapter.notifyDataSetChanged()
+
+            loadFavoriteRecently()
         }
 
         loadPackages()
@@ -151,8 +210,28 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         )
     }
 
-    private fun loadPackages() {
+    private fun setThemeImageIcon() {
+        if (Config.useLightMode) {
+            recentlyIV.setImageResource(R.mipmap.ic_recents_normal)
+            favoriteIV.setImageResource(R.mipmap.ic_favorites_normal)
+            if (favoriteRL.tag as Boolean) {
+                favoriteIV.setImageResource(R.mipmap.ic_favorites_active)
+            } else {
+                recentlyIV.setImageResource(R.mipmap.ic_recents_active)
+            }
+        } else {
+            recentlyIV.setImageResource(R.mipmap.ic_recents_normal_dark)
+            favoriteIV.setImageResource(R.mipmap.ic_favorites_normal_dark)
 
+            if (favoriteRL.tag as Boolean) {
+                favoriteIV.setImageResource(R.mipmap.ic_favorites_active_dark)
+            } else {
+                recentlyIV.setImageResource(R.mipmap.ic_recents_active_dark)
+            }
+        }
+    }
+
+    private fun loadPackages() {
         val params = JSONObject()
         params.put("pageNumber", page)
         params.put("limit", 20)
@@ -203,6 +282,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     }
 
     private fun loadStickers() {
+        favoriteRL.setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
 
         stickerData.clear()
         stickerAdapter.notifyDataSetChanged()
@@ -240,5 +320,102 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
         }
 
+    }
+
+    private fun loadFavoriteRecently() {
+        setThemeImageIcon()
+
+        // Favorite
+        if (favoriteRL.tag as Boolean) {
+            loadFavorite()
+        } else {
+            // Recently
+            loadRecently()
+        }
+    }
+
+    private fun loadFavorite() {
+        val params = JSONObject()
+        params.put("pageNumber", stickerPage)
+        params.put("limit", 12)
+
+        APIClient.get(
+            activity,
+            APIClient.APIPath.FAVORITE.rawValue + "/${Stipop.userId}",
+            null
+        ) { response: JSONObject?, e: IOException? ->
+
+            println(response)
+
+            if (null != response) {
+
+                val header = response.getJSONObject("header")
+
+                if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
+                    val body = response.getJSONObject("body")
+                    val packageObj = body.getJSONObject("package")
+
+                    if (!response.isNull("pageMap")) {
+                        val pageMap = body.getJSONObject("pageMap")
+                        stickerTotalPage = Utils.getInt(pageMap, "pageCount")
+                    }
+
+                    if (!packageObj.isNull("stickers")) {
+                        val stickers = packageObj.getJSONArray("stickers")
+
+                        for (i in 0 until stickers.length()) {
+                            stickerData.add(SPSticker(stickers.get(i) as JSONObject))
+                        }
+
+                        stickerAdapter.notifyDataSetChanged()
+
+                    }
+
+                }
+            }
+
+        }
+    }
+
+    private fun loadRecently() {
+        val params = JSONObject()
+        params.put("pageNumber", stickerPage)
+        params.put("limit", 12)
+
+        APIClient.get(
+            activity,
+            APIClient.APIPath.PACKAGE_SEND.rawValue + "/${Stipop.userId}",
+            null
+        ) { response: JSONObject?, e: IOException? ->
+
+            println(response)
+
+            if (null != response) {
+
+                val header = response.getJSONObject("header")
+
+                if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
+                    val body = response.getJSONObject("body")
+
+                    if (!response.isNull("pageMap")) {
+                        val pageMap = body.getJSONObject("pageMap")
+                        stickerTotalPage = Utils.getInt(pageMap, "pageCount")
+                    }
+
+                    if (!body.isNull("stickerList")) {
+                        val stickerList = body.getJSONArray("stickerList")
+
+                        for (i in 0 until stickerList.length()) {
+                            stickerData.add(SPSticker(stickerList[i] as JSONObject))
+                        }
+
+                        stickerAdapter.notifyDataSetChanged()
+
+                    }
+
+                }
+            }
+
+        }
     }
 }

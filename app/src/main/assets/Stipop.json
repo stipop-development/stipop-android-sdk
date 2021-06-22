@@ -1,14 +1,14 @@
 {
 	"api_key": "f1487146b30e92fc07ae42f44de3c5d7",
 	"Theme": {
-		"useLightMode" : true,
+		"useLightMode" : false,
 		"color" : {
-			"light" : "#f7f8f9",
-			"dark" : "#f7f8f9"
+			"light" : "#ffffff",
+			"dark" : "#2e363a"
 		},
 		"groupedBgColor" : {
 			"light" : "#f7f8f9",
-			"dark" : "#f7f8f9"
+			"dark" : "#1e2427"
 		}
 	},
 	"StickerIcon": {
@@ -77,7 +77,7 @@
 			"light" : "liteStoreIcon",
 			"dark" : "liteStoreIconDark"
 		},
-		"numOfColumns": 3
+		"numOfColumns": 4
 	},
 	"StorePolicy" : {
 		"allowPremium" : "N",

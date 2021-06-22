@@ -15,10 +15,12 @@ class APIClient {
         SEARCH("/search"),
         SEARCH_KEYWORD("/search/keyword"),
         PACKAGE("/package"),
+        PACKAGE_SEND("/package/send"),
         MY_STICKER("/mysticker"),
         MY_STICKER_ORDER("/mysticker/order"),
         MY_STICKER_HIDE("/mysticker/hide"),
-        DOWNLOAD("/download")
+        DOWNLOAD("/download"),
+        FAVORITE("/favorite")
     }
 
     companion object {

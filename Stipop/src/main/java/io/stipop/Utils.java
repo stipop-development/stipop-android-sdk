@@ -71,6 +71,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
@@ -1657,6 +1658,17 @@ public class Utils {
         return "";
     }
 
+    public static String getString(JSONObject json, String key, String defaultValue) {
+        if (json != null && json.has(key) && !json.isNull(key)) {
+            try {
+                return json.getString(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return defaultValue;
+    }
+
     public static int getInt(JSONObject json, String key) {
         if (json != null && json.has(key) && !json.isNull(key)) {
             try {
@@ -1710,6 +1722,17 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    public static boolean getBoolen(JSONObject json, String key, Boolean defaultValue) {
+        if (json != null && json.has(key) && !json.isNull(key)) {
+            try {
+                return json.getBoolean(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return defaultValue;
     }
 
     // 리스트 뷰 아이템 높이만큼 크기 늘리기
@@ -1899,4 +1922,24 @@ public class Utils {
         }
     }
 
+    public static int getMipmapResource(String imageName) {
+        Class mipmap = R.mipmap.class;
+        try {
+            Field field = mipmap.getField(imageName);
+            int resId = field.getInt(imageName);
+            return resId;
+        } catch (NoSuchFieldException e) {//If the imageName is not found under "mipmap", it will return 0
+            return Config.Companion.getErrorImage();
+        } catch (IllegalAccessException e) {
+            return Config.Companion.getErrorImage();
+        }
+    }
+
+    public static int getResource(String imageName, Context context) {
+        int id = context.getResources().getIdentifier(imageName, "mipmap", context.getPackageName());
+        if (id < 1) {
+            id = Config.Companion.getErrorImage();
+        }
+        return id;
+    }
 }
