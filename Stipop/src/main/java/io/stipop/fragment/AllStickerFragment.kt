@@ -232,7 +232,7 @@ class AllStickerFragment : Fragment() {
         params.put("pageNumber", page)
         params.put("lang", Stipop.lang)
         params.put("countryCode", Stipop.countryCode)
-        params.put("limit", 20)
+        params.put("limit", 12)
         params.put("q", Utils.getString(keywordET))
 
         APIClient.get(
