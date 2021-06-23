@@ -22,17 +22,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/packageNameTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textSize="14sp"
                 android:textColor="#000000"
                 android:textStyle="bold"
                 android:lineHeight="22sp"
-                android:text="JalGOM's Toon(Ver.1)"/>
+                android:text=""/>
 
             <TextView
                 android:id="@+id/artistNameTV"
@@ -41,7 +44,7 @@
                 android:textSize="12sp"
                 android:textColor="#8f8f8f"
                 android:lineHeight="20sp"
-                android:text="Cmaker"/>
+                android:text=""/>
 
         </LinearLayout>
 
@@ -49,7 +52,8 @@
             android:id="@+id/isViewLL"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:gravity="right">
 
             <LinearLayout
                 android:id="@+id/hideLL"
@@ -62,6 +66,8 @@
                     android:id="@+id/hideIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:maxWidth="50dp"
+                    android:adjustViewBounds="true"
                     android:src="@mipmap/ic_hide" />
 
             </LinearLayout>
@@ -75,8 +81,11 @@
                 android:gravity="center">
 
                 <ImageView
+                    android:id="@+id/moveIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:maxWidth="50dp"
+                    android:adjustViewBounds="true"
                     android:src="@mipmap/ic_move" />
 
             </LinearLayout>
@@ -93,8 +102,11 @@
             android:visibility="gone">
 
             <ImageView
+                android:id="@+id/addIV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxWidth="50dp"
+                android:adjustViewBounds="true"
                 android:src="@mipmap/add_3" />
 
         </LinearLayout>

@@ -51,7 +51,12 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
         val moveLL: LinearLayout
         val hideLL: LinearLayout
 
+        val moveIV: ImageView
+        val hideIV: ImageView
+
         val addLL: LinearLayout
+
+        val addIV: ImageView
 
         init {
             containerLL = view.findViewById(R.id.containerLL)
@@ -62,7 +67,10 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
             artistNameTV = view.findViewById(R.id.artistNameTV)
             isViewLL = view.findViewById(R.id.isViewLL)
             hideLL = view.findViewById(R.id.hideLL)
+            moveIV = view.findViewById(R.id.moveIV)
+            hideIV = view.findViewById(R.id.hideIV)
             addLL = view.findViewById(R.id.addLL)
+            addIV = view.findViewById(R.id.addIV)
         }
 
     }
@@ -79,6 +87,17 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val spPackage = dataList[position]
 
+        holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeColor))
+
+        holder.packageNameTV.setTextColor(Config.getAllStickerPackageNameTextColor(context))
+        holder.artistNameTV.setTextColor(Config.getTitleTextColor(context))
+
+        holder.hideIV.setImageResource(Config.getHideIconResourceId(context))
+        holder.moveIV.setImageResource(Config.getOrderIconResourceId(context))
+
+        holder.addIV.setImageResource(Config.getAddIconResourceId())
+
+
         Glide.with(context).load(spPackage.packageImg).into(holder.packageIV)
 
         holder.artistNameTV.setText(spPackage.artistName)
@@ -90,7 +109,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
             holder.isViewLL.visibility = View.VISIBLE
 
             holder.hideLL.setOnClickListener {
-                myStickerFragment.hidePackage(spPackage.packageId, position)
+                myStickerFragment.showConfirmAlert(spPackage.packageId, position)
             }
         } else {
             holder.addLL.visibility = View.VISIBLE
@@ -100,7 +119,6 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
             }
         }
 
-        holder.containerLL.setBackgroundColor(Color.WHITE)
 //        holder.moveLL.setOnTouchListener { _, event ->
 //            holder.containerLL.setBackgroundColor(ContextCompat.getColor(context, R.color.c_f7f8f9))
 //            if (event.action == MotionEvent.ACTION_DOWN) {
@@ -110,7 +128,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 //        }
 
         holder.moveLL.setOnLongClickListener {
-            holder.containerLL.setBackgroundColor(ContextCompat.getColor(context, R.color.c_f7f8f9))
+            holder.containerLL.setBackgroundColor(Config.getMovingBackgroundColor(context))
 
             onEventListener?.onDragStarted(holder)
 

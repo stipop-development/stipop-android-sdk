@@ -11,6 +11,7 @@ import android.view.*
 import android.widget.*
 import io.stipop.activity.DetailActivity
 import io.stipop.activity.Keyboard
+import io.stipop.activity.SearchActivity
 import io.stipop.activity.StoreActivity
 
 class Stipop(private val activity: Activity, private val stipopButton: ImageView) {
@@ -87,7 +88,7 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
         } else {
             this.enableStickerIcon()
 
-            val intent = Intent(this.activity, StoreActivity::class.java)
+            val intent = Intent(this.activity, SearchActivity::class.java)
             this.activity.startActivity(intent)
         }
 

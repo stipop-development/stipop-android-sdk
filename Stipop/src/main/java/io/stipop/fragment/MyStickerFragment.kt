@@ -4,16 +4,20 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.stipop.*
 import io.stipop.activity.DetailActivity
 import io.stipop.adapter.MyStickerAdapter
@@ -21,6 +25,7 @@ import io.stipop.adapter.PackageAdapter
 import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
 import io.stipop.extend.dragdrop.SimpleItemTouchHelperCallback
 import io.stipop.model.SPPackage
+import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import org.json.JSONObject
 import java.io.IOException
@@ -49,6 +54,10 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        stickerTypeTV.setTextColor(Config.getActiveHiddenStickerTextColor(myContext))
+        stickerTypeTV.setBackgroundColor(Config.getHiddenStickerBackgroundColor(myContext))
+
 
         myStickerAdapter = MyStickerAdapter(myContext, data, this)
 
@@ -80,7 +89,7 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         itemTouchHelper.attachToRecyclerView(listRV)
 
         stickerTypeTV.setOnClickListener {
-            stickerTypeTV.tag = if (stickerTypeTV.tag == 1) { 2 } else { 1 }
+            stickerTypeTV.tag = if (stickerTypeTV.tag == 2) { 1 } else { 2 }
 
             reloadData()
         }
@@ -94,12 +103,12 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
 
         if (stickerTypeTV.tag == 1) {
             stickerTypeTV.setText("View Hidden Stickers")
-            stickerTypeTV.setBackgroundColor(Color.parseColor("#eaebee"))
+            stickerTypeTV.setBackgroundColor(Config.getHiddenStickerBackgroundColor(myContext))
 
             loadMySticker()
         } else {
             stickerTypeTV.setText("View Active Stickers")
-            stickerTypeTV.setBackgroundColor(Color.parseColor("#f8d4c7"))
+            stickerTypeTV.setBackgroundColor(Config.getActiveStickerBackgroundColor(myContext))
 
             loadMyHiddenSticker()
         }
@@ -273,6 +282,37 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
 
         }
 
+    }
+
+    fun showConfirmAlert(packageId: Int, position: Int) {
+        var customSelectProfilePicBottomSheetDialog = BottomSheetDialog(myContext, R.style.CustomBottomSheetDialogTheme)
+
+        val layoutBottomSheetView  = this.layoutInflater.inflate(R.layout.bottom_alert, null)
+
+        val drawable = layoutBottomSheetView.findViewById<LinearLayout>(R.id.containerLL).background as GradientDrawable
+        drawable.setColor(Config.getAlertBackgroundColor(myContext)) // solid  color
+
+        layoutBottomSheetView.findViewById<TextView>(R.id.titleTV).setTextColor(Config.getAlertTitleTextColor(myContext))
+        layoutBottomSheetView.findViewById<TextView>(R.id.contentsTV).setTextColor(Config.getAlertContentsTextColor(myContext))
+
+        val cancelTV = layoutBottomSheetView.findViewById<TextView>(R.id.cancelTV)
+        val hideTV = layoutBottomSheetView.findViewById<TextView>(R.id.hideTV)
+
+        cancelTV.setTextColor(Config.getAlertButtonTextColor(myContext))
+        hideTV.setTextColor(Config.getAlertButtonTextColor(myContext))
+
+        cancelTV.setOnClickListener {
+            customSelectProfilePicBottomSheetDialog.dismiss()
+        }
+
+        hideTV.setOnClickListener {
+            hidePackage(packageId, position)
+
+            customSelectProfilePicBottomSheetDialog.dismiss()
+        }
+
+        customSelectProfilePicBottomSheetDialog.setContentView(layoutBottomSheetView)
+        customSelectProfilePicBottomSheetDialog.show()
     }
 
     override fun onItemClicked(position: Int) {

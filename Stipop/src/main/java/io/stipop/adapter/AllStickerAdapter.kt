@@ -39,7 +39,7 @@ class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayLi
         val packageObj = data.get(position)
 
         item.packageNameTV.setTextColor(Config.getAllStickerPackageNameTextColor(myContext))
-        item.artistNameTV.setTextColor(Config.getAllStickerArtistNameTextColor(myContext))
+        item.artistNameTV.setTextColor(Config.getTitleTextColor(myContext))
 
 
         item.packageNameTV.setText(packageObj.packageName)

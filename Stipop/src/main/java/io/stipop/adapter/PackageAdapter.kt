@@ -58,8 +58,9 @@ class PackageAdapter(private val dataList: ArrayList<SPPackage>, val context: Co
         Glide.with(context).load(packageImg).into(holder.imageIV)
 
         val drawable = holder.backgroundLL.background as GradientDrawable
-
         Config.setStoreTrendingBackground(context, drawable)
+
+        // holder.backgroundLL.alpha = Config.storeTrendingOpacity.toFloat()
 
         holder.backgroundLL.setOnClickListener {
             if (mListener != null) {

@@ -1,10 +1,13 @@
 package io.stipop.activity
 
+import android.app.Activity
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.stipop.*
 import io.stipop.adapter.KeywordAdapter
@@ -12,10 +15,12 @@ import io.stipop.adapter.StickerAdapter
 import io.stipop.extend.RecyclerDecoration
 import io.stipop.model.SPSticker
 import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.activity_search.clearTextLL
+import kotlinx.android.synthetic.main.activity_search.keywordET
 import org.json.JSONObject
 import java.io.IOException
 
-class SearchActivity: AppCompatActivity() {
+class SearchActivity: Activity() {
 
     lateinit var context: Context
 
@@ -30,6 +35,22 @@ class SearchActivity: AppCompatActivity() {
         setContentView(R.layout.activity_search)
 
         this.context = this
+
+
+        val drawable = containerLL.background as GradientDrawable
+        drawable.setColor(Color.parseColor(Config.themeColor))
+
+        val drawable2 = searchbarLL.background as GradientDrawable
+        drawable2.setColor(Color.parseColor(Config.searchbarBgColor)) // solid  color
+        drawable2.cornerRadius = Config.searchbarRadius.toFloat()
+
+        searchIV.setImageResource(Config.getSearchbarResourceId(context))
+        eraseIV.setImageResource(Config.getEraseResourceId(context))
+
+        titleTV.setTextColor(Config.getSearchTitleTextColor(context))
+        keywordET.setTextColor(Config.getSearchTitleTextColor(context))
+
+
 
         clearTextLL.setOnClickListener {
             keywordET.setText("")
@@ -75,7 +96,14 @@ class SearchActivity: AppCompatActivity() {
 
         stickerGV.adapter = stickerAdapter
 
-        getKeyword()
+        if (Config.searchTagsHidden) {
+            tagLL.visibility = View.GONE
+        } else {
+            tagLL.visibility = View.VISIBLE
+
+            getKeyword()
+        }
+
         search("")
     }
 
@@ -116,6 +144,7 @@ class SearchActivity: AppCompatActivity() {
         params.put("userId", Stipop.userId)
         params.put("lang", Stipop.lang)
         params.put("countryCode", Stipop.countryCode)
+        params.put("limit", 20)
         params.put("q", keyword)
 
         APIClient.get(this, APIClient.APIPath.SEARCH.rawValue, params) { response: JSONObject?, e: IOException? ->

@@ -28,8 +28,13 @@ import io.stipop.adapter.PackageAdapter
 import io.stipop.extend.RecyclerDecoration
 import io.stipop.model.SPPackage
 import kotlinx.android.synthetic.main.activity_detail.*
+import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_store.*
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
+import kotlinx.android.synthetic.main.fragment_all_sticker.clearTextLL
+import kotlinx.android.synthetic.main.fragment_all_sticker.eraseIV
+import kotlinx.android.synthetic.main.fragment_all_sticker.keywordET
+import kotlinx.android.synthetic.main.fragment_all_sticker.searchbarLL
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import org.json.JSONObject
 import java.io.IOException
@@ -68,6 +73,8 @@ class AllStickerFragment : Fragment() {
 
         val drawable = searchbarLL.background as GradientDrawable
         drawable.setColor(Color.parseColor(Config.searchbarBgColor)) // solid  color
+
+        keywordET.setTextColor(Config.getSearchTitleTextColor(myContext))
 
         searchIconIV.setImageResource(Config.getSearchbarResourceId(myContext))
         eraseIV.setImageResource(Config.getEraseResourceId(myContext))
@@ -225,7 +232,7 @@ class AllStickerFragment : Fragment() {
         params.put("pageNumber", page)
         params.put("lang", Stipop.lang)
         params.put("countryCode", Stipop.countryCode)
-        params.put("limit", 12)
+        params.put("limit", 20)
         params.put("q", Utils.getString(keywordET))
 
         APIClient.get(

@@ -33,7 +33,7 @@ class StoreActivity: FragmentActivity() {
 
 
         val drawable = containerLL.background as GradientDrawable
-        drawable.setColor(Color.parseColor(Config.themeGroupedBgColor)) // solid  color
+        drawable.setColor(Color.parseColor(Config.themeColor)) // solid  color
 
         navigationBarLL.setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
 

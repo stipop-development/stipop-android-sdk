@@ -5,14 +5,16 @@
     android:background="#000000">
 
     <LinearLayout
+        android:id="@+id/containerLL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/search_background"
         android:paddingHorizontal="12dp"
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/searchbarLL"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="15dp"
@@ -25,6 +27,7 @@
                 android:gravity="center">
 
                 <ImageView
+                    android:id="@+id/searchIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@mipmap/icon_search"/>
@@ -47,6 +50,7 @@
                 android:gravity="center">
 
                 <ImageView
+                    android:id="@+id/eraseIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@mipmap/icon_erase"/>
@@ -55,21 +59,31 @@
 
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@color/c_374553"
-            android:text="Recommended Tag"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/keywordRV"
+        <LinearLayout
+            android:id="@+id/tagLL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="25dp"
-            android:layout_marginTop="10dp"/>
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/titleTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/c_374553"
+                android:text="Recommended Tag"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/keywordRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="25dp"
+                android:layout_marginTop="10dp"/>
+
+        </LinearLayout>
 
         <GridView
             android:id="@+id/stickerGV"

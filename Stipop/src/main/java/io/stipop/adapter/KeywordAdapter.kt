@@ -1,10 +1,13 @@
 package io.stipop.adapter
 
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import io.stipop.Config
 import io.stipop.R
 import io.stipop.Utils
 import org.json.JSONObject
@@ -40,6 +43,9 @@ class KeywordAdapter(private val dataList: ArrayList<JSONObject>):
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = dataList[position]
+
+        val drawable = holder.keywordTV.background as GradientDrawable
+        drawable.setColor(Color.parseColor(Config.searchTagBgColor))
 
         holder.keywordTV.text = Utils.getString(item, "keyword")
         holder.keywordTV.setOnClickListener {

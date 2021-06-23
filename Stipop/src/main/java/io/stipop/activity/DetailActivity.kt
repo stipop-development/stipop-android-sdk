@@ -3,6 +3,8 @@ package io.stipop.activity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -13,7 +15,6 @@ import io.stipop.model.SPSticker
 import kotlinx.android.synthetic.main.activity_detail.*
 import org.json.JSONObject
 import java.io.IOException
-
 
 class DetailActivity: Activity() {
 
@@ -32,6 +33,22 @@ class DetailActivity: Activity() {
         this.context = this
 
         packageId = intent.getIntExtra("packageId", -1)
+
+
+        val drawable = containerLL.background as GradientDrawable
+        drawable.setColor(Color.parseColor(Config.themeGroupedBgColor)) // solid  color
+
+        contentsRL.setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
+
+        packageNameTV.setTextColor(Config.getDetailPackageNameTextColor(context))
+
+        backIV.setImageResource(Config.getBackIconResourceId(context))
+        closeIV.setImageResource(Config.getCloseIconResourceId(context))
+
+        downloadTV.setBackgroundColor(Config.getDetailDownloadBackgroundColor(context))
+
+        stickerGV.numColumns = Config.detailNumOfColumns
+
 
         backLL.setOnClickListener { finish() }
         closeLL.setOnClickListener { finish() }
@@ -88,7 +105,6 @@ class DetailActivity: Activity() {
                     }
 
                     downloadTV.tag = pack.isDownload
-
                 }
 
             } else {

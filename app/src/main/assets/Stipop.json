@@ -1,10 +1,10 @@
 {
 	"api_key": "f1487146b30e92fc07ae42f44de3c5d7",
 	"Theme": {
-		"useLightMode" : false,
+		"useLightMode" : true,
 		"color" : {
 			"light" : "#ffffff",
-			"dark" : "#2e363a"
+			"dark" : "#171b1c"
 		},
 		"groupedBgColor" : {
 			"light" : "#f7f8f9",
@@ -35,10 +35,10 @@
 			"dark" : ""
 		},
 		"searchbarColor": {
-			"light" : "#ffffff",
+			"light" : "#eeeeee",
 			"dark" : "#2e363a"
 		},
-		"searchbarRadius": 3,
+		"searchbarRadius": 10,
 		"searchTags": {
 			"hidden": false,
 			"color": {
@@ -68,18 +68,18 @@
 	},
 	"MySticker": {
 		"orderIcon": {
-			"light" : "orderIcon",
-			"dark" : "orderIconDark"
+			"light" : "",
+			"dark" : ""
 		},
 		"hideIcon": {
-			"light" : "hideIcon",
-			"dark" : "hideIconDark"
+			"light" : "",
+			"dark" : ""
 		}
 	},
 	"Keyboard": {
 		"liteStoreIcon": {
-			"light" : "liteStoreIcon",
-			"dark" : "liteStoreIconDark"
+			"light" : "",
+			"dark" : ""
 		},
 		"numOfColumns": 4
 	},
@@ -92,20 +92,20 @@
 	},
 	"Sticker": {
 		"backIcon": {
-			"light" : "backIcon",
-			"dark" : "backIconDark"
+			"light" : "",
+			"dark" : ""
 		},
 		"closeIcon": {
-			"light" : "closeIcon",
-			"dark" : "closeIconDark"
+			"light" : "",
+			"dark" : ""
 		},
 		"shareIcon": {
 			"light" : "shareIcon",
 			"dark" : "shareIconDark"
 		},
 		"downloadButtonColor": {
-			"light" : "#ec5428",
-			"dark" : "#ec5428"
+			"light" : "",
+			"dark" : ""
 		},
 		"numOfColumns": 3
 

@@ -5,9 +5,10 @@
     android:background="#000000">
 
     <LinearLayout
+        android:id="@+id/containerLL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/detail_background"
         android:orientation="vertical">
 
@@ -24,6 +25,7 @@
                 android:gravity="center">
 
                 <ImageView
+                    android:id="@+id/backIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@mipmap/ic_back"/>
@@ -42,6 +44,7 @@
                 android:gravity="center">
 
                 <ImageView
+                    android:id="@+id/closeIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@mipmap/ic_close"/>
@@ -51,6 +54,7 @@
         </LinearLayout>
 
         <RelativeLayout
+            android:id="@+id/contentsRL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
@@ -95,7 +99,7 @@
                     android:layout_marginTop="0.5dp"
                     android:gravity="center"
                     android:textSize="14sp"
-                    android:textColor="#bababa"
+                    android:textColor="@color/c_bababa"
                     android:textStyle="bold"
                     android:text="©twistolive" />
 

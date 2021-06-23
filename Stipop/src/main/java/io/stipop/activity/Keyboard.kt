@@ -85,7 +85,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         // set size
         popupWindow.height = Stipop.keyboardHeight
 
-        view.findViewById<LinearLayout>(R.id.containerLL).setBackgroundColor(Color.parseColor(Config.themeColor))
+        view.findViewById<LinearLayout>(R.id.containerLL).setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
         view.findViewById<LinearLayout>(R.id.packageListLL).setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
 
         favoriteRL = view.findViewById(R.id.favoriteRL)
