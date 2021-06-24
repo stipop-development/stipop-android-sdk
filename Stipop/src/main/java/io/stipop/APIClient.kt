@@ -19,8 +19,9 @@ class APIClient {
         MY_STICKER("/mysticker"),
         MY_STICKER_ORDER("/mysticker/order"),
         MY_STICKER_HIDE("/mysticker/hide"),
+        MY_STICKER_FAVORITE("/mysticker/favorite"),
         DOWNLOAD("/download"),
-        FAVORITE("/favorite")
+        ANALYTICS_SEND("/analytics/send")
     }
 
     companion object {

@@ -26,6 +26,8 @@ class DetailActivity: Activity() {
 
     var packageId = -1
 
+    var packageAnimated: String? = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -91,6 +93,8 @@ class DetailActivity: Activity() {
 
                     val pack = SPPackage(packageObj)
 
+                    packageAnimated = pack.packageAnimated
+
                     Glide.with(context).load(pack.packageImg).into(packageIV)
 
                     packageNameTV.setText(pack.packageName)
@@ -121,6 +125,19 @@ class DetailActivity: Activity() {
         var params = JSONObject()
         params.put("userId", Stipop.userId)
         params.put("isPurchase", Config.allowPremium)
+        params.put("lang", Stipop.lang)
+        params.put("countryCode", Stipop.countryCode)
+
+        if (Config.allowPremium == "Y") {
+            // 움직이지 않는 스티커
+            var price = Config.pngPrice
+
+            if (packageAnimated == "Y") {
+                // 움직이는 스티커
+                price = Config.gifPrice
+            }
+            params.put("price", price)
+        }
 
         APIClient.post(this, APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
             println(response)

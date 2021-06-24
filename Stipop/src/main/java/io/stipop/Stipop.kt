@@ -13,6 +13,9 @@ import io.stipop.activity.DetailActivity
 import io.stipop.activity.Keyboard
 import io.stipop.activity.SearchActivity
 import io.stipop.activity.StoreActivity
+import io.stipop.model.SPPackage
+import org.json.JSONObject
+import java.io.IOException
 
 class Stipop(private val activity: Activity, private val stipopButton: ImageView) {
 
@@ -59,6 +62,14 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
 
             instance!!.detail(packageId)
         }
+
+        fun send(stickerId: Int, keyword: String) {
+            if (instance == null) {
+                return
+            }
+
+            instance!!.send(stickerId, keyword)
+        }
     }
 
 
@@ -103,6 +114,37 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
         val intent = Intent(this.activity, DetailActivity::class.java)
         intent.putExtra("packageId", packageId)
         this.activity.startActivity(intent)
+    }
+
+    fun send(stickerId: Int, searchKeyword: String) {
+        if (!this.connected) {
+            return
+        }
+
+        val params = JSONObject()
+        params.put("userId", userId)
+        params.put("p", searchKeyword)
+        params.put("lang", lang)
+        params.put("countryCode", countryCode)
+
+        APIClient.post(
+            activity,
+            APIClient.APIPath.ANALYTICS_SEND.rawValue + "/${stickerId}",
+            params
+        ) { response: JSONObject?, e: IOException? ->
+
+            println(response)
+
+            if (null != response) {
+
+                val header = response.getJSONObject("header")
+
+                if (Utils.getString(header, "status") != "success") {
+                    println("ERROR!")
+                }
+            }
+
+        }
     }
 
     private fun enableStickerIcon() {

@@ -2,7 +2,6 @@ package io.stipop.activity
 
 import android.app.Activity
 import android.content.Intent
-import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
 import android.transition.Slide
@@ -15,7 +14,6 @@ import io.stipop.*
 import io.stipop.adapter.*
 import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker
-import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import org.json.JSONObject
 import java.io.IOException
 
@@ -44,6 +42,8 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     private var lastItemVisibleFlag = false
     var stickerPage = 1
     var stickerTotalPage = 1
+
+    lateinit var preview: Preview
 
     companion object {
         fun show(activity: Activity) {
@@ -84,6 +84,8 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
         // set size
         popupWindow.height = Stipop.keyboardHeight
+
+        preview = Preview(this.activity)
 
         view.findViewById<LinearLayout>(R.id.containerLL).setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
         view.findViewById<LinearLayout>(R.id.packageListLL).setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
@@ -162,6 +164,18 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             }
 
         })
+        stickerGV.setOnItemClickListener { adapterView, view, i, l ->
+            // Stipop.send(stickerData[i].stickerId, "")
+
+            preview.sticker = stickerData[i]
+
+            if (preview.windowIsShowing()) {
+                preview.setStickerView()
+            } else {
+                preview.show()
+            }
+
+        }
 
         view.findViewById<Button>(R.id.button_popup).setOnClickListener {
             popupWindow.dismiss()
@@ -341,7 +355,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
         APIClient.get(
             activity,
-            APIClient.APIPath.FAVORITE.rawValue + "/${Stipop.userId}",
+            APIClient.APIPath.MY_STICKER_FAVORITE.rawValue + "/${Stipop.userId}",
             null
         ) { response: JSONObject?, e: IOException? ->
 
@@ -360,11 +374,11 @@ class Keyboard(val activity: Activity) : PopupWindow() {
                         stickerTotalPage = Utils.getInt(pageMap, "pageCount")
                     }
 
-                    if (!packageObj.isNull("stickers")) {
-                        val stickers = packageObj.getJSONArray("stickers")
+                    if (!packageObj.isNull("favoriteList")) {
+                        val favoriteList = packageObj.getJSONArray("favoriteList")
 
-                        for (i in 0 until stickers.length()) {
-                            stickerData.add(SPSticker(stickers.get(i) as JSONObject))
+                        for (i in 0 until favoriteList.length()) {
+                            stickerData.add(SPSticker(favoriteList.get(i) as JSONObject))
                         }
 
                         stickerAdapter.notifyDataSetChanged()
