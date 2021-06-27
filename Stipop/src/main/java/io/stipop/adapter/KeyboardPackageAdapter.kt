@@ -2,6 +2,8 @@ package io.stipop.adapter
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,11 +60,17 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
         Glide.with(context).load(packageImg).into(holder.imageIV)
 
 
+        val matrix = ColorMatrix()
+
         if (keyboard.selectedPackageId == item.packageId) {
             holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
+            matrix.setSaturation(1.0f)
         } else {
             holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
+            matrix.setSaturation(0.0f)
         }
+
+        holder.imageIV.colorFilter = ColorMatrixColorFilter(matrix)
 
         holder.containerLL.setOnClickListener {
             if (mListener != null) {
