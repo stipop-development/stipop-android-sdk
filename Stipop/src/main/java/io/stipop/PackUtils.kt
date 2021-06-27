@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import io.stipop.model.SPPackage
+import io.stipop.model.SPSticker
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
@@ -49,6 +50,26 @@ public class PackUtils {
                     input.copyTo(output)
                 }
             }
+        }
+
+        fun stickerListOf(activity:Activity, packageId:Int): ArrayList<SPSticker> {
+            val stickerList = ArrayList<SPSticker>()
+
+            val filePath = File(activity.filesDir, "stipop/$packageId")
+            if (filePath.exists()) {
+                filePath.walkTopDown().forEach {
+                    println(it)
+
+                    val sticker = SPSticker()
+                    sticker.packageId = packageId
+                    sticker.stickerId = -1
+                    sticker.stickerImg = it.absolutePath
+
+                    stickerList.add(sticker)
+                }
+            }
+
+            return stickerList
         }
     }
 }

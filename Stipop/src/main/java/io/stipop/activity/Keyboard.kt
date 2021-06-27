@@ -72,6 +72,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
 
         // animations
+        /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val slideIn = Slide()
             slideIn.slideEdge = Gravity.BOTTOM
@@ -81,6 +82,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             slideOut.slideEdge = Gravity.BOTTOM
             popupWindow.exitTransition = slideOut
         }
+        */
 
         // set size
         popupWindow.height = Stipop.keyboardHeight
@@ -107,7 +109,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         ///////////////////////////////////////////////////////////////////////////////
         // Events
 
-        favoriteRL.tag = false
+        favoriteRL.tag = 0
         setThemeImageIcon()
 
         val mLayoutManager = LinearLayoutManager(this.activity)
@@ -189,8 +191,15 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         favoriteRL.setOnClickListener {
             favoriteRL.setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
 
-            if (selectedPackageId < 0) {
-                favoriteRL.tag = !(favoriteRL.tag as Boolean)
+            println("selectedPackageId : $selectedPackageId")
+            println("favoriteRL.tag : ${favoriteRL.tag}")
+
+            if (selectedPackageId == -1) {
+                if (favoriteRL.tag == 0) {
+                    favoriteRL.tag = 1
+                } else {
+                    favoriteRL.tag = 0
+                }
             }
 
             selectedPackageId = -1
@@ -228,7 +237,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         if (Config.useLightMode) {
             recentlyIV.setImageResource(R.mipmap.ic_recents_normal)
             favoriteIV.setImageResource(R.mipmap.ic_favorites_normal)
-            if (favoriteRL.tag as Boolean) {
+            if (favoriteRL.tag == 1) {
                 favoriteIV.setImageResource(R.mipmap.ic_favorites_active)
             } else {
                 recentlyIV.setImageResource(R.mipmap.ic_recents_active)
@@ -237,7 +246,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             recentlyIV.setImageResource(R.mipmap.ic_recents_normal_dark)
             favoriteIV.setImageResource(R.mipmap.ic_favorites_normal_dark)
 
-            if (favoriteRL.tag as Boolean) {
+            if (favoriteRL.tag == 1) {
                 favoriteIV.setImageResource(R.mipmap.ic_favorites_active_dark)
             } else {
                 recentlyIV.setImageResource(R.mipmap.ic_recents_active_dark)
@@ -289,6 +298,8 @@ class Keyboard(val activity: Activity) : PopupWindow() {
                         }
                     }
                 }
+            } else {
+                e?.printStackTrace()
             }
 
         }
@@ -296,6 +307,19 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     }
 
     private fun loadStickers() {
+
+        stickerData.clear()
+        stickerAdapter.notifyDataSetChanged()
+
+        val stickerList = PackUtils.stickerListOf(this.activity, selectedPackageId)
+        for (i in 0 until stickerList.size) {
+            stickerData.add(stickerList[i])
+        }
+
+        stickerAdapter.notifyDataSetChanged()
+    }
+
+    private fun loadStickersOld() {
         favoriteRL.setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
 
         stickerData.clear()
@@ -340,7 +364,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         setThemeImageIcon()
 
         // Favorite
-        if (favoriteRL.tag as Boolean) {
+        if (favoriteRL.tag == 1) {
             loadFavorite()
         } else {
             // Recently
@@ -367,15 +391,14 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
                 if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
                     val body = response.getJSONObject("body")
-                    val packageObj = body.getJSONObject("package")
 
                     if (!response.isNull("pageMap")) {
                         val pageMap = body.getJSONObject("pageMap")
                         stickerTotalPage = Utils.getInt(pageMap, "pageCount")
                     }
 
-                    if (!packageObj.isNull("favoriteList")) {
-                        val favoriteList = packageObj.getJSONArray("favoriteList")
+                    if (!body.isNull("favoriteList")) {
+                        val favoriteList = body.getJSONArray("favoriteList")
 
                         for (i in 0 until favoriteList.length()) {
                             stickerData.add(SPSticker(favoriteList.get(i) as JSONObject))
