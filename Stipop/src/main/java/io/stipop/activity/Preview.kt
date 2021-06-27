@@ -52,6 +52,7 @@ class Preview(val activity: Activity) : PopupWindow() {
             setFavorite()
         }
 
+        setStickerView()
 
         // show
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
@@ -59,7 +60,7 @@ class Preview(val activity: Activity) : PopupWindow() {
             this.rootView,
             Gravity.BOTTOM,
             0,
-            Stipop.keyboardHeight
+            Stipop.keyboardHeight + Utils.getNavigationBarSize(this.activity).y
         )
     }
 
@@ -81,7 +82,7 @@ class Preview(val activity: Activity) : PopupWindow() {
 
     fun setFavorite() {
 
-        var params = JSONObject()
+        val params = JSONObject()
         params.put("stickerId", sticker.stickerId)
 
         APIClient.put(this.activity, APIClient.APIPath.MY_STICKER_FAVORITE.rawValue + "/${Stipop.userId}", params) { response: JSONObject?, e: IOException? ->

@@ -5,17 +5,17 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#000000"
-        android:alpha="0.5"
+        android:layout_height="130dp"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
-            android:layout_marginRight="12dp"
-            android:gravity="right">
+            android:layout_height="match_parent"
+            android:paddingTop="9dp"
+            android:paddingRight="12dp"
+            android:gravity="end"
+            android:background="#000000"
+            android:alpha="0.5">
 
             <ImageView
                 android:id="@+id/favoriteIV"
@@ -35,7 +35,6 @@
             android:id="@+id/stickerIV"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginVertical="15dp"
             android:layout_centerInParent="true"/>
 
     </RelativeLayout>
