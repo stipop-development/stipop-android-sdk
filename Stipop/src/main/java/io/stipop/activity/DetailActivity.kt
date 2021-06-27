@@ -28,6 +28,8 @@ class DetailActivity: Activity() {
 
     var packageAnimated: String? = ""
 
+    lateinit var spPackage:SPPackage
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -69,9 +71,9 @@ class DetailActivity: Activity() {
         getPackInfo()
     }
 
-    fun getPackInfo() {
+    private fun getPackInfo() {
 
-        var params = JSONObject()
+        val params = JSONObject()
         params.put("userId", Stipop.userId)
 
         APIClient.get(this, APIClient.APIPath.PACKAGE.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
@@ -91,28 +93,28 @@ class DetailActivity: Activity() {
                         stickerData.add(SPSticker(stickers.get(i) as JSONObject))
                     }
 
-                    val pack = SPPackage(packageObj)
+                    this.spPackage = SPPackage(packageObj)
 
-                    packageAnimated = pack.packageAnimated
+                    packageAnimated = this.spPackage.packageAnimated
 
-                    Glide.with(context).load(pack.packageImg).into(packageIV)
+                    Glide.with(context).load(this.spPackage.packageImg).into(packageIV)
 
-                    packageNameTV.setText(pack.packageName)
-                    artistNameTV.setText(pack.artistName)
+                    packageNameTV.text = this.spPackage.packageName
+                    artistNameTV.text = this.spPackage.artistName
 
-                    if (pack.isDownload) {
+                    if (this.spPackage.isDownload) {
                         downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
-                        downloadTV.setText("DOWNLOADED")
+                        downloadTV.text = "DOWNLOADED"
                     } else {
                         downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background)
-                        downloadTV.setText("DOWNLOAD")
+                        downloadTV.text = "DOWNLOAD"
                     }
 
-                    downloadTV.tag = pack.isDownload
+                    downloadTV.tag = this.spPackage.isDownload
                 }
 
             } else {
-
+                e?.printStackTrace()
             }
 
             stickerAdapter.notifyDataSetChanged()
@@ -120,9 +122,9 @@ class DetailActivity: Activity() {
 
     }
 
-    fun downloadPackage() {
+    private fun downloadPackage() {
 
-        var params = JSONObject()
+        val params = JSONObject()
         params.put("userId", Stipop.userId)
         params.put("isPurchase", Config.allowPremium)
         params.put("lang", Stipop.lang)
@@ -147,18 +149,22 @@ class DetailActivity: Activity() {
                 val header = response.getJSONObject("header")
 
                 if (Utils.getString(header, "status") == "success") {
-                    Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
-
-                    downloadTV.setText("DOWNLOADED")
-                    downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
 
                     val intent = Intent()
                     intent.putExtra("packageId", packageId)
                     setResult(RESULT_OK, intent)
+
+                    // download
+                    PackUtils.downloadAndSaveLocal(this, this.spPackage) {
+                        downloadTV.text = "DOWNLOADED"
+                        downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
+
+                        Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
+                    }
                 }
 
             } else {
-
+                e?.printStackTrace()
             }
         }
 
