@@ -12,11 +12,11 @@ import kotlin.math.roundToInt
 class Config {
     companion object {
 
-        val baseUrl = "https://messenger.stipop.io/v1"
+        const val baseUrl = "https://messenger.stipop.io/v1"
 
         lateinit var apikey: String
-        var stickerIconNormalLight = "ic_sticker_normal"
-        var stickerIconActiveLight = "ic_sticker_active"
+        private var stickerIconNormalLight = "ic_sticker_normal"
+        private var stickerIconActiveLight = "ic_sticker_active"
 
         var useLightMode = true
 
@@ -25,41 +25,41 @@ class Config {
         var themeContentsBgColor = "#ffffff"
 
         var searchbarRadius = 10
-        var searchNumOfColumns = 3
+        private var searchNumOfColumns = 3
 
         var searchTagsHidden = false
         var searchTagBgColor = "#ff855b"
 
         var searchbarBgColor = ""
-        var searchbarIconName = ""
-        var searchbarDeleteIconName = ""
+        private var searchbarIconName = ""
+        private var searchbarDeleteIconName = ""
 
         var storeListType = ""
 
-        var storeTrendingUseBackgroundColor = false
-        var storeTrendingBackgroundColor = ""
-        var storeTrendingOpacity = 0.0
+        private var storeTrendingUseBackgroundColor = false
+        private var storeTrendingBackgroundColor = ""
+        private var storeTrendingOpacity = 0.0
 
-        var storeDownloadIconName = ""
-        var storeCompleteIconName = ""
+        private var storeDownloadIconName = ""
+        private var storeCompleteIconName = ""
 
-        var orderIconName = ""
-        var hideIconName = ""
+        private var orderIconName = ""
+        private var hideIconName = ""
 
-        var keyboardStoreIconName = ""
+        private var keyboardStoreIconName = ""
         var keyboardNumOfColumns = 3
 
         lateinit var allowPremium: String
         var pngPrice: Double = 0.0
         var gifPrice: Double = 0.0
 
-        var detailBackIconName = ""
-        var detailCloseIconName = ""
-        var detailDownloadButtonColor = ""
+        private var detailBackIconName = ""
+        private var detailCloseIconName = ""
+        private var detailDownloadButtonColor = ""
         var detailNumOfColumns = 3
 
-        val LIGHT_KEY = "light"
-        val DARK_KEY = "dark"
+        private const val LIGHT_KEY = "light"
+        private const val DARK_KEY = "dark"
 
         fun configure(context: Context) {
 
@@ -67,7 +67,7 @@ class Config {
 
             try {
                 val json = JSONObject(jsonString)
-                Config.parse(json)
+                parse(json)
             } catch (e: JSONException) {
                 e.printStackTrace()
 
@@ -93,8 +93,8 @@ class Config {
             return jsonString
         }
 
-        fun parse(json: JSONObject) {
-            Config.apikey = Utils.getString(json, "api_key")
+        private fun parse(json: JSONObject) {
+            apikey = Utils.getString(json, "api_key")
 
             val theme = json.getJSONObject("Theme")
             useLightMode = Utils.getBoolen(theme, "useLightMode", true)
@@ -215,45 +215,39 @@ class Config {
         }
 
         fun getKeyboardStoreResourceId(context: Context): Int {
-            var imageId: Int
-            if (keyboardStoreIconName.isNotEmpty()) {
-                imageId = Utils.getResource(keyboardStoreIconName, context)
+            return if (keyboardStoreIconName.isNotEmpty()) {
+                Utils.getResource(keyboardStoreIconName, context)
             } else {
                 if (useLightMode) {
-                    imageId = R.mipmap.ic_store
+                    R.mipmap.ic_store
                 } else {
-                    imageId = R.mipmap.ic_store_dark
+                    R.mipmap.ic_store_dark
                 }
             }
-            return imageId
         }
 
         fun getSearchbarResourceId(context: Context): Int {
-            var imageId: Int
-            if (searchbarIconName.isNotEmpty()) {
-                imageId = Utils.getResource(searchbarIconName, context)
+            return if (searchbarIconName.isNotEmpty()) {
+                Utils.getResource(searchbarIconName, context)
             } else {
                 if (useLightMode) {
-                    imageId = R.mipmap.icon_search
+                    R.mipmap.icon_search
                 } else {
-                    imageId = R.mipmap.icon_search_dark
+                    R.mipmap.icon_search_dark
                 }
             }
-            return imageId
         }
 
         fun getEraseResourceId(context: Context): Int {
-            var imageId: Int
-            if (searchbarDeleteIconName.isNotEmpty()) {
-                imageId = Utils.getResource(searchbarDeleteIconName, context)
+            return if (searchbarDeleteIconName.isNotEmpty()) {
+                Utils.getResource(searchbarDeleteIconName, context)
             } else {
                 if (useLightMode) {
-                    imageId = R.mipmap.icon_erase
+                    R.mipmap.icon_erase
                 } else {
-                    imageId = R.mipmap.icon_erase_dark
+                    R.mipmap.icon_erase_dark
                 }
             }
-            return imageId
         }
 
         fun getDownloadIconResourceId(context: Context): Int {
@@ -329,21 +323,19 @@ class Config {
         }
 
         fun getStoreNavigationTextColor(context: Context, selected: Boolean): Int {
-            var color = ContextCompat.getColor(context, R.color.c_646f7c)
-            if (selected) {
+            return if (selected) {
                 if (!useLightMode) {
-                    color = ContextCompat.getColor(context, R.color.c_f3f4f5)
+                    ContextCompat.getColor(context, R.color.c_f3f4f5)
                 } else {
-                    color = ContextCompat.getColor(context, R.color.c_374553)
+                    ContextCompat.getColor(context, R.color.c_374553)
                 }
             } else {
                 if (!useLightMode) {
-                    color = ContextCompat.getColor(context, R.color.c_646f7c)
+                    ContextCompat.getColor(context, R.color.c_646f7c)
                 } else {
-                    color = ContextCompat.getColor(context, R.color.c_c6c8cf)
+                    ContextCompat.getColor(context, R.color.c_c6c8cf)
                 }
             }
-            return color
         }
 
         fun getTitleTextColor(context: Context): Int {
