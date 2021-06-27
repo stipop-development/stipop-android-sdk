@@ -10,10 +10,12 @@ import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.adapter.*
 import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker
+import kotlinx.android.synthetic.main.activity_detail.*
 import org.json.JSONObject
 import java.io.IOException
 
@@ -28,6 +30,11 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
     private lateinit var packageRV: RecyclerView
     private lateinit var stickerGV: GridView
+    private lateinit var downloadLL: LinearLayout
+    private lateinit var packageIV: ImageView
+    private lateinit var packageNameTV: TextView
+    private lateinit var artistNameTV: TextView
+    private lateinit var downloadTV: TextView
 
     lateinit var packageAdapter: KeyboardPackageAdapter
     lateinit var stickerAdapter: StickerAdapter
@@ -35,6 +42,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     var packageData = ArrayList<SPPackage>()
     var stickerData = ArrayList<SPSticker>()
 
+    var selectedPackage:SPPackage? = null
     var selectedPackageId = -1
     var page = 1
     var totalPage = 1
@@ -99,6 +107,11 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
         packageRV = view.findViewById(R.id.packageRV)
         stickerGV = view.findViewById(R.id.stickerGV)
+        downloadLL = view.findViewById(R.id.downloadLL)
+        packageIV = view.findViewById(R.id.packageIV)
+        packageNameTV = view.findViewById(R.id.packageNameTV)
+        artistNameTV = view.findViewById(R.id.artistNameTV)
+        downloadTV = view.findViewById(R.id.downloadTV)
 
 
         storeIV.setImageResource(Config.getKeyboardStoreResourceId(this.activity))
@@ -139,9 +152,11 @@ class Keyboard(val activity: Activity) : PopupWindow() {
                     return
                 }
 
-                val item = packageData[position]
+                println(packageData)
 
-                selectedPackageId = item.packageId
+                val pack = packageData[position]
+
+                selectedPackageId = pack.packageId
 
                 packageAdapter.notifyDataSetChanged()
 
@@ -211,6 +226,13 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             stickerAdapter.notifyDataSetChanged()
 
             loadFavoriteRecently()
+        }
+
+        downloadTV.setOnClickListener {
+            // download
+            PackUtils.downloadAndSaveLocal(this.activity, this.selectedPackage) {
+                showStickers()
+            }
         }
 
         loadPackages()
@@ -306,24 +328,40 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
     }
 
-    private fun loadStickers() {
+    private fun showStickers() {
 
         stickerData.clear()
         stickerAdapter.notifyDataSetChanged()
 
         val stickerList = PackUtils.stickerListOf(this.activity, selectedPackageId)
-        for (i in 0 until stickerList.size) {
-            stickerData.add(stickerList[i])
+        if (stickerList.size == 0) {
+            stickerGV.visibility = View.GONE
+            downloadLL.visibility = View.VISIBLE
+
+            val packageImg = selectedPackage!!.packageImg
+            val packageName = selectedPackage!!.packageName
+            val artistName = selectedPackage!!.artistName
+
+            Glide.with(this.activity).load(packageImg).into(packageIV)
+            packageNameTV.text = packageName
+            artistNameTV.text = artistName
+
+        } else {
+            stickerGV.visibility = View.VISIBLE
+            downloadLL.visibility = View.GONE
+
+            for (i in 0 until stickerList.size) {
+                stickerData.add(stickerList[i])
+            }
+
+            stickerAdapter.notifyDataSetChanged()
         }
 
-        stickerAdapter.notifyDataSetChanged()
     }
 
-    private fun loadStickersOld() {
-        favoriteRL.setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
+    private fun loadStickers() {
 
         stickerData.clear()
-        stickerAdapter.notifyDataSetChanged()
 
         val params = JSONObject()
         params.put("userId", Stipop.userId)
@@ -340,19 +378,9 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
                 if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
                     val body = response.getJSONObject("body")
-                    val packageObj = body.getJSONObject("package")
+                    this.selectedPackage = SPPackage(body.getJSONObject("package"))
 
-                    if (!packageObj.isNull("stickers")) {
-                        val stickers = packageObj.getJSONArray("stickers")
-
-                        for (i in 0 until stickers.length()) {
-                            stickerData.add(SPSticker(stickers.get(i) as JSONObject))
-                        }
-
-                        stickerAdapter.notifyDataSetChanged()
-
-                    }
-
+                    showStickers()
                 }
             }
 

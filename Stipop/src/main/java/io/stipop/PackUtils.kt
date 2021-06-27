@@ -13,8 +13,10 @@ import java.net.URL
 public class PackUtils {
 
     companion object {
-        fun downloadAndSaveLocal(activity:Activity, spPackage: SPPackage, responseCallback: () -> Unit) {
-            val stickers = spPackage.stickers
+        fun downloadAndSaveLocal(activity:Activity, spPackage: SPPackage?, responseCallback: () -> Unit) {
+            val stickers = spPackage!!.stickers
+
+            println(stickers)
 
             for (sticker in stickers) {
                 val packageId = sticker.packageId
@@ -24,6 +26,8 @@ public class PackUtils {
 
                 downloadImage(activity, packageId, stickerImg)
             }
+
+            responseCallback()
         }
 
         private fun downloadImage(activity:Activity, packageId: Int, encodedString: String?) {
@@ -58,14 +62,14 @@ public class PackUtils {
             val filePath = File(activity.filesDir, "stipop/$packageId")
             if (filePath.exists()) {
                 filePath.walkTopDown().forEach {
-                    println(it)
+                    if (it.isFile) {
+                        val sticker = SPSticker()
+                        sticker.packageId = packageId
+                        sticker.stickerId = -1
+                        sticker.stickerImg = it.absolutePath
 
-                    val sticker = SPSticker()
-                    sticker.packageId = packageId
-                    sticker.stickerId = -1
-                    sticker.stickerImg = it.absolutePath
-
-                    stickerList.add(sticker)
+                        stickerList.add(sticker)
+                    }
                 }
             }
 

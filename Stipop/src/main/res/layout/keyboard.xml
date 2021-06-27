@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/containerLL"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#FFFFFF">
 
@@ -65,15 +65,77 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <GridView
-            android:id="@+id/stickerGV"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="15dp"
-            android:numColumns="3"
-            android:verticalSpacing="5dp"
-            android:horizontalSpacing="25dp"
-            android:scrollbars="none"/>
+            android:layout_height="match_parent">
+            <GridView
+                android:id="@+id/stickerGV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="15dp"
+                android:numColumns="3"
+                android:verticalSpacing="5dp"
+                android:horizontalSpacing="25dp"
+                android:scrollbars="none"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:id="@+id/downloadLL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/packageIV"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginRight="6dp"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/packageNameTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:textColor="#374553"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:lineHeight="22sp"
+                        android:text="JalGOM's Toon(Ver.1)"/>
+
+                    <TextView
+                        android:id="@+id/artistNameTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#646f7c"
+                        android:textSize="10sp"
+                        android:lineHeight="20sp"
+                        android:text="©Cmaker"/>
+
+                    <TextView
+                        android:id="@+id/downloadTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="11dp"
+                        android:gravity="center"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:text="DOWNLOAD"
+                        android:background="@drawable/detail_download_btn_background"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
     <Button
