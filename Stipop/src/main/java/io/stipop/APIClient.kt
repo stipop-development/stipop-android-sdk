@@ -14,6 +14,7 @@ class APIClient {
     enum class APIPath(val rawValue: String) {
         SEARCH("/search"),
         SEARCH_KEYWORD("/search/keyword"),
+        SEARCH_RECENT("/search/recent"),
         PACKAGE("/package"),
         PACKAGE_SEND("/package/send"),
         MY_STICKER("/mysticker"),
@@ -176,5 +177,45 @@ class APIClient {
                 }
             }
         }
+
+        fun delete(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
+            thread(start = true) {
+                var resolvedPath = Config.baseUrl + path
+                if (parameters != null && parameters.keys().hasNext()) {
+                    resolvedPath += "?"
+                    resolvedPath += getQuery(parameters)
+                }
+
+                println(resolvedPath)
+
+                val url = URL(resolvedPath)
+
+                val huc = url.openConnection() as HttpURLConnection
+                huc.requestMethod = "DELETE"
+
+                huc.setRequestProperty("apikey", Config.apikey)
+
+                val buffered = if (huc.responseCode in 100..399) {
+                    BufferedReader(InputStreamReader(huc.inputStream))
+                } else {
+                    BufferedReader(InputStreamReader(huc.errorStream))
+                }
+
+                val content = StringBuilder()
+                while (true) {
+                    val data = buffered.readLine() ?: break
+                    content.append(data)
+                }
+
+                buffered.close()
+                huc.disconnect()
+
+                activity.runOnUiThread {
+                    val response = JSONObject(content.toString())
+                    responseCallback(response, null)
+                }
+            }
+        }
+
     }
 }

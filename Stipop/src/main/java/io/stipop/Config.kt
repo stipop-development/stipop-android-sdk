@@ -427,6 +427,9 @@ class Config {
         }
 
         fun getDetailDownloadBackgroundColor(context: Context): Int {
+            if (detailDownloadButtonColor.count() > 0) {
+                return Color.parseColor(detailDownloadButtonColor)
+            }
             var color = ContextCompat.getColor(context, R.color.c_ff774a)
             if (!useLightMode) {
                 color = ContextCompat.getColor(context, R.color.c_ff855b)

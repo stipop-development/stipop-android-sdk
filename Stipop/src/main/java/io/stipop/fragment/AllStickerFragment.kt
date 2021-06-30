@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -17,7 +18,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +26,10 @@ import io.stipop.*
 import io.stipop.activity.DetailActivity
 import io.stipop.adapter.AllStickerAdapter
 import io.stipop.adapter.PackageAdapter
+import io.stipop.adapter.PopularStickerAdapter
+import io.stipop.adapter.RecentKeywordAdapter
 import io.stipop.extend.RecyclerDecoration
+import io.stipop.extend.TagLayout
 import io.stipop.model.SPPackage
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.activity_search.*
@@ -38,6 +42,7 @@ import kotlinx.android.synthetic.main.fragment_all_sticker.searchbarLL
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import org.json.JSONObject
 import java.io.IOException
+import java.net.URLEncoder
 
 class AllStickerFragment : Fragment() {
 
@@ -55,6 +60,15 @@ class AllStickerFragment : Fragment() {
 
     lateinit var packageRV: RecyclerView
     lateinit var trendingLL: LinearLayout
+
+    lateinit var recentKeywordAdapter: RecentKeywordAdapter
+    var recentKeywords = ArrayList<String>()
+
+    var popularStickers = ArrayList<SPPackage>()
+    lateinit var popularStickerAdapter: PopularStickerAdapter
+
+    lateinit var recommendedTagsTL: TagLayout
+    lateinit var popularStickerRV: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -94,6 +108,24 @@ class AllStickerFragment : Fragment() {
 
         clearTextLL.setOnClickListener {
             keywordET.setText("")
+
+            Utils.hideKeyboard(myContext)
+
+            changeView(false)
+        }
+
+        keywordET.setOnClickListener {
+            changeView(true)
+
+            getRecentKeyword()
+        }
+
+        keywordET.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                changeView(true)
+
+                getRecentKeyword()
+            }
         }
 
         keywordET.addTextChangedListener(object : TextWatcher {
@@ -117,7 +149,7 @@ class AllStickerFragment : Fragment() {
         mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
 
         packageRV.layoutManager = mLayoutManager
-        packageRV.addItemDecoration(RecyclerDecoration(6))
+        packageRV.addItemDecoration(RecyclerDecoration(Utils.dpToPx(6F).toInt()))
         packageRV.adapter = packageAdapter
 
         packageAdapter.setOnItemClickListener(object : PackageAdapter.OnItemClickListener {
@@ -176,10 +208,60 @@ class AllStickerFragment : Fragment() {
 
         allStickerAdapter.notifyDataSetChanged()
 
+
+        val recentHeaderV = View.inflate(myContext, R.layout.header_recent_keyword, null)
+        recentHeaderV.findViewById<TextView>(R.id.keywordClearTV).setOnClickListener {
+            deleteKeyword(null)
+        }
+
+        recentLV.addHeaderView(recentHeaderV)
+
+        val recentFooterV = View.inflate(myContext, R.layout.footer_recent_keyword, null)
+        recommendedTagsTL = recentFooterV.findViewById(R.id.recommendedTagsTL)
+        popularStickerRV = recentFooterV.findViewById(R.id.popularStickerRV)
+
+        popularStickerAdapter = PopularStickerAdapter(popularStickers, myContext)
+
+        val mLayoutManager2 = LinearLayoutManager(myContext)
+        mLayoutManager2.orientation = LinearLayoutManager.HORIZONTAL
+
+        popularStickerRV.layoutManager = mLayoutManager2
+        popularStickerRV.addItemDecoration(RecyclerDecoration(Utils.dpToPx(7F).toInt()))
+        popularStickerRV.adapter = popularStickerAdapter
+
+        popularStickerAdapter.setOnItemClickListener(object : PopularStickerAdapter.OnItemClickListener {
+            override fun onItemClick(position: Int) {
+                if (position > popularStickers.size) {
+                    return
+                }
+
+                val packageObj = popularStickers[position]
+
+                goDetail(packageObj.packageId)
+            }
+        })
+
+        recentLV.addFooterView(recentFooterV)
+
+        recentKeywordAdapter = RecentKeywordAdapter(myContext, R.layout.item_recent_keyword, recentKeywords, this)
+        recentLV.adapter = recentKeywordAdapter
+        recentLV.setOnItemClickListener { adapterView, view, i, l ->
+            // position - 1 : addHeaderView 해줬기 때문!
+            val position = i - 1
+            if (position < 0 && position > allStickerData.size) {
+                return@setOnItemClickListener
+            }
+        }
+
         loadPackageData(1, false)
 
         loadPackageData(packagePage, false)
+
+        getKeyword()
+
+        getPopularStickers()
     }
+
 
     val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -332,6 +414,187 @@ class AllStickerFragment : Fragment() {
             }
         }
 
+    }
+
+    fun getRecentKeyword() {
+
+        recentKeywords.clear()
+        recentKeywordAdapter.notifyDataSetChanged()
+
+        var params = JSONObject()
+        params.put("userId", Stipop.userId)
+
+        APIClient.get(
+            activity as Activity,
+            APIClient.APIPath.SEARCH_RECENT.rawValue,
+            params
+        ) { response: JSONObject?, e: IOException? ->
+            println(response)
+
+            if (null != response) {
+
+                if (!response.isNull("body")) {
+                    val body = response.getJSONObject("body")
+
+                    if (!body.isNull("keywordList")) {
+                        val keywordList = body.getJSONArray("keywordList")
+
+                        for (i in 0 until keywordList.length()) {
+                            val item = keywordList.get(i) as JSONObject
+
+                            recentKeywords.add(Utils.getString(item, "keyword"))
+                        }
+
+                        recentKeywordAdapter.notifyDataSetChanged()
+                    }
+
+                }
+
+            } else {
+
+            }
+        }
+
+    }
+
+    fun getKeyword() {
+        recommendedTagsTL.removeAllViews()
+
+        APIClient.get(
+            activity as Activity,
+            APIClient.APIPath.SEARCH_KEYWORD.rawValue,
+            null
+        ) { response: JSONObject?, e: IOException? ->
+
+            if (null != response) {
+
+                print(response)
+
+                if (!response.isNull("body")) {
+                    val body = response.getJSONObject("body")
+
+                    if (!body.isNull("keywordList")) {
+                        val keywordList = body.getJSONArray("keywordList")
+
+                        var limit = keywordList.length()
+                        if (limit > 10) {
+                            limit = 10
+                        }
+
+                        for (i in 0 until limit) {
+                            val item = keywordList.get(i) as JSONObject
+
+                            val keyword = Utils.getString(item, "keyword")
+
+                            val tagView = layoutInflater.inflate(R.layout.tag_layout, null, false)
+                            val tagTV = tagView.findViewById<TextView>(R.id.tagTV)
+                            tagTV.text = keyword
+                            tagTV.setOnClickListener {
+                                changeView(false)
+                                keywordET.setText(keyword)
+                            }
+
+                            recommendedTagsTL.addView(tagView)
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+    }
+
+    fun getPopularStickers() {
+
+        popularStickers.clear()
+
+        val params = JSONObject()
+        params.put("userId", Stipop.userId)
+        params.put("limit", 4)
+
+        APIClient.get(
+            activity as Activity,
+            APIClient.APIPath.PACKAGE.rawValue,
+            params
+        ) { response: JSONObject?, e: IOException? ->
+
+            if (null != response) {
+
+                if (!response.isNull("body")) {
+                    val body = response.getJSONObject("body")
+
+                    if (!body.isNull("packageList")) {
+                        val packageList = body.getJSONArray("packageList")
+
+                        for (i in 0 until packageList.length()) {
+                            val item = packageList.get(i) as JSONObject
+                            popularStickers.add(SPPackage(item))
+                        }
+
+                        popularStickerAdapter.notifyDataSetChanged()
+
+                    }
+
+                }
+
+            }
+
+        }
+    }
+
+    fun deleteKeyword(keyword: String?) {
+
+        var path = APIClient.APIPath.SEARCH_RECENT.rawValue + "/${Stipop.userId}"
+        if (!keyword.isNullOrEmpty()) {
+            val encodeKeyword = URLEncoder.encode(keyword, "UTF-8")
+            path += "/$encodeKeyword"
+        }
+
+        APIClient.delete(
+            activity as Activity,
+            path,
+            null
+        ) { response: JSONObject?, e: IOException? ->
+
+            println(response)
+
+            if (null != response) {
+
+                if (!response.isNull("header")) {
+                    val header = response.getJSONObject("header")
+
+                    if (Utils.getString(header, "status") == "success") {
+                        if (!keyword.isNullOrEmpty()) {
+                            for (i in 0 until recentKeywords.size) {
+                                if (recentKeywords[i] == keyword) {
+                                    recentKeywords.removeAt(i)
+                                    break
+                                }
+                            }
+                        } else {
+                            recentKeywords.clear()
+                        }
+
+                        recentKeywordAdapter.notifyDataSetChanged()
+                    }
+
+                }
+
+            }
+
+        }
+    }
+
+    fun changeView(search: Boolean) {
+        if (search) {
+            recentLV.visibility = View.VISIBLE
+            stickerLV.visibility = View.GONE
+        } else {
+            recentLV.visibility = View.GONE
+            stickerLV.visibility = View.VISIBLE
+        }
     }
 
 }
