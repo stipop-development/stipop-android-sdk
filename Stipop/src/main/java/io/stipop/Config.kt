@@ -25,7 +25,7 @@ class Config {
         var themeContentsBgColor = "#ffffff"
 
         var searchbarRadius = 10
-        private var searchNumOfColumns = 3
+        var searchNumOfColumns = 3
 
         var searchTagsHidden = false
         var searchTagBgColor = "#ff855b"
@@ -43,6 +43,11 @@ class Config {
         private var storeDownloadIconName = ""
         private var storeCompleteIconName = ""
 
+        var storeRecommendedTagShow = false
+
+        private var storeRecommendedTagColor = ""
+        private var storeRecommendedTagBgColor = ""
+
         private var orderIconName = ""
         private var hideIconName = ""
 
@@ -57,6 +62,12 @@ class Config {
         private var detailCloseIconName = ""
         private var detailDownloadButtonColor = ""
         var detailNumOfColumns = 3
+
+        var showPreview = false
+
+        private var previewFavoritesOnIconName = ""
+        private var previewFavoritesOffIconName = ""
+        private var previewCloseIconName = ""
 
         private const val LIGHT_KEY = "light"
         private const val DARK_KEY = "dark"
@@ -141,6 +152,12 @@ class Config {
             val downloadIcon = liteStore.getJSONObject("downloadIcon")
             val completeIcon = liteStore.getJSONObject("completeIcon")
 
+            val recommendedTag = liteStore.getJSONObject("recommendedTag")
+            storeRecommendedTagShow = Utils.getBoolen(recommendedTag, "show")
+
+            val recommendedTagColor = recommendedTag.getJSONObject("color")
+            val recommendedTagBgColor = recommendedTag.getJSONObject("bgColor")
+
             val mySticker = json.getJSONObject("MySticker")
 
             val orderIcon = mySticker.getJSONObject("orderIcon")
@@ -168,6 +185,12 @@ class Config {
 
             detailNumOfColumns = Utils.getInt(sticker, "numOfColumns")
 
+            val send = json.getJSONObject("Send")
+            showPreview = Utils.getBoolen(send, "preview")
+
+            val previewFavoritesOnIcon = send.getJSONObject("favoritesOnIcon")
+            val previewFavoritesOffIcon = send.getJSONObject("favoritesOffIcon")
+            val previewCloseIcon = send.getJSONObject("closeIcon")
 
             if (useLightMode) {
                 themeColor = Utils.getString(color, LIGHT_KEY, "#ffffff")
@@ -182,6 +205,9 @@ class Config {
                 storeDownloadIconName = Utils.getString(downloadIcon, LIGHT_KEY)
                 storeCompleteIconName = Utils.getString(completeIcon, LIGHT_KEY)
 
+                storeRecommendedTagColor = Utils.getString(recommendedTagColor, LIGHT_KEY)
+                storeRecommendedTagBgColor = Utils.getString(recommendedTagBgColor, LIGHT_KEY)
+
                 orderIconName = Utils.getString(orderIcon, LIGHT_KEY)
                 hideIconName = Utils.getString(hideIcon, LIGHT_KEY)
 
@@ -190,6 +216,10 @@ class Config {
                 detailBackIconName = Utils.getString(backIcon, LIGHT_KEY)
                 detailCloseIconName = Utils.getString(closeIcon, LIGHT_KEY)
                 detailDownloadButtonColor = Utils.getString(downloadButtonColor, LIGHT_KEY)
+
+                previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, LIGHT_KEY)
+                previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, LIGHT_KEY)
+                previewCloseIconName = Utils.getString(previewCloseIcon, LIGHT_KEY)
             } else {
                 themeColor = Utils.getString(color, DARK_KEY, "#171b1c")
                 themeGroupedBgColor = Utils.getString(groupedBgColor, DARK_KEY, "#1e2427")
@@ -203,6 +233,9 @@ class Config {
                 storeDownloadIconName = Utils.getString(downloadIcon, DARK_KEY)
                 storeCompleteIconName = Utils.getString(completeIcon, DARK_KEY)
 
+                storeRecommendedTagColor = Utils.getString(recommendedTagColor, DARK_KEY)
+                storeRecommendedTagBgColor = Utils.getString(recommendedTagBgColor, DARK_KEY)
+
                 orderIconName = Utils.getString(orderIcon, DARK_KEY)
                 hideIconName = Utils.getString(hideIcon, DARK_KEY)
 
@@ -211,6 +244,10 @@ class Config {
                 detailBackIconName = Utils.getString(backIcon, DARK_KEY)
                 detailCloseIconName = Utils.getString(closeIcon, DARK_KEY)
                 detailDownloadButtonColor = Utils.getString(downloadButtonColor, DARK_KEY)
+
+                previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, DARK_KEY)
+                previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, DARK_KEY)
+                previewCloseIconName = Utils.getString(previewCloseIcon, DARK_KEY)
             }
         }
 

@@ -64,6 +64,17 @@
 		"completeIcon": {
 			"light" : "",
 			"dark" : ""
+		},
+		"recommendedTag": {
+			"show": true,
+			"color": {
+				"light": "",
+				"dark": ""
+			},
+			"bgColor": {
+				"light": "",
+				"dark": ""
+			}
 		}
 	},
 	"MySticker": {
@@ -112,9 +123,13 @@
 	},
 	"Send": {
 		"preview": false,
-		"favoritesIcon": {
-			"light" : "favoritesIcon",
+		"favoritesOnIcon": {
+			"light" : "favoritesOnIcon",
 			"dark" : "favoritesIconDark"
+		},
+		"favoritesOffIcon": {
+			"light" : "favoritesOffIcon",
+			"dark" : "favoritesOffIconDark"
 		},
 		"closeIcon": {
 			"light" : "closeIcon",

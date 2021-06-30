@@ -16,6 +16,7 @@
             android:layout_marginBottom="6dp"/>
 
         <LinearLayout
+            android:id="@+id/popularStickerLL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="12dp"
@@ -39,6 +40,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/recommendedTagLL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="12dp"

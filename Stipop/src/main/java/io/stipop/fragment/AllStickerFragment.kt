@@ -217,6 +217,9 @@ class AllStickerFragment : Fragment() {
         recentLV.addHeaderView(recentHeaderV)
 
         val recentFooterV = View.inflate(myContext, R.layout.footer_recent_keyword, null)
+        val popularStickerLL = recentFooterV.findViewById<LinearLayout>(R.id.popularStickerLL)
+        val recommendedTagLL = recentFooterV.findViewById<LinearLayout>(R.id.recommendedTagLL)
+
         recommendedTagsTL = recentFooterV.findViewById(R.id.recommendedTagsTL)
         popularStickerRV = recentFooterV.findViewById(R.id.popularStickerRV)
 
@@ -257,9 +260,18 @@ class AllStickerFragment : Fragment() {
 
         loadPackageData(packagePage, false)
 
-        getKeyword()
+        if (Config.storeRecommendedTagShow) {
+            recommendedTagLL.visibility = View.VISIBLE
+            popularStickerLL.visibility = View.GONE
 
-        getPopularStickers()
+            getPopularStickers()
+        } else {
+            recommendedTagLL.visibility = View.GONE
+            popularStickerLL.visibility = View.VISIBLE
+
+            getKeyword()
+        }
+
     }
 
 
