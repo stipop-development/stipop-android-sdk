@@ -45,9 +45,6 @@ class Config {
 
         var storeRecommendedTagShow = false
 
-        private var storeRecommendedTagColor = ""
-        private var storeRecommendedTagBgColor = ""
-
         private var orderIconName = ""
         private var hideIconName = ""
 
@@ -64,6 +61,7 @@ class Config {
         var detailNumOfColumns = 3
 
         var showPreview = false
+        var previewPadding = 44
 
         private var previewFavoritesOnIconName = ""
         private var previewFavoritesOffIconName = ""
@@ -139,6 +137,8 @@ class Config {
 
             searchTagsHidden = Utils.getBoolen(searchTags, "hidden", false)
 
+            val searchTagsColor = searchTags.getJSONObject("color")
+
             val liteStore = json.getJSONObject("LiteStore")
 
             storeListType = Utils.getString(liteStore, "listType")
@@ -152,11 +152,7 @@ class Config {
             val downloadIcon = liteStore.getJSONObject("downloadIcon")
             val completeIcon = liteStore.getJSONObject("completeIcon")
 
-            val recommendedTag = liteStore.getJSONObject("recommendedTag")
-            storeRecommendedTagShow = Utils.getBoolen(recommendedTag, "show")
-
-            val recommendedTagColor = recommendedTag.getJSONObject("color")
-            val recommendedTagBgColor = recommendedTag.getJSONObject("bgColor")
+            storeRecommendedTagShow = Utils.getString(liteStore, "bottomOfSearch") == "recommendedTags"
 
             val mySticker = json.getJSONObject("MySticker")
 
@@ -187,6 +183,7 @@ class Config {
 
             val send = json.getJSONObject("Send")
             showPreview = Utils.getBoolen(send, "preview")
+            previewPadding = Utils.getInt(send, "previewPadding")
 
             val previewFavoritesOnIcon = send.getJSONObject("favoritesOnIcon")
             val previewFavoritesOffIcon = send.getJSONObject("favoritesOffIcon")
@@ -200,13 +197,10 @@ class Config {
                 searchbarBgColor = Utils.getString(searchbarColor, LIGHT_KEY, "#eeeeee")
                 searchbarIconName = Utils.getString(searchbarIcon, LIGHT_KEY)
                 searchbarDeleteIconName = Utils.getString(searchbarDeleteIcon, LIGHT_KEY)
-                searchTagBgColor = Utils.getString(searchTags, LIGHT_KEY, "#ff855b")
+                searchTagBgColor = Utils.getString(searchTagsColor, LIGHT_KEY, "#ff855b")
 
                 storeDownloadIconName = Utils.getString(downloadIcon, LIGHT_KEY)
                 storeCompleteIconName = Utils.getString(completeIcon, LIGHT_KEY)
-
-                storeRecommendedTagColor = Utils.getString(recommendedTagColor, LIGHT_KEY)
-                storeRecommendedTagBgColor = Utils.getString(recommendedTagBgColor, LIGHT_KEY)
 
                 orderIconName = Utils.getString(orderIcon, LIGHT_KEY)
                 hideIconName = Utils.getString(hideIcon, LIGHT_KEY)
@@ -228,13 +222,10 @@ class Config {
                 searchbarBgColor = Utils.getString(searchbarColor, DARK_KEY, "#2e363a")
                 searchbarIconName = Utils.getString(searchbarIcon, DARK_KEY)
                 searchbarDeleteIconName = Utils.getString(searchbarDeleteIcon, DARK_KEY)
-                searchTagBgColor = Utils.getString(searchTags, DARK_KEY, "#ff855b")
+                searchTagBgColor = Utils.getString(searchTagsColor, DARK_KEY, "#ff855b")
 
                 storeDownloadIconName = Utils.getString(downloadIcon, DARK_KEY)
                 storeCompleteIconName = Utils.getString(completeIcon, DARK_KEY)
-
-                storeRecommendedTagColor = Utils.getString(recommendedTagColor, DARK_KEY)
-                storeRecommendedTagBgColor = Utils.getString(recommendedTagBgColor, DARK_KEY)
 
                 orderIconName = Utils.getString(orderIcon, DARK_KEY)
                 hideIconName = Utils.getString(hideIcon, DARK_KEY)

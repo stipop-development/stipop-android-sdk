@@ -26,7 +26,7 @@
         android:textStyle="bold"
         android:textSize="16sp"
         android:textColor="#d3d3d3"
-        android:text="After hiding, the sticker goes down and you\ncan download it again at any time."/>
+        android:text="Do you want to hide the sticker pack? You can always re-download hidden stickers later."/>
 
     <LinearLayout
         android:layout_width="match_parent"
