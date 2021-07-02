@@ -7,7 +7,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
@@ -42,6 +45,7 @@ import kotlinx.android.synthetic.main.fragment_all_sticker.searchbarLL
 import org.json.JSONObject
 import java.io.IOException
 import java.net.URLEncoder
+
 
 class AllStickerFragment : Fragment() {
 
@@ -633,6 +637,21 @@ class AllStickerFragment : Fragment() {
                             val tagTV = tagView.findViewById<TextView>(R.id.tagTV)
                             tagTV.text = keyword
                             tagTV.setOnClickListener {
+
+                                // haptics
+                                val vibrator = this.myContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+                                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
+                                    vibrator.vibrate(
+                                        VibrationEffect.createOneShot(
+                                            500,
+                                            VibrationEffect.DEFAULT_AMPLITUDE
+                                        )
+                                    )
+                                } else {
+                                    vibrator.vibrate(500)
+                                }
+
                                 changeView(false)
                                 inputKeyword = keyword
                                 keywordET.setText(keyword)
