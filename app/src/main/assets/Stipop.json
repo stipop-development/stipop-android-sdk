@@ -1,7 +1,7 @@
 {
 	"api_key": "f1487146b30e92fc07ae42f44de3c5d7",
 	"Theme": {
-		"useLightMode" : true,
+		"useLightMode" : false,
 		"color" : {
 			"light" : "#ffffff",
 			"dark" : "#171b1c"

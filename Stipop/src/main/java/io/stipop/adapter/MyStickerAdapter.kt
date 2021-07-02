@@ -2,6 +2,8 @@ package io.stipop.adapter
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -89,9 +91,6 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
         holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeColor))
 
-        holder.packageNameTV.setTextColor(Config.getAllStickerPackageNameTextColor(context))
-        holder.artistNameTV.setTextColor(Config.getTitleTextColor(context))
-
         holder.hideIV.setImageResource(Config.getHideIconResourceId(context))
         holder.moveIV.setImageResource(Config.getOrderIconResourceId(context))
 
@@ -105,19 +104,34 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
         holder.isViewLL.visibility = View.GONE
         holder.addLL.visibility = View.GONE
+
+        val matrix = ColorMatrix()
+
         if (spPackage.isView) {
+            holder.packageNameTV.setTextColor(Config.getAllStickerPackageNameTextColor(context))
+            holder.artistNameTV.setTextColor(Config.getTitleTextColor(context))
+
             holder.isViewLL.visibility = View.VISIBLE
 
             holder.hideLL.setOnClickListener {
                 myStickerFragment.showConfirmAlert(spPackage.packageId, position)
             }
+
+            matrix.setSaturation(1.0f)
         } else {
+            holder.artistNameTV.setTextColor(Config.getMyStickerHiddenArtistNameTextColor(context))
+            holder.packageNameTV.setTextColor(Config.getMyStickerHiddenPackageNameTextColor(context))
+
             holder.addLL.visibility = View.VISIBLE
 
             holder.addLL.setOnClickListener {
                 myStickerFragment.hidePackage(spPackage.packageId, position)
             }
+
+            matrix.setSaturation(0.0f)
         }
+
+        holder.packageIV.colorFilter = ColorMatrixColorFilter(matrix)
 
 //        holder.moveLL.setOnTouchListener { _, event ->
 //            holder.containerLL.setBackgroundColor(ContextCompat.getColor(context, R.color.c_f7f8f9))
