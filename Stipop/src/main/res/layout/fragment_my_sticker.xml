@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <io.stipop.extend.StipopTextView
         android:id="@+id/stickerTypeTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
 
     </LinearLayout>
 
-    <TextView
+    <io.stipop.extend.StipopTextView
         android:id="@+id/noneTV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

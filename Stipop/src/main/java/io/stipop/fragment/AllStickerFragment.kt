@@ -13,21 +13,20 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.KeyEvent
-import android.view.KeyEvent.KEYCODE_ENTER
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.AbsListView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.activity.DetailActivity
 import io.stipop.adapter.AllStickerAdapter
@@ -38,10 +37,6 @@ import io.stipop.extend.RecyclerDecoration
 import io.stipop.extend.TagLayout
 import io.stipop.model.SPPackage
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
-import kotlinx.android.synthetic.main.fragment_all_sticker.clearTextLL
-import kotlinx.android.synthetic.main.fragment_all_sticker.eraseIV
-import kotlinx.android.synthetic.main.fragment_all_sticker.keywordET
-import kotlinx.android.synthetic.main.fragment_all_sticker.searchbarLL
 import org.json.JSONObject
 import java.io.IOException
 import java.net.URLEncoder
@@ -168,12 +163,13 @@ class AllStickerFragment : Fragment() {
             }
         })
 
-        keywordET.setOnKeyListener { view, i, event ->
-            if(event.action == KeyEvent.ACTION_DOWN && i == KEYCODE_ENTER) {
+        keywordET.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 reloadData(inputKeyword.isEmpty())
             }
-            true
+            false
         }
+
 
         packageAdapter = PackageAdapter(packageData, myContext)
 

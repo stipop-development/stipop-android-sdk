@@ -25,7 +25,7 @@
             android:layout_marginRight="10dp"
             android:orientation="vertical">
 
-            <TextView
+            <io.stipop.extend.StipopTextView
                 android:id="@+id/packageNameTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                 android:lineHeight="22sp"
                 android:text=""/>
 
-            <TextView
+            <io.stipop.extend.StipopTextView
                 android:id="@+id/artistNameTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

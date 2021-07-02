@@ -2,12 +2,14 @@ package io.stipop
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.alpha
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
+import java.lang.Exception
 import kotlin.math.roundToInt
 
 class Config {
@@ -30,6 +32,7 @@ class Config {
         var fontFamily = "system"
         var fontWeight = "regular"
         var fontCharacter = 0
+        var fontFace:Typeface? = null
 
         var searchbarRadius = 10
         var searchNumOfColumns = 3
@@ -80,7 +83,7 @@ class Config {
 
             try {
                 val json = JSONObject(jsonString)
-                parse(json)
+                parse(context, json)
             } catch (e: JSONException) {
                 e.printStackTrace()
 
@@ -106,7 +109,7 @@ class Config {
             return jsonString
         }
 
-        private fun parse(json: JSONObject) {
+        private fun parse(context: Context, json: JSONObject) {
             apikey = Utils.getString(json, "api_key")
 
             val theme = json.optJSONObject("Theme")
@@ -123,9 +126,26 @@ class Config {
             val font = theme?.optJSONObject("font")
 
             // font
-            fontFamily = Utils.getString(font, "family", "system")
+            fontFamily = Utils.getString(font, "family", "system").lowercase()
             fontWeight = Utils.getString(font, "weight", "regular")
             fontCharacter = Utils.getInt(font, "character", 0)
+
+            try {
+                fontFace = Typeface.createFromAsset(context.assets, fontFamily)
+            } catch (e:Exception) {}
+
+            if (fontFace == null) {
+                try {
+                    fontFace = Typeface.createFromAsset(context.assets, "$fontFamily.ttf")
+                } catch (e:Exception) {}
+
+                if (fontFace == null) {
+                    try {
+                        fontFace = Typeface.createFromAsset(context.assets, "$fontFamily.otf")
+                    } catch (e:Exception) {}
+                }
+            }
+
 
 
             stickerIconNormalName = Utils.getString(json, "StickerIcon", "ic_sticker_normal")

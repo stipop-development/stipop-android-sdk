@@ -31,14 +31,17 @@
 
             </LinearLayout>
 
-            <EditText
+            <io.stipop.extend.StipopEditText
                 android:id="@+id/keywordET"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:inputType="text"
                 android:maxLines="1"
-                android:background="@null"/>
+                android:hint="Search.."
+                android:textColorHint="#646f7c"
+                android:background="@null"
+                android:imeOptions="actionSearch" />
 
             <LinearLayout
                 android:id="@+id/clearTextLL"

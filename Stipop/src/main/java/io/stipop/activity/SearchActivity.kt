@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.AbsListView
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.stipop.*
@@ -16,6 +17,11 @@ import io.stipop.adapter.StickerAdapter
 import io.stipop.extend.RecyclerDecoration
 import io.stipop.model.SPSticker
 import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.activity_search.clearTextLL
+import kotlinx.android.synthetic.main.activity_search.eraseIV
+import kotlinx.android.synthetic.main.activity_search.keywordET
+import kotlinx.android.synthetic.main.activity_search.searchbarLL
+import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import org.json.JSONObject
 import java.io.IOException
 

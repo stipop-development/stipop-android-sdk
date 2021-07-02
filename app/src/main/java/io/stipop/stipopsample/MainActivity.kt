@@ -12,9 +12,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val packageDetailTV = findViewById<TextView>(R.id.packageDetailTV)
-
-
         val stipopIV = findViewById<ImageView>(R.id.stipopIV)
 
         Stipop.connect(this, stipopIV, "1234", "en", "US")

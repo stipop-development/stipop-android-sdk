@@ -79,7 +79,7 @@ class StoreActivity: FragmentActivity() {
 
     }
 
-    fun changeTabs(type: Int) {
+    private fun changeTabs(type: Int) {
         allTV.setTextColor(Config.getStoreNavigationTextColor(context, false))
         myTV.setTextColor(Config.getStoreNavigationTextColor(context, false))
 

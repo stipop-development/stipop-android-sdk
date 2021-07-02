@@ -8,7 +8,7 @@
         android:layout_height="43dp"
         android:gravity="center">
 
-        <TextView
+        <io.stipop.extend.StipopTextView
             android:id="@+id/keywordTV"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

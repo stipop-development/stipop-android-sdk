@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
+        <io.stipop.extend.StipopTextView
             android:id="@+id/noneTV"
             android:layout_width="match_parent"
             android:layout_height="177dp"
@@ -33,7 +33,7 @@
             android:paddingBottom="30dp"
             android:orientation="vertical">
 
-            <TextView
+            <io.stipop.extend.StipopTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
@@ -57,7 +57,7 @@
             android:paddingBottom="30dp"
             android:orientation="vertical">
 
-            <TextView
+            <io.stipop.extend.StipopTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
