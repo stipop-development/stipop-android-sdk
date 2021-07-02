@@ -299,6 +299,28 @@ class Config {
             return imageId
         }
 
+        fun getPreviewFavoriteResourceId(context: Context, favorite: Boolean): Int {
+            var imageId = R.mipmap.ic_favorites_off
+            if (previewFavoritesOffIconName.isNotEmpty()) {
+                imageId = Utils.getResource(previewFavoritesOffIconName, context)
+            }
+            if (favorite) {
+                imageId = R.mipmap.ic_favorites_on
+                if (previewFavoritesOnIconName.isNotEmpty()) {
+                    imageId = Utils.getResource(previewFavoritesOnIconName, context)
+                }
+            }
+            return imageId
+        }
+
+        fun getPreviewCloseResourceId(context: Context): Int {
+            var imageId = R.mipmap.ic_cancel
+            if (previewCloseIconName.isNotEmpty()) {
+                imageId = Utils.getResource(previewCloseIconName, context)
+            }
+            return imageId
+        }
+
         fun getErrorImage(): Int {
             var imageId = R.mipmap.error
             if (!useLightMode) {
