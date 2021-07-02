@@ -49,7 +49,7 @@ class DetailActivity: Activity() {
         backIV.setImageResource(Config.getBackIconResourceId(context))
         closeIV.setImageResource(Config.getCloseIconResourceId(context))
 
-        downloadTV.setBackgroundColor(Config.getDetailDownloadBackgroundColor(context))
+//        downloadTV.setBackgroundColor(Config.getDetailDownloadBackgroundColor(context))
 
         stickerGV.numColumns = Config.detailNumOfColumns
 

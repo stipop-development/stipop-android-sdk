@@ -1,19 +1,19 @@
 package io.stipop.adapter
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.view.marginRight
 import com.bumptech.glide.Glide
-import io.stipop.Config
-import io.stipop.R
-import io.stipop.Utils
+import io.stipop.*
 import io.stipop.model.SPPackage
+import kotlinx.android.synthetic.main.activity_detail.*
+import org.json.JSONObject
+import java.io.IOException
 
 class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayList<SPPackage>): ArrayAdapter<SPPackage>(myContext, view, data) {
 
@@ -29,11 +29,6 @@ class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayLi
         } else {
             retView = convertView
             item = convertView.tag as ViewHolder
-            if (item == null) {
-                retView = View.inflate(myContext, view, null)
-                item = ViewHolder(retView)
-                retView.tag = item
-            }
         }
 
         val packageObj = data.get(position)
@@ -42,14 +37,26 @@ class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayLi
         item.artistNameTV.setTextColor(Config.getTitleTextColor(myContext))
 
 
-        item.packageNameTV.setText(packageObj.packageName)
-        item.artistNameTV.setText(packageObj.artistName)
+        item.packageNameTV.text = packageObj.packageName
+        item.artistNameTV.text = packageObj.artistName
 
         if (packageObj.isDownload) {
             item.downloadIV.setImageResource(Config.getCompleteIconResourceId(myContext))
         } else {
             item.downloadIV.setImageResource(Config.getDownloadIconResourceId(myContext))
         }
+
+
+        item.downloadIV.setOnClickListener {
+            if (!packageObj.isDownload) {
+                val intent = Intent()
+                intent.action = "SET_DOWNLOAD"
+                intent.putExtra("idx", position)
+                intent.putExtra("package_id", packageObj.packageId)
+                context.sendBroadcast(intent)
+            }
+        }
+
 
         if (Config.storeListType == "singular") {
             Glide.with(myContext).load(packageObj.packageImg).into(item.packageIV!!)
@@ -84,6 +91,10 @@ class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayLi
 
     override fun getCount(): Int {
         return data.count()
+    }
+
+    fun setDownload(position: Int) {
+        data[position].download = "Y"
     }
 
     class ViewHolder(v: View) {
