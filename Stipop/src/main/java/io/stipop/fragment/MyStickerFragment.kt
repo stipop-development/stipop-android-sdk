@@ -96,12 +96,12 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         totalPage = 1
 
         if (stickerTypeTV.tag == 1) {
-            stickerTypeTV.setText("View Hidden Stickers")
+            stickerTypeTV.text = "View Hidden Stickers"
             stickerTypeTV.setBackgroundColor(Config.getHiddenStickerBackgroundColor(myContext))
 
             loadMySticker()
         } else {
-            stickerTypeTV.setText("View Active Stickers")
+            stickerTypeTV.text = "View Active Stickers"
             stickerTypeTV.setBackgroundColor(Config.getActiveStickerBackgroundColor(myContext))
 
             loadMyHiddenSticker()
@@ -196,8 +196,17 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                         myStickerAdapter.notifyDataSetChanged()
                     }
                 }
+            } else {
+                e?.printStackTrace()
             }
 
+            if(data.count() > 0) {
+                listLL.visibility = View.VISIBLE
+                noneTV.visibility = View.GONE
+            } else {
+                listLL.visibility = View.GONE
+                noneTV.visibility = View.VISIBLE
+            }
         }
     }
 

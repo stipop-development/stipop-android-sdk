@@ -20,12 +20,8 @@ class MainActivity : AppCompatActivity() {
         Stipop.connect(this, stipopIV, "1234", "en", "US")
 
         stipopIV.setOnClickListener {
-            Stipop.show()
+            // Stipop.showSearch()
+            Stipop.showKeyboard()
         }
-
-        packageDetailTV.setOnClickListener {
-            Stipop.detail(1234)
-        }
-
     }
 }

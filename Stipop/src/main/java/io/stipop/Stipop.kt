@@ -47,6 +47,23 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
             instance!!.connect()
         }
 
+        fun showSearch() {
+            if (instance == null) {
+                return
+            }
+
+            instance!!.showSearch()
+        }
+
+        fun showKeyboard() {
+            if (instance == null) {
+                return
+            }
+
+            instance!!.showKeyboard()
+        }
+
+        /*
         fun show() {
             if (instance == null) {
                 return
@@ -62,6 +79,7 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
 
             instance!!.detail(packageId)
         }
+        */
 
         fun send(stickerId: Int, keyword: String, completionHandler: (result: Boolean) -> Unit) {
             println("send::::::::::::::::::::")
@@ -86,6 +104,8 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
 
         this.connected = true
 
+        this.enableStickerIcon()
+
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
 
         this.setSizeForSoftKeyboard()
@@ -104,8 +124,6 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
             val intent = Intent(this.activity, SearchActivity::class.java)
             this.activity.startActivity(intent)
         }
-
-
     }
 
     fun detail(packageId: Int) {
@@ -172,7 +190,20 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
         }
     }
 
+    private fun showSearch() {
+        if (!this.connected) {
+            return
+        }
+
+        val intent = Intent(this.activity, SearchActivity::class.java)
+        this.activity.startActivity(intent)
+    }
+
     private fun showKeyboard() {
+        if (!this.connected) {
+            return
+        }
+
         Keyboard.show(this.activity)
     }
 
