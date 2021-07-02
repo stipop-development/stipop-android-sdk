@@ -55,28 +55,33 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = dataList[position]
 
-        val packageImg = item.packageImg
-
-        Glide.with(context).load(packageImg).into(holder.imageIV)
-
-
-        val matrix = ColorMatrix()
-
-        if (keyboard.selectedPackageId == item.packageId) {
-            holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
-            matrix.setSaturation(1.0f)
+        if (item.packageId == -999) {
+            // Settings
+            holder.imageIV.setImageResource(R.mipmap.ic_setting)
         } else {
-            holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
-            matrix.setSaturation(0.0f)
-        }
+            val packageImg = item.packageImg
 
-        holder.imageIV.colorFilter = ColorMatrixColorFilter(matrix)
+            Glide.with(context).load(packageImg).into(holder.imageIV)
+
+            val matrix = ColorMatrix()
+
+            if (keyboard.selectedPackageId == item.packageId) {
+                holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
+                matrix.setSaturation(1.0f)
+            } else {
+                holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
+                matrix.setSaturation(0.0f)
+            }
+
+            holder.imageIV.colorFilter = ColorMatrixColorFilter(matrix)
+        }
 
         holder.containerLL.setOnClickListener {
             if (mListener != null) {
                 mListener!!.onItemClick(position)
             }
         }
+
     }
 
     override fun getItemCount(): Int {

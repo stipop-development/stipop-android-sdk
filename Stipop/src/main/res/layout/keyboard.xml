@@ -35,6 +35,14 @@
                 android:layout_alignParentRight="true"
                 android:layout_margin="4dp"/>
 
+            <ImageView
+                android:id="@+id/recentPreviewOffIV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_recent_previewoff"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
+
         </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -122,9 +130,10 @@
 
                     <TextView
                         android:id="@+id/downloadTV"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="34dp"
                         android:layout_marginTop="11dp"
+                        android:paddingHorizontal="10dp"
                         android:gravity="center"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"

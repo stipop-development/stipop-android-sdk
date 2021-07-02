@@ -5,6 +5,7 @@ import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker
+import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
@@ -24,13 +25,13 @@ public class PackUtils {
 
                 // val encodedString = URLEncoder.encode(stickerImg, "utf-8")
 
-                downloadImage(activity, packageId, stickerImg)
+                downloadImage(activity, packageId, stickerImg, sticker)
             }
 
             responseCallback()
         }
 
-        private fun downloadImage(activity:Activity, packageId: Int, encodedString: String?) {
+        private fun downloadImage(activity:Activity, packageId: Int, encodedString: String?, sticker: SPSticker) {
             if (encodedString == null) {
                 return
             }
@@ -53,6 +54,8 @@ public class PackUtils {
                 FileOutputStream(filePath).use { output ->
                     input.copyTo(output)
                 }
+
+                saveStickerJsonData(activity, sticker, packageId, fileName)
             }
         }
 
@@ -74,6 +77,40 @@ public class PackUtils {
             }
 
             return stickerList
+        }
+
+        fun saveStickerJsonData(activity: Activity, sticker: SPSticker, packageId: Int, fileName: String) {
+
+            val fileNames = fileName.split(".")
+
+            var jsonFileName = fileName
+            if (fileNames.count() > 0) {
+                jsonFileName = fileNames[0]
+            }
+
+            val filePath = File(activity.filesDir, "stipop/$packageId/$jsonFileName.json")
+            println("filePath : $filePath")
+
+            val json = JSONObject()
+            json.put("stickerId", sticker.stickerId)
+            json.put("stickerImg", sticker.stickerImg)
+            json.put("favoriteYN", sticker.favoriteYN)
+            json.put("stickerId", sticker.stickerId)
+
+            val policy = ThreadPolicy.Builder().permitAll().build()
+            StrictMode.setThreadPolicy(policy)
+
+//            val file = File(s)
+//            file.writeText(jsonString)
+//
+//            URL(encodedString).openStream().use { input ->
+//                FileOutputStream(filePath).use { output ->
+//                    input.copyTo(output)
+//                }
+//
+//                saveStickerJsonData(sticker, packageId)
+//            }
+
         }
     }
 }

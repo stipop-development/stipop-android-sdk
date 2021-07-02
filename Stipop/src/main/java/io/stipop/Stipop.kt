@@ -24,7 +24,7 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
         @SuppressLint("StaticFieldLeak")
         private var instance:Stipop? = null
 
-        var userId = -1
+        var userId = "-1"
         var lang = "en"
         var countryCode = "us"
 
@@ -34,7 +34,7 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
             Config.configure(context)
         }
 
-        fun connect(activity: Activity, stipopButton:ImageView, userId:Int, lang: String, countryCode:String) {
+        fun connect(activity: Activity, stipopButton:ImageView, userId:String, lang: String, countryCode:String) {
 
             Stipop.userId = userId
             Stipop.lang = lang
@@ -63,12 +63,14 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
             instance!!.detail(packageId)
         }
 
-        fun send(stickerId: Int, keyword: String) {
+        fun send(stickerId: Int, keyword: String, completionHandler: (result: Boolean) -> Unit) {
+            println("send::::::::::::::::::::")
             if (instance == null) {
                 return
             }
 
-            instance!!.send(stickerId, keyword)
+            println("send::::::::::::::::::::true")
+            instance!!.send(stickerId, keyword, completionHandler)
         }
     }
 
@@ -116,16 +118,21 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
         this.activity.startActivity(intent)
     }
 
-    fun send(stickerId: Int, searchKeyword: String) {
+    fun send(stickerId: Int, searchKeyword: String, completionHandler: (result: Boolean) -> Unit) {
+        println("send==============================")
         if (!this.connected) {
             return
         }
+
+        println("send==============================true")
 
         val params = JSONObject()
         params.put("userId", userId)
         params.put("p", searchKeyword)
         params.put("lang", lang)
         params.put("countryCode", countryCode)
+
+        println("send==============================params: " + params)
 
         APIClient.post(
             activity,
@@ -136,14 +143,24 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
             println(response)
 
             if (null != response) {
+                var success = true
 
-                val header = response.getJSONObject("header")
+                if (response.isNull("header")) {
+                    success = false
+                } else {
 
-                if (Utils.getString(header, "status") != "success") {
-                    println("ERROR!")
+                    val header = response.getJSONObject("header")
+
+                    if (Utils.getString(header, "status") != "success" || Utils.getInt(header, "code", -1) == -1) {
+                        success = false
+                    }
+
                 }
-            }
 
+                completionHandler(success)
+            } else {
+                completionHandler(false)
+            }
         }
     }
 

@@ -26,6 +26,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     private lateinit var favoriteRL: RelativeLayout
     private lateinit var recentlyIV: ImageView
     private lateinit var favoriteIV: ImageView
+    private lateinit var recentPreviewOffIV: ImageView
     private lateinit var storeIV: ImageView
 
     private lateinit var packageRV: RecyclerView
@@ -103,6 +104,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         favoriteRL = view.findViewById(R.id.favoriteRL)
         recentlyIV = view.findViewById(R.id.recentlyIV)
         favoriteIV = view.findViewById(R.id.favoriteIV)
+        recentPreviewOffIV = view.findViewById(R.id.recentPreviewOffIV)
         storeIV = view.findViewById(R.id.storeIV)
 
         packageRV = view.findViewById(R.id.packageRV)
@@ -121,6 +123,18 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         ///////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////
         // Events
+
+        if (!Config.showPreview) {
+            recentPreviewOffIV.visibility = View.VISIBLE
+
+            recentlyIV.visibility = View.GONE
+            favoriteIV.visibility = View.GONE
+        } else {
+            recentPreviewOffIV.visibility = View.GONE
+
+            recentlyIV.visibility = View.VISIBLE
+            favoriteIV.visibility = View.VISIBLE
+        }
 
         favoriteRL.tag = 0
         setThemeImageIcon()
@@ -156,11 +170,15 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
                 val pack = packageData[position]
 
-                selectedPackageId = pack.packageId
+                if (pack.packageId == -999) {
+                    showStore(2)
+                } else {
+                    selectedPackageId = pack.packageId
 
-                packageAdapter.notifyDataSetChanged()
+                    packageAdapter.notifyDataSetChanged()
 
-                loadStickers()
+                    loadStickers()
+                }
             }
         })
 
@@ -182,14 +200,25 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
         })
         stickerGV.setOnItemClickListener { adapterView, view, i, l ->
-            // Stipop.send(stickerData[i].stickerId, "")
+            val sticker = stickerData[i]
 
-            preview.sticker = stickerData[i]
+            Stipop.send(sticker.stickerId, "") { result ->
+                println("result::: " + result)
+                if (result) {
+                    if (Config.showPreview) {
+                        preview.sticker = sticker
 
-            if (preview.windowIsShowing()) {
-                preview.setStickerView()
-            } else {
-                preview.show()
+                        if (preview.windowIsShowing()) {
+                            preview.setStickerView()
+                        } else {
+                            preview.show()
+                        }
+                    } else {
+                        // delegate
+                    }
+
+                }
+
             }
 
         }
@@ -199,8 +228,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         }
 
         view.findViewById<LinearLayout>(R.id.storeLL).setOnClickListener {
-            val intent = Intent(this.activity, StoreActivity::class.java)
-            this.activity.startActivity(intent)
+            showStore(1)
         }
 
         favoriteRL.setOnClickListener {
@@ -209,7 +237,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             println("selectedPackageId : $selectedPackageId")
             println("favoriteRL.tag : ${favoriteRL.tag}")
 
-            if (selectedPackageId == -1) {
+            if (selectedPackageId == -1 && Config.showPreview) {
                 if (favoriteRL.tag == 0) {
                     favoriteRL.tag = 1
                 } else {
@@ -253,6 +281,12 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             0,
             0
         )
+    }
+
+    fun showStore(tab: Int) {
+        val intent = Intent(this.activity, StoreActivity::class.java)
+        intent.putExtra("tab", tab)
+        this.activity.startActivity(intent)
     }
 
     private fun setThemeImageIcon() {
@@ -320,6 +354,11 @@ class Keyboard(val activity: Activity) : PopupWindow() {
                         }
                     }
                 }
+
+                if (page == totalPage) {
+                    packageData.add(SPPackage(-999))
+                }
+
             } else {
                 e?.printStackTrace()
             }
@@ -360,6 +399,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     }
 
     private fun loadStickers() {
+        favoriteRL.setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
 
         stickerData.clear()
 
@@ -401,6 +441,10 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     }
 
     private fun loadFavorite() {
+
+        downloadLL.visibility = View.GONE
+        stickerGV.visibility = View.VISIBLE
+
         val params = JSONObject()
         params.put("pageNumber", stickerPage)
         params.put("limit", 12)
@@ -443,6 +487,9 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     }
 
     private fun loadRecently() {
+        downloadLL.visibility = View.GONE
+        stickerGV.visibility = View.VISIBLE
+
         val params = JSONObject()
         params.put("pageNumber", stickerPage)
         params.put("limit", 12)

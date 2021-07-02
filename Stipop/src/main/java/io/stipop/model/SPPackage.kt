@@ -24,6 +24,11 @@ class SPPackage() {
     val isView: Boolean
         get() = this.view == "Y"
 
+    constructor(
+        packageId: Int
+    ) : this() {
+        this.packageId = packageId
+    }
 
     constructor(
         artistName: String,

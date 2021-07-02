@@ -26,12 +26,15 @@ class StoreActivity: FragmentActivity() {
 
     lateinit var fragmentTransaction: FragmentTransaction
 
+    var tab = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_store)
 
         this.context = this
 
+        tab = intent.getIntExtra("tab", 1)
 
         val drawable = containerLL.background as GradientDrawable
         drawable.setColor(Color.parseColor(Config.themeColor)) // solid  color
@@ -44,11 +47,17 @@ class StoreActivity: FragmentActivity() {
         allV.setBackgroundColor(Config.getStoreNavigationTextColor(context, true))
         myV.setBackgroundColor(Config.getStoreNavigationTextColor(context, true))
 
-
         val fm: FragmentManager = supportFragmentManager
-        fragmentTransaction = fm.beginTransaction()
-        fragmentTransaction.add(R.id.fragmentFL, AllStickerFragment())
-        fragmentTransaction.commit()
+
+        if (tab == 2) {
+            fragmentTransaction = fm.beginTransaction()
+            fragmentTransaction.add(R.id.fragmentFL, MyStickerFragment())
+            fragmentTransaction.commit()
+        } else {
+            fragmentTransaction = fm.beginTransaction()
+            fragmentTransaction.add(R.id.fragmentFL, AllStickerFragment())
+            fragmentTransaction.commit()
+        }
 
         allTabLL.setOnClickListener {
             changeTabs(1)
@@ -66,7 +75,7 @@ class StoreActivity: FragmentActivity() {
             fragmentTransaction.commit()
         }
 
-        changeTabs(1)
+        changeTabs(tab)
 
     }
 

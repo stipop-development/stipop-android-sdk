@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
 
         val stipopIV = findViewById<ImageView>(R.id.stipopIV)
 
-        Stipop.connect(this, stipopIV, 1103, "en", "US")
+        Stipop.connect(this, stipopIV, "1103", "en", "US")
 
         stipopIV.setOnClickListener {
             Stipop.show()
