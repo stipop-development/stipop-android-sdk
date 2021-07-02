@@ -75,7 +75,8 @@
 				"light": "",
 				"dark": ""
 			}
-		}
+		},
+		"bottomOfSearch": "recommendedTags"
 	},
 	"MySticker": {
 		"orderIcon": {
