@@ -11,7 +11,7 @@ import java.io.FileOutputStream
 import java.net.URL
 
 
-public class PackUtils {
+class PackUtils {
 
     companion object {
         fun downloadAndSaveLocal(activity:Activity, spPackage: SPPackage?, responseCallback: () -> Unit) {
@@ -72,12 +72,9 @@ public class PackUtils {
                             return@forEach
                         }
 
-                        print(fileName)
-
                         val sticker = SPSticker()
 
                         val fileNames = fileName.split(".")
-
                         if (fileNames.count() > 0) {
                             val jsonFileName = fileNames[0]
 
@@ -113,7 +110,6 @@ public class PackUtils {
             }
 
             val filePath = File(activity.filesDir, "stipop/$packageId/$jsonFileName.json")
-            println("filePath : $filePath")
 
             val json = JSONObject()
             json.put("stickerId", sticker.stickerId)
