@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.alpha
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
@@ -15,29 +16,33 @@ class Config {
         const val baseUrl = "https://messenger.stipop.io/v1"
 
         lateinit var apikey: String
-        private var stickerIconNormalLight = "ic_sticker_normal"
-        private var stickerIconActiveLight = "ic_sticker_active"
+        private var stickerIconNormalName = "ic_sticker_normal"
 
         var useLightMode = true
 
-        var themeColor = "#ffffff"
-        var themeGroupedBgColor = "#f7f8f9"
-        var themeContentsBgColor = "#ffffff"
+        var themeBackgroundColor = "#ffffff"
+        var themeGroupedContentBackgroundColor = "#f7f8f9"
+        var themeMainColor = "#FF5D1E"
+
+        var themeIconColor = "#414141"
+        var themeIconTintColor = "#FF5D1E"
+
+        var fontFamily = "system"
+        var fontWeight = "regular"
+        var fontCharacter = 0
 
         var searchbarRadius = 10
         var searchNumOfColumns = 3
 
         var searchTagsHidden = false
-        var searchTagBgColor = "#ff855b"
 
-        var searchbarBgColor = ""
-        private var searchbarIconName = ""
+        private var searchbarIconName = "ic_sticker_normal"
         private var searchbarDeleteIconName = ""
 
         var storeListType = ""
 
         private var storeTrendingUseBackgroundColor = false
-        private var storeTrendingBackgroundColor = ""
+        private var storeTrendingBackgroundColor = "#EEEEEE"
         private var storeTrendingOpacity = 0.0
 
         private var storeDownloadIconName = ""
@@ -57,7 +62,6 @@ class Config {
 
         private var detailBackIconName = ""
         private var detailCloseIconName = ""
-        private var detailDownloadButtonColor = ""
         var detailNumOfColumns = 3
 
         var showPreview = false
@@ -105,140 +109,101 @@ class Config {
         private fun parse(json: JSONObject) {
             apikey = Utils.getString(json, "api_key")
 
-            val theme = json.getJSONObject("Theme")
+            val theme = json.optJSONObject("Theme")
             useLightMode = Utils.getBoolen(theme, "useLightMode", true)
 
-            val color = theme.getJSONObject("color")
-            val groupedBgColor = theme.getJSONObject("groupedBgColor")
-            val contentsBgColor = theme.getJSONObject("contentsBgColor")
+            val backgroundColor = theme?.optJSONObject("backgroundColor")
+            val groupedContentBackgroundColor = theme?.optJSONObject("groupedContentBackgroundColor")
+            val mainColor = theme?.optJSONObject("mainColor")
+
+            val iconColor = theme?.optJSONObject("iconColor")
+            val normalColor = iconColor?.optJSONObject("normalColor")
+            val tintColor = iconColor?.optJSONObject("tintColor")
+
+            val font = theme?.optJSONObject("font")
+
+            // font
+            fontFamily = Utils.getString(font, "family", "system")
+            fontWeight = Utils.getString(font, "weight", "regular")
+            fontCharacter = Utils.getInt(font, "character", 0)
 
 
-            val stickerIcon = json.getJSONObject("StickerIcon")
+            stickerIconNormalName = Utils.getString(json, "StickerIcon", "ic_sticker_normal")
 
-            val stickerIconNormal = stickerIcon.getJSONObject("normal")
-
-            this.stickerIconNormalLight = Utils.getString(stickerIconNormal, LIGHT_KEY)
-            val stickerIconNormalDark = Utils.getString(stickerIconNormal, DARK_KEY)
-
-            val stickerIconActive = stickerIcon.getJSONObject("active")
-
-            this.stickerIconActiveLight = Utils.getString(stickerIconActive, LIGHT_KEY)
-            val stickerIconActiveDark = Utils.getString(stickerIconActive, DARK_KEY)
-
-            val search = json.getJSONObject("Search")
+            val search = json.optJSONObject("Search")
 
             searchbarRadius = Utils.getInt(search, "searchbarRadius", 10)
-            searchNumOfColumns = Utils.getInt(search, "numOfColumns", 10)
+            searchNumOfColumns = Utils.getInt(search, "numOfColumns", 3)
 
-            val searchbarIcon = search.getJSONObject("searchbarIcon")
-            val searchbarDeleteIcon = search.getJSONObject("searchbarDeleteIcon")
-            val searchbarColor = search.getJSONObject("searchbarColor")
-            val searchTags = search.getJSONObject("searchTags")
+            searchbarIconName = Utils.getString(search, "searchbarIcon", "icon_search")
+            searchbarDeleteIconName = Utils.getString(search, "searchbarDeleteIcon", "icon_erase")
 
+            val searchTags = search?.optJSONObject("searchTags")
             searchTagsHidden = Utils.getBoolen(searchTags, "hidden", false)
 
-            val searchTagsColor = searchTags.getJSONObject("color")
+            val liteStore = json.optJSONObject("LiteStore")
+            storeListType = Utils.getString(liteStore, "listType", "horizontal")
 
-            val liteStore = json.getJSONObject("LiteStore")
-
-            storeListType = Utils.getString(liteStore, "listType")
-
-            val trending = liteStore.getJSONObject("trending")
-
+            val trending = liteStore?.optJSONObject("trending")
             storeTrendingUseBackgroundColor = Utils.getBoolen(trending, "useBackgroundColor", false)
-            storeTrendingBackgroundColor = Utils.getString(trending, "backgroundColor")
-            storeTrendingOpacity = Utils.getDouble(trending, "opacity")
+            storeTrendingBackgroundColor = Utils.getString(trending, "backgroundColor", "#eeeeee")
+            storeTrendingOpacity = Utils.getDouble(trending, "opacity", 0.7)
 
-            val downloadIcon = liteStore.getJSONObject("downloadIcon")
-            val completeIcon = liteStore.getJSONObject("completeIcon")
+            storeDownloadIconName = Utils.getString(liteStore, "downloadIcon", "ic_download")
+            storeCompleteIconName = Utils.getString(liteStore, "completeIcon", "ic_downloaded")
 
-            storeRecommendedTagShow = Utils.getString(liteStore, "bottomOfSearch") == "recommendedTags"
+            storeRecommendedTagShow = Utils.getString(liteStore, "bottomOfSearch", "recommendedTags") == "recommendedTags"
 
-            val mySticker = json.getJSONObject("MySticker")
+            val mySticker = json.optJSONObject("MySticker")
 
-            val orderIcon = mySticker.getJSONObject("orderIcon")
-            val hideIcon = mySticker.getJSONObject("hideIcon")
+            orderIconName = Utils.getString(mySticker, "orderIcon", "ic_move")
+            hideIconName = Utils.getString(mySticker, "hideIcon", "ic_hide")
 
-
-            val keyboard = json.getJSONObject("Keyboard")
-
+            val keyboard = json.optJSONObject("Keyboard")
             keyboardNumOfColumns = Utils.getInt(keyboard, "numOfColumns", 3)
+            keyboardStoreIconName = Utils.getString(keyboard, "liteStoreIcon", "ic_store")
 
-            val liteStoreIcon = keyboard.getJSONObject("liteStoreIcon")
-
-            val storePolicy = json.getJSONObject("StorePolicy")
+            val storePolicy = json.optJSONObject("StorePolicy")
             allowPremium = Utils.getString(storePolicy, "allowPremium", "N")
 
-            val price = storePolicy.getJSONObject("price")
-            pngPrice = Utils.getDouble(price, "png")
-            gifPrice = Utils.getDouble(price, "gif")
+            val price = storePolicy?.optJSONObject("price")
+            pngPrice = Utils.getDouble(price, "png", 0.99)
+            gifPrice = Utils.getDouble(price, "gif", 1.99)
 
-            val sticker = json.getJSONObject("Sticker")
+            val sticker = json.optJSONObject("Sticker")
 
-            val backIcon = sticker.getJSONObject("backIcon")
-            val closeIcon = sticker.getJSONObject("closeIcon")
-            val downloadButtonColor = sticker.getJSONObject("downloadButtonColor")
-
-            detailNumOfColumns = Utils.getInt(sticker, "numOfColumns")
+            detailBackIconName = Utils.getString(sticker, "backIcon", "ic_back")
+            detailCloseIconName = Utils.getString(sticker, "closeIcon", "ic_close")
+            detailNumOfColumns = Utils.getInt(sticker, "numOfColumns", 3)
 
             val send = json.getJSONObject("Send")
             showPreview = Utils.getBoolen(send, "preview")
-            previewPadding = Utils.getInt(send, "previewPadding")
+            previewPadding = Utils.getInt(send, "previewPadding", 100)
 
             val previewFavoritesOnIcon = send.getJSONObject("favoritesOnIcon")
             val previewFavoritesOffIcon = send.getJSONObject("favoritesOffIcon")
             val previewCloseIcon = send.getJSONObject("closeIcon")
 
             if (useLightMode) {
-                themeColor = Utils.getString(color, LIGHT_KEY, "#ffffff")
-                themeGroupedBgColor = Utils.getString(groupedBgColor, LIGHT_KEY, "#f7f8f9")
-                themeContentsBgColor = Utils.getString(contentsBgColor, LIGHT_KEY, "#ffffff")
+                themeBackgroundColor = Utils.getString(backgroundColor, LIGHT_KEY, "#FFFFFF")
+                themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, LIGHT_KEY, "#F7F8F9")
+                themeMainColor = Utils.getString(mainColor, LIGHT_KEY, "#FF501E")
+                themeIconColor = Utils.getString(normalColor, LIGHT_KEY, "#414141")
+                themeIconTintColor = Utils.getString(normalColor, LIGHT_KEY, this.themeMainColor)
 
-                searchbarBgColor = Utils.getString(searchbarColor, LIGHT_KEY, "#eeeeee")
-                searchbarIconName = Utils.getString(searchbarIcon, LIGHT_KEY)
-                searchbarDeleteIconName = Utils.getString(searchbarDeleteIcon, LIGHT_KEY)
-                searchTagBgColor = Utils.getString(searchTagsColor, LIGHT_KEY, "#ff855b")
-
-                storeDownloadIconName = Utils.getString(downloadIcon, LIGHT_KEY)
-                storeCompleteIconName = Utils.getString(completeIcon, LIGHT_KEY)
-
-                orderIconName = Utils.getString(orderIcon, LIGHT_KEY)
-                hideIconName = Utils.getString(hideIcon, LIGHT_KEY)
-
-                keyboardStoreIconName = Utils.getString(liteStoreIcon, LIGHT_KEY)
-
-                detailBackIconName = Utils.getString(backIcon, LIGHT_KEY)
-                detailCloseIconName = Utils.getString(closeIcon, LIGHT_KEY)
-                detailDownloadButtonColor = Utils.getString(downloadButtonColor, LIGHT_KEY)
-
-                previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, LIGHT_KEY)
-                previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, LIGHT_KEY)
-                previewCloseIconName = Utils.getString(previewCloseIcon, LIGHT_KEY)
+                previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, LIGHT_KEY, "ic_favorites_on")
+                previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, LIGHT_KEY, "ic_favorites_off")
+                previewCloseIconName = Utils.getString(previewCloseIcon, LIGHT_KEY, "ic_cancel")
             } else {
-                themeColor = Utils.getString(color, DARK_KEY, "#171b1c")
-                themeGroupedBgColor = Utils.getString(groupedBgColor, DARK_KEY, "#1e2427")
-                themeContentsBgColor = Utils.getString(contentsBgColor, DARK_KEY, "#2e363a")
+                themeBackgroundColor = Utils.getString(backgroundColor, DARK_KEY, "#171B1C")
+                themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, DARK_KEY, "#2E363A")
+                themeMainColor = Utils.getString(mainColor, DARK_KEY, "#FF8558")
+                themeIconColor = Utils.getString(normalColor, DARK_KEY, "#646F7C")
+                themeIconTintColor = Utils.getString(normalColor, DARK_KEY, this.themeMainColor)
 
-                searchbarBgColor = Utils.getString(searchbarColor, DARK_KEY, "#2e363a")
-                searchbarIconName = Utils.getString(searchbarIcon, DARK_KEY)
-                searchbarDeleteIconName = Utils.getString(searchbarDeleteIcon, DARK_KEY)
-                searchTagBgColor = Utils.getString(searchTagsColor, DARK_KEY, "#ff855b")
-
-                storeDownloadIconName = Utils.getString(downloadIcon, DARK_KEY)
-                storeCompleteIconName = Utils.getString(completeIcon, DARK_KEY)
-
-                orderIconName = Utils.getString(orderIcon, DARK_KEY)
-                hideIconName = Utils.getString(hideIcon, DARK_KEY)
-
-                keyboardStoreIconName = Utils.getString(liteStoreIcon, DARK_KEY)
-
-                detailBackIconName = Utils.getString(backIcon, DARK_KEY)
-                detailCloseIconName = Utils.getString(closeIcon, DARK_KEY)
-                detailDownloadButtonColor = Utils.getString(downloadButtonColor, DARK_KEY)
-
-                previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, DARK_KEY)
-                previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, DARK_KEY)
-                previewCloseIconName = Utils.getString(previewCloseIcon, DARK_KEY)
+                previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, DARK_KEY, "ic_favorites_on")
+                previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, DARK_KEY, "ic_favorites_off")
+                previewCloseIconName = Utils.getString(previewCloseIcon, DARK_KEY, "ic_cancel")
             }
         }
 
@@ -399,9 +364,11 @@ class Config {
         }
 
         fun getActiveStickerBackgroundColor(context: Context): Int {
-            var color = ContextCompat.getColor(context, R.color.c_f8d4c7)
-            if (!useLightMode) {
-                color = ContextCompat.getColor(context, R.color.c_ff4500)
+            var color = Color.parseColor(themeMainColor)
+            if (useLightMode) {
+                val mainColor = themeMainColor.replace("#", "")
+
+                color = Color.parseColor("#33$mainColor")
             }
             return color
         }
@@ -466,17 +433,6 @@ class Config {
             var color = ContextCompat.getColor(context, R.color.c_000000)
             if (!useLightMode) {
                 color = ContextCompat.getColor(context, R.color.c_f7f8f9)
-            }
-            return color
-        }
-
-        fun getDetailDownloadBackgroundColor(context: Context): Int {
-            if (detailDownloadButtonColor.count() > 0) {
-                return Color.parseColor(detailDownloadButtonColor)
-            }
-            var color = ContextCompat.getColor(context, R.color.c_ff774a)
-            if (!useLightMode) {
-                color = ContextCompat.getColor(context, R.color.c_ff855b)
             }
             return color
         }

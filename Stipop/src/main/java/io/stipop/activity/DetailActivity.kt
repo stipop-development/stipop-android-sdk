@@ -40,16 +40,19 @@ class DetailActivity: Activity() {
 
 
         val drawable = containerLL.background as GradientDrawable
-        drawable.setColor(Color.parseColor(Config.themeGroupedBgColor)) // solid  color
+        drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
 
-        contentsRL.setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
+        contentsRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
         packageNameTV.setTextColor(Config.getDetailPackageNameTextColor(context))
 
         backIV.setImageResource(Config.getBackIconResourceId(context))
         closeIV.setImageResource(Config.getCloseIconResourceId(context))
 
-        downloadTV.setBackgroundColor(Config.getDetailDownloadBackgroundColor(context))
+
+
+        val drawable2 = downloadTV.background as GradientDrawable
+        drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
 
         stickerGV.numColumns = Config.detailNumOfColumns
 

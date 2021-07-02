@@ -2,53 +2,43 @@
 	"api_key": "f1487146b30e92fc07ae42f44de3c5d7",
 	"Theme": {
 		"useLightMode" : false,
-		"color" : {
-			"light" : "#ffffff",
-			"dark" : "#171b1c"
+		"backgroundColor" : {
+			"light" : "#FFFFFF",
+			"dark" : "#171B1C"
 		},
-		"groupedBgColor" : {
-			"light" : "#f7f8f9",
-			"dark" : "#1e2427"
+		"groupedContentBackgroundColor" : {
+			"light" : "#F7F8F9",
+			"dark" : "#2E363A"
 		},
-		"contentsBgColor" : {
-			"light" : "#ffffff",
-			"dark" : "#2e363a"
-		}
-	},
-	"StickerIcon": {
-		"normal": {
-			"light" : "icStickerNormal",
-			"dark" : "icStickerNormalDark"
+		"mainColor" : {
+			"light" : "#FF5D1E",
+			"dark" : "#FF855B"
 		},
-		"active": {
-			"light" : "icStickerActive",
-			"dark" : "icStickerActiveDark"
-		}
-	},
-	"Search": {
-		"searchbarIcon": {
-			"light" : "",
-			"dark" : ""
-		},
-		"searchbarDeleteIcon": {
-			"light" : "",
-			"dark" : ""
-		},
-		"searchbarColor": {
-			"light" : "#eeeeee",
-			"dark" : "#2e363a"
-		},
-		"searchbarRadius": 10,
-		"searchTags": {
-			"hidden": false,
-			"color": {
-				"light" : "#ec5428",
-				"dark" : "#ec5428"
+		"iconColor" : {
+			"normalColor": {
+				"light": "#414141",
+				"dark": "#646F7C"
+			},
+			"tintColor": {
+				"light": "#FF5D1E",
+				"dark": "#FF855B"
 			}
 		},
-		"numOfColumns": 3,
-		"searchLimit" : 20,
-		"trendingLimit" : 20
+		"font" : {
+			"family": "Pacifico",
+			"weight": "black",
+			"character": 0
+		}
+	},
+	"StickerIcon": "ic_sticker_normal",
+	"Search": {
+		"searchbarIcon": "icon_search",
+		"searchbarDeleteIcon": "icon_erase",
+		"searchbarRadius": 10,
+		"searchTags": {
+			"hidden": false
+		},
+		"numOfColumns": 3
 	},
 	"LiteStore": {
 		"trending" : {
@@ -57,42 +47,16 @@
 			"opacity": 0.7
 		},
 		"listType": "singular",
-		"downloadIcon": {
-			"light" : "",
-			"dark" : ""
-		},
-		"completeIcon": {
-			"light" : "",
-			"dark" : ""
-		},
-		"recommendedTag": {
-			"show": true,
-			"color": {
-				"light": "",
-				"dark": ""
-			},
-			"bgColor": {
-				"light": "",
-				"dark": ""
-			}
-		},
-		"bottomOfSearch": "recommendedTags"
+		"downloadIcon": "ic_download",
+		"completeIcon": "ic_downloaded",
+		"bottomOfSearch": "popularStickers"
 	},
 	"MySticker": {
-		"orderIcon": {
-			"light" : "",
-			"dark" : ""
-		},
-		"hideIcon": {
-			"light" : "",
-			"dark" : ""
-		}
+		"orderIcon": "ic_move",
+		"hideIcon": "ic_hide"
 	},
 	"Keyboard": {
-		"liteStoreIcon": {
-			"light" : "",
-			"dark" : ""
-		},
+		"liteStoreIcon": "ic_store",
 		"numOfColumns": 4
 	},
 	"StorePolicy" : {
@@ -103,38 +67,24 @@
 		}
 	},
 	"Sticker": {
-		"backIcon": {
-			"light" : "",
-			"dark" : ""
-		},
-		"closeIcon": {
-			"light" : "",
-			"dark" : ""
-		},
-		"shareIcon": {
-			"light" : "shareIcon",
-			"dark" : "shareIconDark"
-		},
-		"downloadButtonColor": {
-			"light" : "",
-			"dark" : ""
-		},
+		"backIcon": "ic_back",
+		"closeIcon": "ic_close",
 		"numOfColumns": 3
-
 	},
 	"Send": {
 		"preview": true,
+		"previewPadding": 100,
 		"favoritesOnIcon": {
-			"light" : "favoritesOnIcon",
-			"dark" : "favoritesIconDark"
+			"light" : "ic_favorites_on",
+			"dark" : "ic_favorites_on"
 		},
 		"favoritesOffIcon": {
-			"light" : "favoritesOffIcon",
-			"dark" : "favoritesOffIconDark"
+			"light" : "ic_favorites_off",
+			"dark" : "ic_favorites_off"
 		},
 		"closeIcon": {
-			"light" : "closeIcon",
-			"dark" : "closeIconDark"
+			"light" : "ic_cancel",
+			"dark" : "ic_cancel"
 		}
 	}
 }

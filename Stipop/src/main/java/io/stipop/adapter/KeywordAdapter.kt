@@ -45,7 +45,7 @@ class KeywordAdapter(private val dataList: ArrayList<JSONObject>):
         val item = dataList[position]
 
         val drawable = holder.keywordTV.background as GradientDrawable
-        drawable.setColor(Color.parseColor(Config.searchTagBgColor))
+        drawable.setColor(Color.parseColor(Config.themeMainColor))
 
         holder.keywordTV.text = Utils.getString(item, "keyword")
         holder.keywordTV.setOnClickListener {

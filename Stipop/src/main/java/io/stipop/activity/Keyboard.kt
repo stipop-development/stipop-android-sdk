@@ -3,6 +3,7 @@ package io.stipop.activity
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.transition.Slide
 import android.view.Gravity
@@ -98,8 +99,8 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
         preview = Preview(this.activity, this)
 
-        view.findViewById<LinearLayout>(R.id.containerLL).setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
-        view.findViewById<LinearLayout>(R.id.packageListLL).setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
+        view.findViewById<LinearLayout>(R.id.containerLL).setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
+        view.findViewById<LinearLayout>(R.id.packageListLL).setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
 
         favoriteRL = view.findViewById(R.id.favoriteRL)
         recentlyIV = view.findViewById(R.id.recentlyIV)
@@ -115,6 +116,8 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         artistNameTV = view.findViewById(R.id.artistNameTV)
         downloadTV = view.findViewById(R.id.downloadTV)
 
+        val drawable2 = downloadTV.background as GradientDrawable
+        drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
 
         storeIV.setImageResource(Config.getKeyboardStoreResourceId(this.activity))
 
@@ -231,7 +234,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         }
 
         favoriteRL.setOnClickListener {
-            favoriteRL.setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
+            favoriteRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
             println("selectedPackageId : $selectedPackageId")
             println("favoriteRL.tag : ${favoriteRL.tag}")
@@ -409,7 +412,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     }
 
     private fun loadStickers() {
-        favoriteRL.setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
+        favoriteRL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
 
         stickerData.clear()
 

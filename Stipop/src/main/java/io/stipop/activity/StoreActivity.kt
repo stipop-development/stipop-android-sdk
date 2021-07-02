@@ -37,9 +37,9 @@ class StoreActivity: FragmentActivity() {
         tab = intent.getIntExtra("tab", 1)
 
         val drawable = containerLL.background as GradientDrawable
-        drawable.setColor(Color.parseColor(Config.themeColor)) // solid  color
+        drawable.setColor(Color.parseColor(Config.themeBackgroundColor)) // solid  color
 
-        navigationBarLL.setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
+        navigationBarLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
 
         underLineV.setBackgroundColor(Config.getUnderLineColor(context))
 

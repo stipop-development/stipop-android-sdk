@@ -94,7 +94,7 @@ class AllStickerFragment : Fragment() {
 
 
         val drawable = searchbarLL.background as GradientDrawable
-        drawable.setColor(Color.parseColor(Config.searchbarBgColor)) // solid  color
+        drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
 
         keywordET.setTextColor(Config.getSearchTitleTextColor(myContext))
 
@@ -544,6 +544,11 @@ class AllStickerFragment : Fragment() {
 
                             val tagView = layoutInflater.inflate(R.layout.tag_layout, null, false)
                             val tagTV = tagView.findViewById<TextView>(R.id.tagTV)
+
+                            val drawable = tagTV.background as GradientDrawable
+                            drawable.setStroke(1, Color.parseColor(Config.themeMainColor))
+
+                            tagTV.setTextColor(Color.parseColor(Config.themeMainColor))
                             tagTV.text = keyword
                             tagTV.setOnClickListener {
 

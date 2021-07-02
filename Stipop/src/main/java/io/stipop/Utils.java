@@ -1624,6 +1624,17 @@ public class Utils {
         return 0.0;
     }
 
+    public static double getDouble(JSONObject json, String key, Double defaultValue) {
+        if (json != null && json.has(key) && !json.isNull(key)) {
+            try {
+                return json.getDouble(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return defaultValue;
+    }
+
     public static int getInt(EditText editText) {
         String val = editText.getText().toString().trim();
         try {

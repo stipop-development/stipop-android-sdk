@@ -42,11 +42,11 @@ class SearchActivity: Activity() {
 
 
         val drawable = containerLL.background as GradientDrawable
-        drawable.setColor(Color.parseColor(Config.themeColor))
+        drawable.setColor(Color.parseColor(Config.themeBackgroundColor))
 
         val drawable2 = searchbarLL.background as GradientDrawable
-        drawable2.setColor(Color.parseColor(Config.searchbarBgColor)) // solid  color
-        drawable2.cornerRadius = Config.searchbarRadius.toFloat()
+        drawable2.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
+        drawable2.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
 
         searchIV.setImageResource(Config.getSearchbarResourceId(context))
         eraseIV.setImageResource(Config.getEraseResourceId(context))
@@ -55,7 +55,7 @@ class SearchActivity: Activity() {
         keywordET.setTextColor(Config.getSearchTitleTextColor(context))
 
         val gd = GradientDrawable(
-            GradientDrawable.Orientation.TOP_BOTTOM, intArrayOf(Color.parseColor(Config.themeColor), Color.TRANSPARENT)
+            GradientDrawable.Orientation.TOP_BOTTOM, intArrayOf(Color.parseColor(Config.themeBackgroundColor), Color.TRANSPARENT)
         )
 
         shadowV.background = gd

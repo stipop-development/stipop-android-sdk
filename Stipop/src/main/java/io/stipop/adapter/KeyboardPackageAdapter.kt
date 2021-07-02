@@ -66,10 +66,10 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
             val matrix = ColorMatrix()
 
             if (keyboard.selectedPackageId == item.packageId) {
-                holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
+                holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
                 matrix.setSaturation(1.0f)
             } else {
-                holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
+                holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
                 matrix.setSaturation(0.0f)
             }
 

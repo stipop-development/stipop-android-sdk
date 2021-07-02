@@ -89,7 +89,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val spPackage = dataList[position]
 
-        holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeColor))
+        holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
         holder.hideIV.setImageResource(Config.getHideIconResourceId(context))
         holder.moveIV.setImageResource(Config.getOrderIconResourceId(context))
@@ -142,7 +142,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 //        }
 
         holder.moveLL.setOnLongClickListener {
-            holder.containerLL.setBackgroundColor(Config.getMovingBackgroundColor(context))
+            holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
 
             onEventListener?.onDragStarted(holder)
 
