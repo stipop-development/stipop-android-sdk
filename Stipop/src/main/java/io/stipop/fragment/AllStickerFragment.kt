@@ -5,8 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -18,7 +20,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,6 +44,7 @@ import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import org.json.JSONObject
 import java.io.IOException
 import java.net.URLEncoder
+
 
 class AllStickerFragment : Fragment() {
 
@@ -502,6 +504,21 @@ class AllStickerFragment : Fragment() {
                             val tagTV = tagView.findViewById<TextView>(R.id.tagTV)
                             tagTV.text = keyword
                             tagTV.setOnClickListener {
+
+                                // haptics
+                                val vibrator = this.myContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+                                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
+                                    vibrator.vibrate(
+                                        VibrationEffect.createOneShot(
+                                            500,
+                                            VibrationEffect.DEFAULT_AMPLITUDE
+                                        )
+                                    )
+                                } else {
+                                    vibrator.vibrate(500)
+                                }
+
                                 changeView(false)
                                 keywordET.setText(keyword)
                             }
