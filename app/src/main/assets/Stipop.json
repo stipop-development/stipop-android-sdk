@@ -73,7 +73,7 @@
 	},
 	"Send": {
 		"preview": true,
-		"previewPadding": 100,
+		"previewPadding": 150,
 		"favoritesOnIcon": {
 			"light" : "ic_favorites_on",
 			"dark" : "ic_favorites_on"

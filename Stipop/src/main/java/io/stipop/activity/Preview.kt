@@ -62,7 +62,7 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
             this.rootView,
             Gravity.BOTTOM,
             0,
-            Stipop.keyboardHeight + Utils.getNavigationBarSize(this.activity).y
+            Stipop.keyboardHeight + Config.previewPadding + Utils.getNavigationBarSize(this.activity).y
         )
     }
 
