@@ -21,15 +21,15 @@
 
             <ImageView
                 android:id="@+id/recentlyIV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:src="@mipmap/ic_recents_active"
                 android:layout_margin="4dp"/>
 
             <ImageView
                 android:id="@+id/favoriteIV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:src="@mipmap/ic_favorites_normal"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
@@ -37,8 +37,8 @@
 
             <ImageView
                 android:id="@+id/recentPreviewOffIV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:src="@mipmap/ic_recent_previewoff"
                 android:layout_centerInParent="true"
                 android:visibility="gone"/>
@@ -59,8 +59,8 @@
 
             <ImageView
                 android:id="@+id/storeIV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="18dp"
                 android:src="@mipmap/ic_store"/>
 
         </LinearLayout>

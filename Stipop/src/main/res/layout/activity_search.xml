@@ -28,8 +28,8 @@
 
                 <ImageView
                     android:id="@+id/searchIV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:src="@mipmap/icon_search"/>
 
             </LinearLayout>
@@ -52,8 +52,8 @@
 
                 <ImageView
                     android:id="@+id/eraseIV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:src="@mipmap/icon_erase"/>
 
             </LinearLayout>
