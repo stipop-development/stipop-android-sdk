@@ -1,8 +1,10 @@
 package io.stipop.fragment
 
 import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
@@ -25,6 +27,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.activity.DetailActivity
 import io.stipop.adapter.AllStickerAdapter
@@ -34,15 +37,11 @@ import io.stipop.adapter.RecentKeywordAdapter
 import io.stipop.extend.RecyclerDecoration
 import io.stipop.extend.TagLayout
 import io.stipop.model.SPPackage
-import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.activity_search.*
-import kotlinx.android.synthetic.main.activity_store.*
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import kotlinx.android.synthetic.main.fragment_all_sticker.clearTextLL
 import kotlinx.android.synthetic.main.fragment_all_sticker.eraseIV
 import kotlinx.android.synthetic.main.fragment_all_sticker.keywordET
 import kotlinx.android.synthetic.main.fragment_all_sticker.searchbarLL
-import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import org.json.JSONObject
 import java.io.IOException
 import java.net.URLEncoder
@@ -78,6 +77,22 @@ class AllStickerFragment : Fragment() {
 
     var inputKeyword = ""
 
+
+    private var downloadReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+
+                val idx = intent.getIntExtra("idx", -1)
+                val package_id = intent.getIntExtra("package_id", -1)
+
+                if(idx != -1) {
+                    getPackInfo(idx, package_id)
+                }
+            }
+        }
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -92,6 +107,8 @@ class AllStickerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val filter1 = IntentFilter("SET_DOWNLOAD")
+        myContext.registerReceiver(downloadReceiver, filter1)
 
         val drawable = searchbarLL.background as GradientDrawable
         drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
@@ -442,35 +459,109 @@ class AllStickerFragment : Fragment() {
         }
     }
 
-    fun downloadPackage(packageId: Int) {
+    private fun getPackInfo(idx: Int, packageId: Int) {
 
-        var params = JSONObject()
+        val params = JSONObject()
+        params.put("userId", Stipop.userId)
+
+        APIClient.get(activity as Activity, APIClient.APIPath.PACKAGE.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
+
+            if (null != response) {
+
+                val header = response.getJSONObject("header")
+
+                if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
+                    val body = response.getJSONObject("body")
+                    val packageObj = body.getJSONObject("package")
+
+                    val spPackage = SPPackage(packageObj)
+
+                    val packageAnimated = spPackage.packageAnimated
+
+                    if (packageAnimated != null) {
+                        downloadPackage(idx, packageId, spPackage, packageAnimated)
+                    } else {
+                        downloadPackage(idx, packageId, spPackage, "N")
+                    }
+                }
+
+            } else {
+                e?.printStackTrace()
+            }
+        }
+
+    }
+
+    private fun downloadPackage(idx: Int, packageId: Int, spPackage: SPPackage, packageAnimated: String) {
+
+        val params = JSONObject()
         params.put("userId", Stipop.userId)
         params.put("isPurchase", Config.allowPremium)
+        params.put("lang", Stipop.lang)
+        params.put("countryCode", Stipop.countryCode)
 
-        APIClient.post(
-            activity as Activity,
-            APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId",
-            params
-        ) { response: JSONObject?, e: IOException? ->
-            println(response)
+        if (Config.allowPremium == "Y") {
+            // 움직이지 않는 스티커
+            var price = Config.pngPrice
+
+            if (packageAnimated == "Y") {
+                // 움직이는 스티커
+                price = Config.gifPrice
+            }
+            params.put("price", price)
+        }
+
+        APIClient.post(activity as Activity, APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
 
             if (null != response) {
 
                 val header = response.getJSONObject("header")
 
                 if (Utils.getString(header, "status") == "success") {
-                    Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
 
-                    downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
+                    // download
+                    PackUtils.downloadAndSaveLocal(activity as Activity, spPackage) {
+                        allStickerAdapter.setDownload(idx)
+                        Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
+                        allStickerAdapter.notifyDataSetChanged()
+                    }
                 }
 
             } else {
-
+                e?.printStackTrace()
             }
         }
-
     }
+
+//    fun downloadPackage(packageId: Int) {
+//
+//        var params = JSONObject()
+//        params.put("userId", Stipop.userId)
+//        params.put("isPurchase", Config.allowPremium)
+//
+//        APIClient.post(
+//            activity as Activity,
+//            APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId",
+//            params
+//        ) { response: JSONObject?, e: IOException? ->
+//            println(response)
+//
+//            if (null != response) {
+//
+//                val header = response.getJSONObject("header")
+//
+//                if (Utils.getString(header, "status") == "success") {
+//                    Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
+//
+//                    downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
+//                }
+//
+//            } else {
+//
+//            }
+//        }
+//
+//    }
 
     fun getRecentKeyword() {
 

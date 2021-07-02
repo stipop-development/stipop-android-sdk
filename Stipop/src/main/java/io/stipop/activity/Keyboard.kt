@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
-import android.transition.Slide
 import android.view.Gravity
 import android.view.View
 import android.widget.*
@@ -16,7 +15,6 @@ import io.stipop.*
 import io.stipop.adapter.*
 import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker
-import kotlinx.android.synthetic.main.activity_detail.*
 import org.json.JSONObject
 import java.io.IOException
 

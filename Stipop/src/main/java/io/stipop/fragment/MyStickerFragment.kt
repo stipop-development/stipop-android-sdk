@@ -2,12 +2,9 @@ package io.stipop.fragment
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -19,13 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.stipop.*
-import io.stipop.activity.DetailActivity
 import io.stipop.adapter.MyStickerAdapter
-import io.stipop.adapter.PackageAdapter
 import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
 import io.stipop.extend.dragdrop.SimpleItemTouchHelperCallback
 import io.stipop.model.SPPackage
-import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import org.json.JSONObject
 import java.io.IOException
