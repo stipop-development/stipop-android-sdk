@@ -382,6 +382,22 @@ class Config {
             return color
         }
 
+        fun getMyStickerHiddenPackageNameTextColor(context: Context): Int {
+            var color = ContextCompat.getColor(context, R.color.c_000000)
+            if (!useLightMode) {
+                color = ContextCompat.getColor(context, R.color.c_646f7c)
+            }
+            return color
+        }
+
+        fun getMyStickerHiddenArtistNameTextColor(context: Context): Int {
+            var color = ContextCompat.getColor(context, R.color.c_8f8f8f)
+            if (!useLightMode) {
+                color = ContextCompat.getColor(context, R.color.c_646f7c)
+            }
+            return color
+        }
+
         fun getActiveStickerBackgroundColor(context: Context): Int {
             var color = ContextCompat.getColor(context, R.color.c_f8d4c7)
             if (!useLightMode) {
