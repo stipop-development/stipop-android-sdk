@@ -5,11 +5,9 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.alpha
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
-import java.lang.Exception
 import kotlin.math.roundToInt
 
 class Config {
@@ -30,8 +28,8 @@ class Config {
         var themeIconTintColor = "#FF5D1E"
 
         var fontFamily = "system"
-        var fontWeight = "regular"
-        var fontCharacter = 0
+        var fontWeight = 400
+        var fontCharacter:Float = 0.0f
         var fontFace:Typeface? = null
 
         var searchbarRadius = 10
@@ -127,24 +125,48 @@ class Config {
 
             // font
             fontFamily = Utils.getString(font, "family", "system").lowercase()
-            fontWeight = Utils.getString(font, "weight", "regular")
-            fontCharacter = Utils.getInt(font, "character", 0)
+            fontWeight = Utils.getInt(font, "weight", 400)
+            fontCharacter = Utils.getFloat(font, "character")
 
+
+            // weight
+            /*
+            100    Extra Light or Ultra Light
+            200    Light or Thin
+            300    Book or Demi
+            400    Normal or Regular
+            500    Medium
+            600    Semibold, Demibold
+            700    Bold
+            800    Black, Extra Bold or Heavy
+            900    Extra Black, Fat, Poster or Ultra Black
+            */
+            var builder:Typeface.Builder? = null
             try {
-                fontFace = Typeface.createFromAsset(context.assets, fontFamily)
+                builder = Typeface.Builder(context.assets, fontFamily)
+                builder.setFontVariationSettings("'wght' $fontWeight, 'slnt' 20, 'ital' 0")
+                builder.setWeight(fontWeight) // Tell the system that this is a bold font.
+                fontFace = builder.build()
             } catch (e:Exception) {}
 
             if (fontFace == null) {
                 try {
-                    fontFace = Typeface.createFromAsset(context.assets, "$fontFamily.ttf")
+                    builder = Typeface.Builder(context.assets, "$fontFamily.ttf")
+                    builder.setFontVariationSettings("'wght' $fontWeight, 'slnt' 20, 'ital' 0")
+                    builder.setWeight(fontWeight) // Tell the system that this is a bold font.
+                    fontFace = builder.build()
                 } catch (e:Exception) {}
 
                 if (fontFace == null) {
                     try {
-                        fontFace = Typeface.createFromAsset(context.assets, "$fontFamily.otf")
+                        builder = Typeface.Builder(context.assets, "$fontFamily.otf")
+                        builder.setFontVariationSettings("'wght' $fontWeight, 'slnt' 20, 'ital' 0")
+                        builder.setWeight(fontWeight) // Tell the system that this is a bold font.
+                        fontFace = builder.build()
                     } catch (e:Exception) {}
                 }
             }
+
 
 
 

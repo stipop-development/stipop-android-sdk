@@ -23,5 +23,8 @@ class StipopTextView : AppCompatTextView {
         if (Config.fontFace != null) {
             this.typeface = Config.fontFace
         }
+
+        // letterSpacing
+        this.letterSpacing = Config.fontCharacter
     }
 }

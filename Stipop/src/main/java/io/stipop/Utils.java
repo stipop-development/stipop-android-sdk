@@ -1613,6 +1613,17 @@ public class Utils {
         return -1;
     }
 
+    public static float getFloat(JSONObject json, String key) {
+        if (json != null && json.has(key) && !json.isNull(key)) {
+            try {
+                return (float) json.getDouble(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0.0f;
+    }
+
     public static double getDouble(JSONObject json, String key) {
         if (json != null && json.has(key) && !json.isNull(key)) {
             try {

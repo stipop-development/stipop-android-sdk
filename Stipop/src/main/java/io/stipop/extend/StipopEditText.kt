@@ -24,5 +24,8 @@ class StipopEditText : AppCompatEditText {
         if (Config.fontFace != null) {
             this.typeface = Config.fontFace
         }
+
+        // letterSpacing
+        this.letterSpacing = Config.fontCharacter
     }
 }
