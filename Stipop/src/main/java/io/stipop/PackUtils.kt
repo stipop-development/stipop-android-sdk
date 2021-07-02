@@ -55,7 +55,7 @@ public class PackUtils {
                     input.copyTo(output)
                 }
 
-                saveStickerJsonData(activity, sticker, packageId, fileName)
+                saveStickerJsonData(activity, sticker, packageId)
             }
         }
 
@@ -66,9 +66,31 @@ public class PackUtils {
             if (filePath.exists()) {
                 filePath.walkTopDown().forEach {
                     if (it.isFile) {
+                        val fileName = it.name
+
+                        if (fileName.contains(".json")) {
+                            return@forEach
+                        }
+
+                        print(fileName)
+
                         val sticker = SPSticker()
+
+                        val fileNames = fileName.split(".")
+
+                        if (fileNames.count() > 0) {
+                            val jsonFileName = fileNames[0]
+
+                            val file = File(activity.filesDir, "stipop/$packageId/$jsonFileName.json")
+                            if (file.isFile) {
+                                val json = JSONObject(file.readText())
+                                sticker.stickerId = Utils.getInt(json, "stickerId")
+                                sticker.stickerImg = Utils.getString(json, "stickerImg")
+                                sticker.favoriteYN = Utils.getString(json, "favoriteYN")
+                            }
+                        }
+
                         sticker.packageId = packageId
-                        sticker.stickerId = -1
                         sticker.stickerImg = it.absolutePath
 
                         stickerList.add(sticker)
@@ -79,7 +101,9 @@ public class PackUtils {
             return stickerList
         }
 
-        fun saveStickerJsonData(activity: Activity, sticker: SPSticker, packageId: Int, fileName: String) {
+        fun saveStickerJsonData(activity: Activity, sticker: SPSticker, packageId: Int) {
+
+            val fileName = sticker.stickerImg!!.split(File.separator)!!.last()
 
             val fileNames = fileName.split(".")
 
@@ -95,21 +119,12 @@ public class PackUtils {
             json.put("stickerId", sticker.stickerId)
             json.put("stickerImg", sticker.stickerImg)
             json.put("favoriteYN", sticker.favoriteYN)
-            json.put("stickerId", sticker.stickerId)
+            json.put("keyword", sticker.keyword)
 
             val policy = ThreadPolicy.Builder().permitAll().build()
             StrictMode.setThreadPolicy(policy)
 
-//            val file = File(s)
-//            file.writeText(jsonString)
-//
-//            URL(encodedString).openStream().use { input ->
-//                FileOutputStream(filePath).use { output ->
-//                    input.copyTo(output)
-//                }
-//
-//                saveStickerJsonData(sticker, packageId)
-//            }
+            filePath.writeText(json.toString())
 
         }
     }

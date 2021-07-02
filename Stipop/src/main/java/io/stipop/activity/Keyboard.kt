@@ -96,7 +96,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         // set size
         popupWindow.height = Stipop.keyboardHeight
 
-        preview = Preview(this.activity)
+        preview = Preview(this.activity, this)
 
         view.findViewById<LinearLayout>(R.id.containerLL).setBackgroundColor(Color.parseColor(Config.themeContentsBgColor))
         view.findViewById<LinearLayout>(R.id.packageListLL).setBackgroundColor(Color.parseColor(Config.themeGroupedBgColor))
@@ -202,8 +202,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         stickerGV.setOnItemClickListener { adapterView, view, i, l ->
             val sticker = stickerData[i]
 
-            Stipop.send(sticker.stickerId, "") { result ->
-                println("result::: " + result)
+            Stipop.send(sticker.stickerId, sticker.keyword) { result ->
                 if (result) {
                     if (Config.showPreview) {
                         preview.sticker = sticker
@@ -287,6 +286,17 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         val intent = Intent(this.activity, StoreActivity::class.java)
         intent.putExtra("tab", tab)
         this.activity.startActivity(intent)
+    }
+
+    fun changeFavorite(stickerId: Int, favoriteYN: String, packageId: Int) {
+        for (i in 0 until stickerData.size) {
+            if (stickerData[i].stickerId == stickerId) {
+                stickerData[i].favoriteYN = favoriteYN
+
+                PackUtils.saveStickerJsonData(this.activity, stickerData[i], packageId)
+                break
+            }
+        }
     }
 
     private fun setThemeImageIcon() {

@@ -123,7 +123,7 @@
 
 	},
 	"Send": {
-		"preview": false,
+		"preview": true,
 		"favoritesOnIcon": {
 			"light" : "favoritesOnIcon",
 			"dark" : "favoritesIconDark"

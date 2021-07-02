@@ -11,7 +11,7 @@ import io.stipop.model.SPSticker
 import org.json.JSONObject
 import java.io.IOException
 
-class Preview(val activity: Activity) : PopupWindow() {
+class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
 
     private lateinit var rootView: View
 
@@ -78,6 +78,12 @@ class Preview(val activity: Activity) : PopupWindow() {
 
     fun setStickerView() {
         Glide.with(this.activity).load(sticker.stickerImg).into(stickerIV)
+
+        if (sticker.favoriteYN == "Y") {
+            favoriteIV.setImageResource(R.mipmap.ic_favorites_on)
+        } else {
+            favoriteIV.setImageResource(R.mipmap.ic_favorites_off)
+        }
     }
 
     fun setFavorite() {
@@ -93,13 +99,16 @@ class Preview(val activity: Activity) : PopupWindow() {
                 val header = response.getJSONObject("header")
 
                 if (Utils.getString(header, "status") == "success") {
-                    if (favoriteIV.tag == 2) {
+                    if (sticker.favoriteYN != "Y") {
                         favoriteIV.setImageResource(R.mipmap.ic_favorites_on)
-                        favoriteIV.tag = 1
+                        sticker.favoriteYN = "Y"
                     } else {
                         favoriteIV.setImageResource(R.mipmap.ic_favorites_off)
-                        favoriteIV.tag = 2
+                        sticker.favoriteYN = "N"
                     }
+
+                    keyboard.changeFavorite(sticker.stickerId, sticker.favoriteYN, sticker.packageId)
+
                 } else {
                     println("ERROR!")
                 }

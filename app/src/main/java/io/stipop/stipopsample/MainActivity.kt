@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
 
         val stipopIV = findViewById<ImageView>(R.id.stipopIV)
 
-        Stipop.connect(this, stipopIV, "1103", "en", "US")
+        Stipop.connect(this, stipopIV, "1234", "en", "US")
 
         stipopIV.setOnClickListener {
             Stipop.show()
@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
         packageDetailTV.setOnClickListener {
             Stipop.detail(1234)
         }
-
 
     }
 }
