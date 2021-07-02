@@ -17,6 +17,7 @@
         android:text="View Hidden Stickers"/>
 
     <LinearLayout
+        android:id="@+id/listLL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -30,5 +31,15 @@
             android:scrollbars="none"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/noneTV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="No results"
+        android:textColor="@color/c_374553"
+        android:textStyle="bold"
+        android:visibility="gone"/>
 
 </LinearLayout>

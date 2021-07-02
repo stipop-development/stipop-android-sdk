@@ -8,6 +8,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/noneTV"
+            android:layout_width="match_parent"
+            android:layout_height="177dp"
+            android:gravity="center"
+            android:text="No results"
+            android:textColor="@color/c_374553"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

@@ -154,6 +154,13 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                 }
             }
 
+            if(data.count() > 0) {
+                listLL.visibility = View.VISIBLE
+                noneTV.visibility = View.GONE
+            } else {
+                listLL.visibility = View.GONE
+                noneTV.visibility = View.VISIBLE
+            }
         }
     }
 

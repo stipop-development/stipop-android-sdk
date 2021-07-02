@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
+import android.view.KeyEvent.KEYCODE_ENTER
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,6 +72,10 @@ class AllStickerFragment : Fragment() {
     lateinit var recommendedTagsTL: TagLayout
     lateinit var popularStickerRV: RecyclerView
 
+    lateinit var noneTV: TextView
+
+    var inputKeyword = ""
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -108,23 +114,24 @@ class AllStickerFragment : Fragment() {
 
         clearTextLL.setOnClickListener {
             keywordET.setText("")
+            inputKeyword = ""
 
             Utils.hideKeyboard(myContext)
 
-            changeView(false)
+            reloadData(true)
         }
 
         keywordET.setOnClickListener {
             changeView(true)
 
-            getRecentKeyword()
+//            getRecentKeyword()
         }
 
         keywordET.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
                 changeView(true)
 
-                getRecentKeyword()
+//                getRecentKeyword()
             }
         }
 
@@ -138,10 +145,16 @@ class AllStickerFragment : Fragment() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                val keyword = Utils.getString(keywordET)
-                reloadData(keyword.length < 1)
+                inputKeyword = Utils.getString(keywordET)
             }
         })
+
+        keywordET.setOnKeyListener { view, i, event ->
+            if(event.action == KeyEvent.ACTION_DOWN && i == KEYCODE_ENTER) {
+                reloadData(inputKeyword.isEmpty())
+            }
+            true
+        }
 
         packageAdapter = PackageAdapter(packageData, myContext)
 
@@ -166,12 +179,10 @@ class AllStickerFragment : Fragment() {
 
         if (Config.storeListType == "singular") {
             // B Type
-            allStickerAdapter =
-                AllStickerAdapter(myContext, R.layout.item_all_sticker_type_b, allStickerData)
+            allStickerAdapter = AllStickerAdapter(myContext, R.layout.item_all_sticker_type_b, allStickerData)
         } else {
             // A Type
-            allStickerAdapter =
-                AllStickerAdapter(myContext, R.layout.item_all_sticker_type_a, allStickerData)
+            allStickerAdapter = AllStickerAdapter(myContext, R.layout.item_all_sticker_type_a, allStickerData)
         }
 
         stickerLV.adapter = allStickerAdapter
@@ -180,7 +191,7 @@ class AllStickerFragment : Fragment() {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > packagePage) {
                     packagePage += 1
                     val keyword = Utils.getString(keywordET)
-                    loadPackageData(packagePage, keyword.length > 0)
+                    loadPackageData(packagePage, keyword.isNotEmpty())
                 }
             }
 
@@ -214,11 +225,12 @@ class AllStickerFragment : Fragment() {
             deleteKeyword(null)
         }
 
-        recentLV.addHeaderView(recentHeaderV)
+//        recentLV.addHeaderView(recentHeaderV)
 
         val recentFooterV = View.inflate(myContext, R.layout.footer_recent_keyword, null)
         val popularStickerLL = recentFooterV.findViewById<LinearLayout>(R.id.popularStickerLL)
         val recommendedTagLL = recentFooterV.findViewById<LinearLayout>(R.id.recommendedTagLL)
+        noneTV = recentFooterV.findViewById<TextView>(R.id.noneTV)
 
         recommendedTagsTL = recentFooterV.findViewById(R.id.recommendedTagsTL)
         popularStickerRV = recentFooterV.findViewById(R.id.popularStickerRV)
@@ -264,12 +276,12 @@ class AllStickerFragment : Fragment() {
             recommendedTagLL.visibility = View.VISIBLE
             popularStickerLL.visibility = View.GONE
 
-            getPopularStickers()
+            getKeyword()
         } else {
             recommendedTagLL.visibility = View.GONE
             popularStickerLL.visibility = View.VISIBLE
 
-            getKeyword()
+            getPopularStickers()
         }
 
     }
@@ -387,7 +399,7 @@ class AllStickerFragment : Fragment() {
                         }
 
                         if (page == 1) {
-                            stickerLV.smoothScrollToPosition(0);
+                            stickerLV.smoothScrollToPosition(0)
                         }
                     }
 
@@ -395,6 +407,36 @@ class AllStickerFragment : Fragment() {
 
             }
 
+            if (search) {
+                if (page == 1) {
+                    if(allStickerData.count() > 0) {
+                        noneTV.visibility = View.GONE
+                        changeView(false)
+                        Utils.hideKeyboard(myContext)
+                    } else {
+                        noneTV.visibility = View.VISIBLE
+                    }
+                }
+            } else {
+                trendingLL.visibility = View.VISIBLE
+                if (page == 1) {
+                    if(packageData.count() > 0) {
+                        noneTV.visibility = View.GONE
+                        changeView(false)
+                        Utils.hideKeyboard(myContext)
+                    } else {
+                        noneTV.visibility = View.VISIBLE
+                    }
+                } else if (page == 2) {
+                    if(allStickerData.count() > 0) {
+                        noneTV.visibility = View.GONE
+                        changeView(false)
+                        Utils.hideKeyboard(myContext)
+                    } else {
+                        noneTV.visibility = View.VISIBLE
+                    }
+                }
+            }
         }
     }
 
@@ -503,7 +545,9 @@ class AllStickerFragment : Fragment() {
                             tagTV.text = keyword
                             tagTV.setOnClickListener {
                                 changeView(false)
+                                inputKeyword = keyword
                                 keywordET.setText(keyword)
+                                reloadData(false)
                             }
 
                             recommendedTagsTL.addView(tagView)
