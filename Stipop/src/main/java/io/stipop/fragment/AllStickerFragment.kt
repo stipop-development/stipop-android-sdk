@@ -641,17 +641,7 @@ class AllStickerFragment : Fragment() {
 
                                 // haptics
                                 val vibrator = this.myContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-
-                                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
-                                    vibrator.vibrate(
-                                        VibrationEffect.createOneShot(
-                                            500,
-                                            VibrationEffect.DEFAULT_AMPLITUDE
-                                        )
-                                    )
-                                } else {
-                                    vibrator.vibrate(500)
-                                }
+                                vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
 
                                 changeView(false)
                                 inputKeyword = keyword

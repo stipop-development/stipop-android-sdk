@@ -49,7 +49,7 @@
 		"listType": "singular",
 		"downloadIcon": "ic_download",
 		"completeIcon": "ic_downloaded",
-		"bottomOfSearch": "popularStickers"
+		"bottomOfSearch": "recommendedTags"
 	},
 	"MySticker": {
 		"orderIcon": "ic_move",
