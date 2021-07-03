@@ -26,6 +26,7 @@ class Config {
 
         var themeIconColor = "#414141"
         var themeIconTintColor = "#FF5D1E"
+        var themeIconTintColorDark = "#FF855B"
 
         var fontFamily = "system"
         var fontWeight = 400
@@ -231,7 +232,8 @@ class Config {
                 themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, LIGHT_KEY, "#F7F8F9")
                 themeMainColor = Utils.getString(mainColor, LIGHT_KEY, "#FF501E")
                 themeIconColor = Utils.getString(normalColor, LIGHT_KEY, "#414141")
-                themeIconTintColor = Utils.getString(normalColor, LIGHT_KEY, this.themeMainColor)
+                themeIconTintColor = Utils.getString(normalColor, LIGHT_KEY, "#FF5D1E")
+                themeIconTintColorDark = Utils.getString(tintColor, LIGHT_KEY, "#FF855B")
 
                 previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, LIGHT_KEY, "ic_favorites_on")
                 previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, LIGHT_KEY, "ic_favorites_off")
@@ -241,7 +243,8 @@ class Config {
                 themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, DARK_KEY, "#2E363A")
                 themeMainColor = Utils.getString(mainColor, DARK_KEY, "#FF8558")
                 themeIconColor = Utils.getString(normalColor, DARK_KEY, "#646F7C")
-                themeIconTintColor = Utils.getString(normalColor, DARK_KEY, this.themeMainColor)
+                themeIconTintColor = Utils.getString(normalColor, LIGHT_KEY, "#FF5D1E")
+                themeIconTintColorDark = Utils.getString(tintColor, LIGHT_KEY, "#FF855B")
 
                 previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, DARK_KEY, "ic_favorites_on")
                 previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, DARK_KEY, "ic_favorites_off")

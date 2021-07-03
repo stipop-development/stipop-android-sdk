@@ -13,11 +13,12 @@ import io.stipop.activity.DetailActivity
 import io.stipop.activity.Keyboard
 import io.stipop.activity.SearchActivity
 import io.stipop.activity.StoreActivity
+import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
 import org.json.JSONObject
 import java.io.IOException
 
-class Stipop(private val activity: Activity, private val stipopButton: ImageView) {
+class Stipop(private val activity: Activity, private val stipopButton: StipopImageView) {
 
     companion object {
 
@@ -34,7 +35,7 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
             Config.configure(context)
         }
 
-        fun connect(activity: Activity, stipopButton:ImageView, userId:String, lang: String, countryCode:String) {
+        fun connect(activity: Activity, stipopButton:StipopImageView, userId:String, lang: String, countryCode:String) {
 
             Stipop.userId = userId
             Stipop.lang = lang
@@ -184,7 +185,8 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
 
     private fun enableStickerIcon() {
         if (this.connected) {
-            this.stipopButton.setImageResource(R.mipmap.ic_sticker_active)
+            // this.stipopButton.setImageResource(R.mipmap.ic_sticker_active)
+            this.stipopButton.setTint()
 
             this.stickerIconEnabled = true
         }
