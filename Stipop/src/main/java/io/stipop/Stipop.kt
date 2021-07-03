@@ -22,14 +22,19 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
 
     companion object {
 
-        @SuppressLint("StaticFieldLeak")
-        private var instance:Stipop? = null
+        var instance:Stipop? = null
 
         var userId = "-1"
+            private set
+
         var lang = "en"
+            private set
+
         var countryCode = "us"
+            private set
 
         var keyboardHeight = 0
+            private set
 
         fun configure(context:Context) {
             Config.configure(context)
@@ -82,7 +87,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         }
         */
 
-        fun send(stickerId: Int, keyword: String, completionHandler: (result: Boolean) -> Unit) {
+        private fun send(stickerId: Int, keyword: String, completionHandler: (result: Boolean) -> Unit) {
             println("send::::::::::::::::::::")
             if (instance == null) {
                 return
@@ -206,7 +211,8 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
             return
         }
 
-        Keyboard.show(this.activity)
+        val keyboard = Keyboard(this.activity)
+        keyboard.show()
     }
 
 
