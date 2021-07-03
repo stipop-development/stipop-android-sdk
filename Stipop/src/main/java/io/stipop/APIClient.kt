@@ -67,7 +67,6 @@ class APIClient {
 
                 activity.runOnUiThread {
                     val response = JSONObject(content.toString())
-                    println(response)
                     responseCallback(response, null)
                 }
             }

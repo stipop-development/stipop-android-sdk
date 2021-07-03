@@ -2,6 +2,7 @@ package io.stipop.fragment
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -290,12 +291,17 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                 }
             }
 
+
+            // update keyboard package
+            val broadcastIntent = Intent()
+            broadcastIntent.action = "${myContext.packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION"
+            myContext.sendBroadcast(broadcastIntent)
         }
 
     }
 
     fun showConfirmAlert(packageId: Int, position: Int) {
-        var customSelectProfilePicBottomSheetDialog = BottomSheetDialog(myContext, R.style.CustomBottomSheetDialogTheme)
+        val customSelectProfilePicBottomSheetDialog = BottomSheetDialog(myContext, R.style.CustomBottomSheetDialogTheme)
 
         val layoutBottomSheetView  = this.layoutInflater.inflate(R.layout.bottom_alert, null)
 

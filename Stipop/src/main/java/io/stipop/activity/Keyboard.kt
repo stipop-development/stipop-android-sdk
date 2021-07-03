@@ -1,7 +1,10 @@
 package io.stipop.activity
 
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
@@ -52,6 +55,14 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     var stickerTotalPage = 1
 
     lateinit var preview: Preview
+
+    var reloadPackageReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                reloadPackages()
+            }
+        }
+    }
 
     companion object {
         fun show(activity: Activity) {
@@ -263,9 +274,10 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             }
         }
 
-        loadPackages()
+        reloadPackages()
 
-
+        val broadcastIntentFilter = IntentFilter("${this.activity.packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION")
+        this.activity.registerReceiver(reloadPackageReciver, broadcastIntentFilter)
 
         ///////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////
@@ -321,7 +333,18 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         }
     }
 
+    private fun reloadPackages() {
+
+        packageData.clear()
+        packageAdapter.notifyDataSetChanged()
+
+        page = 1
+
+        loadPackages()
+    }
+
     private fun loadPackages() {
+
         val params = JSONObject()
         params.put("pageNumber", page)
         params.put("limit", 20)
@@ -351,17 +374,10 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
                     if (!body.isNull("packageList")) {
                         val packageList = body.getJSONArray("packageList")
-                        println(packageList.toString())
+                        // println(packageList.toString())
 
                         for (i in 0 until packageList.length()) {
                             packageData.add(SPPackage(packageList.get(i) as JSONObject))
-                        }
-
-                        packageAdapter.notifyDataSetChanged()
-
-                        if (selectedPackageId < 1 && packageData.size > 0) {
-                            selectedPackageId = packageData[0].packageId
-                            loadStickers()
                         }
                     }
                 }
@@ -369,6 +385,27 @@ class Keyboard(val activity: Activity) : PopupWindow() {
                 if (page == totalPage) {
                     packageData.add(SPPackage(-999))
                 }
+
+                var isSelectedTabValid = false
+                for (spPackage in packageData) {
+                    if (spPackage.packageId == selectedPackageId) {
+                        isSelectedTabValid = true
+                        break
+                    }
+                }
+
+                println("isSelectedTabValid : $isSelectedTabValid")
+
+                if (isSelectedTabValid) {
+                    if (selectedPackageId == -1) {
+                        loadRecently()
+                    }
+                } else {
+                    selectedPackageId = -1
+                    loadRecently()
+                }
+
+                packageAdapter.notifyDataSetChanged()
 
             } else {
                 e?.printStackTrace()
@@ -442,6 +479,8 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     private fun loadFavoriteRecently() {
         setThemeImageIcon()
 
+        selectedPackageId = -1
+
         // Favorite
         if (favoriteRL.tag == 1) {
             loadFavorite()
@@ -452,6 +491,8 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     }
 
     private fun loadFavorite() {
+
+        favoriteRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
         downloadLL.visibility = View.GONE
         stickerGV.visibility = View.VISIBLE
@@ -498,6 +539,9 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     }
 
     private fun loadRecently() {
+
+        favoriteRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
+
         downloadLL.visibility = View.GONE
         stickerGV.visibility = View.VISIBLE
 
@@ -510,8 +554,6 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             APIClient.APIPath.PACKAGE_SEND.rawValue + "/${Stipop.userId}",
             null
         ) { response: JSONObject?, e: IOException? ->
-
-            println(response)
 
             if (null != response) {
 
@@ -540,5 +582,13 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             }
 
         }
+    }
+
+
+    override fun dismiss() {
+        if (reloadPackageReciver != null) {
+            this.activity.unregisterReceiver(reloadPackageReciver)
+        }
+        super.dismiss()
     }
 }

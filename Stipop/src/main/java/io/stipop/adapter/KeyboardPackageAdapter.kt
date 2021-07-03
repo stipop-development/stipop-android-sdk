@@ -57,6 +57,7 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
 
         if (item.packageId == -999) {
             // Settings
+            holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
             holder.imageIV.setImageResource(R.mipmap.ic_setting)
         } else {
             val packageImg = item.packageImg
