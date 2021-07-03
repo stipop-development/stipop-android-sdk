@@ -18,6 +18,7 @@ import io.stipop.Config
 import io.stipop.R
 import io.stipop.Utils
 import io.stipop.activity.Keyboard
+import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
 import org.json.JSONObject
 
@@ -33,7 +34,7 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val imageIV: ImageView
+        val imageIV: StipopImageView
         val containerLL: LinearLayout
 
         init {
@@ -59,6 +60,7 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
             // Settings
             holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
             holder.imageIV.setImageResource(R.mipmap.ic_setting)
+            holder.imageIV.setTint()
         } else {
             val packageImg = item.packageImg
 

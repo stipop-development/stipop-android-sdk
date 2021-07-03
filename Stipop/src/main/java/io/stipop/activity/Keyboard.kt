@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.adapter.*
+import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker
 import org.json.JSONObject
@@ -26,15 +27,15 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     private lateinit var rootView: View
 
     private lateinit var favoriteRL: RelativeLayout
-    private lateinit var recentlyIV: ImageView
-    private lateinit var favoriteIV: ImageView
-    private lateinit var recentPreviewOffIV: ImageView
-    private lateinit var storeIV: ImageView
+    private lateinit var recentlyIV: StipopImageView
+    private lateinit var favoriteIV: StipopImageView
+    private lateinit var recentPreviewOffIV: StipopImageView
+    private lateinit var storeIV: StipopImageView
 
     private lateinit var packageRV: RecyclerView
     private lateinit var stickerGV: GridView
     private lateinit var downloadLL: LinearLayout
-    private lateinit var packageIV: ImageView
+    private lateinit var packageIV: StipopImageView
     private lateinit var packageNameTV: TextView
     private lateinit var artistNameTV: TextView
     private lateinit var downloadTV: TextView

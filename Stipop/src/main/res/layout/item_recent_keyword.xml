@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:gravity="center">
 
-            <ImageView
+            <io.stipop.extend.StipopImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@mipmap/ic_delete"/>

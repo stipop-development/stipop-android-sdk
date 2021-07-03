@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.*
 import com.bumptech.glide.Glide
 import io.stipop.*
+import io.stipop.extend.StipopImageView
 import io.stipop.model.SPSticker
 import org.json.JSONObject
 import java.io.IOException
@@ -15,8 +16,8 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
 
     private lateinit var rootView: View
 
-    private lateinit var stickerIV: ImageView
-    private lateinit var favoriteIV: ImageView
+    private lateinit var stickerIV: StipopImageView
+    private lateinit var favoriteIV: StipopImageView
 
     var sticker = SPSticker()
 

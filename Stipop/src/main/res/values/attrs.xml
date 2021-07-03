@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <declare-styleable name="StipopImageView">
+        <attr name="stipop_tint" format="boolean"/>
+    </declare-styleable>
+
+</resources>
