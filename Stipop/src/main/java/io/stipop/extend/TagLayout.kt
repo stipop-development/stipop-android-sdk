@@ -118,6 +118,4 @@ class TagLayout: ViewGroup {
             }
         }
     }
-
-    
 }
