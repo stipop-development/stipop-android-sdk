@@ -58,6 +58,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     lateinit var preview: Preview
 
     lateinit var popupWindow:PopupWindow
+    internal var canShow = true
 
     init {
         this.initPopup()
@@ -283,27 +284,35 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         // this.showOrHide()
     }
 
-    internal fun showOrHide() {
+    internal fun show() {
         if (Stipop.keyboardHeight == 0) {
             return
         }
 
-        if (popupWindow.isShowing) {
-            popupWindow.dismiss()
-        } else {
-            this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
-            popupWindow.showAtLocation(
-                this.rootView,
-                Gravity.BOTTOM,
-                0,
-                0
-            )
+        if (!this.canShow) {
+            return
         }
+
+        this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
+        popupWindow.showAtLocation(
+            this.rootView,
+            Gravity.BOTTOM,
+            0,
+            0
+        )
+    }
+
+    internal fun hide() {
+        if (Stipop.keyboardHeight == 0) {
+            return
+        }
+
+        popupWindow.dismiss()
     }
 
     fun showStore(tab: Int) {
 
-        this.showOrHide()
+        this.hide()
 
         val intent = Intent(this.activity, StoreActivity::class.java)
         intent.putExtra("tab", tab)
