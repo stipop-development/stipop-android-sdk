@@ -22,6 +22,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
 
     companion object {
 
+        @SuppressLint("StaticFieldLeak")
         var instance:Stipop? = null
 
         var userId = "-1"
@@ -87,7 +88,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         }
         */
 
-        private fun send(stickerId: Int, keyword: String, completionHandler: (result: Boolean) -> Unit) {
+        internal fun send(stickerId: Int, keyword: String, completionHandler: (result: Boolean) -> Unit) {
             println("send::::::::::::::::::::")
             if (instance == null) {
                 return
@@ -99,6 +100,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
     }
 
 
+    private var keyboard: Keyboard? = null
     private lateinit var rootView: View
 
 
@@ -211,8 +213,11 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
             return
         }
 
-        val keyboard = Keyboard(this.activity)
-        keyboard.show()
+        if(keyboard == null) {
+            keyboard = Keyboard(this.activity)
+        }
+
+        keyboard!!.showOrHide()
     }
 
 
@@ -230,19 +235,19 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
 
             if (heightDifference > 100) {
                 keyboardHeight = heightDifference
+
+                if(this.keyboard != null) {
+                    this.keyboard!!.showOrHide()
+                }
             }
         }
     }
 
     private fun getUsableScreenHeight(): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            val metrics = DisplayMetrics()
-            val windowManager = this.activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            windowManager.defaultDisplay.getMetrics(metrics)
-            metrics.heightPixels
-        } else {
-            this.rootView.rootView.height
-        }
+        val metrics = DisplayMetrics()
+        val windowManager = this.activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        windowManager.defaultDisplay.getMetrics(metrics)
+        return metrics.heightPixels
     }
 
 }

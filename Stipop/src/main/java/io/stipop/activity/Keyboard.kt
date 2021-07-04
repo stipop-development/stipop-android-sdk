@@ -57,6 +57,12 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
     lateinit var preview: Preview
 
+    lateinit var popupWindow:PopupWindow
+
+    init {
+        this.initPopup()
+    }
+
     var reloadPackageReciver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
             if (intent != null) {
@@ -65,30 +71,17 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         }
     }
 
-    companion object {
-        fun show(activity: Activity) {
-            val keyboard = Keyboard(activity)
-            keyboard.show()
-        }
-    }
-
-    fun show() {
-
-        if (Stipop.keyboardHeight == 0) {
-            return
-        }
+    private fun initPopup() {
 
         val view = View.inflate(this.activity, R.layout.keyboard,null)
 
-        val popupWindow = PopupWindow(
+        popupWindow = PopupWindow(
             view,
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            popupWindow.elevation = 10.0F
-        }
+        popupWindow.elevation = 10.0F
 
 
         // animations
@@ -287,16 +280,31 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
 
         // show
-        this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
-        popupWindow.showAtLocation(
-            this.rootView,
-            Gravity.BOTTOM,
-            0,
-            0
-        )
+        // this.showOrHide()
+    }
+
+    internal fun showOrHide() {
+        if (Stipop.keyboardHeight == 0) {
+            return
+        }
+
+        if (popupWindow.isShowing) {
+            popupWindow.dismiss()
+        } else {
+            this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
+            popupWindow.showAtLocation(
+                this.rootView,
+                Gravity.BOTTOM,
+                0,
+                0
+            )
+        }
     }
 
     fun showStore(tab: Int) {
+
+        this.showOrHide()
+
         val intent = Intent(this.activity, StoreActivity::class.java)
         intent.putExtra("tab", tab)
         this.activity.startActivity(intent)
