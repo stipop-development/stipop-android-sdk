@@ -132,7 +132,7 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                 if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
                     val body = response.getJSONObject("body")
 
-                    if (!response.isNull("pageMap")) {
+                    if (!body.isNull("pageMap")) {
                         val pageMap = body.getJSONObject("pageMap")
                         totalPage = Utils.getInt(pageMap, "pageCount")
                     }
@@ -186,7 +186,7 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                 if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
                     val body = response.getJSONObject("body")
 
-                    if (!response.isNull("pageMap")) {
+                    if (!body.isNull("pageMap")) {
                         val pageMap = body.getJSONObject("pageMap")
                         totalPage = Utils.getInt(pageMap, "pageCount")
                     }
