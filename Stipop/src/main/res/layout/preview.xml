@@ -19,14 +19,14 @@
 
             <io.stipop.extend.StipopImageView
                 android:id="@+id/favoriteIV"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@mipmap/ic_favorites_off"/>
 
             <io.stipop.extend.StipopImageView
                 android:id="@+id/closeIV"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@mipmap/ic_cancel"/>
 
         </LinearLayout>

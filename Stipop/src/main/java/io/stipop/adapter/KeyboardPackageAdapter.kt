@@ -60,7 +60,7 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
             // Settings
             holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
             holder.imageIV.setImageResource(R.mipmap.ic_setting)
-            holder.imageIV.setTint()
+            holder.imageIV.setIconDefaultsColor()
         } else {
             val packageImg = item.packageImg
 

@@ -32,6 +32,28 @@ class StipopImageView : AppCompatImageView {
 
     }
 
+    fun setIconDefaultsColor() {
+        var color = Config.themeIconColorDark
+        if (Config.useLightMode) {
+            color = Config.themeIconColor
+        }
+
+        setColorFilter(Color.parseColor(color))
+    }
+
+    fun setIconDefaultsColor40Opacity() {
+        var color = Config.themeIconColorDark
+        if (Config.useLightMode) {
+            color = Config.themeIconColor
+        }
+
+        color = color.replace("#", "")
+        color = "#64$color"
+
+        setColorFilter(Color.parseColor(color))
+
+    }
+
     fun setTint() {
         var color = Config.themeIconTintColorDark
         if (Config.useLightMode) {
@@ -39,6 +61,5 @@ class StipopImageView : AppCompatImageView {
         }
 
         setColorFilter(Color.parseColor(color))
-
     }
 }

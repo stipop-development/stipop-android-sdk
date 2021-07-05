@@ -90,7 +90,7 @@
                     android:textSize="16sp"
                     android:textColor="#000000"
                     android:textStyle="bold"
-                    android:text="Olli's Camping Message" />
+                    android:text="" />
 
                 <io.stipop.extend.StipopTextView
                     android:id="@+id/artistNameTV"
@@ -101,7 +101,7 @@
                     android:textSize="14sp"
                     android:textColor="@color/c_bababa"
                     android:textStyle="bold"
-                    android:text="©twistolive" />
+                    android:text="" />
 
                 <io.stipop.extend.StipopTextView
                     android:id="@+id/downloadTV"

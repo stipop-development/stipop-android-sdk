@@ -26,6 +26,8 @@ class Config {
 
         var themeIconColor = "#414141"
         var themeIconTintColor = "#FF5D1E"
+
+        var themeIconColorDark = "#646F7C"
         var themeIconTintColorDark = "#FF855B"
 
         var fontFamily = "system"
@@ -232,8 +234,7 @@ class Config {
                 themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, LIGHT_KEY, "#F7F8F9")
                 themeMainColor = Utils.getString(mainColor, LIGHT_KEY, "#FF501E")
                 themeIconColor = Utils.getString(normalColor, LIGHT_KEY, "#414141")
-                themeIconTintColor = Utils.getString(normalColor, LIGHT_KEY, "#FF5D1E")
-                themeIconTintColorDark = Utils.getString(tintColor, LIGHT_KEY, "#FF855B")
+                themeIconTintColor = Utils.getString(tintColor, LIGHT_KEY, "#FF5D1E")
 
                 previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, LIGHT_KEY, "ic_favorites_on")
                 previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, LIGHT_KEY, "ic_favorites_off")
@@ -242,9 +243,8 @@ class Config {
                 themeBackgroundColor = Utils.getString(backgroundColor, DARK_KEY, "#171B1C")
                 themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, DARK_KEY, "#2E363A")
                 themeMainColor = Utils.getString(mainColor, DARK_KEY, "#FF8558")
-                themeIconColor = Utils.getString(normalColor, DARK_KEY, "#646F7C")
-                themeIconTintColor = Utils.getString(normalColor, LIGHT_KEY, "#FF5D1E")
-                themeIconTintColorDark = Utils.getString(tintColor, LIGHT_KEY, "#FF855B")
+                themeIconColorDark = Utils.getString(normalColor, DARK_KEY, "#646F7C")
+                themeIconTintColorDark = Utils.getString(tintColor, DARK_KEY, "#FF855B")
 
                 previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, DARK_KEY, "ic_favorites_on")
                 previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, DARK_KEY, "ic_favorites_off")

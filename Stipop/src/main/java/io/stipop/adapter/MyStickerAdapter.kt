@@ -5,18 +5,14 @@ import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.extend.StipopImageView
-import io.stipop.extend.dragdrop.ItemTouchHelperViewHolder
 import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
 import io.stipop.fragment.MyStickerFragment
 import io.stipop.model.SPPackage
@@ -96,6 +92,11 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
         holder.moveIV.setImageResource(Config.getOrderIconResourceId(context))
 
         holder.addIV.setImageResource(Config.getAddIconResourceId())
+
+
+        holder.hideIV.setIconDefaultsColor()
+        holder.moveIV.setIconDefaultsColor()
+        holder.addIV.setIconDefaultsColor()
 
 
         Glide.with(context).load(spPackage.packageImg).into(holder.packageIV)
