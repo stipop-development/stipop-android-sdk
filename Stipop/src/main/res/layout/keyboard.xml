@@ -25,8 +25,7 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:src="@mipmap/ic_recents_active"
-                android:layout_margin="4dp"
-                app:stipop_tint="true"/>
+                android:layout_margin="4dp"/>
 
             <io.stipop.extend.StipopImageView
                 android:id="@+id/favoriteIV"
@@ -35,13 +34,12 @@
                 android:src="@mipmap/ic_favorites_normal"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:layout_margin="4dp"
-                app:stipop_tint="true"/>
+                android:layout_margin="4dp"/>
 
             <io.stipop.extend.StipopImageView
                 android:id="@+id/recentPreviewOffIV"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:src="@mipmap/ic_recent_previewoff"
                 android:layout_centerInParent="true"
                 app:stipop_tint="true"
@@ -65,8 +63,7 @@
                 android:id="@+id/storeIV"
                 android:layout_width="24dp"
                 android:layout_height="18dp"
-                android:src="@mipmap/ic_store"
-                app:stipop_tint="true"/>
+                android:src="@mipmap/ic_store"/>
 
         </LinearLayout>
 

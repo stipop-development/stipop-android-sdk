@@ -107,6 +107,7 @@ class AllStickerFragment : Fragment() {
 
         val drawable = searchbarLL.background as GradientDrawable
         drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
+        drawable.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
 
         keywordET.setTextColor(Config.getSearchTitleTextColor(myContext))
 

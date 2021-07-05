@@ -149,13 +149,17 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                 }
             }
 
-            if(data.count() > 0) {
-                listLL.visibility = View.VISIBLE
-                noneTV.visibility = View.GONE
-            } else {
-                listLL.visibility = View.GONE
-                noneTV.visibility = View.VISIBLE
-            }
+            setNoResultView()
+        }
+    }
+
+    fun setNoResultView() {
+        if(data.count() > 0) {
+            listLL.visibility = View.VISIBLE
+            noneTV.visibility = View.GONE
+        } else {
+            listLL.visibility = View.GONE
+            noneTV.visibility = View.VISIBLE
         }
     }
 
@@ -201,13 +205,7 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                 e?.printStackTrace()
             }
 
-            if(data.count() > 0) {
-                listLL.visibility = View.VISIBLE
-                noneTV.visibility = View.GONE
-            } else {
-                listLL.visibility = View.GONE
-                noneTV.visibility = View.VISIBLE
-            }
+            setNoResultView()
         }
     }
 
@@ -286,6 +284,8 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                 if (status == "success") {
                     data.removeAt(position)
                     myStickerAdapter.notifyDataSetChanged()
+
+                    setNoResultView()
                 } else {
                     Toast.makeText(myContext, "ERROR!!", Toast.LENGTH_LONG).show()
                 }

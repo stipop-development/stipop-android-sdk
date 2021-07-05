@@ -20,6 +20,10 @@ class StipopImageView : AppCompatImageView {
 
         val ta = context.obtainStyledAttributes(attrs, R.styleable.StipopImageView, 0, 0)
         try {
+            if (checkErrorIcon()) {
+                return
+            }
+
             val tintStr = ta.getString(R.styleable.StipopImageView_stipop_tint)
             val haveToSetTint = tintStr.toBoolean()
             if (haveToSetTint) {
@@ -33,20 +37,24 @@ class StipopImageView : AppCompatImageView {
     }
 
     fun setIconDefaultsColor() {
-        var color = Config.themeIconColorDark
-        if (Config.useLightMode) {
-            color = Config.themeIconColor
+        if (checkErrorIcon()) {
+            return
         }
 
-        setColorFilter(Color.parseColor(color))
+        println("setIconDefaultsColor checkErrorIcon(): ${checkErrorIcon()}")
+        println("tag:  ${this.tag}")
+        println("error tag:  ${R.mipmap.error}")
+        println("error_dark tag:  ${R.mipmap.error_dark}")
+
+        setColorFilter(Color.parseColor(Config.themeIconColor))
     }
 
     fun setIconDefaultsColor40Opacity() {
-        var color = Config.themeIconColorDark
-        if (Config.useLightMode) {
-            color = Config.themeIconColor
+        if (checkErrorIcon()) {
+            return
         }
 
+        var color = Config.themeIconColor
         color = color.replace("#", "")
         color = "#64$color"
 
@@ -55,11 +63,24 @@ class StipopImageView : AppCompatImageView {
     }
 
     fun setTint() {
-        var color = Config.themeIconTintColorDark
-        if (Config.useLightMode) {
-            color = Config.themeIconTintColor
+        if (checkErrorIcon()) {
+            return
         }
 
-        setColorFilter(Color.parseColor(color))
+        setColorFilter(Color.parseColor(Config.themeIconTintColor))
+    }
+
+    fun checkErrorIcon(): Boolean {
+        R.mipmap.error
+        if (this.tag == R.mipmap.error || this.tag == R.mipmap.error_dark) {
+            return true
+        }
+        return false
+    }
+
+    override fun setImageResource(resId: Int) {
+        println("setImageResource:::; resId: $resId")
+        this.tag = resId
+        super.setImageResource(resId)
     }
 }

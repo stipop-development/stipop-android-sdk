@@ -27,8 +27,8 @@ class Config {
         var themeIconColor = "#414141"
         var themeIconTintColor = "#FF5D1E"
 
-        var themeIconColorDark = "#646F7C"
-        var themeIconTintColorDark = "#FF855B"
+//        var themeIconColorDark = "#646F7C"
+//        var themeIconTintColorDark = "#FF855B"
 
         var fontFamily = "system"
         var fontWeight = 400
@@ -243,8 +243,8 @@ class Config {
                 themeBackgroundColor = Utils.getString(backgroundColor, DARK_KEY, "#171B1C")
                 themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, DARK_KEY, "#2E363A")
                 themeMainColor = Utils.getString(mainColor, DARK_KEY, "#FF8558")
-                themeIconColorDark = Utils.getString(normalColor, DARK_KEY, "#646F7C")
-                themeIconTintColorDark = Utils.getString(tintColor, DARK_KEY, "#FF855B")
+                themeIconColor = Utils.getString(normalColor, DARK_KEY, "#646F7C")
+                themeIconTintColor = Utils.getString(tintColor, DARK_KEY, "#FF855B")
 
                 previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, DARK_KEY, "ic_favorites_on")
                 previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, DARK_KEY, "ic_favorites_off")
@@ -256,11 +256,7 @@ class Config {
             return if (keyboardStoreIconName.isNotEmpty()) {
                 Utils.getResource(keyboardStoreIconName, context)
             } else {
-                if (useLightMode) {
-                    R.mipmap.ic_store
-                } else {
-                    R.mipmap.ic_store_dark
-                }
+                R.mipmap.ic_store
             }
         }
 
@@ -268,11 +264,7 @@ class Config {
             return if (searchbarIconName.isNotEmpty()) {
                 Utils.getResource(searchbarIconName, context)
             } else {
-                if (useLightMode) {
-                    R.mipmap.icon_search
-                } else {
-                    R.mipmap.icon_search_dark
-                }
+                R.mipmap.icon_search
             }
         }
 
@@ -280,11 +272,7 @@ class Config {
             return if (searchbarDeleteIconName.isNotEmpty()) {
                 Utils.getResource(searchbarDeleteIconName, context)
             } else {
-                if (useLightMode) {
-                    R.mipmap.icon_erase
-                } else {
-                    R.mipmap.icon_erase_dark
-                }
+                R.mipmap.icon_erase
             }
         }
 
@@ -489,11 +477,7 @@ class Config {
         }
 
         fun getAlertButtonTextColor(context: Context): Int {
-            var color = ContextCompat.getColor(context, R.color.c_2d8cbf)
-            if (!useLightMode) {
-                color = ContextCompat.getColor(context, R.color.c_5f97f6)
-            }
-            return color
+            return ContextCompat.getColor(context, R.color.c_f34539)
         }
 
         fun getDetailPackageNameTextColor(context: Context): Int {
