@@ -23,7 +23,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
+                <io.stipop.extend.StipopImageView
                     android:id="@+id/searchIconIV"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -31,14 +31,17 @@
 
             </LinearLayout>
 
-            <EditText
+            <io.stipop.extend.StipopEditText
                 android:id="@+id/keywordET"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:inputType="text"
                 android:maxLines="1"
-                android:background="@null"/>
+                android:hint="Search.."
+                android:textColorHint="#646f7c"
+                android:background="@null"
+                android:imeOptions="actionSearch" />
 
             <LinearLayout
                 android:id="@+id/clearTextLL"
@@ -46,7 +49,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
+                <io.stipop.extend.StipopImageView
                     android:id="@+id/eraseIV"
                     android:layout_width="24dp"
                     android:layout_height="24dp"

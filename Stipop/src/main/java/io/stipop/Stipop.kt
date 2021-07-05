@@ -13,28 +13,35 @@ import io.stipop.activity.DetailActivity
 import io.stipop.activity.Keyboard
 import io.stipop.activity.SearchActivity
 import io.stipop.activity.StoreActivity
+import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
 import org.json.JSONObject
 import java.io.IOException
 
-class Stipop(private val activity: Activity, private val stipopButton: ImageView) {
+class Stipop(private val activity: Activity, private val stipopButton: StipopImageView) {
 
     companion object {
 
         @SuppressLint("StaticFieldLeak")
-        private var instance:Stipop? = null
+        var instance:Stipop? = null
 
         var userId = "-1"
+            private set
+
         var lang = "en"
+            private set
+
         var countryCode = "us"
+            private set
 
         var keyboardHeight = 0
+            private set
 
         fun configure(context:Context) {
             Config.configure(context)
         }
 
-        fun connect(activity: Activity, stipopButton:ImageView, userId:String, lang: String, countryCode:String) {
+        fun connect(activity: Activity, stipopButton:StipopImageView, userId:String, lang: String, countryCode:String) {
 
             Stipop.userId = userId
             Stipop.lang = lang
@@ -47,6 +54,23 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
             instance!!.connect()
         }
 
+        fun showSearch() {
+            if (instance == null) {
+                return
+            }
+
+            instance!!.showSearch()
+        }
+
+        fun showKeyboard() {
+            if (instance == null) {
+                return
+            }
+
+            instance!!.showKeyboard()
+        }
+
+        /*
         fun show() {
             if (instance == null) {
                 return
@@ -62,8 +86,9 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
 
             instance!!.detail(packageId)
         }
+        */
 
-        fun send(stickerId: Int, keyword: String, completionHandler: (result: Boolean) -> Unit) {
+        internal fun send(stickerId: Int, keyword: String, completionHandler: (result: Boolean) -> Unit) {
             println("send::::::::::::::::::::")
             if (instance == null) {
                 return
@@ -75,6 +100,7 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
     }
 
 
+    private var keyboard: Keyboard? = null
     private lateinit var rootView: View
 
 
@@ -85,6 +111,8 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
         this.stipopButton.setImageResource(R.mipmap.ic_sticker_normal)
 
         this.connected = true
+
+        this.enableStickerIcon()
 
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
 
@@ -104,8 +132,6 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
             val intent = Intent(this.activity, SearchActivity::class.java)
             this.activity.startActivity(intent)
         }
-
-
     }
 
     fun detail(packageId: Int) {
@@ -166,14 +192,38 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
 
     private fun enableStickerIcon() {
         if (this.connected) {
-            this.stipopButton.setImageResource(R.mipmap.ic_sticker_active)
+            // this.stipopButton.setImageResource(R.mipmap.ic_sticker_active)
+            this.stipopButton.setTint()
 
             this.stickerIconEnabled = true
         }
     }
 
+    private fun showSearch() {
+        if (!this.connected) {
+            return
+        }
+
+        val intent = Intent(this.activity, SearchActivity::class.java)
+        this.activity.startActivity(intent)
+    }
+
     private fun showKeyboard() {
-        Keyboard.show(this.activity)
+        if (!this.connected) {
+            return
+        }
+
+        if(keyboard == null) {
+            keyboard = Keyboard(this.activity)
+        }
+
+        if (keyboard!!.popupWindow.isShowing) {
+            this.keyboard!!.canShow = false
+            keyboard!!.hide()
+        } else {
+            this.keyboard!!.canShow = true
+            keyboard!!.show()
+        }
     }
 
 
@@ -191,19 +241,24 @@ class Stipop(private val activity: Activity, private val stipopButton: ImageView
 
             if (heightDifference > 100) {
                 keyboardHeight = heightDifference
+
+                if(this.keyboard != null) {
+                    this.keyboard!!.popupWindow.height = keyboardHeight
+                    this.keyboard!!.show()
+                }
+            } else {
+                if(this.keyboard != null) {
+                    this.keyboard!!.hide()
+                }
             }
         }
     }
 
     private fun getUsableScreenHeight(): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            val metrics = DisplayMetrics()
-            val windowManager = this.activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            windowManager.defaultDisplay.getMetrics(metrics)
-            metrics.heightPixels
-        } else {
-            this.rootView.rootView.height
-        }
+        val metrics = DisplayMetrics()
+        val windowManager = this.activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        windowManager.defaultDisplay.getMetrics(metrics)
+        return metrics.heightPixels
     }
 
 }

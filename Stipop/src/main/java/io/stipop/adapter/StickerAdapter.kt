@@ -8,6 +8,7 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import io.stipop.R
 import io.stipop.Utils
+import io.stipop.extend.StipopImageView
 import io.stipop.model.SPSticker
 import org.json.JSONObject
 
@@ -52,7 +53,7 @@ class StickerAdapter(context: Context, var view: Int, var data: ArrayList<SPStic
     }
 
     class ViewHolder(v: View) {
-        val imageIV: ImageView = v.findViewById(R.id.imageIV) as ImageView
+        val imageIV: StipopImageView = v.findViewById(R.id.imageIV) as StipopImageView
     }
 
 }

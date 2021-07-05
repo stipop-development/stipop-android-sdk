@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.*
+import io.stipop.extend.StipopImageView
 import io.stipop.extend.dragdrop.ItemTouchHelperViewHolder
 import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
 import io.stipop.fragment.MyStickerFragment
@@ -45,7 +46,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
         val containerLL: LinearLayout
 
-        val packageIV: ImageView
+        val packageIV: StipopImageView
         val packageNameTV: TextView
         val artistNameTV: TextView
 
@@ -53,12 +54,12 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
         val moveLL: LinearLayout
         val hideLL: LinearLayout
 
-        val moveIV: ImageView
-        val hideIV: ImageView
+        val moveIV: StipopImageView
+        val hideIV: StipopImageView
 
         val addLL: LinearLayout
 
-        val addIV: ImageView
+        val addIV: StipopImageView
 
         init {
             containerLL = view.findViewById(R.id.containerLL)

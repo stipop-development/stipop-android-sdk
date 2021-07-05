@@ -1,7 +1,10 @@
 package io.stipop.activity
 
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
@@ -13,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.adapter.*
+import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker
 import org.json.JSONObject
@@ -23,15 +27,15 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     private lateinit var rootView: View
 
     private lateinit var favoriteRL: RelativeLayout
-    private lateinit var recentlyIV: ImageView
-    private lateinit var favoriteIV: ImageView
-    private lateinit var recentPreviewOffIV: ImageView
-    private lateinit var storeIV: ImageView
+    private lateinit var recentlyIV: StipopImageView
+    private lateinit var favoriteIV: StipopImageView
+    private lateinit var recentPreviewOffIV: StipopImageView
+    private lateinit var storeIV: StipopImageView
 
     private lateinit var packageRV: RecyclerView
     private lateinit var stickerGV: GridView
     private lateinit var downloadLL: LinearLayout
-    private lateinit var packageIV: ImageView
+    private lateinit var packageIV: StipopImageView
     private lateinit var packageNameTV: TextView
     private lateinit var artistNameTV: TextView
     private lateinit var downloadTV: TextView
@@ -53,30 +57,32 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
     lateinit var preview: Preview
 
-    companion object {
-        fun show(activity: Activity) {
-            val keyboard = Keyboard(activity)
-            keyboard.show()
+    lateinit var popupWindow:PopupWindow
+    internal var canShow = true
+
+    init {
+        this.initPopup()
+    }
+
+    var reloadPackageReciver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (intent != null) {
+                reloadPackages()
+            }
         }
     }
 
-    fun show() {
-
-        if (Stipop.keyboardHeight == 0) {
-            return
-        }
+    private fun initPopup() {
 
         val view = View.inflate(this.activity, R.layout.keyboard,null)
 
-        val popupWindow = PopupWindow(
+        popupWindow = PopupWindow(
             view,
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            popupWindow.elevation = 10.0F
-        }
+        popupWindow.elevation = 10.0F
 
 
         // animations
@@ -263,9 +269,10 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             }
         }
 
-        loadPackages()
+        reloadPackages()
 
-
+        val broadcastIntentFilter = IntentFilter("${this.activity.packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION")
+        this.activity.registerReceiver(reloadPackageReciver, broadcastIntentFilter)
 
         ///////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////
@@ -274,6 +281,18 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
 
         // show
+        // this.showOrHide()
+    }
+
+    internal fun show() {
+        if (Stipop.keyboardHeight == 0) {
+            return
+        }
+
+        if (!this.canShow) {
+            return
+        }
+
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
         popupWindow.showAtLocation(
             this.rootView,
@@ -283,7 +302,18 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         )
     }
 
+    internal fun hide() {
+        if (Stipop.keyboardHeight == 0) {
+            return
+        }
+
+        popupWindow.dismiss()
+    }
+
     fun showStore(tab: Int) {
+
+        this.hide()
+
         val intent = Intent(this.activity, StoreActivity::class.java)
         intent.putExtra("tab", tab)
         this.activity.startActivity(intent)
@@ -321,7 +351,18 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         }
     }
 
+    private fun reloadPackages() {
+
+        packageData.clear()
+        packageAdapter.notifyDataSetChanged()
+
+        page = 1
+
+        loadPackages()
+    }
+
     private fun loadPackages() {
+
         val params = JSONObject()
         params.put("pageNumber", page)
         params.put("limit", 20)
@@ -351,17 +392,10 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
                     if (!body.isNull("packageList")) {
                         val packageList = body.getJSONArray("packageList")
-                        println(packageList.toString())
+                        // println(packageList.toString())
 
                         for (i in 0 until packageList.length()) {
                             packageData.add(SPPackage(packageList.get(i) as JSONObject))
-                        }
-
-                        packageAdapter.notifyDataSetChanged()
-
-                        if (selectedPackageId < 1 && packageData.size > 0) {
-                            selectedPackageId = packageData[0].packageId
-                            loadStickers()
                         }
                     }
                 }
@@ -369,6 +403,27 @@ class Keyboard(val activity: Activity) : PopupWindow() {
                 if (page == totalPage) {
                     packageData.add(SPPackage(-999))
                 }
+
+                var isSelectedTabValid = false
+                for (spPackage in packageData) {
+                    if (spPackage.packageId == selectedPackageId) {
+                        isSelectedTabValid = true
+                        break
+                    }
+                }
+
+                println("isSelectedTabValid : $isSelectedTabValid")
+
+                if (isSelectedTabValid) {
+                    if (selectedPackageId == -1) {
+                        loadRecently()
+                    }
+                } else {
+                    selectedPackageId = -1
+                    loadRecently()
+                }
+
+                packageAdapter.notifyDataSetChanged()
 
             } else {
                 e?.printStackTrace()
@@ -442,6 +497,8 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     private fun loadFavoriteRecently() {
         setThemeImageIcon()
 
+        selectedPackageId = -1
+
         // Favorite
         if (favoriteRL.tag == 1) {
             loadFavorite()
@@ -452,6 +509,8 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     }
 
     private fun loadFavorite() {
+
+        favoriteRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
         downloadLL.visibility = View.GONE
         stickerGV.visibility = View.VISIBLE
@@ -498,6 +557,9 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     }
 
     private fun loadRecently() {
+
+        favoriteRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
+
         downloadLL.visibility = View.GONE
         stickerGV.visibility = View.VISIBLE
 
@@ -510,8 +572,6 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             APIClient.APIPath.PACKAGE_SEND.rawValue + "/${Stipop.userId}",
             null
         ) { response: JSONObject?, e: IOException? ->
-
-            println(response)
 
             if (null != response) {
 
@@ -540,5 +600,13 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             }
 
         }
+    }
+
+
+    override fun dismiss() {
+        if (reloadPackageReciver != null) {
+            this.activity.unregisterReceiver(reloadPackageReciver)
+        }
+        super.dismiss()
     }
 }

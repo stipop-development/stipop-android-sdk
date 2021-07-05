@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
 import io.stipop.Utils
+import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
 import kotlinx.android.synthetic.main.activity_store.*
 import kotlin.math.roundToInt
@@ -30,7 +31,7 @@ class PopularStickerAdapter(private val dataList: ArrayList<SPPackage>, val cont
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val imageIV: ImageView
+        val imageIV: StipopImageView
         val backgroundLL: LinearLayout
 
         init {

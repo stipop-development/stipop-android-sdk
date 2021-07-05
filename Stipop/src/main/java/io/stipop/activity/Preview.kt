@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.*
 import com.bumptech.glide.Glide
 import io.stipop.*
+import io.stipop.extend.StipopImageView
 import io.stipop.model.SPSticker
 import org.json.JSONObject
 import java.io.IOException
@@ -15,8 +16,8 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
 
     private lateinit var rootView: View
 
-    private lateinit var stickerIV: ImageView
-    private lateinit var favoriteIV: ImageView
+    private lateinit var stickerIV: StipopImageView
+    private lateinit var favoriteIV: StipopImageView
 
     var sticker = SPSticker()
 
@@ -45,6 +46,8 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
         }
 
 
+        view.findViewById<ImageView>(R.id.closeIV).setImageResource(Config.getPreviewCloseResourceId(activity))
+
         favoriteIV = view.findViewById(R.id.favoriteIV)
         stickerIV = view.findViewById(R.id.stickerIV)
 
@@ -60,7 +63,7 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
             this.rootView,
             Gravity.BOTTOM,
             0,
-            Stipop.keyboardHeight + Utils.getNavigationBarSize(this.activity).y
+            Stipop.keyboardHeight + Config.previewPadding + Utils.getNavigationBarSize(this.activity).y
         )
     }
 
@@ -79,11 +82,7 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
     fun setStickerView() {
         Glide.with(this.activity).load(sticker.stickerImg).into(stickerIV)
 
-        if (sticker.favoriteYN == "Y") {
-            favoriteIV.setImageResource(R.mipmap.ic_favorites_on)
-        } else {
-            favoriteIV.setImageResource(R.mipmap.ic_favorites_off)
-        }
+        setFavoriteImage()
     }
 
     fun setFavorite() {
@@ -100,12 +99,12 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
 
                 if (Utils.getString(header, "status") == "success") {
                     if (sticker.favoriteYN != "Y") {
-                        favoriteIV.setImageResource(R.mipmap.ic_favorites_on)
                         sticker.favoriteYN = "Y"
                     } else {
-                        favoriteIV.setImageResource(R.mipmap.ic_favorites_off)
                         sticker.favoriteYN = "N"
                     }
+
+                    setFavoriteImage()
 
                     keyboard.changeFavorite(sticker.stickerId, sticker.favoriteYN, sticker.packageId)
 
@@ -118,6 +117,10 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
             }
         }
 
+    }
+
+    fun setFavoriteImage() {
+        Config.getPreviewFavoriteResourceId(activity, sticker.favoriteYN == "Y")
     }
 
 }

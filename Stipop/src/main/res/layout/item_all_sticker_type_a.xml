@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <TextView
+                <io.stipop.extend.StipopTextView
                     android:id="@+id/packageNameTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
                     android:lineHeight="22sp"
                     android:text="JalGOM's Toon(Ver.1)"/>
 
-                <TextView
+                <io.stipop.extend.StipopTextView
                     android:id="@+id/artistNameTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -48,28 +48,28 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
 
-                <ImageView
+                <io.stipop.extend.StipopImageView
                     android:id="@+id/image1IV"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
                     android:layout_marginRight="8dp"
                     android:scaleType="centerCrop" />
 
-                <ImageView
+                <io.stipop.extend.StipopImageView
                     android:id="@+id/image2IV"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
                     android:layout_marginRight="8dp"
                     android:scaleType="centerCrop" />
 
-                <ImageView
+                <io.stipop.extend.StipopImageView
                     android:id="@+id/image3IV"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
                     android:layout_marginRight="8dp"
                     android:scaleType="centerCrop"/>
 
-                <ImageView
+                <io.stipop.extend.StipopImageView
                     android:id="@+id/image4IV"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
@@ -86,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
-            <ImageView
+            <io.stipop.extend.StipopImageView
                 android:id="@+id/downloadIV"
                 android:layout_width="24dp"
                 android:layout_height="24dp"

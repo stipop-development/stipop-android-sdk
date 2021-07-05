@@ -5,6 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import io.stipop.Stipop
+import io.stipop.extend.StipopImageView
 
 class MainActivity : AppCompatActivity() {
 
@@ -12,20 +13,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val packageDetailTV = findViewById<TextView>(R.id.packageDetailTV)
-
-
-        val stipopIV = findViewById<ImageView>(R.id.stipopIV)
+        val stipopIV = findViewById<StipopImageView>(R.id.stipopIV)
 
         Stipop.connect(this, stipopIV, "1234", "en", "US")
 
         stipopIV.setOnClickListener {
-            Stipop.show()
+            // Stipop.showSearch()
+            Stipop.showKeyboard()
         }
-
-        packageDetailTV.setOnClickListener {
-            Stipop.detail(1234)
-        }
-
     }
 }

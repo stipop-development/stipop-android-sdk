@@ -2,9 +2,9 @@ package io.stipop
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.alpha
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
@@ -26,10 +26,12 @@ class Config {
 
         var themeIconColor = "#414141"
         var themeIconTintColor = "#FF5D1E"
+        var themeIconTintColorDark = "#FF855B"
 
         var fontFamily = "system"
-        var fontWeight = "regular"
-        var fontCharacter = 0
+        var fontWeight = 400
+        var fontCharacter:Float = 0.0f
+        var fontFace:Typeface? = null
 
         var searchbarRadius = 10
         var searchNumOfColumns = 3
@@ -80,7 +82,7 @@ class Config {
 
             try {
                 val json = JSONObject(jsonString)
-                parse(json)
+                parse(context, json)
             } catch (e: JSONException) {
                 e.printStackTrace()
 
@@ -106,7 +108,7 @@ class Config {
             return jsonString
         }
 
-        private fun parse(json: JSONObject) {
+        private fun parse(context: Context, json: JSONObject) {
             apikey = Utils.getString(json, "api_key")
 
             val theme = json.optJSONObject("Theme")
@@ -123,9 +125,50 @@ class Config {
             val font = theme?.optJSONObject("font")
 
             // font
-            fontFamily = Utils.getString(font, "family", "system")
-            fontWeight = Utils.getString(font, "weight", "regular")
-            fontCharacter = Utils.getInt(font, "character", 0)
+            fontFamily = Utils.getString(font, "family", "system").lowercase()
+            fontWeight = Utils.getInt(font, "weight", 400)
+            fontCharacter = Utils.getFloat(font, "character")
+
+
+            // weight
+            /*
+            100    Extra Light or Ultra Light
+            200    Light or Thin
+            300    Book or Demi
+            400    Normal or Regular
+            500    Medium
+            600    Semibold, Demibold
+            700    Bold
+            800    Black, Extra Bold or Heavy
+            900    Extra Black, Fat, Poster or Ultra Black
+            */
+            var builder:Typeface.Builder? = null
+            try {
+                builder = Typeface.Builder(context.assets, fontFamily)
+                builder.setFontVariationSettings("'wght' $fontWeight, 'slnt' 20, 'ital' 0")
+                builder.setWeight(fontWeight) // Tell the system that this is a bold font.
+                fontFace = builder.build()
+            } catch (e:Exception) {}
+
+            if (fontFace == null) {
+                try {
+                    builder = Typeface.Builder(context.assets, "$fontFamily.ttf")
+                    builder.setFontVariationSettings("'wght' $fontWeight, 'slnt' 20, 'ital' 0")
+                    builder.setWeight(fontWeight) // Tell the system that this is a bold font.
+                    fontFace = builder.build()
+                } catch (e:Exception) {}
+
+                if (fontFace == null) {
+                    try {
+                        builder = Typeface.Builder(context.assets, "$fontFamily.otf")
+                        builder.setFontVariationSettings("'wght' $fontWeight, 'slnt' 20, 'ital' 0")
+                        builder.setWeight(fontWeight) // Tell the system that this is a bold font.
+                        fontFace = builder.build()
+                    } catch (e:Exception) {}
+                }
+            }
+
+
 
 
             stickerIconNormalName = Utils.getString(json, "StickerIcon", "ic_sticker_normal")
@@ -189,7 +232,8 @@ class Config {
                 themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, LIGHT_KEY, "#F7F8F9")
                 themeMainColor = Utils.getString(mainColor, LIGHT_KEY, "#FF501E")
                 themeIconColor = Utils.getString(normalColor, LIGHT_KEY, "#414141")
-                themeIconTintColor = Utils.getString(normalColor, LIGHT_KEY, this.themeMainColor)
+                themeIconTintColor = Utils.getString(normalColor, LIGHT_KEY, "#FF5D1E")
+                themeIconTintColorDark = Utils.getString(tintColor, LIGHT_KEY, "#FF855B")
 
                 previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, LIGHT_KEY, "ic_favorites_on")
                 previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, LIGHT_KEY, "ic_favorites_off")
@@ -199,7 +243,8 @@ class Config {
                 themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, DARK_KEY, "#2E363A")
                 themeMainColor = Utils.getString(mainColor, DARK_KEY, "#FF8558")
                 themeIconColor = Utils.getString(normalColor, DARK_KEY, "#646F7C")
-                themeIconTintColor = Utils.getString(normalColor, DARK_KEY, this.themeMainColor)
+                themeIconTintColor = Utils.getString(normalColor, LIGHT_KEY, "#FF5D1E")
+                themeIconTintColorDark = Utils.getString(tintColor, LIGHT_KEY, "#FF855B")
 
                 previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, DARK_KEY, "ic_favorites_on")
                 previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, DARK_KEY, "ic_favorites_off")
@@ -295,6 +340,28 @@ class Config {
             var imageId = R.mipmap.ic_close
             if (detailCloseIconName.isNotEmpty()) {
                 imageId = Utils.getResource(detailCloseIconName, context)
+            }
+            return imageId
+        }
+
+        fun getPreviewFavoriteResourceId(context: Context, favorite: Boolean): Int {
+            var imageId = R.mipmap.ic_favorites_off
+            if (previewFavoritesOffIconName.isNotEmpty()) {
+                imageId = Utils.getResource(previewFavoritesOffIconName, context)
+            }
+            if (favorite) {
+                imageId = R.mipmap.ic_favorites_on
+                if (previewFavoritesOnIconName.isNotEmpty()) {
+                    imageId = Utils.getResource(previewFavoritesOnIconName, context)
+                }
+            }
+            return imageId
+        }
+
+        fun getPreviewCloseResourceId(context: Context): Int {
+            var imageId = R.mipmap.ic_cancel
+            if (previewCloseIconName.isNotEmpty()) {
+                imageId = Utils.getResource(previewCloseIconName, context)
             }
             return imageId
         }

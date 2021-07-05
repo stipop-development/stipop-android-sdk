@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.core.view.marginRight
 import com.bumptech.glide.Glide
 import io.stipop.*
+import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
 import kotlinx.android.synthetic.main.activity_detail.*
 import org.json.JSONObject
@@ -98,10 +99,10 @@ class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayLi
     }
 
     class ViewHolder(v: View) {
-        val packageIV: ImageView? = v.findViewById(R.id.packageIV) as ImageView?
+        val packageIV: StipopImageView? = v.findViewById(R.id.packageIV) as StipopImageView?
         val packageNameTV: TextView = v.findViewById(R.id.packageNameTV) as TextView
         val artistNameTV: TextView = v.findViewById(R.id.artistNameTV) as TextView
-        val downloadIV: ImageView = v.findViewById(R.id.downloadIV) as ImageView
+        val downloadIV: StipopImageView = v.findViewById(R.id.downloadIV) as StipopImageView
 
         val stickersLL: LinearLayout? = v.findViewById(R.id.stickersLL) as LinearLayout?
     }

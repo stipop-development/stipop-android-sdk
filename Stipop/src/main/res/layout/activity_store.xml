@@ -28,7 +28,7 @@
                 android:orientation="vertical"
                 android:gravity="center">
 
-                <TextView
+                <io.stipop.extend.StipopTextView
                     android:id="@+id/allTV"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -55,7 +55,7 @@
                 android:orientation="vertical"
                 android:gravity="center">
 
-                <TextView
+                <io.stipop.extend.StipopTextView
                     android:id="@+id/myTV"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"

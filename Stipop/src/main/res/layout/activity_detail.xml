@@ -24,7 +24,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
+                <io.stipop.extend.StipopImageView
                     android:id="@+id/backIV"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -43,7 +43,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <ImageView
+                <io.stipop.extend.StipopImageView
                     android:id="@+id/closeIV"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -61,7 +61,7 @@
             android:paddingBottom="13dp"
             android:background="#FFFFFF">
 
-            <ImageView
+            <io.stipop.extend.StipopImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_alignParentRight="true"
@@ -76,12 +76,12 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+                <io.stipop.extend.StipopImageView
                     android:id="@+id/packageIV"
                     android:layout_width="100dp"
                     android:layout_height="100dp"/>
 
-                <TextView
+                <io.stipop.extend.StipopTextView
                     android:id="@+id/packageNameTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
                     android:textStyle="bold"
                     android:text="Olli's Camping Message" />
 
-                <TextView
+                <io.stipop.extend.StipopTextView
                     android:id="@+id/artistNameTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
                     android:textStyle="bold"
                     android:text="©twistolive" />
 
-                <TextView
+                <io.stipop.extend.StipopTextView
                     android:id="@+id/downloadTV"
                     android:layout_width="match_parent"
                     android:layout_height="44dp"

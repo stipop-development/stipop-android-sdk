@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
+        <io.stipop.extend.StipopTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -18,7 +18,7 @@
             android:textStyle="bold"
             android:text="Recent Search"/>
 
-        <TextView
+        <io.stipop.extend.StipopTextView
             android:id="@+id/keywordClearTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

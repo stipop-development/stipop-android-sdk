@@ -26,7 +26,7 @@
 		},
 		"font" : {
 			"family": "Pacifico",
-			"weight": "black",
+			"weight": 400,
 			"character": 0
 		}
 	},
@@ -49,7 +49,7 @@
 		"listType": "singular",
 		"downloadIcon": "ic_download",
 		"completeIcon": "ic_downloaded",
-		"bottomOfSearch": "popularStickers"
+		"bottomOfSearch": "recommendedTags"
 	},
 	"MySticker": {
 		"orderIcon": "ic_move",
@@ -73,7 +73,7 @@
 	},
 	"Send": {
 		"preview": true,
-		"previewPadding": 100,
+		"previewPadding": 150,
 		"favoritesOnIcon": {
 			"light" : "ic_favorites_on",
 			"dark" : "ic_favorites_on"
