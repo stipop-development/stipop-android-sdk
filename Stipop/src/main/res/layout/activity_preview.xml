@@ -19,14 +19,14 @@
 
             <ImageView
                 android:id="@+id/favoriteIV"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@mipmap/ic_favorites_off"/>
 
             <ImageView
                 android:id="@+id/closeIV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@mipmap/ic_cancel"/>
 
         </LinearLayout>
