@@ -15,8 +15,7 @@
             android:layout_weight="1"
             android:layout_marginLeft="9dp"
             android:textSize="16sp"
-            android:textColor="#374553"
-            android:text="thank you"/>
+            android:textColor="#374553"/>
 
         <LinearLayout
             android:id="@+id/removeLL"

@@ -4,4 +4,20 @@
     <string name="bottom_alert_contents">Do you want to hide the sticker pack? You can always re-download hidden stickers later.</string>
     <string name="cancel">Cancel</string>
     <string name="hide">Hide</string>
+    <string name="downloaded">DOWNLOADED</string>
+    <string name="download">DOWNLOAD</string>
+    <string name="search">Search..</string>
+    <string name="all_stickers">All Stickers</string>
+    <string name="my_sticker">My Sticker</string>
+    <string name="popular_stickers">Popular Stickers</string>
+    <string name="recommended_tag">Recommended tag</string>
+    <string name="view_hidden_stickers">View Hidden Stickers</string>
+    <string name="view_active_stickers">View Active Stickers</string>
+    <string name="no_result">No results</string>
+    <string name="trending">Trending</string>
+    <string name="stickers">Stickers</string>
+    <string name="recent_search">Recent Search</string>
+    <string name="clear">Clear</string>
+    <string name="download_done">다운로드 완료!</string>
+    <string name="can_not_download">"Can not download!!!"</string>
 </resources>

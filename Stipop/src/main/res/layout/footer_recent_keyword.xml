@@ -39,7 +39,7 @@
                 android:textSize="14sp"
                 android:textColor="#c6c8cf"
                 android:textStyle="bold"
-                android:text="Popular Stickers"/>
+                android:text="@string/popular_stickers"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/popularStickerRV"
@@ -63,7 +63,7 @@
                 android:textSize="14sp"
                 android:textColor="#c6c8cf"
                 android:textStyle="bold"
-                android:text="Recommended tag"/>
+                android:text="@string/recommended_tag"/>
 
             <io.stipop.extend.TagLayout
                 android:id="@+id/recommendedTagsTL"

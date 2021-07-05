@@ -40,38 +40,22 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val containerLL: LinearLayout
+        val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
 
-        val packageIV: StipopImageView
-        val packageNameTV: TextView
-        val artistNameTV: TextView
+        val packageIV: StipopImageView = view.findViewById(R.id.packageIV)
+        val packageNameTV: TextView = view.findViewById(R.id.packageNameTV)
+        val artistNameTV: TextView = view.findViewById(R.id.artistNameTV)
 
-        val isViewLL: LinearLayout
-        val moveLL: LinearLayout
-        val hideLL: LinearLayout
+        val isViewLL: LinearLayout = view.findViewById(R.id.isViewLL)
+        val moveLL: LinearLayout = view.findViewById(R.id.moveLL)
+        val hideLL: LinearLayout = view.findViewById(R.id.hideLL)
 
-        val moveIV: StipopImageView
-        val hideIV: StipopImageView
+        val moveIV: StipopImageView = view.findViewById(R.id.moveIV)
+        val hideIV: StipopImageView = view.findViewById(R.id.hideIV)
 
-        val addLL: LinearLayout
+        val addLL: LinearLayout = view.findViewById(R.id.addLL)
 
-        val addIV: StipopImageView
-
-        init {
-            containerLL = view.findViewById(R.id.containerLL)
-
-            moveLL = view.findViewById(R.id.moveLL)
-            packageIV = view.findViewById(R.id.packageIV)
-            packageNameTV = view.findViewById(R.id.packageNameTV)
-            artistNameTV = view.findViewById(R.id.artistNameTV)
-            isViewLL = view.findViewById(R.id.isViewLL)
-            hideLL = view.findViewById(R.id.hideLL)
-            moveIV = view.findViewById(R.id.moveIV)
-            hideIV = view.findViewById(R.id.hideIV)
-            addLL = view.findViewById(R.id.addLL)
-            addIV = view.findViewById(R.id.addIV)
-        }
-
+        val addIV: StipopImageView = view.findViewById(R.id.addIV)
     }
 
     // Create new views (invoked by the layout manager)
@@ -101,8 +85,8 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
         Glide.with(context).load(spPackage.packageImg).into(holder.packageIV)
 
-        holder.artistNameTV.setText(spPackage.artistName)
-        holder.packageNameTV.setText(spPackage.packageName)
+        holder.artistNameTV.text = spPackage.artistName
+        holder.packageNameTV.text = spPackage.packageName
 
         holder.isViewLL.visibility = View.GONE
         holder.addLL.visibility = View.GONE
@@ -184,9 +168,6 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
     }
 
     override fun finishedDragAndDrop() {
-
-        println("this.fromPosition: " + this.fromPosition)
-        println("this.toPosition: " + this.toPosition)
 
         if (this.fromPosition < 0 || this.toPosition < 0 && this.fromPosition == this.toPosition) {
             this.fromPosition = -1

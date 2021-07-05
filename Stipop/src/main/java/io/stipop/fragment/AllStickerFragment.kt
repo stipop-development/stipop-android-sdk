@@ -1,13 +1,10 @@
 package io.stipop.fragment
 
 import android.app.Activity
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -20,7 +17,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.AbsListView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,6 +32,7 @@ import io.stipop.adapter.RecentKeywordAdapter
 import io.stipop.extend.RecyclerDecoration
 import io.stipop.extend.TagLayout
 import io.stipop.model.SPPackage
+import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import org.json.JSONObject
 import java.io.IOException
@@ -73,21 +70,6 @@ class AllStickerFragment : Fragment() {
     var inputKeyword = ""
 
 
-    private var downloadReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent?) {
-            if (intent != null) {
-
-                val idx = intent.getIntExtra("idx", -1)
-                val package_id = intent.getIntExtra("package_id", -1)
-
-                if(idx != -1) {
-                    getPackInfo(idx, package_id)
-                }
-            }
-        }
-    }
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -101,9 +83,6 @@ class AllStickerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val filter1 = IntentFilter("SET_DOWNLOAD")
-        myContext.registerReceiver(downloadReceiver, filter1)
 
         val drawable = searchbarLL.background as GradientDrawable
         drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
@@ -199,10 +178,10 @@ class AllStickerFragment : Fragment() {
 
         if (Config.storeListType == "singular") {
             // B Type
-            allStickerAdapter = AllStickerAdapter(myContext, R.layout.item_all_sticker_type_b, allStickerData)
+            allStickerAdapter = AllStickerAdapter(myContext, R.layout.item_all_sticker_type_b, allStickerData, this)
         } else {
             // A Type
-            allStickerAdapter = AllStickerAdapter(myContext, R.layout.item_all_sticker_type_a, allStickerData)
+            allStickerAdapter = AllStickerAdapter(myContext, R.layout.item_all_sticker_type_a, allStickerData, this)
         }
 
         stickerLV.adapter = allStickerAdapter
@@ -460,12 +439,13 @@ class AllStickerFragment : Fragment() {
         }
     }
 
-    private fun getPackInfo(idx: Int, packageId: Int) {
+    fun getPackInfo(idx: Int, packageId: Int) {
 
         val params = JSONObject()
         params.put("userId", Stipop.userId)
 
-        APIClient.get(activity as Activity, APIClient.APIPath.PACKAGE.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
+        APIClient.get(activity as Activity, APIClient.APIPath.PACKAGE.rawValue + "/${packageId}", params) { response: JSONObject?, e: IOException? ->
+            println(response)
 
             if (null != response) {
 
@@ -477,13 +457,7 @@ class AllStickerFragment : Fragment() {
 
                     val spPackage = SPPackage(packageObj)
 
-                    val packageAnimated = spPackage.packageAnimated
-
-                    if (packageAnimated != null) {
-                        downloadPackage(idx, packageId, spPackage, packageAnimated)
-                    } else {
-                        downloadPackage(idx, packageId, spPackage, "N")
-                    }
+                    downloadPackage(idx, spPackage)
                 }
 
             } else {
@@ -493,7 +467,7 @@ class AllStickerFragment : Fragment() {
 
     }
 
-    private fun downloadPackage(idx: Int, packageId: Int, spPackage: SPPackage, packageAnimated: String) {
+    fun downloadPackage(idx: Int, spPackage: SPPackage) {
 
         val params = JSONObject()
         params.put("userId", Stipop.userId)
@@ -505,14 +479,14 @@ class AllStickerFragment : Fragment() {
             // 움직이지 않는 스티커
             var price = Config.pngPrice
 
-            if (packageAnimated == "Y") {
+            if (spPackage.packageAnimated == "Y") {
                 // 움직이는 스티커
                 price = Config.gifPrice
             }
             params.put("price", price)
         }
 
-        APIClient.post(activity as Activity, APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
+        APIClient.post(activity as Activity, APIClient.APIPath.DOWNLOAD.rawValue + "/${spPackage.packageId}", params) { response: JSONObject?, e: IOException? ->
 
             if (null != response) {
 
@@ -533,36 +507,6 @@ class AllStickerFragment : Fragment() {
             }
         }
     }
-
-//    fun downloadPackage(packageId: Int) {
-//
-//        var params = JSONObject()
-//        params.put("userId", Stipop.userId)
-//        params.put("isPurchase", Config.allowPremium)
-//
-//        APIClient.post(
-//            activity as Activity,
-//            APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId",
-//            params
-//        ) { response: JSONObject?, e: IOException? ->
-//            println(response)
-//
-//            if (null != response) {
-//
-//                val header = response.getJSONObject("header")
-//
-//                if (Utils.getString(header, "status") == "success") {
-//                    Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
-//
-//                    downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
-//                }
-//
-//            } else {
-//
-//            }
-//        }
-//
-//    }
 
     fun getRecentKeyword() {
 
@@ -597,8 +541,6 @@ class AllStickerFragment : Fragment() {
                     }
 
                 }
-
-            } else {
 
             }
         }
@@ -756,5 +698,4 @@ class AllStickerFragment : Fragment() {
             stickerLV.visibility = View.VISIBLE
         }
     }
-
 }

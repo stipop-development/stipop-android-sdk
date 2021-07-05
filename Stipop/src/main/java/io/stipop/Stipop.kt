@@ -93,12 +93,10 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         */
 
         internal fun send(stickerId: Int, keyword: String, completionHandler: (result: Boolean) -> Unit) {
-            println("send::::::::::::::::::::")
             if (instance == null) {
                 return
             }
 
-            println("send::::::::::::::::::::true")
             instance!!.send(stickerId, keyword, completionHandler)
         }
     }
@@ -150,12 +148,9 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
     }
 
     fun send(stickerId: Int, searchKeyword: String, completionHandler: (result: Boolean) -> Unit) {
-        println("send==============================")
         if (!this.connected) {
             return
         }
-
-        println("send==============================true")
 
         val params = JSONObject()
         params.put("userId", userId)
@@ -163,15 +158,11 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         params.put("lang", lang)
         params.put("countryCode", countryCode)
 
-        println("send==============================params: " + params)
-
         APIClient.post(
             activity,
             APIClient.APIPath.ANALYTICS_SEND.rawValue + "/${stickerId}",
             params
         ) { response: JSONObject?, e: IOException? ->
-
-            println(response)
 
             if (null != response) {
                 var success = true

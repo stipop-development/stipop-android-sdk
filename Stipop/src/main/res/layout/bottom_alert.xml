@@ -61,7 +61,7 @@
             android:textColor="#2d8cbf"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:text="Hide"/>
+            android:text="@string/hide"/>
 
     </LinearLayout>
 

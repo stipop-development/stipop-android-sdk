@@ -31,15 +31,8 @@ class PackageAdapter(private val dataList: ArrayList<SPPackage>, val context: Co
     private var mListener: OnItemClickListener? = null
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        val imageIV: StipopImageView
-        val backgroundLL: LinearLayout
-
-        init {
-            imageIV = view.findViewById(R.id.imageIV)
-            backgroundLL = view.findViewById(R.id.backgroundLL)
-        }
-
+        val imageIV: StipopImageView = view.findViewById(R.id.imageIV)
+        val backgroundLL: LinearLayout = view.findViewById(R.id.backgroundLL)
     }
 
     // Create new views (invoked by the layout manager)

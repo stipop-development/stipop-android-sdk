@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.AbsListView
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.stipop.*
@@ -143,7 +142,7 @@ class SearchActivity: Activity() {
         search("")
     }
 
-    fun getKeyword() {
+    private fun getKeyword() {
         keywords.clear()
 
         APIClient.get(this, APIClient.APIPath.SEARCH_KEYWORD.rawValue, null) { response: JSONObject?, e: IOException? ->
@@ -162,8 +161,6 @@ class SearchActivity: Activity() {
 
                 }
 
-            } else {
-
             }
 
             keywordAdapter.notifyDataSetChanged()
@@ -172,9 +169,9 @@ class SearchActivity: Activity() {
 
     }
 
-    fun search(keyword: String) {
+    private fun search(keyword: String) {
 
-        var params = JSONObject()
+        val params = JSONObject()
         params.put("userId", Stipop.userId)
         params.put("lang", Stipop.lang)
         params.put("countryCode", Stipop.countryCode)
@@ -213,8 +210,6 @@ class SearchActivity: Activity() {
                     }
 
                 }
-
-            } else {
 
             }
 

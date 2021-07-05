@@ -7,20 +7,14 @@ import android.graphics.ColorMatrixColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.Utils
 import io.stipop.activity.Keyboard
 import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
-import org.json.JSONObject
 
 
 class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var context: Context, var keyboard: Keyboard):
@@ -33,15 +27,8 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
     private var mListener: OnItemClickListener? = null
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        val imageIV: StipopImageView
-        val containerLL: LinearLayout
-
-        init {
-            imageIV = view.findViewById(R.id.imageIV)
-            containerLL = view.findViewById(R.id.containerLL)
-        }
-
+        val imageIV: StipopImageView = view.findViewById(R.id.imageIV)
+        val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
     }
 
     // Create new views (invoked by the layout manager)

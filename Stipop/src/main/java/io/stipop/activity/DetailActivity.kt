@@ -54,9 +54,6 @@ class DetailActivity: Activity() {
         closeIV.setIconDefaultsColor()
 
 
-        val drawable2 = downloadTV.background as GradientDrawable
-        drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
-
         stickerGV.numColumns = Config.detailNumOfColumns
 
 
@@ -65,14 +62,13 @@ class DetailActivity: Activity() {
 
         downloadTV.setOnClickListener {
             if (downloadTV.tag as Boolean) {
-                // Toast.makeText(context, "이미 다운로드한 스티커입니다!", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
             if (Stipop.instance!!.delegate.canDownload(this.spPackage)) {
                 downloadPackage()
             } else {
-                Utils.alert(this, "Can not download!!!")
+                Utils.alert(this, getString(R.string.can_not_download))
             }
 
         }
@@ -116,10 +112,13 @@ class DetailActivity: Activity() {
 
                     if (this.spPackage.isDownload) {
                         downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
-                        downloadTV.text = "DOWNLOADED"
+                        downloadTV.text = getString(R.string.downloaded)
                     } else {
                         downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background)
-                        downloadTV.text = "DOWNLOAD"
+                        downloadTV.text = getString(R.string.download)
+
+                        val drawable2 = downloadTV.background as GradientDrawable
+                        drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
                     }
 
                     downloadTV.tag = this.spPackage.isDownload
@@ -168,10 +167,10 @@ class DetailActivity: Activity() {
 
                     // download
                     PackUtils.downloadAndSaveLocal(this, this.spPackage) {
-                        downloadTV.text = "DOWNLOADED"
+                        downloadTV.text = getString(R.string.downloaded)
                         downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
 
-                        Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, getString(R.string.download_done), Toast.LENGTH_LONG).show()
                     }
                 }
 

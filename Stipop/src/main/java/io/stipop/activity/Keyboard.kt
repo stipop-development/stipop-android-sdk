@@ -291,6 +291,8 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             return
         }
 
+        reloadPackages()
+
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
         popupWindow.showAtLocation(
             this.rootView,
@@ -425,10 +427,12 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
                 if (isSelectedTabValid) {
                     if (selectedPackageId == -1) {
+                        stickerPage = 1
                         loadRecently()
                     }
                 } else {
                     selectedPackageId = -1
+                    stickerPage = 1
                     loadRecently()
                 }
 
@@ -536,6 +540,11 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
             println(response)
 
+            if (stickerPage == 1) {
+                stickerData.clear()
+                stickerAdapter.notifyDataSetChanged()
+            }
+
             if (null != response) {
 
                 val header = response.getJSONObject("header")
@@ -566,7 +575,6 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     }
 
     private fun loadRecently() {
-
         favoriteRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
         downloadLL.visibility = View.GONE
@@ -581,6 +589,11 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             APIClient.APIPath.PACKAGE_SEND.rawValue + "/${Stipop.userId}",
             null
         ) { response: JSONObject?, e: IOException? ->
+
+            if (stickerPage == 1) {
+                stickerData.clear()
+                stickerAdapter.notifyDataSetChanged()
+            }
 
             if (null != response) {
 

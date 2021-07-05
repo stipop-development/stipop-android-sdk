@@ -38,7 +38,7 @@
                 android:layout_weight="1"
                 android:inputType="text"
                 android:maxLines="1"
-                android:hint="Search.."
+                android:hint="@string/search"
                 android:textColorHint="#646f7c"
                 android:background="@null"
                 android:imeOptions="actionSearch" />

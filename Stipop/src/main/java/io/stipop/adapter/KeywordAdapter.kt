@@ -23,13 +23,7 @@ class KeywordAdapter(private val dataList: ArrayList<JSONObject>):
     private var mListener: OnItemClickListener? = null
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        val keywordTV: TextView
-
-        init {
-            keywordTV = view.findViewById(R.id.keywordTV)
-        }
-
+        val keywordTV: TextView = view.findViewById(R.id.keywordTV)
     }
 
     // Create new views (invoked by the layout manager)

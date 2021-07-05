@@ -1960,11 +1960,8 @@ public class Utils {
     public static int getResource(String imageName, Context context) {
         int id = context.getResources().getIdentifier(imageName, "mipmap", context.getPackageName());
         if (id < 1) {
-            System.out.println("getResource id < 1 ");
-
             id = Config.Companion.getErrorImage();
         }
-        System.out.println("getResource id: " + id);
         return id;
     }
 

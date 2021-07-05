@@ -16,7 +16,7 @@
             android:textColor="#c6c8cf"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:text="Recent Search"/>
+            android:text="@string/recent_search"/>
 
         <io.stipop.extend.StipopTextView
             android:id="@+id/keywordClearTV"
@@ -25,7 +25,7 @@
             android:padding="10dp"
             android:textColor="#343c4b"
             android:textSize="12sp"
-            android:text="Clear"/>
+            android:text="@string/clear"/>
 
     </LinearLayout>
 

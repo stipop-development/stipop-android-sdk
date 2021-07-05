@@ -34,7 +34,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="All Stickers"
+                    android:text="@string/all_stickers"
                     android:textColor="#374553"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -64,7 +64,7 @@
                     android:textColor="#c6c8cf"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:text="My Sticker"/>
+                    android:text="@string/my_sticker"/>
 
                 <View
                     android:id="@+id/myV"

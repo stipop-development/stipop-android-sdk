@@ -30,15 +30,8 @@ class PopularStickerAdapter(private val dataList: ArrayList<SPPackage>, val cont
     private var mListener: OnItemClickListener? = null
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        val imageIV: StipopImageView
-        val backgroundLL: LinearLayout
-
-        init {
-            imageIV = view.findViewById(R.id.imageIV)
-            backgroundLL = view.findViewById(R.id.backgroundLL)
-        }
-
+        val imageIV: StipopImageView = view.findViewById(R.id.imageIV)
+        val backgroundLL: LinearLayout = view.findViewById(R.id.backgroundLL)
     }
 
     // Create new views (invoked by the layout manager)

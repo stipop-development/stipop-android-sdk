@@ -37,7 +37,7 @@ class RecentKeywordAdapter(var myContext: Context, var view: Int, var data: Arra
             }
         }
 
-        val keyword = data.get(position)
+        val keyword = data[position]
 
         item.keywordTV.text = keyword
 

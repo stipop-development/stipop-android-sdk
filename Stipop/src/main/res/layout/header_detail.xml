@@ -61,7 +61,7 @@
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:text="DOWNLOAD"
+                android:text="@string/download"
                 android:background="@drawable/detail_download_btn_background"/>
 
         </LinearLayout>

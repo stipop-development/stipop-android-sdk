@@ -97,12 +97,12 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         totalPage = 1
 
         if (stickerTypeTV.tag == 1) {
-            stickerTypeTV.text = "View Hidden Stickers"
+            stickerTypeTV.text = getString(R.string.view_hidden_stickers)
             stickerTypeTV.setBackgroundColor(Config.getHiddenStickerBackgroundColor(myContext))
 
             loadMySticker()
         } else {
-            stickerTypeTV.text = "View Active Stickers"
+            stickerTypeTV.text = getString(R.string.view_active_stickers)
             stickerTypeTV.setBackgroundColor(Config.getActiveStickerBackgroundColor(myContext))
 
             loadMyHiddenSticker()

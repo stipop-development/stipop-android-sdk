@@ -1,22 +1,17 @@
 package io.stipop.adapter
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.view.marginRight
 import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.extend.StipopImageView
+import io.stipop.fragment.AllStickerFragment
 import io.stipop.model.SPPackage
-import kotlinx.android.synthetic.main.activity_detail.*
-import org.json.JSONObject
-import java.io.IOException
 
-class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayList<SPPackage>): ArrayAdapter<SPPackage>(myContext, view, data) {
+class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayList<SPPackage>, var allStickerFragment: AllStickerFragment): ArrayAdapter<SPPackage>(myContext, view, data) {
 
     private lateinit var item: ViewHolder
 
@@ -32,7 +27,7 @@ class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayLi
             item = convertView.tag as ViewHolder
         }
 
-        val packageObj = data.get(position)
+        val packageObj = data[position]
 
         item.packageNameTV.setTextColor(Config.getAllStickerPackageNameTextColor(myContext))
         item.artistNameTV.setTextColor(Config.getTitleTextColor(myContext))
@@ -56,11 +51,7 @@ class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayLi
             if (!packageObj.isDownload) {
 
                 if (Stipop.instance!!.delegate.canDownload(packageObj)) {
-                    val intent = Intent()
-                    intent.action = "SET_DOWNLOAD"
-                    intent.putExtra("idx", position)
-                    intent.putExtra("package_id", packageObj.packageId)
-                    context.sendBroadcast(intent)
+                    allStickerFragment.getPackInfo(position, packageObj.packageId)
                 } else {
                     Utils.alert(context, "Can not download!!!")
                 }
@@ -92,7 +83,7 @@ class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayLi
     }
 
     override fun getItem(position: Int): SPPackage {
-        return data.get(position)
+        return data[position]
     }
 
     override fun getItemId(position: Int): Long {

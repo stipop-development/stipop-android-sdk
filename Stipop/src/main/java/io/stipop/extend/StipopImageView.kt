@@ -41,11 +41,6 @@ class StipopImageView : AppCompatImageView {
             return
         }
 
-        println("setIconDefaultsColor checkErrorIcon(): ${checkErrorIcon()}")
-        println("tag:  ${this.tag}")
-        println("error tag:  ${R.mipmap.error}")
-        println("error_dark tag:  ${R.mipmap.error_dark}")
-
         setColorFilter(Color.parseColor(Config.themeIconColor))
     }
 
@@ -79,7 +74,6 @@ class StipopImageView : AppCompatImageView {
     }
 
     override fun setImageResource(resId: Int) {
-        println("setImageResource:::; resId: $resId")
         this.tag = resId
         super.setImageResource(resId)
     }
