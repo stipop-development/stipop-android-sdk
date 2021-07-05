@@ -54,11 +54,16 @@ class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayLi
 
         item.downloadIV.setOnClickListener {
             if (!packageObj.isDownload) {
-                val intent = Intent()
-                intent.action = "SET_DOWNLOAD"
-                intent.putExtra("idx", position)
-                intent.putExtra("package_id", packageObj.packageId)
-                context.sendBroadcast(intent)
+
+                if (Stipop.instance!!.delegate.canDownload(packageObj)) {
+                    val intent = Intent()
+                    intent.action = "SET_DOWNLOAD"
+                    intent.putExtra("idx", position)
+                    intent.putExtra("package_id", packageObj.packageId)
+                    context.sendBroadcast(intent)
+                } else {
+                    Utils.alert(context, "Can not download!!!")
+                }
             }
         }
 

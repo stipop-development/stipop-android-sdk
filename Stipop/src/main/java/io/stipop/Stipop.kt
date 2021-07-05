@@ -5,20 +5,24 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
-import android.os.Build
 import android.util.DisplayMetrics
 import android.view.*
 import android.widget.*
 import io.stipop.activity.DetailActivity
 import io.stipop.activity.Keyboard
 import io.stipop.activity.SearchActivity
-import io.stipop.activity.StoreActivity
 import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
+import io.stipop.model.SPSticker
 import org.json.JSONObject
 import java.io.IOException
 
-class Stipop(private val activity: Activity, private val stipopButton: StipopImageView) {
+interface StipopDelegate {
+    fun onStickerSelected(sticker: SPSticker)
+    fun canDownload(spPackage:SPPackage): Boolean
+}
+
+class Stipop(private val activity: Activity, private val stipopButton: StipopImageView, val delegate: StipopDelegate) {
 
     companion object {
 
@@ -41,14 +45,14 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
             Config.configure(context)
         }
 
-        fun connect(activity: Activity, stipopButton:StipopImageView, userId:String, lang: String, countryCode:String) {
+        fun connect(activity: Activity, stipopButton: StipopImageView, userId: String, lang: String, countryCode: String, delegate: StipopDelegate) {
 
             Stipop.userId = userId
             Stipop.lang = lang
             Stipop.countryCode = countryCode
 
             if (instance == null) {
-                instance = Stipop(activity, stipopButton)
+                instance = Stipop(activity, stipopButton, delegate)
             }
 
             instance!!.connect()
@@ -99,7 +103,8 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         }
     }
 
-
+    private var maxTop = 0
+    private var maxBottom = 0
     private var keyboard: Keyboard? = null
     private lateinit var rootView: View
 
@@ -230,14 +235,27 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
     private fun setSizeForSoftKeyboard() {
 
         this.rootView.viewTreeObserver.addOnGlobalLayoutListener {
-            val r = Rect()
-            this.rootView.getWindowVisibleDisplayFrame(r)
-            val screenHeight: Int = getUsableScreenHeight()
-            var heightDifference = (screenHeight - (r.bottom - r.top))
-            val resourceId: Int = this.activity.resources.getIdentifier("status_bar_height", "dimen", "android")
-            if (resourceId > 0) {
-                heightDifference -= this.activity.resources.getDimensionPixelSize(resourceId)
+
+            val visibleFrameSize = Rect()
+            this.rootView.getWindowVisibleDisplayFrame(visibleFrameSize)
+
+            val screenHeight = Utils.getScreenHeight(this.activity)
+            val visibleFrameHeight: Int = visibleFrameSize.bottom - visibleFrameSize.top
+
+            var b = 0
+            if (screenHeight < visibleFrameSize.bottom) {
+                b = visibleFrameSize.bottom - screenHeight
             }
+
+            if (b > this.maxBottom) {
+                this.maxBottom = b
+            }
+
+            if (visibleFrameSize.top > this.maxTop) {
+                this.maxTop = visibleFrameSize.top
+            }
+
+            val heightDifference = screenHeight - this.maxTop - visibleFrameHeight + this.maxBottom
 
             if (heightDifference > 100) {
                 keyboardHeight = heightDifference
@@ -252,13 +270,6 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
                 }
             }
         }
-    }
-
-    private fun getUsableScreenHeight(): Int {
-        val metrics = DisplayMetrics()
-        val windowManager = this.activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        windowManager.defaultDisplay.getMetrics(metrics)
-        return metrics.heightPixels
     }
 
 }
