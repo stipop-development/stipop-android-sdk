@@ -43,8 +43,12 @@ class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayLi
 
         if (packageObj.isDownload) {
             item.downloadIV.setImageResource(Config.getCompleteIconResourceId(myContext))
+
+            item.downloadIV.setIconDefaultsColor()
         } else {
             item.downloadIV.setImageResource(Config.getDownloadIconResourceId(myContext))
+
+            item.downloadIV.setTint()
         }
 
 

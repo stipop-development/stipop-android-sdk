@@ -49,6 +49,11 @@ class DetailActivity: Activity() {
         backIV.setImageResource(Config.getBackIconResourceId(context))
         closeIV.setImageResource(Config.getCloseIconResourceId(context))
 
+
+        backIV.setIconDefaultsColor()
+        closeIV.setIconDefaultsColor()
+
+
         val drawable2 = downloadTV.background as GradientDrawable
         drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
 

@@ -60,6 +60,11 @@ class SearchActivity: Activity() {
         titleTV.setTextColor(Config.getSearchTitleTextColor(context))
         keywordET.setTextColor(Config.getSearchTitleTextColor(context))
 
+
+        searchIV.setIconDefaultsColor()
+        eraseIV.setIconDefaultsColor()
+
+
         val gd = GradientDrawable(
             GradientDrawable.Orientation.TOP_BOTTOM, intArrayOf(Color.parseColor(Config.themeBackgroundColor), Color.TRANSPARENT)
         )

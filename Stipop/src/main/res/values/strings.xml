@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Stipop</string>
+    <string name="bottom_alert_title">Hide this sticker pack?</string>
+    <string name="bottom_alert_contents">Do you want to hide the sticker pack? You can always re-download hidden stickers later.</string>
+    <string name="cancel">Cancel</string>
+    <string name="hide">Hide</string>
 </resources>

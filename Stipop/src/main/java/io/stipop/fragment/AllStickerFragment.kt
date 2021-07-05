@@ -114,6 +114,10 @@ class AllStickerFragment : Fragment() {
         eraseIV.setImageResource(Config.getEraseResourceId(myContext))
 
 
+        searchIconIV.setIconDefaultsColor()
+        eraseIV.setIconDefaultsColor()
+
+
         val headerV = View.inflate(myContext, R.layout.header_all_sticker, null)
 
         headerV.findViewById<View>(R.id.underLineV).setBackgroundColor(Config.getUnderLineColor(myContext))

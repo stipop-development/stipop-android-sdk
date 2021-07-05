@@ -124,6 +124,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
 
         storeIV.setImageResource(Config.getKeyboardStoreResourceId(this.activity))
+        storeIV.setIconDefaultsColor()
 
 
         ///////////////////////////////////////////////////////////////////////////////
@@ -240,9 +241,6 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         favoriteRL.setOnClickListener {
             favoriteRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
-            println("selectedPackageId : $selectedPackageId")
-            println("favoriteRL.tag : ${favoriteRL.tag}")
-
             if (selectedPackageId == -1 && Config.showPreview) {
                 if (favoriteRL.tag == 0) {
                     favoriteRL.tag = 1
@@ -331,23 +329,34 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     }
 
     private fun setThemeImageIcon() {
-        if (Config.useLightMode) {
-            recentlyIV.setImageResource(R.mipmap.ic_recents_normal)
-            favoriteIV.setImageResource(R.mipmap.ic_favorites_normal)
-            if (favoriteRL.tag == 1) {
-                favoriteIV.setImageResource(R.mipmap.ic_favorites_active)
-            } else {
-                recentlyIV.setImageResource(R.mipmap.ic_recents_active)
-            }
-        } else {
-            recentlyIV.setImageResource(R.mipmap.ic_recents_normal_dark)
-            favoriteIV.setImageResource(R.mipmap.ic_favorites_normal_dark)
+//        if (Config.useLightMode) {
+//            recentlyIV.setImageResource(R.mipmap.ic_recents_normal)
+//            favoriteIV.setImageResource(R.mipmap.ic_favorites_normal)
+//            if (favoriteRL.tag == 1) {
+//                favoriteIV.setImageResource(R.mipmap.ic_favorites_active)
+//            } else {
+//                recentlyIV.setImageResource(R.mipmap.ic_recents_active)
+//            }
+//        } else {
+//            recentlyIV.setImageResource(R.mipmap.ic_recents_normal_dark)
+//            favoriteIV.setImageResource(R.mipmap.ic_favorites_normal_dark)
+//
+//            if (favoriteRL.tag == 1) {
+//                favoriteIV.setImageResource(R.mipmap.ic_favorites_active_dark)
+//            } else {
+//                recentlyIV.setImageResource(R.mipmap.ic_recents_active_dark)
+//            }
+//        }
 
-            if (favoriteRL.tag == 1) {
-                favoriteIV.setImageResource(R.mipmap.ic_favorites_active_dark)
-            } else {
-                recentlyIV.setImageResource(R.mipmap.ic_recents_active_dark)
-            }
+        favoriteIV.setImageResource(R.mipmap.ic_favorites_active)
+        recentlyIV.setImageResource(R.mipmap.ic_recents_active)
+
+        if (favoriteRL.tag == 1) {
+            favoriteIV.setIconDefaultsColor()
+            recentlyIV.setIconDefaultsColor40Opacity()
+        } else {
+            recentlyIV.setIconDefaultsColor()
+            favoriteIV.setIconDefaultsColor40Opacity()
         }
     }
 
