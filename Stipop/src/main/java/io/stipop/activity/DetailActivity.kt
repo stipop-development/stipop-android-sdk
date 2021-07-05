@@ -63,7 +63,13 @@ class DetailActivity: Activity() {
                 // Toast.makeText(context, "이미 다운로드한 스티커입니다!", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            downloadPackage()
+
+            if (Stipop.instance!!.delegate.canDownload(this.spPackage)) {
+                downloadPackage()
+            } else {
+                Utils.alert(this, "Can not download!!!")
+            }
+
         }
 
         stickerAdapter = StickerAdapter(context, R.layout.item_sticker, stickerData)
