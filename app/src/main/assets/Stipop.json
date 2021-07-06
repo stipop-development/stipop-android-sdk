@@ -25,7 +25,7 @@
 			}
 		},
 		"font" : {
-			"family": "Pacifico",
+			"family": "system",
 			"weight": 400,
 			"character": 0
 		}

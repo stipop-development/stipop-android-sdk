@@ -19,8 +19,8 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
         Stipop.connect(this, stipopIV, "1234", "en", "US", this)
 
         stipopIV.setOnClickListener {
-            // Stipop.showSearch()
-            Stipop.showKeyboard()
+             Stipop.showSearch()
+//            Stipop.showKeyboard()
         }
     }
 

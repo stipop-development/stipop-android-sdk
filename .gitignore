@@ -1,3 +1,5 @@
 .gradle
 .idea
 local.properties
+./app/src/main/assets/Stipop.json
+/app/src/main/assets/Stipop.json
