@@ -222,6 +222,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
                         }
                     } else {
                         // delegate
+                        Stipop.instance!!.delegate.onStickerSelected(sticker)
                     }
 
                 }
