@@ -146,7 +146,7 @@ class SearchActivity: Activity() {
         keywords.clear()
 
         APIClient.get(this, APIClient.APIPath.SEARCH_KEYWORD.rawValue, null) { response: JSONObject?, e: IOException? ->
-            println(response)
+            // println(response)
 
             if (null != response) {
 
@@ -180,7 +180,7 @@ class SearchActivity: Activity() {
         params.put("q", keyword)
 
         APIClient.get(this, APIClient.APIPath.SEARCH.rawValue, params) { response: JSONObject?, e: IOException? ->
-            println(response)
+            // println(response)
 
             if (null != response) {
 

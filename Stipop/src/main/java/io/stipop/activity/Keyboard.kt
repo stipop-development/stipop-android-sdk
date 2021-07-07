@@ -174,7 +174,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
                     return
                 }
 
-                println(packageData)
+                // println(packageData)
 
                 val pack = packageData[position]
 
@@ -424,7 +424,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
                     }
                 }
 
-                println("isSelectedTabValid : $isSelectedTabValid")
+                // println("isSelectedTabValid : $isSelectedTabValid")
 
                 if (isSelectedTabValid) {
                     if (selectedPackageId == -1) {
@@ -539,7 +539,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
             null
         ) { response: JSONObject?, e: IOException? ->
 
-            println(response)
+            // println(response)
 
             if (stickerPage == 1) {
                 stickerData.clear()

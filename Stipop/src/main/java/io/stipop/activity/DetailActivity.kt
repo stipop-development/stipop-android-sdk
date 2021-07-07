@@ -85,7 +85,7 @@ class DetailActivity: Activity() {
         params.put("userId", Stipop.userId)
 
         APIClient.get(this, APIClient.APIPath.PACKAGE.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
-            println(response)
+            // println(response)
 
             if (null != response) {
 
@@ -153,7 +153,7 @@ class DetailActivity: Activity() {
         }
 
         APIClient.post(this, APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
-            println(response)
+            // println(response)
 
             if (null != response) {
 

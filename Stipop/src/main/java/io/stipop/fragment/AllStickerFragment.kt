@@ -445,7 +445,7 @@ class AllStickerFragment : Fragment() {
         params.put("userId", Stipop.userId)
 
         APIClient.get(activity as Activity, APIClient.APIPath.PACKAGE.rawValue + "/${packageId}", params) { response: JSONObject?, e: IOException? ->
-            println(response)
+            // println(response)
 
             if (null != response) {
 
@@ -521,7 +521,7 @@ class AllStickerFragment : Fragment() {
             APIClient.APIPath.SEARCH_RECENT.rawValue,
             params
         ) { response: JSONObject?, e: IOException? ->
-            println(response)
+            // println(response)
 
             if (null != response) {
 
@@ -558,7 +558,7 @@ class AllStickerFragment : Fragment() {
 
             if (null != response) {
 
-                print(response)
+                // print(response)
 
                 if (!response.isNull("body")) {
                     val body = response.getJSONObject("body")
@@ -660,7 +660,7 @@ class AllStickerFragment : Fragment() {
             null
         ) { response: JSONObject?, e: IOException? ->
 
-            println(response)
+            // println(response)
 
             if (null != response) {
 

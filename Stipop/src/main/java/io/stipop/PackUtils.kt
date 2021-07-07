@@ -17,7 +17,7 @@ class PackUtils {
         fun downloadAndSaveLocal(activity:Activity, spPackage: SPPackage?, responseCallback: () -> Unit) {
             val stickers = spPackage!!.stickers
 
-            println(stickers)
+            // println(stickers)
 
             for (sticker in stickers) {
                 val packageId = sticker.packageId
@@ -45,7 +45,7 @@ class PackUtils {
             filePath.mkdirs()
             filePath = File(activity.filesDir, "stipop/$packageId/$fileName")
 
-            println("filePath : $filePath")
+            // println("filePath : $filePath")
 
             val policy = ThreadPolicy.Builder().permitAll().build()
             StrictMode.setThreadPolicy(policy)
