@@ -116,6 +116,11 @@ class SearchActivity: Activity() {
 
         stickerGV.numColumns = Config.searchNumOfColumns
         stickerGV.adapter = stickerAdapter
+        stickerGV.setOnItemClickListener { adapterView, view, i, l ->
+            val sticker = stickerData[i]
+
+            Stipop.instance!!.delegate.onStickerSelected(sticker)
+        }
         stickerGV.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > page) {
