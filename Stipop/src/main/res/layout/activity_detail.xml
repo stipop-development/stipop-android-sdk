@@ -28,7 +28,7 @@
                     android:id="@+id/backIV"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@mipmap/ic_back"/>
+                    android:src="@mipmap/ic_back_border_3"/>
 
             </LinearLayout>
 
@@ -47,7 +47,7 @@
                     android:id="@+id/closeIV"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@mipmap/ic_close"/>
+                    android:src="@mipmap/ic_close_border_3"/>
 
             </LinearLayout>
 

@@ -16,7 +16,7 @@ class Config {
         const val baseUrl = "https://messenger.stipop.io/v1"
 
         lateinit var apikey: String
-        private var stickerIconNormalName = "ic_sticker_normal"
+        private var stickerIconNormalName = "ic_sticker_border_3"
 
         var useLightMode = true
 
@@ -40,8 +40,8 @@ class Config {
 
         var searchTagsHidden = false
 
-        private var searchbarIconName = "ic_sticker_normal"
-        private var searchbarDeleteIconName = ""
+        private var searchbarIconName = "ic_sticker_border_3"
+        private var searchbarDeleteIconName = "ic_erase_border_3"
 
         var storeListType = ""
 
@@ -49,13 +49,13 @@ class Config {
         private var storeTrendingBackgroundColor = "#EEEEEE"
         private var storeTrendingOpacity = 0.0
 
-        private var storeDownloadIconName = ""
-        private var storeCompleteIconName = ""
+        private var storeDownloadIconName = "ic_download_border_3"
+        private var storeCompleteIconName = "ic_downloaded_border_3"
 
         var storeRecommendedTagShow = false
 
-        private var orderIconName = ""
-        private var hideIconName = ""
+        private var orderIconName = "ic_move_border_3"
+        private var hideIconName = "ic_hide_border_3"
 
         private var keyboardStoreIconName = ""
         var keyboardNumOfColumns = 3
@@ -64,8 +64,8 @@ class Config {
         var pngPrice: Double = 0.0
         var gifPrice: Double = 0.0
 
-        private var detailBackIconName = ""
-        private var detailCloseIconName = ""
+        private var detailBackIconName = "ic_back_border_3"
+        private var detailCloseIconName = "ic_close_border_3"
         var detailNumOfColumns = 3
 
         var showPreview = false
@@ -173,7 +173,7 @@ class Config {
 
 
 
-            stickerIconNormalName = Utils.getString(json, "StickerIcon", "ic_sticker_normal")
+            stickerIconNormalName = Utils.getString(json, "StickerIcon", "ic_sticker_board_3")
 
             val search = json.optJSONObject("Search")
 
@@ -181,7 +181,7 @@ class Config {
             searchNumOfColumns = Utils.getInt(search, "numOfColumns", 3)
 
             searchbarIconName = Utils.getString(search, "searchbarIcon", "icon_search")
-            searchbarDeleteIconName = Utils.getString(search, "searchbarDeleteIcon", "icon_erase")
+            searchbarDeleteIconName = Utils.getString(search, "searchbarDeleteIcon", "ic_erase_border_3")
 
             val searchTags = search?.optJSONObject("searchTags")
             searchTagsHidden = Utils.getBoolen(searchTags, "hidden", false)
@@ -194,15 +194,15 @@ class Config {
             storeTrendingBackgroundColor = Utils.getString(trending, "backgroundColor", "#eeeeee")
             storeTrendingOpacity = Utils.getDouble(trending, "opacity", 0.7)
 
-            storeDownloadIconName = Utils.getString(liteStore, "downloadIcon", "ic_download")
-            storeCompleteIconName = Utils.getString(liteStore, "completeIcon", "ic_downloaded")
+            storeDownloadIconName = Utils.getString(liteStore, "downloadIcon", "ic_download_border_3")
+            storeCompleteIconName = Utils.getString(liteStore, "completeIcon", "ic_downloaded_border_3")
 
             storeRecommendedTagShow = Utils.getString(liteStore, "bottomOfSearch", "recommendedTags") == "recommendedTags"
 
             val mySticker = json.optJSONObject("MySticker")
 
-            orderIconName = Utils.getString(mySticker, "orderIcon", "ic_move")
-            hideIconName = Utils.getString(mySticker, "hideIcon", "ic_hide")
+            orderIconName = Utils.getString(mySticker, "orderIcon", "ic_move_border_3")
+            hideIconName = Utils.getString(mySticker, "hideIcon", "ic_hide_border_3")
 
             val keyboard = json.optJSONObject("Keyboard")
             keyboardNumOfColumns = Utils.getInt(keyboard, "numOfColumns", 3)
@@ -217,8 +217,8 @@ class Config {
 
             val sticker = json.optJSONObject("Sticker")
 
-            detailBackIconName = Utils.getString(sticker, "backIcon", "ic_back")
-            detailCloseIconName = Utils.getString(sticker, "closeIcon", "ic_close")
+            detailBackIconName = Utils.getString(sticker, "backIcon", "ic_back_border_3")
+            detailCloseIconName = Utils.getString(sticker, "closeIcon", "ic_close_border_3")
             detailNumOfColumns = Utils.getInt(sticker, "numOfColumns", 3)
 
             val send = json.getJSONObject("Send")
@@ -272,12 +272,12 @@ class Config {
             return if (searchbarDeleteIconName.isNotEmpty()) {
                 Utils.getResource(searchbarDeleteIconName, context)
             } else {
-                R.mipmap.icon_erase
+                R.mipmap.ic_erase_border_3
             }
         }
 
         fun getDownloadIconResourceId(context: Context): Int {
-            var imageId = R.mipmap.ic_download
+            var imageId = R.mipmap.ic_download_border_3
             if (storeDownloadIconName.isNotEmpty()) {
                 imageId = Utils.getResource(storeDownloadIconName, context)
             }
@@ -285,7 +285,7 @@ class Config {
         }
 
         fun getCompleteIconResourceId(context: Context): Int {
-            var imageId = R.mipmap.ic_downloaded
+            var imageId = R.mipmap.ic_downloaded_border_3
             if (storeCompleteIconName.isNotEmpty()) {
                 imageId = Utils.getResource(storeCompleteIconName, context)
             }
@@ -293,7 +293,7 @@ class Config {
         }
 
         fun getOrderIconResourceId(context: Context): Int {
-            var imageId = R.mipmap.ic_move
+            var imageId = R.mipmap.ic_move_border_3
             if (orderIconName.isNotEmpty()) {
                 imageId = Utils.getResource(orderIconName, context)
             }
@@ -301,15 +301,15 @@ class Config {
         }
 
         fun getAddIconResourceId(): Int {
-            var imageId = R.mipmap.add_3
-            if (!useLightMode) {
-                imageId = R.mipmap.ic_add_dark
-            }
-            return imageId
+//            var imageId = R.mipmap.ic_add_border_3
+//            if (!useLightMode) {
+//                imageId = R.mipmap.ic_add_dark
+//            }
+            return R.mipmap.ic_add_border_3
         }
 
         fun getHideIconResourceId(context: Context): Int {
-            var imageId = R.mipmap.ic_hide
+            var imageId = R.mipmap.ic_hide_border_3
             if (hideIconName.isNotEmpty()) {
                 imageId = Utils.getResource(hideIconName, context)
             }
@@ -317,7 +317,7 @@ class Config {
         }
 
         fun getBackIconResourceId(context: Context): Int {
-            var imageId = R.mipmap.ic_back
+            var imageId = R.mipmap.ic_back_border_3
             if (detailBackIconName.isNotEmpty()) {
                 imageId = Utils.getResource(detailBackIconName, context)
             }
@@ -325,7 +325,7 @@ class Config {
         }
 
         fun getCloseIconResourceId(context: Context): Int {
-            var imageId = R.mipmap.ic_close
+            var imageId = R.mipmap.ic_close_border_3
             if (detailCloseIconName.isNotEmpty()) {
                 imageId = Utils.getResource(detailCloseIconName, context)
             }
