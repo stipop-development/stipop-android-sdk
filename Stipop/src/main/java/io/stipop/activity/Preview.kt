@@ -91,7 +91,7 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
         params.put("stickerId", sticker.stickerId)
 
         APIClient.put(this.activity, APIClient.APIPath.MY_STICKER_FAVORITE.rawValue + "/${Stipop.userId}", params) { response: JSONObject?, e: IOException? ->
-            println(response)
+            // println(response)
 
             if (null != response) {
 
@@ -109,7 +109,7 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
                     keyboard.changeFavorite(sticker.stickerId, sticker.favoriteYN, sticker.packageId)
 
                 } else {
-                    println("ERROR!")
+                    // println("ERROR!")
                 }
 
             } else {

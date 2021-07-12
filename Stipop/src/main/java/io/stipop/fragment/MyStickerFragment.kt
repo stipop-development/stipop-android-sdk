@@ -229,7 +229,7 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
 
             if (null != response) {
 
-                println(response)
+                // println(response)
 
                 val header = response.getJSONObject("header")
                 val status = Utils.getString(header, "status")

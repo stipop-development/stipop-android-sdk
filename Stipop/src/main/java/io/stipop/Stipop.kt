@@ -111,7 +111,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
     private var stickerIconEnabled = false
 
     fun connect() {
-        this.stipopButton.setImageResource(R.mipmap.ic_sticker_normal)
+        this.stipopButton.setImageResource(R.mipmap.ic_sticker_border_3)
 
         this.connected = true
 

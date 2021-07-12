@@ -62,7 +62,7 @@
             android:id="@+id/stipopIV"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@mipmap/ic_sticker_normal"/>
+            android:src="@mipmap/ic_sticker_border_3"/>
         <Button
             android:id="@+id/sendButton"
             android:layout_width="80dp"

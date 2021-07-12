@@ -41,7 +41,7 @@ class APIClient {
                     resolvedPath += getQuery(parameters)
                 }
 
-                println(resolvedPath)
+                // println(resolvedPath)
 
                 val url = URL(resolvedPath)
 
@@ -101,7 +101,7 @@ class APIClient {
                     resolvedPath += getQuery(parameters)
                 }
 
-                println(resolvedPath)
+                // println(resolvedPath)
 
                 val url = URL(resolvedPath)
 
@@ -136,8 +136,8 @@ class APIClient {
             thread(start = true) {
                 val resolvedPath = Config.baseUrl + path
 
-                println(resolvedPath)
-                println(parameters.toString())
+                // println(resolvedPath)
+                // println(parameters.toString())
 
                 val url = URL(resolvedPath)
 
@@ -186,7 +186,7 @@ class APIClient {
                     resolvedPath += getQuery(parameters)
                 }
 
-                println(resolvedPath)
+                // println(resolvedPath)
 
                 val url = URL(resolvedPath)
 

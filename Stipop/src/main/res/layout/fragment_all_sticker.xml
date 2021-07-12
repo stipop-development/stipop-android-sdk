@@ -53,7 +53,7 @@
                     android:id="@+id/eraseIV"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@mipmap/icon_erase"/>
+                    android:src="@mipmap/ic_erase_border_3"/>
 
             </LinearLayout>
 

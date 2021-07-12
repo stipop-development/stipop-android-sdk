@@ -92,7 +92,7 @@
                 android:layout_height="24dp"
                 android:layout_marginRight="10dp"
                 android:layout_gravity="center"
-                android:src="@mipmap/ic_download"/>
+                android:src="@mipmap/ic_download_border_3"/>
 
         </LinearLayout>
 

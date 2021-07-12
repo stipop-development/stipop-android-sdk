@@ -117,6 +117,11 @@ class SearchActivity: Activity() {
 
         stickerGV.numColumns = Config.searchNumOfColumns
         stickerGV.adapter = stickerAdapter
+        stickerGV.setOnItemClickListener { adapterView, view, i, l ->
+            val sticker = stickerData[i]
+
+            Stipop.instance!!.delegate.onStickerSelected(sticker)
+        }
         stickerGV.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > page) {
@@ -157,7 +162,7 @@ class SearchActivity: Activity() {
         keywords.clear()
 
         APIClient.get(this, APIClient.APIPath.SEARCH_KEYWORD.rawValue, null) { response: JSONObject?, e: IOException? ->
-            println(response)
+            // println(response)
 
             if (null != response) {
 
@@ -191,7 +196,7 @@ class SearchActivity: Activity() {
         params.put("q", keyword)
 
         APIClient.get(this, APIClient.APIPath.SEARCH.rawValue, params) { response: JSONObject?, e: IOException? ->
-            println(response)
+            // println(response)
 
             if (null != response) {
 
