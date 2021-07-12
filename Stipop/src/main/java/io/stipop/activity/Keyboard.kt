@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.*
@@ -226,9 +227,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
                     }
 
                 }
-
             }
-
         }
 
         view.findViewById<Button>(R.id.button_popup).setOnClickListener {

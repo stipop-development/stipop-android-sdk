@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:layout_gravity="right"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/chat_Me_Name"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp" />
+
+    <TextView
+        android:id="@+id/chat_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_margin="10dp"
+        android:background="@drawable/layout_round"
+        android:gravity="center_vertical"
+        android:textColor="@color/white"
+        android:paddingLeft="18.7dp"
+        android:paddingRight="18.7dp"
+        android:paddingTop="13dp"
+        android:paddingBottom="13dp"
+        android:text="내가 입력한 내용"
+        android:textSize="16dp" />
+
+<!--    <TextView-->
+<!--        android:id="@+id/chat_Time"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="right|center_vertical"-->
+<!--        android:text="시간" />-->
+
+</LinearLayout>
