@@ -51,9 +51,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
             Stipop.lang = lang
             Stipop.countryCode = countryCode
 
-            if (instance == null) {
-                instance = Stipop(activity, stipopButton, delegate)
-            }
+            instance = Stipop(activity, stipopButton, delegate)
 
             instance!!.connect()
         }
