@@ -257,6 +257,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
                 }
             } else {
                 if(this.keyboard != null) {
+                    this.keyboard!!.popupWindow.height = 0
                     this.keyboard!!.hide()
                 }
             }
