@@ -8,13 +8,13 @@
     android:orientation="vertical">
 
 
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/chat_recyclerview"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_weight="2"-->
-<!--        >-->
-<!--    </androidx.recyclerview.widget.RecyclerView>-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        >
+    </androidx.recyclerview.widget.RecyclerView>
 
 <!--    <RelativeLayout-->
 <!--        android:layout_width="match_parent"-->
@@ -63,11 +63,11 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@mipmap/ic_sticker_border_3"/>
-        <Button
-            android:id="@+id/sendButton"
-            android:layout_width="80dp"
-            android:layout_height="48dp"
-            android:text="send" />
+<!--        <Button-->
+<!--            android:id="@+id/sendButton"-->
+<!--            android:layout_width="80dp"-->
+<!--            android:layout_height="48dp"-->
+<!--            android:text="send" />-->
     </LinearLayout>
 
 

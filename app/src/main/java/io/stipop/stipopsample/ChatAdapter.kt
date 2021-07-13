@@ -2,15 +2,12 @@ package io.stipop.stipopsample
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Bitmap
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import java.net.URL
 import java.util.ArrayList
 import com.bumptech.glide.Glide
 
@@ -36,10 +33,8 @@ class ChatAdapter(val context: Context, val arrayList: ArrayList<ChatModel>)
             view = LayoutInflater.from(context).inflate(R.layout.item_my_chat, parent, false)
             Holder(view)
         } else{
-            view = LayoutInflater.from(context).inflate(R.layout.item_my_sticker, parent, false)
+            view = LayoutInflater.from(context).inflate(R.layout.sticker_send, parent, false)
             Holder3(view)
-//            view = LayoutInflater.from(context).inflate(R.layout.item_your_chat, parent, false)
-//            Holder2(view)
         }
     }
 
@@ -49,17 +44,13 @@ class ChatAdapter(val context: Context, val arrayList: ArrayList<ChatModel>)
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        //onCreateViewHolder에서 리턴받은 뷰홀더가 Holder라면 내채팅, item_my_chat의 뷰들을 초기화 해줌
+
         if (viewHolder is Holder) {
             (viewHolder as Holder).chat_Text?.setText(arrayList[position].script)
-//            (viewHolder as Holder).chat_Time?.setText(arrayList[position].date_time)
-        }
-        //onCreateViewHolder에서 리턴받은 뷰홀더가 Holder2라면 상대의 채팅, item_your_chat의 뷰들을 초기화 해줌
-        else if(viewHolder is Holder2) {
+        } else if(viewHolder is Holder2) {
             (viewHolder as Holder2).chat_You_Image?.setImageResource(R.mipmap.ic_launcher)
             (viewHolder as Holder2).chat_You_Name?.setText(arrayList[position].name)
             (viewHolder as Holder2).chat_Text?.setText(arrayList[position].script)
-//            (viewHolder as Holder2).chat_Time?.setText(arrayList[position].date_time)
         } else if (viewHolder is Holder3) {
             (viewHolder as Holder3).bind(arrayList[position])
         }

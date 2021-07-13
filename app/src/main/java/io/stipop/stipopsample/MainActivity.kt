@@ -32,14 +32,14 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
 
         val stipopIV = findViewById<StipopImageView>(R.id.stipopIV)
 
-//        chat_recyclerview = findViewById<RecyclerView>(R.id.chat_recyclerview);
-//        chat_recyclerview.adapter = mAdapter
-//        val lm = LinearLayoutManager(this)
-//        chat_recyclerview.layoutManager = lm
-//        chat_recyclerview.setHasFixedSize(true)
+        chat_recyclerview = findViewById<RecyclerView>(R.id.chat_recyclerview);
+        chat_recyclerview.adapter = mAdapter
+        val lm = LinearLayoutManager(this)
+        chat_recyclerview.layoutManager = lm
+        chat_recyclerview.setHasFixedSize(true)
 
         chatText = findViewById(R.id.chatET)
-        sendButton = findViewById(R.id.sendButton)
+//        sendButton = findViewById(R.id.sendButton)
 
         Stipop.connect(this, stipopIV, "9937", "en", "US", this)
 
@@ -53,9 +53,9 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
             true
         }
 
-        sendButton.setOnClickListener {
-            Stipop.showSearch()
-        }
+//        sendButton.setOnClickListener {
+//            Stipop.showSearch()
+//        }
 
     }
 
@@ -69,7 +69,6 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
             //example에는 원래는 이미지 url이 들어가야할 자리
             val item = ChatModel("testName", chatText.text.toString(),"example", true, "")
             mAdapter.addItem(item)
-//            mAdapter.notifyDataSetChanged()
             mAdapter.notifyItemInserted(mAdapter.itemCount-1)
             //채팅 입력창 초기화
             chatText.setText("")
