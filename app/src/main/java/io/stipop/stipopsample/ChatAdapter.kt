@@ -16,13 +16,13 @@ class ChatAdapter(val context: Context, val arrayList: ArrayList<ChatModel>)
 
     internal lateinit var preferences: SharedPreferences
 
-    fun addItem(item: ChatModel) {//아이템 추가
+    fun addItem(item: ChatModel) {
         if (arrayList != null) {
             arrayList.add(item)
         }
     }
 
-    override fun getItemId(position: Int): Long { // 특정 id 가 없을 시 position 값으로 대체
+    override fun getItemId(position: Int): Long {
         return arrayList[position].hashCode().toLong()
     }
 
@@ -57,37 +57,26 @@ class ChatAdapter(val context: Context, val arrayList: ArrayList<ChatModel>)
 
     }
 
-    //내가친 채팅 뷰홀더
+
     inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        //친구목록 모델의 변수들 정의하는부분
         val chat_Text: TextView = itemView?.findViewById<TextView>(R.id.chat_Text)
-//        val chat_Time: TextView = itemView?.findViewById<TextView>(R.id.chat_Time)
     }
 
     inner class Holder3(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        //친구목록 모델의 변수들 정의하는부분
         private val chat_sticker: ImageView = itemView.findViewById<ImageView>(R.id.my_sticker)
-//        private val chat_Time: TextView = itemView?.findViewById<TextView>(R.id.chat_Time)
 
         fun bind(item: ChatModel) {
-            Glide.with(itemView).load(item.sticker_url).into(chat_sticker)
-//            chat_Time.text = item.date_time
+            Glide.with(itemView).load(item.sticker_url).dontAnimate().into(chat_sticker)
         }
     }
 
-    //상대가친 채팅 뷰홀더
     inner class Holder2(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        //친구목록 모델의 변수들 정의하는부분
         val chat_You_Image: ImageView = itemView?.findViewById<ImageView>(R.id.chat_You_Image)
         val chat_You_Name: TextView = itemView?.findViewById<TextView>(R.id.chat_You_Name)
         val chat_Text: TextView = itemView?.findViewById<TextView>(R.id.chat_Text)
-//        val chat_Time: TextView = itemView?.findViewById<TextView>(R.id.chat_Time)
-
-
     }
 
-    override fun getItemViewType(position: Int): Int {//여기서 뷰타입을 1, 2로 바꿔서 지정해줘야 내채팅 너채팅을 바꾸면서 쌓을 수 있음
+    override fun getItemViewType(position: Int): Int {
 
         return if (arrayList[position].chat_type) {
             1

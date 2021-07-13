@@ -14,6 +14,7 @@ import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.adapter.*
@@ -122,6 +123,15 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         artistNameTV = view.findViewById(R.id.artistNameTV)
         downloadTV = view.findViewById(R.id.downloadTV)
 
+        val animator: RecyclerView.ItemAnimator? = packageRV.itemAnimator
+
+        if (animator is SimpleItemAnimator) {
+            animator.supportsChangeAnimations = false
+        }
+
+        packageRV.setHasFixedSize(true)
+        packageRV.setItemViewCacheSize(20)
+
         val drawable2 = downloadTV.background as GradientDrawable
         drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
 
@@ -155,42 +165,44 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         packageRV.layoutManager = mLayoutManager
 
         packageAdapter = KeyboardPackageAdapter(packageData, this.activity, this)
+        packageAdapter.setHasStableIds(true)
+
         packageRV.adapter = packageAdapter
-        packageRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
-                val itemTotalCount = packageData.size
-
-                if (lastVisibleItemPosition + 1 == itemTotalCount && totalPage > page) {
-                    // 리스트 마지막 도착! 다음 페이지 로드!
-                    page += 1
-                    loadPackages()
-                }
-            }
-        })
-        packageAdapter.setOnItemClickListener(object : KeyboardPackageAdapter.OnItemClickListener {
-            override fun onItemClick(position: Int) {
-                if (position > packageData.size) {
-                    return
-                }
-
-                // println(packageData)
-
-                val pack = packageData[position]
-
-                if (pack.packageId == -999) {
-                    showStore(2)
-                } else {
-                    selectedPackageId = pack.packageId
-
-                    packageAdapter.notifyDataSetChanged()
-
-                    loadStickers()
-                }
-            }
-        })
+//        packageRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                super.onScrolled(recyclerView, dx, dy)
+//
+//                val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+//                val itemTotalCount = packageData.size
+//
+//                if (lastVisibleItemPosition + 1 == itemTotalCount && totalPage > page) {
+//                    // 리스트 마지막 도착! 다음 페이지 로드!
+//                    page += 1
+//                    loadPackages()
+//                }
+//            }
+//        })
+//        packageAdapter.setOnItemClickListener(object : KeyboardPackageAdapter.OnItemClickListener {
+//            override fun onItemClick(position: Int) {
+//                if (position > packageData.size) {
+//                    return
+//                }
+//
+//                // println(packageData)
+//
+//                val pack = packageData[position]
+//
+//                if (pack.packageId == -999) {
+//                    showStore(2)
+//                } else {
+//                    selectedPackageId = pack.packageId
+//
+//                    packageAdapter.notifyDataSetChanged()
+//
+//                    loadStickers()
+//                }
+//            }
+//        })
 
 
         stickerAdapter = StickerAdapter(this.activity, R.layout.item_sticker, stickerData)
@@ -211,7 +223,7 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         })
         stickerGV.setOnItemClickListener { adapterView, view, i, l ->
             val sticker = stickerData[i]
-
+Log.e("send=", "==============")
             Stipop.send(sticker.stickerId, sticker.keyword) { result ->
                 if (result) {
                     if (Config.showPreview) {
