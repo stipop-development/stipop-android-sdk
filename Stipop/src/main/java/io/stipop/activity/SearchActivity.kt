@@ -120,6 +120,8 @@ class SearchActivity: Activity() {
             val sticker = stickerData[i]
 
             Stipop.instance!!.delegate.onStickerSelected(sticker)
+
+            finish()
         }
         stickerGV.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
