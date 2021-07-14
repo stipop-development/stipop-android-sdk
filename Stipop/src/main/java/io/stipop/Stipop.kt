@@ -251,7 +251,10 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
 
                 if(this.keyboard != null) {
                     this.keyboard!!.popupWindow.height = keyboardHeight
-                    this.keyboard!!.show()
+
+                    if (!this.keyboard!!.popupWindow.isShowing) {
+                        this.keyboard!!.show()
+                    }
                 }
             } else {
                 if(this.keyboard != null) {
