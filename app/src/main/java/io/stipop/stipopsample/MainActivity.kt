@@ -42,11 +42,11 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
         chatText = findViewById(R.id.chatET)
 //        sendButton = findViewById(R.id.sendButton)
 
-        Stipop.connect(this, stipopIV, "9937", "ko", "US", this)
+        Stipop.connect(this, stipopIV, "9937", "en", "US", this)
 
         stipopIV.setOnClickListener {
-            Stipop.showSearch()
-//            Stipop.showKeyboard()
+//            Stipop.showSearch()
+            Stipop.showKeyboard()
         }
 
         chatText.setOnEditorActionListener { textView, action, event ->
