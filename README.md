@@ -1,4 +1,4 @@
-##Stipop Android SDK 데모 사용 가이드
+## Stipop Android SDK 데모 사용 가이드
 
 소개
 
