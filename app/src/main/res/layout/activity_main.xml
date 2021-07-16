@@ -8,30 +8,31 @@
     android:orientation="vertical">
 
 
-    <LinearLayout
-        android:id="@+id/topLL"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@android:color/holo_green_dark"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        >
+    </androidx.recyclerview.widget.RecyclerView>
 
-        <TextView
-            android:id="@+id/packageDetailTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="packageDetail!"
-            android:layout_gravity="center"
-            android:gravity="center"/>
+<!--    <LinearLayout-->
+<!--        android:id="@+id/topLL"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_weight="1"-->
+<!--        android:background="@android:color/holo_green_dark"-->
+<!--        android:orientation="vertical">-->
 
-        <FrameLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="@android:color/holo_blue_dark">
-        </FrameLayout>
 
-    </LinearLayout>
+<!--        <FrameLayout-->
+<!--            android:id="@+id/container"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="300dp"-->
+<!--            android:background="@android:color/holo_blue_dark">-->
+<!--        </FrameLayout>-->
+
+<!--    </LinearLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"

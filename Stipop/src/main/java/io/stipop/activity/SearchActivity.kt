@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.AbsListView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -137,6 +138,16 @@ class SearchActivity: Activity() {
             }
 
         })
+
+        stickerGV.setOnItemClickListener { adapterView, view, i, l ->
+            val sticker = stickerData[i]
+
+            Stipop.send(sticker.stickerId, sticker.keyword) { result ->
+                if (result) {
+                    Stipop.instance!!.delegate.onStickerSelected(sticker)
+                }
+            }
+        }
 
         if (Config.searchTagsHidden) {
             tagLL.visibility = View.GONE

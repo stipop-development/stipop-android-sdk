@@ -4,13 +4,11 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.ImageView
 import com.bumptech.glide.Glide
 import io.stipop.R
-import io.stipop.Utils
 import io.stipop.extend.StipopImageView
 import io.stipop.model.SPSticker
-import org.json.JSONObject
+
 
 class StickerAdapter(context: Context, var view: Int, var data: ArrayList<SPSticker>): ArrayAdapter<SPSticker>(context, view, data) {
 

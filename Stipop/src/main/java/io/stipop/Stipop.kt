@@ -18,7 +18,7 @@ import org.json.JSONObject
 import java.io.IOException
 
 interface StipopDelegate {
-    fun onStickerSelected(sticker: SPSticker)
+    fun onStickerSelected(sticker: SPSticker): Boolean
     fun canDownload(spPackage:SPPackage): Boolean
 }
 

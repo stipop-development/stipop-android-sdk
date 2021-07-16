@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +32,10 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
         val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
     }
 
+    override fun getItemId(position: Int): Long {
+        return dataList[position].hashCode().toLong()
+    }
+
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
@@ -41,6 +46,7 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         val item = dataList[position]
 
         if (item.packageId == -999) {
@@ -51,7 +57,7 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
         } else {
             val packageImg = item.packageImg
 
-            Glide.with(context).load(packageImg).into(holder.imageIV)
+            Glide.with(context).load(packageImg).dontAnimate().into(holder.imageIV)
 
             val matrix = ColorMatrix()
 

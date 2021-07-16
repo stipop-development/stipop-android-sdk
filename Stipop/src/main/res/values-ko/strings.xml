@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Stipop</string>
-    <string name="bottom_alert_title">Hide this sticker pack?</string>
-    <string name="bottom_alert_contents">Do you want to hide the sticker pack? You can always re-download hidden stickers later.</string>
-    <string name="cancel">Cancel</string>
-    <string name="hide">Hide</string>
-    <string name="downloaded">DOWNLOADED</string>
-    <string name="download">DOWNLOAD</string>
-    <string name="search">Search..</string>
-    <string name="all_stickers">All Stickers</string>
-    <string name="my_sticker">My Sticker</string>
-    <string name="popular_stickers">Popular Stickers</string>
-    <string name="recommended_tag">Recommended tag</string>
-    <string name="view_hidden_stickers">View Hidden Stickers</string>
-    <string name="view_active_stickers">View Active Stickers</string>
-    <string name="no_result">No results</string>
-    <string name="trending">Trending</string>
-    <string name="stickers">Stickers</string>
-    <string name="recent_search">Recent Search</string>
-    <string name="clear">Clear</string>
+    <string name="bottom_alert_title">이모티콘을 숨기시겠어요??</string>
+    <string name="bottom_alert_contents">이모티콘을 숨기시겠어요? 나중에 다시 다운받을 수 있습니다.</string>
+    <string name="cancel">취소</string>
+    <string name="hide">숨기기</string>
+    <string name="downloaded">다운로드 완료</string>
+    <string name="download">다운로드</string>
+    <string name="search">검색..</string>
+    <string name="all_stickers">이모티콘</string>
+    <string name="my_sticker">내 이모티콘</string>
+    <string name="popular_stickers">인기 이모티콘</string>
+    <string name="recommended_tag">추천 검색어</string>
+    <string name="view_hidden_stickers">숨긴 이모티콘 보기</string>
+    <string name="view_active_stickers">내 이모티콘 보기</string>
+    <string name="no_result">결과없음</string>
+    <string name="trending">추천 이모티콘</string>
+    <string name="stickers">이모티콘</string>
+    <string name="recent_search">최근 검색</string>
+    <string name="clear">삭제</string>
     <string name="download_done">다운로드 완료!</string>
-    <string name="can_not_download">"Can not download!!!"</string>
+    <string name="can_not_download">"다운로드가 되지 않았습니다."</string>
 </resources>

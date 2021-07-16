@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import android.util.Log
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.Gravity
@@ -19,6 +20,7 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.adapter.*
@@ -139,6 +141,15 @@ class Keyboard(val activity: Activity) : Fragment() {
         artistNameTV = view.findViewById(R.id.artistNameTV)
         downloadTV = view.findViewById(R.id.downloadTV)
 
+        val animator: RecyclerView.ItemAnimator? = packageRV.itemAnimator
+
+        if (animator is SimpleItemAnimator) {
+            animator.supportsChangeAnimations = false
+        }
+
+        packageRV.setHasFixedSize(true)
+        packageRV.setItemViewCacheSize(20)
+
         val drawable2 = downloadTV.background as GradientDrawable
         drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
 
@@ -172,6 +183,8 @@ class Keyboard(val activity: Activity) : Fragment() {
         packageRV.layoutManager = mLayoutManager
 
         packageAdapter = KeyboardPackageAdapter(packageData, this.activity, this)
+        packageAdapter.setHasStableIds(true)
+
         packageRV.adapter = packageAdapter
         packageRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -228,7 +241,6 @@ class Keyboard(val activity: Activity) : Fragment() {
         })
         stickerGV.setOnItemClickListener { adapterView, view, i, l ->
             val sticker = stickerData[i]
-
             Stipop.send(sticker.stickerId, sticker.keyword) { result ->
                 if (result) {
                     if (Config.showPreview) {
@@ -245,9 +257,7 @@ class Keyboard(val activity: Activity) : Fragment() {
                     }
 
                 }
-
             }
-
         }
 
         view.findViewById<Button>(R.id.button_popup).setOnClickListener {
