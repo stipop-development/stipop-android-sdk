@@ -38,7 +38,6 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        Log.e("create=", "dddddddddddddd")
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.item_keyboard_package, viewGroup, false)
@@ -47,7 +46,7 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Log.e("bind=", "dddddddddddddd")
+
         val item = dataList[position]
 
         if (item.packageId == -999) {
