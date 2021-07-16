@@ -1,14 +1,18 @@
 package io.stipop.stipopsample
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.StipopDelegate
+import io.stipop.activity.Keyboard
 import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker
@@ -18,13 +22,13 @@ import java.util.*
 class MainActivity : AppCompatActivity(), StipopDelegate {
 
     private lateinit var chatText: EditText
-    private lateinit var sendButton: Button
     private lateinit var chat_recyclerview: RecyclerView
 
     var chatList = arrayListOf<ChatModel>()
     val mAdapter = ChatAdapter(this, chatList)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -38,11 +42,14 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
         chat_recyclerview.layoutManager = lm
         chat_recyclerview.setHasFixedSize(true)
 
-
         chatText = findViewById(R.id.chatET)
-//        sendButton = findViewById(R.id.sendButton)
 
         Stipop.connect(this, stipopIV, "9937", "ko", "US", this)
+
+//        val keyboardView = Keyboard(this)
+//        supportFragmentManager.beginTransaction()
+//            .replace(R.id.container, keyboardView)
+//            .commitAllowingStateLoss()
 
         stipopIV.setOnClickListener {
 //            Stipop.showSearch()
@@ -53,11 +60,6 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
             sendMessage()
             true
         }
-
-//        sendButton.setOnClickListener {
-//            Stipop.showSearch()
-//        }
-
     }
 
     private fun sendMessage() {

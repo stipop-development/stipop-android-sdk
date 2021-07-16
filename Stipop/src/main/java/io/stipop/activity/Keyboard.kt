@@ -9,9 +9,15 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.util.Log
+import android.os.Bundle
+import android.util.AttributeSet
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -25,9 +31,7 @@ import org.json.JSONObject
 import java.io.IOException
 import kotlin.coroutines.coroutineContext
 
-class Keyboard(val activity: Activity) : PopupWindow() {
-
-    private lateinit var rootView: View
+class Keyboard(val activity: Activity) : Fragment() {
 
     private lateinit var favoriteRL: RelativeLayout
     private lateinit var recentlyIV: StipopImageView
@@ -63,8 +67,19 @@ class Keyboard(val activity: Activity) : PopupWindow() {
     lateinit var popupWindow:PopupWindow
     internal var canShow = true
 
+
     init {
-        this.initPopup()
+        this.initPopup(null)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.keyboard, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initPopup(view)
     }
 
     var reloadPackageReciver: BroadcastReceiver? = object : BroadcastReceiver() {
@@ -75,9 +90,12 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         }
     }
 
-    private fun initPopup() {
+    private fun initPopup(v: View?) {
 
-        val view = View.inflate(this.activity, R.layout.keyboard,null)
+        var view = View.inflate(this.activity, R.layout.keyboard,null)
+        if (v != null) {
+            view = v
+        }
 
         popupWindow = PopupWindow(
             view,
@@ -305,9 +323,9 @@ class Keyboard(val activity: Activity) : PopupWindow() {
 
         reloadPackages()
 
-        this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
+        val rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
         popupWindow.showAtLocation(
-            this.rootView,
+            rootView,
             Gravity.BOTTOM,
             0,
             0
@@ -636,11 +654,12 @@ class Keyboard(val activity: Activity) : PopupWindow() {
         }
     }
 
-
-    override fun dismiss() {
+    override fun onDestroy() {
         if (reloadPackageReciver != null) {
             this.activity.unregisterReceiver(reloadPackageReciver)
         }
-        super.dismiss()
+
+        super.onDestroy()
     }
+    
 }
