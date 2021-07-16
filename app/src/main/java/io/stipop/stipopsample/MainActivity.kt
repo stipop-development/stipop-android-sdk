@@ -52,8 +52,8 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
 //            .commitAllowingStateLoss()
 
         stipopIV.setOnClickListener {
-//            Stipop.showSearch()
-            Stipop.showKeyboard()
+            Stipop.showSearch()
+//            Stipop.showKeyboard()
         }
 
         chatText.setOnEditorActionListener { textView, action, event ->
