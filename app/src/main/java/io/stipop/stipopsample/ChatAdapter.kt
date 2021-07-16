@@ -66,7 +66,7 @@ class ChatAdapter(val context: Context, val arrayList: ArrayList<ChatModel>)
         private val chat_sticker: ImageView = itemView.findViewById<ImageView>(R.id.my_sticker)
 
         fun bind(item: ChatModel) {
-            Glide.with(itemView).load(item.sticker_url).dontAnimate().into(chat_sticker)
+            Glide.with(itemView).load(item.sticker_url).into(chat_sticker)
         }
     }
 
