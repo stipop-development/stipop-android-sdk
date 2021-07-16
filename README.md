@@ -8,7 +8,7 @@ Stipop Android SDK 데모 사용 가이드
 1. 코드 다운로드 및 json 파일 추가
   - 스티팝 대시보드 (dashboard.stipop.io) 혹은 이메일을 통해 받은 Stipop.json 파일을 app>src>main>assets에 추가해주세요.
   - Stipop.json 파일에는 API key, custom 설정 값들이 저장되어 있습니다.
-  - 더 자세한 가이드는 https://docs.stipop.io/en/sdk/android/get-started/quick-start를 확인해주세요.
+  - 더 자세한 가이드는 https://docs.stipop.io/en/sdk/android/get-started/quick-start/ 를 확인해주세요.
 
 2. 코드를 뒤 디폴트로 설정되어 있는 Search View를 테스트해보세요.
   - 이모티콘의 언어 등은 사용자 lang 정보에 맞게 최적화 됩니다.
