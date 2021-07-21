@@ -184,10 +184,15 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
 
     private fun enableStickerIcon() {
         if (this.connected) {
-            // this.stipopButton.setImageResource(R.mipmap.ic_sticker_active)
             this.stipopButton.setTint()
 
             this.stickerIconEnabled = true
+        }
+    }
+
+    private fun disableStickerIcon() {
+        if (this.connected) {
+            this.stipopButton.clearTint()
         }
     }
 
@@ -196,7 +201,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
             return
         }
 
-        this.enableStickerIcon()
+        // this.enableStickerIcon()
 
         val intent = Intent(this.activity, SearchActivity::class.java)
         this.activity.startActivity(intent)
@@ -216,6 +221,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         if (keyboard!!.popupWindow.isShowing) {
             this.keyboard!!.canShow = false
             keyboard!!.hide()
+            this.disableStickerIcon()
         } else {
 
             if (Stipop.keyboardHeight == 0) {
@@ -262,6 +268,9 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
 
                     if (preHeight == 0 || !this.keyboard!!.popupWindow.isShowing) {
                         this.keyboard!!.show()
+                        if(this.keyboard!!.canShow) {
+                            this.enableStickerIcon()
+                        }
                     }
                 }
             } else {
@@ -269,6 +278,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
                 if(this.keyboard != null) {
                     this.keyboard!!.popupWindow.height = 0
                     this.keyboard!!.hide()
+                    this.disableStickerIcon()
                 }
             }
         }

@@ -65,6 +65,14 @@ class StipopImageView : AppCompatImageView {
         setColorFilter(Color.parseColor(Config.themeIconTintColor))
     }
 
+    fun clearTint() {
+        if (checkErrorIcon()) {
+            return
+        }
+
+        colorFilter = null
+    }
+
     fun checkErrorIcon(): Boolean {
         R.mipmap.error
         if (this.tag == R.mipmap.error || this.tag == R.mipmap.error_dark) {
