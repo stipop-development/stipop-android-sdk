@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import com.bumptech.glide.Glide
 import io.stipop.R
 import io.stipop.extend.StipopImageView
@@ -51,7 +52,7 @@ class StickerAdapter(context: Context, var view: Int, var data: ArrayList<SPStic
     }
 
     class ViewHolder(v: View) {
-        val imageIV: StipopImageView = v.findViewById(R.id.imageIV) as StipopImageView
+        val imageIV: ImageView = v.findViewById(R.id.imageIV) as ImageView
     }
 
 }

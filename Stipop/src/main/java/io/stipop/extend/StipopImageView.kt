@@ -28,6 +28,8 @@ class StipopImageView : AppCompatImageView {
             val haveToSetTint = tintStr.toBoolean()
             if (haveToSetTint) {
                 setTint()
+            } else {
+                setIconDefaultsColor()
             }
 
         } finally {
@@ -70,7 +72,7 @@ class StipopImageView : AppCompatImageView {
             return
         }
 
-        colorFilter = null
+        setIconDefaultsColor()
     }
 
     fun checkErrorIcon(): Boolean {

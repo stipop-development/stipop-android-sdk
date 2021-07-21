@@ -40,7 +40,7 @@
                 android:id="@+id/recentPreviewOffIV"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@mipmap/ic_recent_previewoff"
+                android:src="@mipmap/ic_recents_active"
                 android:layout_centerInParent="true"
                 app:stipop_tint="true"
                 android:visibility="gone"/>

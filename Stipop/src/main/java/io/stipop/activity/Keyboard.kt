@@ -203,6 +203,8 @@ class Keyboard(val activity: Activity) : Fragment() {
 
                 // println(packageData)
 
+                clearThemeImageIcon()
+
                 val pack = packageData[position]
 
                 if (pack.packageId == -999) {
@@ -351,25 +353,6 @@ class Keyboard(val activity: Activity) : Fragment() {
     }
 
     private fun setThemeImageIcon() {
-//        if (Config.useLightMode) {
-//            recentlyIV.setImageResource(R.mipmap.ic_recents_normal)
-//            favoriteIV.setImageResource(R.mipmap.ic_favorites_normal)
-//            if (favoriteRL.tag == 1) {
-//                favoriteIV.setImageResource(R.mipmap.ic_favorites_active)
-//            } else {
-//                recentlyIV.setImageResource(R.mipmap.ic_recents_active)
-//            }
-//        } else {
-//            recentlyIV.setImageResource(R.mipmap.ic_recents_normal_dark)
-//            favoriteIV.setImageResource(R.mipmap.ic_favorites_normal_dark)
-//
-//            if (favoriteRL.tag == 1) {
-//                favoriteIV.setImageResource(R.mipmap.ic_favorites_active_dark)
-//            } else {
-//                recentlyIV.setImageResource(R.mipmap.ic_recents_active_dark)
-//            }
-//        }
-
         favoriteIV.setImageResource(R.mipmap.ic_favorites_active)
         recentlyIV.setImageResource(R.mipmap.ic_recents_active)
 
@@ -380,6 +363,11 @@ class Keyboard(val activity: Activity) : Fragment() {
             recentlyIV.setIconDefaultsColor()
             favoriteIV.setIconDefaultsColor40Opacity()
         }
+        recentPreviewOffIV.setTint()
+    }
+
+    private fun clearThemeImageIcon() {
+        recentPreviewOffIV.clearTint()
     }
 
     private fun reloadPackages() {
