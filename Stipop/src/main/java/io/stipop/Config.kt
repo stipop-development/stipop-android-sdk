@@ -173,7 +173,7 @@ class Config {
 
 
 
-            stickerIconNormalName = Utils.getString(json, "StickerIcon", "ic_sticker_board_3")
+            stickerIconNormalName = Utils.getString(json, "StickerIcon", "ic_sticker_border_3")
 
             val search = json.optJSONObject("Search")
 
@@ -249,6 +249,14 @@ class Config {
                 previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, DARK_KEY, "ic_favorites_on")
                 previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, DARK_KEY, "ic_favorites_off")
                 previewCloseIconName = Utils.getString(previewCloseIcon, DARK_KEY, "ic_cancel")
+            }
+        }
+
+        fun getStickerIconResourceId(context: Context): Int {
+            return if (stickerIconNormalName.isNotEmpty()) {
+                Utils.getResource(stickerIconNormalName, context)
+            } else {
+                R.mipmap.ic_sticker_border_3
             }
         }
 

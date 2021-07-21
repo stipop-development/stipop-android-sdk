@@ -109,11 +109,9 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
     private var stickerIconEnabled = false
 
     fun connect() {
-        this.stipopButton.setImageResource(R.mipmap.ic_sticker_border_3)
+        this.stipopButton.setImageResource(Config.getStickerIconResourceId(this.activity))
 
         this.connected = true
-
-        this.enableStickerIcon()
 
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
 
@@ -198,6 +196,8 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
             return
         }
 
+        this.enableStickerIcon()
+
         val intent = Intent(this.activity, SearchActivity::class.java)
         this.activity.startActivity(intent)
     }
@@ -206,6 +206,8 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         if (!this.connected) {
             return
         }
+
+        this.enableStickerIcon()
 
         if(keyboard == null) {
             keyboard = Keyboard(this.activity)
