@@ -28,9 +28,9 @@ Stipop SDK는 총 두 종류의 View를 제공합니다.
           Stipop.showKeyboard()    //키보드 UI창
 <br/>
 
-4. 언어정보 전환 방법
+4. 언어정보 전환 방법 (영어 > 한글)
   - **app > src > main > java.io.stipop.stipopsample > MainActivity**로 이동
-  - Stipop.connect(this, stipopIV, "9937", "ko", "KR", this)에서 lang을 **en**(영어), 등으로 수정
+  - Stipop.connect(this, stipopIV, "9937", "en", "US", this)에서 lang을 **ko**, country를 **KR** 로 수정
 <br/>
 
 
