@@ -215,6 +215,11 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
             this.keyboard!!.canShow = false
             keyboard!!.hide()
         } else {
+
+            if (Stipop.keyboardHeight == 0) {
+                Utils.showKeyboard(instance!!.activity)
+            }
+
             this.keyboard!!.canShow = true
             keyboard!!.show()
         }
@@ -250,13 +255,15 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
                 keyboardHeight = heightDifference
 
                 if(this.keyboard != null) {
+                    val preHeight = this.keyboard!!.popupWindow.height
                     this.keyboard!!.popupWindow.height = keyboardHeight
 
-                    if (!this.keyboard!!.popupWindow.isShowing) {
+                    if (preHeight == 0 || !this.keyboard!!.popupWindow.isShowing) {
                         this.keyboard!!.show()
                     }
                 }
             } else {
+                keyboardHeight = 0
                 if(this.keyboard != null) {
                     this.keyboard!!.popupWindow.height = 0
                     this.keyboard!!.hide()

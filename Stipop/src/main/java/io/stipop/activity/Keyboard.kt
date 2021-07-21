@@ -7,16 +7,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.os.Build
-import android.util.Log
 import android.os.Bundle
-import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,7 +25,7 @@ import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker
 import org.json.JSONObject
 import java.io.IOException
-import kotlin.coroutines.coroutineContext
+
 
 class Keyboard(val activity: Activity) : Fragment() {
 
@@ -104,7 +100,6 @@ class Keyboard(val activity: Activity) : Fragment() {
         )
 
         popupWindow.elevation = 10.0F
-
 
         // animations
         /*
@@ -313,10 +308,6 @@ class Keyboard(val activity: Activity) : Fragment() {
     }
 
     internal fun show() {
-        if (Stipop.keyboardHeight == 0) {
-            return
-        }
-
         if (!this.canShow) {
             return
         }
@@ -324,19 +315,18 @@ class Keyboard(val activity: Activity) : Fragment() {
         reloadPackages()
 
         val rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
-        popupWindow.showAtLocation(
-            rootView,
-            Gravity.BOTTOM,
-            0,
-            0
-        )
+
+        if (Stipop.keyboardHeight > 0) {
+            popupWindow.showAtLocation(
+                rootView,
+                Gravity.BOTTOM,
+                0,
+                0
+            )
+        }
     }
 
     internal fun hide() {
-        if (Stipop.keyboardHeight == 0) {
-            return
-        }
-
         popupWindow.dismiss()
     }
 
