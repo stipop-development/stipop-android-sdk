@@ -28,8 +28,6 @@ class StipopImageView : AppCompatImageView {
             val haveToSetTint = tintStr.toBoolean()
             if (haveToSetTint) {
                 setTint()
-            } else {
-                setIconDefaultsColor()
             }
 
         } finally {
