@@ -36,9 +36,13 @@ class APIClient {
             thread(start = true) {
                 // parameters
                 var resolvedPath = Config.baseUrl + path
+
                 if (parameters != null && parameters.keys().hasNext()) {
                     resolvedPath += "?"
                     resolvedPath += getQuery(parameters)
+                    resolvedPath += "&platform=android-sdk"
+                } else {
+                    resolvedPath += "?platform=android-sdk"
                 }
 
                 // println(resolvedPath)
@@ -95,10 +99,15 @@ class APIClient {
 
         fun post(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
             thread(start = true) {
+
                 var resolvedPath = Config.baseUrl + path
+
                 if (parameters != null && parameters.keys().hasNext()) {
                     resolvedPath += "?"
                     resolvedPath += getQuery(parameters)
+                    resolvedPath += "&platform=android-sdk"
+                } else {
+                    resolvedPath += "?platform=android-sdk"
                 }
 
                 // println(resolvedPath)
@@ -134,10 +143,8 @@ class APIClient {
 
         fun put(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
             thread(start = true) {
-                val resolvedPath = Config.baseUrl + path
 
-                // println(resolvedPath)
-                // println(parameters.toString())
+                val resolvedPath = Config.baseUrl + path +"?platform=android-sdk"
 
                 val url = URL(resolvedPath)
 
@@ -181,9 +188,13 @@ class APIClient {
         fun delete(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
             thread(start = true) {
                 var resolvedPath = Config.baseUrl + path
+
                 if (parameters != null && parameters.keys().hasNext()) {
                     resolvedPath += "?"
                     resolvedPath += getQuery(parameters)
+                    resolvedPath += "&platform=android-sdk"
+                } else {
+                    resolvedPath += "?platform=android-sdk"
                 }
 
                 // println(resolvedPath)
