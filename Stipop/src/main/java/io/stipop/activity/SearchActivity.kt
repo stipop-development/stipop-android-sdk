@@ -158,7 +158,10 @@ class SearchActivity: Activity() {
     private fun getKeyword() {
         keywords.clear()
 
-        APIClient.get(this, APIClient.APIPath.SEARCH_KEYWORD.rawValue, null) { response: JSONObject?, e: IOException? ->
+        val params = JSONObject()
+        params.put("userId", Stipop.userId)
+
+        APIClient.get(this, APIClient.APIPath.SEARCH_KEYWORD.rawValue, params) { response: JSONObject?, e: IOException? ->
             // println(response)
 
             if (null != response) {
