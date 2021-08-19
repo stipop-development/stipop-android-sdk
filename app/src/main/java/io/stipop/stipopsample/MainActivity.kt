@@ -1,18 +1,14 @@
 package io.stipop.stipopsample
 
-import android.graphics.Color
+import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import android.widget.EditText
-import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.StipopDelegate
-import io.stipop.activity.Keyboard
+import io.stipop.activity.StoreActivity
 import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker
@@ -66,23 +62,23 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
 
         if (chatText.text.toString().length !== 0) {
 
-            val item = ChatModel("testName", chatText.text.toString(),"example", true, "")
+            val item = ChatModel("testName", chatText.text.toString(), "example", true, "")
             mAdapter.addItem(item)
-            mAdapter.notifyItemInserted(mAdapter.itemCount-1)
+            mAdapter.notifyItemInserted(mAdapter.itemCount - 1)
             chatText.setText("")
-            chat_recyclerview.scrollToPosition(mAdapter.itemCount-1)
+            chat_recyclerview.scrollToPosition(mAdapter.itemCount - 1)
 
         }
     }
 
     private fun sendSticker(stickerImg: String?) {
 
-        val item = ChatModel("testName", "","example", false, stickerImg.toString())
+        val item = ChatModel("testName", "", "example", false, stickerImg.toString())
 
         mAdapter.addItem(item)
-        mAdapter.notifyItemInserted(mAdapter.itemCount-1)
+        mAdapter.notifyItemInserted(mAdapter.itemCount - 1)
 
-        chat_recyclerview.scrollToPosition(mAdapter.itemCount-1)
+        chat_recyclerview.scrollToPosition(mAdapter.itemCount - 1)
 
     }
 
@@ -106,5 +102,11 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
         print(spPackage)
 
         return true
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        startActivity(Intent(this, StoreActivity::class.java))
     }
 }

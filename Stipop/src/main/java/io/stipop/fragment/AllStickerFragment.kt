@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -29,19 +30,18 @@ import io.stipop.adapter.AllStickerAdapter
 import io.stipop.adapter.PackageAdapter
 import io.stipop.adapter.PopularStickerAdapter
 import io.stipop.adapter.RecentKeywordAdapter
+import io.stipop.databinding.FragmentAllStickerBinding
 import io.stipop.extend.RecyclerDecoration
 import io.stipop.extend.TagLayout
 import io.stipop.model.SPPackage
-import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import org.json.JSONObject
 import java.io.IOException
 import java.net.URLEncoder
 
 
 class AllStickerFragment : Fragment() {
-
-    lateinit var myContext: Context
+    lateinit private var _binding: FragmentAllStickerBinding
+    lateinit private var _context: Context
 
     var packagePage = 2 // 1 Page -> Trending List
     var totalPage = 2
@@ -75,57 +75,60 @@ class AllStickerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        this.myContext = container!!.context
-
-        return inflater.inflate(R.layout.fragment_all_sticker, container, false)
+        _binding = FragmentAllStickerBinding.inflate(layoutInflater, container, false)
+        return _binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val drawable = searchbarLL.background as GradientDrawable
+        _context = view.context
+
+        val drawable = _binding.searchbarLL.background as GradientDrawable
         drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
         drawable.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
 
-        keywordET.setTextColor(Config.getSearchTitleTextColor(myContext))
+        _binding.keywordET.setTextColor(Config.getSearchTitleTextColor(_context))
 
-        searchIconIV.setImageResource(Config.getSearchbarResourceId(myContext))
-        eraseIV.setImageResource(Config.getEraseResourceId(myContext))
-
-
-        searchIconIV.setIconDefaultsColor()
-        eraseIV.setIconDefaultsColor()
+        _binding.searchIconIV.setImageResource(Config.getSearchbarResourceId(_context))
+        _binding.eraseIV.setImageResource(Config.getEraseResourceId(_context))
 
 
-        val headerV = View.inflate(myContext, R.layout.header_all_sticker, null)
+        _binding.searchIconIV.setIconDefaultsColor()
+        _binding.eraseIV.setIconDefaultsColor()
 
-        headerV.findViewById<View>(R.id.underLineV).setBackgroundColor(Config.getUnderLineColor(myContext))
-        headerV.findViewById<TextView>(R.id.trendingTV).setTextColor(Config.getTitleTextColor(myContext))
-        headerV.findViewById<TextView>(R.id.stickersTV).setTextColor(Config.getTitleTextColor(myContext))
+
+        val headerV = View.inflate(_context, R.layout.header_all_sticker, null)
+
+        headerV.findViewById<View>(R.id.underLineV)
+            .setBackgroundColor(Config.getUnderLineColor(_context))
+        headerV.findViewById<TextView>(R.id.trendingTV)
+            .setTextColor(Config.getTitleTextColor(_context))
+        headerV.findViewById<TextView>(R.id.stickersTV)
+            .setTextColor(Config.getTitleTextColor(_context))
 
 
         packageRV = headerV.findViewById(R.id.packageRV)
         trendingLL = headerV.findViewById(R.id.trendingLL)
 
-        stickerLV.addHeaderView(headerV)
+        _binding.stickerLV.addHeaderView(headerV)
 
-        clearTextLL.setOnClickListener {
-            keywordET.setText("")
+        _binding.clearTextLL.setOnClickListener {
+            _binding.keywordET.setText("")
             inputKeyword = ""
 
-            Utils.hideKeyboard(myContext)
+            Utils.hideKeyboard(_context)
 
             reloadData(true)
         }
 
-        keywordET.setOnClickListener {
+        _binding.keywordET.setOnClickListener {
             changeView(true)
 
 //            getRecentKeyword()
         }
 
-        keywordET.setOnFocusChangeListener { view, hasFocus ->
+        _binding.keywordET.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
                 changeView(true)
 
@@ -133,7 +136,7 @@ class AllStickerFragment : Fragment() {
             }
         }
 
-        keywordET.addTextChangedListener(object : TextWatcher {
+        _binding.keywordET.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
             }
@@ -143,11 +146,11 @@ class AllStickerFragment : Fragment() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                inputKeyword = Utils.getString(keywordET)
+                inputKeyword = Utils.getString(_binding.keywordET)
             }
         })
 
-        keywordET.setOnEditorActionListener { v, actionId, event ->
+        _binding.keywordET.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 reloadData(inputKeyword.isEmpty())
             }
@@ -155,9 +158,9 @@ class AllStickerFragment : Fragment() {
         }
 
 
-        packageAdapter = PackageAdapter(packageData, myContext)
+        packageAdapter = PackageAdapter(packageData, _context)
 
-        val mLayoutManager = LinearLayoutManager(myContext)
+        val mLayoutManager = LinearLayoutManager(_context)
         mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
 
         packageRV.layoutManager = mLayoutManager
@@ -178,18 +181,20 @@ class AllStickerFragment : Fragment() {
 
         if (Config.storeListType == "singular") {
             // B Type
-            allStickerAdapter = AllStickerAdapter(myContext, R.layout.item_all_sticker_type_b, allStickerData, this)
+            allStickerAdapter =
+                AllStickerAdapter(_context, R.layout.item_all_sticker_type_b, allStickerData, this)
         } else {
             // A Type
-            allStickerAdapter = AllStickerAdapter(myContext, R.layout.item_all_sticker_type_a, allStickerData, this)
+            allStickerAdapter =
+                AllStickerAdapter(_context, R.layout.item_all_sticker_type_a, allStickerData, this)
         }
 
-        stickerLV.adapter = allStickerAdapter
-        stickerLV.setOnScrollListener(object : AbsListView.OnScrollListener {
+        _binding.stickerLV.adapter = allStickerAdapter
+        _binding.stickerLV.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > packagePage) {
                     packagePage += 1
-                    val keyword = Utils.getString(keywordET)
+                    val keyword = Utils.getString(_binding.keywordET)
                     loadPackageData(packagePage, keyword.isNotEmpty())
                 }
             }
@@ -205,7 +210,7 @@ class AllStickerFragment : Fragment() {
             }
 
         })
-        stickerLV.setOnItemClickListener { adapterView, view, i, l ->
+        _binding.stickerLV.setOnItemClickListener { adapterView, view, i, l ->
             // position - 1 : addHeaderView 해줬기 때문!
             val position = i - 1
             if (position < 0 && position > allStickerData.size) {
@@ -219,14 +224,14 @@ class AllStickerFragment : Fragment() {
         allStickerAdapter.notifyDataSetChanged()
 
 
-        val recentHeaderV = View.inflate(myContext, R.layout.header_recent_keyword, null)
+        val recentHeaderV = View.inflate(_context, R.layout.header_recent_keyword, null)
         recentHeaderV.findViewById<TextView>(R.id.keywordClearTV).setOnClickListener {
             deleteKeyword(null)
         }
 
-//        recentLV.addHeaderView(recentHeaderV)
+//       binding.recentLV.addHeaderView(recentHeaderV)
 
-        val recentFooterV = View.inflate(myContext, R.layout.footer_recent_keyword, null)
+        val recentFooterV = View.inflate(_context, R.layout.footer_recent_keyword, null)
         val popularStickerLL = recentFooterV.findViewById<LinearLayout>(R.id.popularStickerLL)
         val recommendedTagLL = recentFooterV.findViewById<LinearLayout>(R.id.recommendedTagLL)
         noneTV = recentFooterV.findViewById<TextView>(R.id.noneTV)
@@ -234,16 +239,17 @@ class AllStickerFragment : Fragment() {
         recommendedTagsTL = recentFooterV.findViewById(R.id.recommendedTagsTL)
         popularStickerRV = recentFooterV.findViewById(R.id.popularStickerRV)
 
-        popularStickerAdapter = PopularStickerAdapter(popularStickers, myContext)
+        popularStickerAdapter = PopularStickerAdapter(popularStickers, _context)
 
-        val mLayoutManager2 = LinearLayoutManager(myContext)
+        val mLayoutManager2 = LinearLayoutManager(_context)
         mLayoutManager2.orientation = LinearLayoutManager.HORIZONTAL
 
         popularStickerRV.layoutManager = mLayoutManager2
         popularStickerRV.addItemDecoration(RecyclerDecoration(Utils.dpToPx(7F).toInt()))
         popularStickerRV.adapter = popularStickerAdapter
 
-        popularStickerAdapter.setOnItemClickListener(object : PopularStickerAdapter.OnItemClickListener {
+        popularStickerAdapter.setOnItemClickListener(object :
+            PopularStickerAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 if (position > popularStickers.size) {
                     return
@@ -255,11 +261,12 @@ class AllStickerFragment : Fragment() {
             }
         })
 
-        recentLV.addFooterView(recentFooterV)
+        _binding.recentLV.addFooterView(recentFooterV)
 
-        recentKeywordAdapter = RecentKeywordAdapter(myContext, R.layout.item_recent_keyword, recentKeywords, this)
-        recentLV.adapter = recentKeywordAdapter
-        recentLV.setOnItemClickListener { adapterView, view, i, l ->
+        recentKeywordAdapter =
+            RecentKeywordAdapter(_context, R.layout.item_recent_keyword, recentKeywords, this)
+        _binding.recentLV.adapter = recentKeywordAdapter
+        _binding.recentLV.setOnItemClickListener { adapterView, view, i, l ->
             // position - 1 : addHeaderView 해줬기 때문!
             val position = i - 1
             if (position < 0 && position > allStickerData.size) {
@@ -311,7 +318,7 @@ class AllStickerFragment : Fragment() {
         }
 
     fun goDetail(packageId: Int) {
-        val intent = Intent(myContext, DetailActivity::class.java)
+        val intent = Intent(_context, DetailActivity::class.java)
         intent.putExtra("packageId", packageId)
         // startActivity(intent)
         startForResult.launch(intent)
@@ -338,7 +345,7 @@ class AllStickerFragment : Fragment() {
         params.put("lang", Stipop.lang)
         params.put("countryCode", Stipop.countryCode)
         params.put("limit", 12)
-        params.put("q", Utils.getString(keywordET))
+        params.put("q", Utils.getString(_binding.keywordET))
 
         APIClient.get(
             activity as Activity,
@@ -398,7 +405,7 @@ class AllStickerFragment : Fragment() {
                         }
 
                         if (page == 1) {
-                            stickerLV.smoothScrollToPosition(0)
+                            _binding.stickerLV.smoothScrollToPosition(0)
                         }
                     }
 
@@ -408,10 +415,10 @@ class AllStickerFragment : Fragment() {
 
             if (search) {
                 if (page == 1) {
-                    if(allStickerData.count() > 0) {
+                    if (allStickerData.count() > 0) {
                         noneTV.visibility = View.GONE
                         changeView(false)
-                        Utils.hideKeyboard(myContext)
+                        Utils.hideKeyboard(_context)
                     } else {
                         noneTV.visibility = View.VISIBLE
                     }
@@ -419,18 +426,18 @@ class AllStickerFragment : Fragment() {
             } else {
                 trendingLL.visibility = View.VISIBLE
                 if (page == 1) {
-                    if(packageData.count() > 0) {
+                    if (packageData.count() > 0) {
                         noneTV.visibility = View.GONE
                         changeView(false)
-                        Utils.hideKeyboard(myContext)
+                        Utils.hideKeyboard(_context)
                     } else {
                         noneTV.visibility = View.VISIBLE
                     }
                 } else if (page == 2) {
-                    if(allStickerData.count() > 0) {
+                    if (allStickerData.count() > 0) {
                         noneTV.visibility = View.GONE
                         changeView(false)
-                        Utils.hideKeyboard(myContext)
+                        Utils.hideKeyboard(_context)
                     } else {
                         noneTV.visibility = View.VISIBLE
                     }
@@ -444,7 +451,11 @@ class AllStickerFragment : Fragment() {
         val params = JSONObject()
         params.put("userId", Stipop.userId)
 
-        APIClient.get(activity as Activity, APIClient.APIPath.PACKAGE.rawValue + "/${packageId}", params) { response: JSONObject?, e: IOException? ->
+        APIClient.get(
+            activity as Activity,
+            APIClient.APIPath.PACKAGE.rawValue + "/${packageId}",
+            params
+        ) { response: JSONObject?, e: IOException? ->
             // println(response)
 
             if (null != response) {
@@ -486,7 +497,11 @@ class AllStickerFragment : Fragment() {
             params.put("price", price)
         }
 
-        APIClient.post(activity as Activity, APIClient.APIPath.DOWNLOAD.rawValue + "/${spPackage.packageId}", params) { response: JSONObject?, e: IOException? ->
+        APIClient.post(
+            activity as Activity,
+            APIClient.APIPath.DOWNLOAD.rawValue + "/${spPackage.packageId}",
+            params
+        ) { response: JSONObject?, e: IOException? ->
 
             if (null != response) {
 
@@ -497,7 +512,7 @@ class AllStickerFragment : Fragment() {
                     // download
                     PackUtils.downloadAndSaveLocal(activity as Activity, spPackage) {
                         allStickerAdapter.setDownload(idx)
-                        Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(_context, "다운로드 완료!", Toast.LENGTH_LONG).show()
                         allStickerAdapter.notifyDataSetChanged()
                     }
                 }
@@ -558,8 +573,6 @@ class AllStickerFragment : Fragment() {
 
             if (null != response) {
 
-                // print(response)
-
                 if (!response.isNull("body")) {
                     val body = response.getJSONObject("body")
 
@@ -587,12 +600,20 @@ class AllStickerFragment : Fragment() {
                             tagTV.setOnClickListener {
 
                                 // haptics
-                                val vibrator = this.myContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                                vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                                val vibrator =
+                                    this._context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    vibrator.vibrate(
+                                        VibrationEffect.createOneShot(
+                                            100,
+                                            VibrationEffect.DEFAULT_AMPLITUDE
+                                        )
+                                    )
+                                }
 
                                 changeView(false)
                                 inputKeyword = keyword
-                                keywordET.setText(keyword)
+                                _binding.keywordET.setText(keyword)
                                 reloadData(false)
                             }
 
@@ -691,11 +712,11 @@ class AllStickerFragment : Fragment() {
 
     fun changeView(search: Boolean) {
         if (search) {
-            recentLV.visibility = View.VISIBLE
-            stickerLV.visibility = View.GONE
+            _binding.recentLV.visibility = View.VISIBLE
+            _binding.stickerLV.visibility = View.GONE
         } else {
-            recentLV.visibility = View.GONE
-            stickerLV.visibility = View.VISIBLE
+            _binding.recentLV.visibility = View.GONE
+            _binding.stickerLV.visibility = View.VISIBLE
         }
     }
 }

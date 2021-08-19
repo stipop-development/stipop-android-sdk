@@ -10,15 +10,16 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.adapter.StickerAdapter
+import io.stipop.databinding.ActivityDetailBinding
 import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker
-import kotlinx.android.synthetic.main.activity_detail.*
 import org.json.JSONObject
 import java.io.IOException
 
-class DetailActivity: Activity() {
+class DetailActivity : Activity() {
 
-    lateinit var context: Context
+    lateinit var _binding: ActivityDetailBinding
+    lateinit var _context: Context
 
     lateinit var stickerAdapter: StickerAdapter
 
@@ -28,40 +29,40 @@ class DetailActivity: Activity() {
 
     var packageAnimated: String? = ""
 
-    lateinit var spPackage:SPPackage
+    lateinit var spPackage: SPPackage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
+        _binding = ActivityDetailBinding.inflate(layoutInflater)
+        setContentView(_binding.root)
 
-        this.context = this
+        _context = this
 
         packageId = intent.getIntExtra("packageId", -1)
 
-
-        val drawable = containerLL.background as GradientDrawable
+        val drawable = _binding.containerLL.background as GradientDrawable
         drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
 
-        contentsRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
+        _binding.contentsRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
-        packageNameTV.setTextColor(Config.getDetailPackageNameTextColor(context))
+        _binding.packageNameTV.setTextColor(Config.getDetailPackageNameTextColor(_context))
 
-        backIV.setImageResource(Config.getBackIconResourceId(context))
-        closeIV.setImageResource(Config.getCloseIconResourceId(context))
-
-
-        backIV.setIconDefaultsColor()
-        closeIV.setIconDefaultsColor()
+        _binding.backIV.setImageResource(Config.getBackIconResourceId(_context))
+        _binding.closeIV.setImageResource(Config.getCloseIconResourceId(_context))
 
 
-        stickerGV.numColumns = Config.detailNumOfColumns
+        _binding.backIV.setIconDefaultsColor()
+        _binding.closeIV.setIconDefaultsColor()
 
 
-        backLL.setOnClickListener { finish() }
-        closeLL.setOnClickListener { finish() }
+        _binding.stickerGV.numColumns = Config.detailNumOfColumns
 
-        downloadTV.setOnClickListener {
-            if (downloadTV.tag as Boolean) {
+
+        _binding.backLL.setOnClickListener { finish() }
+        _binding.closeLL.setOnClickListener { finish() }
+
+        _binding.downloadTV.setOnClickListener {
+            if (_binding.downloadTV.tag as Boolean) {
                 return@setOnClickListener
             }
 
@@ -73,8 +74,8 @@ class DetailActivity: Activity() {
 
         }
 
-        stickerAdapter = StickerAdapter(context, R.layout.item_sticker, stickerData)
-        stickerGV.adapter = stickerAdapter
+        stickerAdapter = StickerAdapter(_context, R.layout.item_sticker, stickerData)
+        _binding.stickerGV.adapter = stickerAdapter
 
         getPackInfo()
     }
@@ -84,7 +85,11 @@ class DetailActivity: Activity() {
         val params = JSONObject()
         params.put("userId", Stipop.userId)
 
-        APIClient.get(this, APIClient.APIPath.PACKAGE.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
+        APIClient.get(
+            this,
+            APIClient.APIPath.PACKAGE.rawValue + "/$packageId",
+            params
+        ) { response: JSONObject?, e: IOException? ->
             // println(response)
 
             if (null != response) {
@@ -105,23 +110,23 @@ class DetailActivity: Activity() {
 
                     packageAnimated = this.spPackage.packageAnimated
 
-                    Glide.with(context).load(this.spPackage.packageImg).into(packageIV)
+                    Glide.with(_context).load(this.spPackage.packageImg).into(_binding.packageIV)
 
-                    packageNameTV.text = this.spPackage.packageName
-                    artistNameTV.text = this.spPackage.artistName
+                    _binding.packageNameTV.text = this.spPackage.packageName
+                    _binding.artistNameTV.text = this.spPackage.artistName
 
                     if (this.spPackage.isDownload) {
-                        downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
-                        downloadTV.text = getString(R.string.downloaded)
+                        _binding.downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
+                        _binding.downloadTV.text = getString(R.string.downloaded)
                     } else {
-                        downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background)
-                        downloadTV.text = getString(R.string.download)
+                        _binding.downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background)
+                        _binding.downloadTV.text = getString(R.string.download)
 
-                        val drawable2 = downloadTV.background as GradientDrawable
+                        val drawable2 = _binding.downloadTV.background as GradientDrawable
                         drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
                     }
 
-                    downloadTV.tag = this.spPackage.isDownload
+                    _binding.downloadTV.tag = this.spPackage.isDownload
                 }
 
             } else {
@@ -152,7 +157,11 @@ class DetailActivity: Activity() {
             params.put("price", price)
         }
 
-        APIClient.post(this, APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
+        APIClient.post(
+            this,
+            APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId",
+            params
+        ) { response: JSONObject?, e: IOException? ->
             // println(response)
 
             if (null != response) {
@@ -167,10 +176,14 @@ class DetailActivity: Activity() {
 
                     // download
                     PackUtils.downloadAndSaveLocal(this, this.spPackage) {
-                        downloadTV.text = getString(R.string.downloaded)
-                        downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
+                        _binding.downloadTV.text = getString(R.string.downloaded)
+                        _binding.downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
 
-                        Toast.makeText(context, getString(R.string.download_done), Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            _context,
+                            getString(R.string.download_done),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
 

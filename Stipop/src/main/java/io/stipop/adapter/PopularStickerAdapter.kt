@@ -16,7 +16,6 @@ import io.stipop.R
 import io.stipop.Utils
 import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
-import kotlinx.android.synthetic.main.activity_store.*
 import kotlin.math.roundToInt
 
 

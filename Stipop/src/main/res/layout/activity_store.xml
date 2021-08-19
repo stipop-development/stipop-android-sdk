@@ -17,16 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="43dp"
             android:layout_marginTop="15dp"
-            android:paddingHorizontal="12dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp">
 
             <LinearLayout
                 android:id="@+id/allTabLL"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <io.stipop.extend.StipopTextView
                     android:id="@+id/allTV"
@@ -43,7 +43,7 @@
                     android:id="@+id/allV"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="#292929"/>
+                    android:background="#292929" />
 
             </LinearLayout>
 
@@ -52,8 +52,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <io.stipop.extend.StipopTextView
                     android:id="@+id/myTV"
@@ -61,17 +61,17 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:text="@string/my_sticker"
                     android:textColor="#c6c8cf"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:text="@string/my_sticker"/>
+                    android:textStyle="bold" />
 
                 <View
                     android:id="@+id/myV"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:background="#292929"
-                    android:visibility="invisible"/>
+                    android:visibility="invisible" />
 
             </LinearLayout>
 
@@ -81,7 +81,7 @@
             android:id="@+id/underLineV"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#d6d6d8"/>
+            android:background="#d6d6d8" />
 
         <FrameLayout
             android:id="@+id/fragmentFL"

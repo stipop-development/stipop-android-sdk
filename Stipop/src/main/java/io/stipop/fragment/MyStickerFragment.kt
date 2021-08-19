@@ -18,17 +18,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.stipop.*
 import io.stipop.adapter.MyStickerAdapter
+import io.stipop.databinding.FragmentMyStickerBinding
 import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
 import io.stipop.extend.dragdrop.SimpleItemTouchHelperCallback
 import io.stipop.model.SPPackage
-import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import org.json.JSONObject
 import java.io.IOException
 
-class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
+class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
 
-    lateinit var myContext: Context
-
+    lateinit private var _binding: FragmentMyStickerBinding
+    lateinit private var _context: Context
     lateinit var myStickerAdapter: MyStickerAdapter
     private lateinit var itemTouchHelper: ItemTouchHelper
 
@@ -42,33 +42,35 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         savedInstanceState: Bundle?
     ): View? {
 
-        this.myContext = container!!.context
-
-        return inflater.inflate(R.layout.fragment_my_sticker, container, false)
+        _binding = FragmentMyStickerBinding.inflate(layoutInflater, container, false)
+        return _binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        stickerTypeTV.setTextColor(Config.getActiveHiddenStickerTextColor(myContext))
-        stickerTypeTV.setBackgroundColor(Config.getHiddenStickerBackgroundColor(myContext))
+        _context = view.context
+
+        _binding.stickerTypeTV.setTextColor(Config.getActiveHiddenStickerTextColor(_context))
+        _binding.stickerTypeTV.setBackgroundColor(Config.getHiddenStickerBackgroundColor(_context))
 
 
-        myStickerAdapter = MyStickerAdapter(myContext, data, this)
+        myStickerAdapter = MyStickerAdapter(_context, data, this)
 
-        listRV.layoutManager = LinearLayoutManager(myContext)
-        listRV.adapter = myStickerAdapter
-        listRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        _binding.listRV.layoutManager = LinearLayoutManager(_context)
+        _binding.listRV.adapter = myStickerAdapter
+        _binding.listRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+                val lastVisibleItemPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 val itemTotalCount = data.size
 
                 if (lastVisibleItemPosition + 1 == itemTotalCount && totalPage > page) {
                     // 리스트 마지막 도착! 다음 페이지 로드!
                     page += 1
-                    if (stickerTypeTV.tag == 1) {
+                    if (_binding.stickerTypeTV.tag == 1) {
                         loadMySticker()
                     } else {
                         loadMyHiddenSticker()
@@ -81,10 +83,14 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         myStickerAdapter.setOnRecyclerAdapterEventListener(this)
         val callback = SimpleItemTouchHelperCallback(myStickerAdapter)
         itemTouchHelper = ItemTouchHelper(callback)
-        itemTouchHelper.attachToRecyclerView(listRV)
+        itemTouchHelper.attachToRecyclerView(_binding.listRV)
 
-        stickerTypeTV.setOnClickListener {
-            stickerTypeTV.tag = if (stickerTypeTV.tag == 2) { 1 } else { 2 }
+        _binding.stickerTypeTV.setOnClickListener {
+            _binding.stickerTypeTV.tag = if (_binding.stickerTypeTV.tag == 2) {
+                1
+            } else {
+                2
+            }
 
             reloadData()
         }
@@ -96,14 +102,22 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         page = 1
         totalPage = 1
 
-        if (stickerTypeTV.tag == 1) {
-            stickerTypeTV.text = getString(R.string.view_hidden_stickers)
-            stickerTypeTV.setBackgroundColor(Config.getHiddenStickerBackgroundColor(myContext))
+        if (_binding.stickerTypeTV.tag == 1) {
+            _binding.stickerTypeTV.text = getString(R.string.view_hidden_stickers)
+            _binding.stickerTypeTV.setBackgroundColor(
+                Config.getHiddenStickerBackgroundColor(
+                    _context
+                )
+            )
 
             loadMySticker()
         } else {
-            stickerTypeTV.text = getString(R.string.view_active_stickers)
-            stickerTypeTV.setBackgroundColor(Config.getActiveStickerBackgroundColor(myContext))
+            _binding.stickerTypeTV.text = getString(R.string.view_active_stickers)
+            _binding.stickerTypeTV.setBackgroundColor(
+                Config.getActiveStickerBackgroundColor(
+                    _context
+                )
+            )
 
             loadMyHiddenSticker()
         }
@@ -154,12 +168,12 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
     }
 
     fun setNoResultView() {
-        if(data.count() > 0) {
-            listLL.visibility = View.VISIBLE
-            noneTV.visibility = View.GONE
+        if (data.count() > 0) {
+            _binding.listLL.visibility = View.VISIBLE
+            _binding.noneTV.visibility = View.GONE
         } else {
-            listLL.visibility = View.GONE
-            noneTV.visibility = View.VISIBLE
+            _binding.listLL.visibility = View.GONE
+            _binding.noneTV.visibility = View.VISIBLE
         }
     }
 
@@ -235,7 +249,7 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
                 val status = Utils.getString(header, "status")
 
                 if (status == "fail") {
-                    Toast.makeText(myContext, "ERROR!!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(view?.context, "ERROR!!", Toast.LENGTH_LONG).show()
                 } else {
                     // order 변경
 
@@ -287,35 +301,40 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
 
                     setNoResultView()
                 } else {
-                    Toast.makeText(myContext, "ERROR!!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(view?.context, "ERROR!!", Toast.LENGTH_LONG).show()
                 }
             }
 
 
             // update keyboard package
             val broadcastIntent = Intent()
-            broadcastIntent.action = "${myContext.packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION"
-            myContext.sendBroadcast(broadcastIntent)
+            broadcastIntent.action =
+                "${view?.context?.packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION"
+            _context.sendBroadcast(broadcastIntent)
         }
 
     }
 
     fun showConfirmAlert(packageId: Int, position: Int) {
-        val customSelectProfilePicBottomSheetDialog = BottomSheetDialog(myContext, R.style.CustomBottomSheetDialogTheme)
+        val customSelectProfilePicBottomSheetDialog =
+            BottomSheetDialog(_context, R.style.CustomBottomSheetDialogTheme)
 
-        val layoutBottomSheetView  = this.layoutInflater.inflate(R.layout.bottom_alert, null)
+        val layoutBottomSheetView = this.layoutInflater.inflate(R.layout.bottom_alert, null)
 
-        val drawable = layoutBottomSheetView.findViewById<LinearLayout>(R.id.containerLL).background as GradientDrawable
-        drawable.setColor(Config.getAlertBackgroundColor(myContext)) // solid  color
+        val drawable =
+            layoutBottomSheetView.findViewById<LinearLayout>(R.id.containerLL).background as GradientDrawable
+        drawable.setColor(Config.getAlertBackgroundColor(_context)) // solid  color
 
-        layoutBottomSheetView.findViewById<TextView>(R.id.titleTV).setTextColor(Config.getAlertTitleTextColor(myContext))
-        layoutBottomSheetView.findViewById<TextView>(R.id.contentsTV).setTextColor(Config.getAlertContentsTextColor(myContext))
+        layoutBottomSheetView.findViewById<TextView>(R.id.titleTV)
+            .setTextColor(Config.getAlertTitleTextColor(_context))
+        layoutBottomSheetView.findViewById<TextView>(R.id.contentsTV)
+            .setTextColor(Config.getAlertContentsTextColor(_context))
 
         val cancelTV = layoutBottomSheetView.findViewById<TextView>(R.id.cancelTV)
         val hideTV = layoutBottomSheetView.findViewById<TextView>(R.id.hideTV)
 
-        cancelTV.setTextColor(Config.getAlertButtonTextColor(myContext))
-        hideTV.setTextColor(Config.getAlertButtonTextColor(myContext))
+        cancelTV.setTextColor(Config.getAlertButtonTextColor(_context))
+        hideTV.setTextColor(Config.getAlertButtonTextColor(_context))
 
         cancelTV.setOnClickListener {
             customSelectProfilePicBottomSheetDialog.dismiss()
