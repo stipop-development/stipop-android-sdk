@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,13 +42,14 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        Log.d(this::class.simpleName, "onCreateView")
         _binding = FragmentMyStickerBinding.inflate(layoutInflater, container, false)
         return _binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d(this::class.simpleName, "onViewCreated")
 
         _context = view.context
 
@@ -62,6 +64,7 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
         _binding.listRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
+                Log.d(this::class.simpleName, "onScrolled")
 
                 val lastVisibleItemPosition =
                     (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
@@ -99,6 +102,7 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
     }
 
     fun reloadData() {
+        Log.d(this::class.simpleName, "reloadData")
         page = 1
         totalPage = 1
 
@@ -124,6 +128,8 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
     }
 
     fun loadMySticker() {
+        Log.d(this::class.simpleName, "loadMySticker")
+
         val params = JSONObject()
         params.put("pageNumber", page)
         params.put("limit", 20)
@@ -168,6 +174,7 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
     }
 
     fun setNoResultView() {
+        Log.d(this::class.simpleName, "setNoResultView")
         if (data.count() > 0) {
             _binding.listLL.visibility = View.VISIBLE
             _binding.noneTV.visibility = View.GONE
@@ -178,6 +185,7 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
     }
 
     fun loadMyHiddenSticker() {
+        Log.d(this::class.simpleName, "loadMyHiddenSticker")
         val params = JSONObject()
         params.put("pageNumber", page)
         params.put("limit", 20)
@@ -224,6 +232,10 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
     }
 
     fun myStickerOrder(fromPosition: Int, toPosition: Int) {
+        Log.d(this::class.simpleName, "myStickerOrder : " +
+                "fromPosition -> $fromPosition , " +
+                "toPosition -> $toPosition" +
+                "")
 
         val fromPackageObj = data[fromPosition]
         val toPackageObj = data[toPosition]
@@ -243,16 +255,17 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
 
             if (null != response) {
 
-                // println(response)
-
                 val header = response.getJSONObject("header")
                 val status = Utils.getString(header, "status")
 
                 if (status == "fail") {
+                    Log.e(this::class.simpleName, e?.message, e)
                     Toast.makeText(view?.context, "ERROR!!", Toast.LENGTH_LONG).show()
-                } else {
-                    // order 변경
+                    data.sortBy { data -> data.order }
 
+                } else {
+
+                    // order 변경
                     if (!response.isNull("body")) {
                         val body = response.getJSONObject("body")
                         if (!body.isNull("packageList")) {
@@ -267,10 +280,6 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
                                     }
                                 }
                             }
-
-                            data.sortBy { data -> data.order }
-
-                            myStickerAdapter.notifyDataSetChanged()
                         }
                     }
 
@@ -283,6 +292,7 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
     }
 
     fun hidePackage(packageId: Int, position: Int) {
+        Log.d(this::class.simpleName, "hidePackage")
         val params = JSONObject()
 
         APIClient.put(
@@ -316,6 +326,7 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
     }
 
     fun showConfirmAlert(packageId: Int, position: Int) {
+        Log.d(this::class.simpleName, "showConfirmAlert")
         val customSelectProfilePicBottomSheetDialog =
             BottomSheetDialog(_context, R.style.CustomBottomSheetDialogTheme)
 
@@ -351,12 +362,15 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
     }
 
     override fun onItemClicked(position: Int) {
+        Log.d(this::class.simpleName, "onItemClicked")
     }
 
     override fun onItemLongClicked(position: Int) {
+        Log.d(this::class.simpleName, "onItemLongClicked")
     }
 
     override fun onDragStarted(viewHolder: RecyclerView.ViewHolder) {
+        Log.d(this::class.simpleName, "onDragStarted")
         itemTouchHelper.startDrag(viewHolder)
     }
 
