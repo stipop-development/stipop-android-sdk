@@ -2,7 +2,10 @@ package io.stipop
 
 import android.app.Activity
 import org.json.JSONObject
-import java.io.*
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -27,11 +30,28 @@ class APIClient {
 
     companion object {
 
-        fun get(activity:Activity, path: String, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
+        fun get(
+            activity: Activity?,
+            path: String,
+            responseCallback: (response: JSONObject?, e: IOException?) -> Unit
+        ) {
             get(activity, path, null, responseCallback)
         }
 
-        fun get(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
+        fun get(
+            path: String,
+            parameters: JSONObject?,
+            responseCallback: (response: JSONObject?, e: IOException?) -> Unit
+        ) {
+            get(null, path, parameters, responseCallback)
+        }
+
+        fun get(
+            activity: Activity?,
+            path: String,
+            parameters: JSONObject?,
+            responseCallback: (response: JSONObject?, e: IOException?) -> Unit
+        ) {
 
             thread(start = true) {
                 // parameters
@@ -69,9 +89,14 @@ class APIClient {
                 buffered.close()
                 huc.disconnect()
 
-                activity.runOnUiThread {
+                if (activity == null) {
                     val response = JSONObject(content.toString())
                     responseCallback(response, null)
+                } else {
+                    activity.runOnUiThread {
+                        val response = JSONObject(content.toString())
+                        responseCallback(response, null)
+                    }
                 }
             }
         }
@@ -97,7 +122,20 @@ class APIClient {
             return result.toString()
         }
 
-        fun post(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
+        fun post(
+            path: String,
+            parameters: JSONObject?,
+            responseCallback: (response: JSONObject?, e: IOException?) -> Unit
+        ) {
+            post(null, path, parameters, responseCallback)
+        }
+
+        fun post(
+            activity: Activity?,
+            path: String,
+            parameters: JSONObject?,
+            responseCallback: (response: JSONObject?, e: IOException?) -> Unit
+        ) {
             thread(start = true) {
 
                 var resolvedPath = Config.baseUrl + path
@@ -134,17 +172,35 @@ class APIClient {
                 buffered.close()
                 huc.disconnect()
 
-                activity.runOnUiThread {
+                if (activity == null) {
                     val response = JSONObject(content.toString())
                     responseCallback(response, null)
+                } else {
+                    activity.runOnUiThread {
+                        val response = JSONObject(content.toString())
+                        responseCallback(response, null)
+                    }
                 }
             }
         }
 
-        fun put(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
+        fun put(
+            path: String,
+            parameters: JSONObject?,
+            responseCallback: (response: JSONObject?, e: IOException?) -> Unit
+        ) {
+            put(null, path, parameters, responseCallback)
+        }
+
+        fun put(
+            activity: Activity?,
+            path: String,
+            parameters: JSONObject?,
+            responseCallback: (response: JSONObject?, e: IOException?) -> Unit
+        ) {
             thread(start = true) {
 
-                val resolvedPath = Config.baseUrl + path +"?platform=android-sdk"
+                val resolvedPath = Config.baseUrl + path + "?platform=android-sdk"
 
                 val url = URL(resolvedPath)
 
@@ -154,8 +210,8 @@ class APIClient {
                 huc.doInput = true
 
                 huc.setRequestProperty("apikey", Config.apikey)
-                huc.setRequestProperty("Content-Type","application/json;charset=utf-8");
-                huc.setRequestProperty("Accept","application/json");
+                huc.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                huc.setRequestProperty("Accept", "application/json");
 
 
                 val writer = OutputStreamWriter(huc.outputStream)
@@ -178,14 +234,32 @@ class APIClient {
                 buffered.close()
                 huc.disconnect()
 
-                activity.runOnUiThread {
+                if (activity == null) {
                     val response = JSONObject(content.toString())
                     responseCallback(response, null)
+                } else {
+                    activity.runOnUiThread {
+                        val response = JSONObject(content.toString())
+                        responseCallback(response, null)
+                    }
                 }
             }
         }
 
-        fun delete(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
+        fun delete(
+            path: String,
+            parameters: JSONObject?,
+            responseCallback: (response: JSONObject?, e: IOException?) -> Unit
+        ) {
+            delete(null, path, parameters, responseCallback)
+        }
+
+        fun delete(
+            activity: Activity?,
+            path: String,
+            parameters: JSONObject?,
+            responseCallback: (response: JSONObject?, e: IOException?) -> Unit
+        ) {
             thread(start = true) {
                 var resolvedPath = Config.baseUrl + path
 
@@ -221,12 +295,16 @@ class APIClient {
                 buffered.close()
                 huc.disconnect()
 
-                activity.runOnUiThread {
+                if (activity == null) {
                     val response = JSONObject(content.toString())
                     responseCallback(response, null)
+                } else {
+                    activity.runOnUiThread {
+                        val response = JSONObject(content.toString())
+                        responseCallback(response, null)
+                    }
                 }
             }
         }
-
     }
 }
