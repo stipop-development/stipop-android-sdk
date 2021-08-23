@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="12dp"
+        android:layout_marginTop="21dp"
+        android:layout_marginBottom="21dp"
+        android:id="@+id/package_image"
+        android:layout_width="59dp"
+        android:layout_height="59dp" />
+
+    <LinearLayout
+        app:layout_constraintTop_toTopOf="@id/package_image"
+        app:layout_constraintBottom_toBottomOf="@id/package_image"
+        app:layout_constraintRight_toLeftOf="@id/downloadIV"
+        app:layout_constraintLeft_toRightOf="@id/package_image"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/package_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#374553"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:hint="package name"
+            android:lineHeight="22sp"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/artist_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="artist name"
+            android:lineHeight="20sp"
+            android:text=""
+            android:textColor="#646f7c"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <ImageButton
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/downloadIV"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        android:padding="16dp"
+        android:background="@null"
+        android:src="@mipmap/ic_download_border_3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

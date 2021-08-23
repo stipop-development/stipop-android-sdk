@@ -26,12 +26,12 @@
             android:orientation="vertical">
 
             <io.stipop.extend.StipopImageView
-                android:id="@+id/packageIV"
+                android:id="@+id/package_image"
                 android:layout_width="100dp"
                 android:layout_height="100dp"/>
 
             <io.stipop.extend.StipopTextView
-                android:id="@+id/packageNameTV"
+                android:id="@+id/package_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8.5dp"
@@ -42,7 +42,7 @@
                 android:text="" />
 
             <io.stipop.extend.StipopTextView
-                android:id="@+id/artistNameTV"
+                android:id="@+id/artist_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0.5dp"

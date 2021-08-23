@@ -48,7 +48,7 @@
         </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/packageRV"
+            android:id="@+id/storeTrendingList"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -99,7 +99,7 @@
                 android:visibility="gone">
 
                 <io.stipop.extend.StipopImageView
-                    android:id="@+id/packageIV"
+                    android:id="@+id/package_image"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:layout_marginRight="6dp"/>
@@ -111,7 +111,7 @@
                     android:orientation="vertical">
 
                     <io.stipop.extend.StipopTextView
-                        android:id="@+id/packageNameTV"
+                        android:id="@+id/package_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
@@ -122,7 +122,7 @@
                         android:text="JalGOM's Toon(Ver.1)"/>
 
                     <io.stipop.extend.StipopTextView
-                        android:id="@+id/artistNameTV"
+                        android:id="@+id/artist_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#646f7c"

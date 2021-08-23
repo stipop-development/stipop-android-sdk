@@ -48,14 +48,17 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
 //            .commitAllowingStateLoss()
 
         stipopIV.setOnClickListener {
-//            Stipop.showSearch()
-            Stipop.showKeyboard()
+            Stipop.showSearch()
+//            Stipop.showKeyboard()
         }
 
         chatText.setOnEditorActionListener { textView, action, event ->
             sendMessage()
             true
         }
+
+        startActivity(Intent(this, StoreActivity::class.java))
+
     }
 
     private fun sendMessage() {
@@ -107,6 +110,5 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
     override fun onResume() {
         super.onResume()
 
-        startActivity(Intent(this, StoreActivity::class.java))
     }
 }

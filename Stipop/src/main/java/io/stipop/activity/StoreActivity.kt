@@ -4,82 +4,82 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import io.stipop.Config
-import io.stipop.R
 import io.stipop.databinding.ActivityStoreBinding
-import io.stipop.fragment.AllStickerFragment
-import io.stipop.fragment.MyStickerFragment
+import io.stipop.fragment.StorePageFragment
+import io.stipop.fragment.MyPageFragment
+import io.stipop.viewModel.StoreMode
+import io.stipop.viewModel.StoreViewModel
 
 class StoreActivity : FragmentActivity() {
 
-    lateinit var fragmentTransaction: FragmentTransaction
-    lateinit var binding: ActivityStoreBinding
-
-    private var tab = 1
+    private lateinit var _binding: ActivityStoreBinding
+    private lateinit var _viewModel: StoreViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityStoreBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        _binding = ActivityStoreBinding.inflate(layoutInflater)
 
-        tab = intent.getIntExtra("tab", 1)
-
-        binding.navigationBarLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-
-        binding.underLineV.setBackgroundColor(Config.getUnderLineColor(this))
-
-
-        binding.allV.setBackgroundColor(Config.getStoreNavigationTextColor(this, true))
-        binding.myV.setBackgroundColor(Config.getStoreNavigationTextColor(this, true))
-
-        binding.allTabLL.setOnClickListener {
-            changeTabs(1)
-            Log.d(this::class.simpleName, "ALL")
+        _binding.storePageTab.setOnClickListener {
+            Log.d(this::class.simpleName, "allTabLL.setOnClickListener")
+            _viewModel.onChangeStoreMode(StoreMode.STORE_PAGE)
         }
 
-        binding.myTabLL.setOnClickListener {
-            changeTabs(2)
-            Log.d(this::class.simpleName, "MY")
+        _binding.myPageTab.setOnClickListener {
+            Log.d(this::class.simpleName, "myTabLL.setOnClickListener")
+            _viewModel.onChangeStoreMode(StoreMode.MY_PAGE)
         }
 
-        changeTabs(tab)
+        _viewModel = viewModels<StoreViewModel>().value
+
+        _viewModel.storeMode.observe(this, Observer {
+           onChangeStoreMode(it)
+        })
+
+        intent.getIntExtra("tab", 1).let {
+            when(it) {
+                1 -> _viewModel.onChangeStoreMode(StoreMode.STORE_PAGE)
+                2 -> _viewModel.onChangeStoreMode(StoreMode.MY_PAGE)
+            }
+        }
+
+        val _fragmentTransaction = supportFragmentManager.beginTransaction()
+        _fragmentTransaction.replace(_binding.storePageContainer.id, StorePageFragment())
+        _fragmentTransaction.replace(_binding.myPageContainer.id, MyPageFragment())
+        _fragmentTransaction.commit()
+
+        setContentView(_binding.root)
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun onChangeStoreMode(mode: StoreMode) {
+        Log.d(this::class.simpleName, "onChangeStoreMode: mode -> $mode")
 
-        binding.containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
-    }
+        when(mode) {
+            StoreMode.STORE_PAGE -> {
+                _binding.storePageTabLabel.setTextColor(Config.getStoreNavigationTextColor(this, true))
+                _binding.storePageTabIndicator.visibility = View.VISIBLE
+                _binding.storePageContainer.visibility = View.VISIBLE
 
-    private fun changeTabs(type: Int) {
-
-        Log.d(this::class.simpleName, "changeTabs: type -> $type")
-
-        if (type == 1) {
-            fragmentTransaction = supportFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.fragmentFL, AllStickerFragment())
-            fragmentTransaction.commit()
-
-            binding.allTV.setTextColor(Config.getStoreNavigationTextColor(this, true))
-            binding.allV.visibility = View.VISIBLE
-
-            binding.myTV.setTextColor(Config.getStoreNavigationTextColor(this, false))
-            binding.myV.visibility = View.INVISIBLE
+                _binding.myPageTabLabel.setTextColor(Config.getStoreNavigationTextColor(this, false))
+                _binding.myPageTabIndicator.visibility = View.GONE
+                _binding.myPageContainer.visibility = View.GONE
+            }
+            StoreMode.MY_PAGE -> {
 
 
-        } else if (type == 2) {
-            fragmentTransaction = supportFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.fragmentFL, MyStickerFragment())
-            fragmentTransaction.commit()
+                _binding.storePageTabLabel.setTextColor(Config.getStoreNavigationTextColor(this, false))
+                _binding.storePageTabIndicator.visibility = View.GONE
+                _binding.storePageContainer.visibility = View.GONE
 
-            binding.allTV.setTextColor(Config.getStoreNavigationTextColor(this, false))
-            binding.allV.visibility = View.INVISIBLE
+                _binding.myPageTabLabel.setTextColor(Config.getStoreNavigationTextColor(this, true))
+                _binding.myPageTabIndicator.visibility = View.VISIBLE
+                _binding.myPageContainer.visibility = View.VISIBLE
 
-            binding.myTV.setTextColor(Config.getStoreNavigationTextColor(this, true))
-            binding.myV.visibility = View.VISIBLE
+            }
         }
     }
 

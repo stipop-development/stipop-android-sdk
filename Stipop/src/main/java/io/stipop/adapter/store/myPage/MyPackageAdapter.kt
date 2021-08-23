@@ -1,4 +1,4 @@
-package io.stipop.adapter
+package io.stipop.adapter.store.myPage
 
 import android.content.Context
 import android.graphics.Color
@@ -14,14 +14,13 @@ import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.extend.StipopImageView
 import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
-import io.stipop.fragment.MyStickerFragment
+import io.stipop.fragment.MyPageFragment
 import io.stipop.model.SPPackage
-import java.util.*
 import kotlin.collections.ArrayList
 
 
-class MyStickerAdapter(private val context: Context, private val dataList: ArrayList<SPPackage>, var myStickerFragment: MyStickerFragment):
-    RecyclerView.Adapter<MyStickerAdapter.ViewHolder>(), ItemTouchHelperAdapter {
+class MyPackageAdapter(private val context: Context, private val dataList: ArrayList<SPPackage>, var myPackageFragment: MyPageFragment):
+    RecyclerView.Adapter<MyPackageAdapter.ViewHolder>(), ItemTouchHelperAdapter {
 
     var fromPosition = -1
     var toPosition = -1
@@ -42,9 +41,9 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
         val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
 
-        val packageIV: StipopImageView = view.findViewById(R.id.packageIV)
-        val packageNameTV: TextView = view.findViewById(R.id.packageNameTV)
-        val artistNameTV: TextView = view.findViewById(R.id.artistNameTV)
+        val packageIV: StipopImageView = view.findViewById(R.id.package_image)
+        val packageNameTV: TextView = view.findViewById(R.id.package_name)
+        val artistNameTV: TextView = view.findViewById(R.id.artist_name)
 
         val isViewLL: LinearLayout = view.findViewById(R.id.isViewLL)
         val moveLL: LinearLayout = view.findViewById(R.id.moveLL)
@@ -100,7 +99,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
             holder.isViewLL.visibility = View.VISIBLE
 
             holder.hideLL.setOnClickListener {
-                myStickerFragment.showConfirmAlert(spPackage.packageId, position)
+                myPackageFragment.showConfirmAlert(spPackage.packageId, position)
             }
 
             matrix.setSaturation(1.0f)
@@ -111,7 +110,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
             holder.addLL.visibility = View.VISIBLE
 
             holder.addLL.setOnClickListener {
-                myStickerFragment.hidePackage(spPackage.packageId, position)
+                myPackageFragment.hidePackage(spPackage.packageId, position)
             }
 
             matrix.setSaturation(0.0f)
@@ -175,7 +174,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
             return
         }
 
-         myStickerFragment.myStickerOrder(this.fromPosition, this.toPosition)
+         myPackageFragment.myStickerOrder(this.fromPosition, this.toPosition)
 
         this.fromPosition = -1
         this.toPosition = -1

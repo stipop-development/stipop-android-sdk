@@ -12,7 +12,7 @@
         android:gravity="center">
 
         <io.stipop.extend.StipopImageView
-            android:id="@+id/packageIV"
+            android:id="@+id/package_image"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:scaleType="centerCrop"/>
@@ -26,7 +26,7 @@
             android:orientation="vertical">
 
             <io.stipop.extend.StipopTextView
-                android:id="@+id/packageNameTV"
+                android:id="@+id/package_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
@@ -38,7 +38,7 @@
                 android:text=""/>
 
             <io.stipop.extend.StipopTextView
-                android:id="@+id/artistNameTV"
+                android:id="@+id/artist_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"

@@ -45,7 +45,7 @@ class DetailActivity : Activity() {
 
         _binding.contentsRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
-        _binding.packageNameTV.setTextColor(Config.getDetailPackageNameTextColor(_context))
+        _binding.packageName.setTextColor(Config.getDetailPackageNameTextColor(_context))
 
         _binding.backIV.setImageResource(Config.getBackIconResourceId(_context))
         _binding.closeIV.setImageResource(Config.getCloseIconResourceId(_context))
@@ -110,10 +110,10 @@ class DetailActivity : Activity() {
 
                     packageAnimated = this.spPackage.packageAnimated
 
-                    Glide.with(_context).load(this.spPackage.packageImg).into(_binding.packageIV)
+                    Glide.with(_context).load(this.spPackage.packageImg).into(_binding.packageImage)
 
-                    _binding.packageNameTV.text = this.spPackage.packageName
-                    _binding.artistNameTV.text = this.spPackage.artistName
+                    _binding.packageName.text = this.spPackage.packageName
+                    _binding.artistName.text = this.spPackage.artistName
 
                     if (this.spPackage.isDownload) {
                         _binding.downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)

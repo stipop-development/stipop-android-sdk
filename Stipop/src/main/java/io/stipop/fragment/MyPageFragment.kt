@@ -18,19 +18,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.stipop.*
-import io.stipop.adapter.MyStickerAdapter
-import io.stipop.databinding.FragmentMyStickerBinding
+import io.stipop.adapter.store.myPage.MyPackageAdapter
+import io.stipop.databinding.FragmentMyPageBinding
 import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
 import io.stipop.extend.dragdrop.SimpleItemTouchHelperCallback
 import io.stipop.model.SPPackage
 import org.json.JSONObject
 import java.io.IOException
 
-class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
+class MyPageFragment : Fragment(), OnRecyclerAdapterEventListener {
 
-    lateinit private var _binding: FragmentMyStickerBinding
-    lateinit private var _context: Context
-    lateinit var myStickerAdapter: MyStickerAdapter
+    private lateinit var _binding: FragmentMyPageBinding
+    private lateinit var _context: Context
+    lateinit var myStickerAdapter: MyPackageAdapter
     private lateinit var itemTouchHelper: ItemTouchHelper
 
     var data = ArrayList<SPPackage>()
@@ -43,7 +43,7 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
         savedInstanceState: Bundle?
     ): View? {
         Log.d(this::class.simpleName, "onCreateView")
-        _binding = FragmentMyStickerBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentMyPageBinding.inflate(layoutInflater, container, false)
         return _binding.root
     }
 
@@ -57,7 +57,7 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
         _binding.stickerTypeTV.setBackgroundColor(Config.getHiddenStickerBackgroundColor(_context))
 
 
-        myStickerAdapter = MyStickerAdapter(_context, data, this)
+        myStickerAdapter = MyPackageAdapter(_context, data, this)
 
         _binding.listRV.layoutManager = LinearLayoutManager(_context)
         _binding.listRV.adapter = myStickerAdapter
@@ -176,10 +176,8 @@ class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
     fun setNoResultView() {
         Log.d(this::class.simpleName, "setNoResultView")
         if (data.count() > 0) {
-            _binding.listLL.visibility = View.VISIBLE
             _binding.noneTV.visibility = View.GONE
         } else {
-            _binding.listLL.visibility = View.GONE
             _binding.noneTV.visibility = View.VISIBLE
         }
     }

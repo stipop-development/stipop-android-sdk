@@ -128,12 +128,12 @@ class Keyboard(val activity: Activity) : Fragment() {
         recentPreviewOffIV = view.findViewById(R.id.recentPreviewOffIV)
         storeIV = view.findViewById(R.id.storeIV)
 
-        packageRV = view.findViewById(R.id.packageRV)
+        packageRV = view.findViewById(R.id.storeTrendingList)
         stickerGV = view.findViewById(R.id.stickerGV)
         downloadLL = view.findViewById(R.id.downloadLL)
-        packageIV = view.findViewById(R.id.packageIV)
-        packageNameTV = view.findViewById(R.id.packageNameTV)
-        artistNameTV = view.findViewById(R.id.artistNameTV)
+        packageIV = view.findViewById(R.id.package_image)
+        packageNameTV = view.findViewById(R.id.package_name)
+        artistNameTV = view.findViewById(R.id.artist_name)
         downloadTV = view.findViewById(R.id.downloadTV)
 
         val animator: RecyclerView.ItemAnimator? = packageRV.itemAnimator
@@ -639,5 +639,5 @@ class Keyboard(val activity: Activity) : Fragment() {
 
         super.onDestroy()
     }
-    
+
 }

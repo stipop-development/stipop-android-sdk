@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/store_all_package_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="136dp"
+            android:paddingBottom="64dp"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:scrollbars="vertical"
+            android:listSelector="@android:color/transparent"
+            android:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_package_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="136dp"
+            android:paddingBottom="64dp"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:scrollbars="vertical"
+            android:listSelector="@android:color/transparent"
+            android:visibility="gone" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:padding="12dp"
+    >
+        <LinearLayout
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:id="@+id/searchbarLL"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="64dp"
+                android:background="@drawable/search_bar"
+                android:orientation="horizontal">
+
+            <io.stipop.extend.StipopImageView
+                    android:id="@+id/searchIconIV"
+                    android:padding="12dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/icon_search" />
+
+            <io.stipop.extend.StipopEditText
+                    android:id="@+id/keywordET"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:hint="@string/search"
+                    android:textColorHint="#646f7c"
+                    android:background="@null"
+                    android:imeOptions="actionSearch" />
+
+            <io.stipop.extend.StipopImageView
+                    android:id="@+id/eraseIV"
+                    android:padding="12dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/ic_erase_border_3" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

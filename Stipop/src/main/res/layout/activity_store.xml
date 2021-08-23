@@ -1,94 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#000000">
+
+
+<androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <FrameLayout
+            android:id="@+id/store_page_container"
+            android:layout_width="match_parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="0dp" />
+
+    <FrameLayout
+            android:id="@+id/my_page_container"
+            android:layout_width="match_parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="0dp" />
 
     <LinearLayout
-        android:id="@+id/containerLL"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/search_background"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/navigationBarLL"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:id="@+id/store_tab_bar"
             android:layout_width="match_parent"
-            android:layout_height="43dp"
+            android:layout_height="48dp"
             android:layout_marginTop="15dp"
-            android:orientation="horizontal"
-            android:paddingHorizontal="12dp">
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:id="@+id/allTabLL"
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/store_page_tab"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <io.stipop.extend.StipopTextView
-                    android:id="@+id/allTV"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
+            <io.stipop.extend.StipopTextView
+                    android:id="@+id/store_page_tab_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/all_stickers"
                     android:textColor="#374553"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <View
-                    android:id="@+id/allV"
+            <View
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:id="@+id/store_page_tab_indicator"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:background="#292929" />
 
-            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <LinearLayout
-                android:id="@+id/myTabLL"
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/my_page_tab"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <io.stipop.extend.StipopTextView
-                    android:id="@+id/myTV"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+            <io.stipop.extend.StipopTextView
+                    android:id="@+id/my_page_tab_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     android:text="@string/my_sticker"
                     android:textColor="#c6c8cf"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <View
-                    android:id="@+id/myV"
+            <View
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:id="@+id/my_page_tab_indicator"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:background="#292929"
                     android:visibility="invisible" />
 
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <View
-            android:id="@+id/underLineV"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#d6d6d8" />
-
-        <FrameLayout
-            android:id="@+id/fragmentFL"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

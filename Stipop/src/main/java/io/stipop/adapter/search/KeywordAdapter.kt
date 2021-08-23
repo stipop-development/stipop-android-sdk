@@ -1,21 +1,20 @@
-package io.stipop.adapter
+package io.stipop.adapter.search
 
-import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.extend.StipopImageView
-import io.stipop.model.SPPackage
+import io.stipop.Utils
+import org.json.JSONObject
 
 
-class PackageAdapter(private val dataList: ArrayList<SPPackage>, val context: Context) :
-    RecyclerView.Adapter<PackageAdapter.ViewHolder>() {
+class KeywordAdapter(private val dataList: ArrayList<JSONObject>):
+    RecyclerView.Adapter<KeywordAdapter.ViewHolder>() {
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
@@ -24,15 +23,14 @@ class PackageAdapter(private val dataList: ArrayList<SPPackage>, val context: Co
     private var mListener: OnItemClickListener? = null
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageIV: StipopImageView = view.findViewById(R.id.imageIV)
-        val backgroundLL: LinearLayout = view.findViewById(R.id.backgroundLL)
+        val keywordTV: TextView = view.findViewById(R.id.keywordTV)
     }
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.item_package, viewGroup, false)
+            .inflate(R.layout.item_keyword, viewGroup, false)
 
         return ViewHolder(view)
     }
@@ -40,16 +38,11 @@ class PackageAdapter(private val dataList: ArrayList<SPPackage>, val context: Co
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = dataList[position]
 
-        val packageImg = item.packageImg
+        val drawable = holder.keywordTV.background as GradientDrawable
+        drawable.setColor(Color.parseColor(Config.themeMainColor))
 
-        Glide.with(context).load(packageImg).into(holder.imageIV)
-
-        val drawable = holder.backgroundLL.background as GradientDrawable
-        Config.setStoreTrendingBackground(context, drawable)
-
-        // holder.backgroundLL.alpha = Config.storeTrendingOpacity.toFloat()
-
-        holder.backgroundLL.setOnClickListener {
+        holder.keywordTV.text = Utils.getString(item, "keyword")
+        holder.keywordTV.setOnClickListener {
             if (mListener != null) {
                 mListener!!.onItemClick(position)
             }
