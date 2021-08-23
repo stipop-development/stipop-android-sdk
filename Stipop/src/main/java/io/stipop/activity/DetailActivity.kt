@@ -20,7 +20,6 @@ class DetailActivity : Activity() {
 
     lateinit var _binding: ActivityDetailBinding
     lateinit var _context: Context
-
     lateinit var stickerAdapter: StickerAdapter
 
     var stickerData = ArrayList<SPSticker>()
@@ -34,29 +33,11 @@ class DetailActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityDetailBinding.inflate(layoutInflater)
+        _context = _binding.root.context
+
         setContentView(_binding.root)
 
-        _context = this
-
-        packageId = intent.getIntExtra("packageId", -1)
-
-        val drawable = _binding.containerLL.background as GradientDrawable
-        drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
-
-        _binding.contentsRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
-
-        _binding.packageName.setTextColor(Config.getDetailPackageNameTextColor(_context))
-
-        _binding.backIV.setImageResource(Config.getBackIconResourceId(_context))
-        _binding.closeIV.setImageResource(Config.getCloseIconResourceId(_context))
-
-
-        _binding.backIV.setIconDefaultsColor()
-        _binding.closeIV.setIconDefaultsColor()
-
-
         _binding.stickerGV.numColumns = Config.detailNumOfColumns
-
 
         _binding.backLL.setOnClickListener { finish() }
         _binding.closeLL.setOnClickListener { finish() }
@@ -71,13 +52,10 @@ class DetailActivity : Activity() {
             } else {
                 Utils.alert(this, getString(R.string.can_not_download))
             }
-
         }
 
         stickerAdapter = StickerAdapter(_context, R.layout.item_sticker, stickerData)
         _binding.stickerGV.adapter = stickerAdapter
-
-        getPackInfo()
     }
 
     private fun getPackInfo() {

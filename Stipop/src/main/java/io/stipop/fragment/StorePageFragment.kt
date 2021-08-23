@@ -52,7 +52,11 @@ class StorePageFragment : Fragment() {
             this.adapter = StoreAllPackageAdapter().apply {
                 this.selectPackageCallback = object : SelectPackageCallback {
                     override fun onSelect(item: SPPackage) {
-                        startActivity(Intent(activity, DetailActivity::class.java))
+
+                        startActivity(Intent(activity, DetailActivity::class.java).apply {
+                            this.putExtra("packageId", item.packageId)
+                        })
+
                     }
                 }
                 this.downloadPackageCallback = object : DownloadPackageCallback {

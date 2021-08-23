@@ -50,7 +50,7 @@ class StoreAllPackageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         LayoutInflater.from(parent.context),
                         parent,
                         false
-                    )
+                    ), selectPackageCallback
                 )
             }
             ALL -> {
@@ -59,7 +59,9 @@ class StoreAllPackageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         LayoutInflater.from(parent.context),
                         parent,
                         false
-                    )
+                    ),
+                    selectPackageCallback,
+                    downloadPackageCallback,
                 )
             }
             else -> {
@@ -79,9 +81,6 @@ class StoreAllPackageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             is StoreAllPackageViewHolder -> {
                 val _item = _allItemList[position - _trendingItemCount]
                 holder.setItem(_item)
-                holder.itemView.setOnClickListener {
-                    selectPackageCallback?.onSelect(_item)
-                }
             }
         }
     }
@@ -105,7 +104,11 @@ class StoreAllPackageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 }
 
-class StoreAllPackageViewHolder(private val _binding: ViewBinding) :
+class StoreAllPackageViewHolder(
+    private val _binding: ViewBinding,
+    private val _selectPackageCallback: SelectPackageCallback?,
+    private val _downloadPackageCallback: DownloadPackageCallback?
+) :
     RecyclerView.ViewHolder(_binding.root) {
 
     fun setItem(item: SPPackage) {
@@ -114,12 +117,21 @@ class StoreAllPackageViewHolder(private val _binding: ViewBinding) :
                 Glide.with(itemView).load(item.packageImg).into(_binding.packageImage)
                 _binding.packageName.text = item.packageName
                 _binding.artistName.text = item.artistName
+                _binding.root.setOnClickListener {
+                    _selectPackageCallback?.onSelect(item)
+                }
+                _binding.downloadButton.setOnClickListener {
+                    _downloadPackageCallback?.onDownload(item)
+                }
             }
         }
     }
 }
 
-class StoreTrendingPackageListViewHolder(private val _binding: ViewBinding) :
+class StoreTrendingPackageListViewHolder(
+    private val _binding: ViewBinding,
+    private val _selectPackageCallback: SelectPackageCallback?
+) :
     RecyclerView.ViewHolder(_binding.root) {
 
     fun setItemList(_trendingItemList: List<SPPackage>) {
@@ -129,7 +141,8 @@ class StoreTrendingPackageListViewHolder(private val _binding: ViewBinding) :
                     trendingPackageList.apply {
                         layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
                         adapter = StoreTrendingPackageAdapter().apply {
-                            this.setItemList(_trendingItemList)
+                            setItemList(_trendingItemList)
+                            selectPackageCallback = _selectPackageCallback
                         }
                     }
                 }
@@ -142,6 +155,8 @@ class StoreTrendingPackageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private val _itemList: ArrayList<SPPackage> = arrayListOf()
 
+    var selectPackageCallback: SelectPackageCallback? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return StoreTrendingViewHolder(
             ItemStoreTrendingPackageBinding.inflate(
@@ -153,9 +168,13 @@ class StoreTrendingPackageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val _item = _itemList[position]
         when (holder) {
             is StoreTrendingViewHolder -> {
-                holder.setItem(_itemList[position])
+                holder.setItem(_item)
+                holder.itemView.setOnClickListener({
+                    selectPackageCallback?.onSelect(_item)
+                })
             }
         }
     }

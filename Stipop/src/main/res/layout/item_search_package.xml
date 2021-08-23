@@ -87,7 +87,7 @@
                 android:layout_height="match_parent">
 
             <io.stipop.extend.StipopImageView
-                    android:id="@+id/downloadIV"
+                    android:id="@+id/download_button"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginRight="10dp"
