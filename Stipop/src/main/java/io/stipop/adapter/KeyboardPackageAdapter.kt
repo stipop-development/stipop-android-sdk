@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +27,7 @@ class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var con
     private var mListener: OnItemClickListener? = null
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageIV: StipopImageView = view.findViewById(R.id.imageIV)
+        val imageIV: StipopImageView = view.findViewById(R.id.sticker_image)
         val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
     }
 

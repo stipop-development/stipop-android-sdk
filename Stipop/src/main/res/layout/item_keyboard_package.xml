@@ -6,7 +6,7 @@
     android:gravity="center">
 
     <io.stipop.extend.StipopImageView
-        android:id="@+id/imageIV"
+        android:id="@+id/sticker_image"
         android:layout_width="29dp"
         android:layout_height="29dp"
         android:scaleType="centerCrop"/>

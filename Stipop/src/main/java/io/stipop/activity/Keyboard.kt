@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -99,7 +100,9 @@ class Keyboard(val activity: Activity) : Fragment() {
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
 
-        popupWindow.elevation = 10.0F
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            popupWindow.elevation = 10.0F
+        }
 
         // animations
         /*
@@ -129,12 +132,12 @@ class Keyboard(val activity: Activity) : Fragment() {
         storeIV = view.findViewById(R.id.storeIV)
 
         packageRV = view.findViewById(R.id.storeTrendingList)
-        stickerGV = view.findViewById(R.id.stickerGV)
+        stickerGV = view.findViewById(R.id.sticker_grid)
         downloadLL = view.findViewById(R.id.downloadLL)
         packageIV = view.findViewById(R.id.package_image)
         packageNameTV = view.findViewById(R.id.package_name)
         artistNameTV = view.findViewById(R.id.artist_name)
-        downloadTV = view.findViewById(R.id.downloadTV)
+        downloadTV = view.findViewById(R.id.download_button)
 
         val animator: RecyclerView.ItemAnimator? = packageRV.itemAnimator
 

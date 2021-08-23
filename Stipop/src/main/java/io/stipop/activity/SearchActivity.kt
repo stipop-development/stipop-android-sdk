@@ -113,9 +113,9 @@ class SearchActivity : Activity() {
         _binding.keywordRV.addItemDecoration(RecyclerDecoration(10))
         _binding.keywordRV.adapter = keywordAdapter
 
-        _binding.stickerGV.numColumns = Config.searchNumOfColumns
-        _binding.stickerGV.adapter = stickerAdapter
-        _binding.stickerGV.setOnScrollListener(object : AbsListView.OnScrollListener {
+        _binding.stickerGrid.numColumns = Config.searchNumOfColumns
+        _binding.stickerGrid.adapter = stickerAdapter
+        _binding.stickerGrid.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > page) {
                     page += 1
@@ -136,7 +136,7 @@ class SearchActivity : Activity() {
 
         })
 
-        _binding.stickerGV.setOnItemClickListener { adapterView, view, i, l ->
+        _binding.stickerGrid.setOnItemClickListener { adapterView, view, i, l ->
             val sticker = stickerData[i]
 
             Stipop.send(sticker.stickerId, sticker.keyword) { result ->

@@ -11,7 +11,7 @@
         android:background="@drawable/trending_background">
 
         <io.stipop.extend.StipopImageView
-            android:id="@+id/imageIV"
+            android:id="@+id/sticker_image"
             android:layout_width="69dp"
             android:layout_height="69dp"/>
 

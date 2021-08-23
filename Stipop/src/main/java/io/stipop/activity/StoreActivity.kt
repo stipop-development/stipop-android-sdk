@@ -1,20 +1,19 @@
 package io.stipop.activity
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import io.stipop.Config
 import io.stipop.databinding.ActivityStoreBinding
-import io.stipop.fragment.StorePageFragment
 import io.stipop.fragment.MyPageFragment
+import io.stipop.fragment.StorePageFragment
 import io.stipop.viewModel.StoreMode
 import io.stipop.viewModel.StoreViewModel
 
-class StoreActivity : FragmentActivity() {
+class StoreActivity : AppCompatActivity() {
 
     private lateinit var _binding: ActivityStoreBinding
     private lateinit var _viewModel: StoreViewModel
@@ -82,5 +81,4 @@ class StoreActivity : FragmentActivity() {
             }
         }
     }
-
 }

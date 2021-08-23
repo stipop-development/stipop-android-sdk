@@ -10,6 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,7 +30,26 @@ import io.stipop.viewModel.StorePageViewModel
 class StorePageFragment : Fragment() {
     private lateinit var _binding: FragmentStorePageBinding
     private lateinit var _viewModel: StorePageViewModel
-    private lateinit var _context: Context
+    private var resultLauncher: ActivityResultLauncher<Intent>? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        resultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+
+                Log.d(
+                    this::class.simpleName, "registerForActivityResult : " +
+                            "result.resultCode -> ${result.resultCode}"
+                )
+
+                when (result.resultCode) {
+                    DetailActivity.REQ_DOWNLOAD_PACKAGE -> {
+
+                    }
+                }
+            }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,18 +66,14 @@ class StorePageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(this::class.simpleName, "onViewCreated")
-        _context = view.context
-
         _binding.storeAllPackageList.apply {
-            this.layoutManager = LinearLayoutManager(_context)
+            this.layoutManager = LinearLayoutManager(context)
             this.adapter = StoreAllPackageAdapter().apply {
                 this.selectPackageCallback = object : SelectPackageCallback {
                     override fun onSelect(item: SPPackage) {
-
-                        startActivity(Intent(activity, DetailActivity::class.java).apply {
-                            this.putExtra("packageId", item.packageId)
+                        resultLauncher?.launch(Intent(activity, DetailActivity::class.java).apply {
+                            this.putExtra(DetailActivity.PACKAGE_ID, item.packageId)
                         })
-
                     }
                 }
                 this.downloadPackageCallback = object : DownloadPackageCallback {
@@ -71,7 +88,7 @@ class StorePageFragment : Fragment() {
                     if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                         _binding.keywordET.clearFocus()
                         val inputMethodManager =
-                            _context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
                     }
                 }
@@ -85,7 +102,7 @@ class StorePageFragment : Fragment() {
             })
         }
         _binding.searchPackageList.apply {
-            this.layoutManager = LinearLayoutManager(_context)
+            this.layoutManager = LinearLayoutManager(context)
             this.adapter = SearchPackageAdapter()
             this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -93,7 +110,7 @@ class StorePageFragment : Fragment() {
                     if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                         _binding.keywordET.clearFocus()
                         val inputMethodManager =
-                            _context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
                     }
                 }
@@ -162,7 +179,7 @@ class StorePageFragment : Fragment() {
                 _binding.searchPackageList.visibility = View.GONE
 
                 _binding.keywordET.clearFocus()
-                val inputMethodManager = _context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val inputMethodManager = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(_binding.root.windowToken, 0)
             }
             StorePageMode.SEARCH -> {

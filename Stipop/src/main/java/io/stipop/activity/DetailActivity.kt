@@ -1,175 +1,100 @@
 package io.stipop.activity
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.widget.Toast
+import android.util.DisplayMetrics
+import android.util.Log
+import android.view.Display
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
-import io.stipop.*
-import io.stipop.adapter.StickerAdapter
+import io.stipop.Config
+import io.stipop.R
+import io.stipop.adapter.store.storePage.StoreDetailPackageAdapter
 import io.stipop.databinding.ActivityDetailBinding
-import io.stipop.model.SPPackage
-import io.stipop.model.SPSticker
-import org.json.JSONObject
-import java.io.IOException
+import io.stipop.ui.components.core.item_decoration.ItemPaddingDecoration
+import io.stipop.viewModel.DetailViewModel
 
-class DetailActivity : Activity() {
+
+class DetailActivity : AppCompatActivity() {
+
+    companion object {
+        const val PACKAGE_ID = "packageId"
+
+        const val REQ_DOWNLOAD_PACKAGE = 0X00
+    }
 
     lateinit var _binding: ActivityDetailBinding
-    lateinit var _context: Context
-    lateinit var stickerAdapter: StickerAdapter
-
-    var stickerData = ArrayList<SPSticker>()
-
-    var packageId = -1
-
-    var packageAnimated: String? = ""
-
-    lateinit var spPackage: SPPackage
+    lateinit var _viewModel: DetailViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityDetailBinding.inflate(layoutInflater)
-        _context = _binding.root.context
+        _viewModel = viewModels<DetailViewModel>().value
 
         setContentView(_binding.root)
 
-        _binding.stickerGV.numColumns = Config.detailNumOfColumns
+        _binding.stickerGrid.apply {
+            this.layoutManager = GridLayoutManager(context, Config.detailNumOfColumns)
+            this.adapter = StoreDetailPackageAdapter()
 
-        _binding.backLL.setOnClickListener { finish() }
-        _binding.closeLL.setOnClickListener { finish() }
-
-        _binding.downloadTV.setOnClickListener {
-            if (_binding.downloadTV.tag as Boolean) {
-                return@setOnClickListener
-            }
-
-            if (Stipop.instance!!.delegate.canDownload(this.spPackage)) {
-                downloadPackage()
+            val outMetrics = DisplayMetrics()
+            val display: Display?
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                display = this.display
+                display?.getRealMetrics(outMetrics)
             } else {
-                Utils.alert(this, getString(R.string.can_not_download))
+                @Suppress("DEPRECATION")
+                display = windowManager.defaultDisplay
+                @Suppress("DEPRECATION")
+                display.getMetrics(outMetrics)
             }
+
+            val paddingValue = (outMetrics.widthPixels / Config.detailNumOfColumns * 0.1).toInt()
+
+            this.addItemDecoration(ItemPaddingDecoration(paddingValue))
+            this.clipToPadding = false
         }
 
-        stickerAdapter = StickerAdapter(_context, R.layout.item_sticker, stickerData)
-        _binding.stickerGV.adapter = stickerAdapter
-    }
+        _binding.backButton.setOnClickListener { finish() }
+        _binding.closeButton.setOnClickListener { finish() }
 
-    private fun getPackInfo() {
-
-        val params = JSONObject()
-        params.put("userId", Stipop.userId)
-
-        APIClient.get(
-            this,
-            APIClient.APIPath.PACKAGE.rawValue + "/$packageId",
-            params
-        ) { response: JSONObject?, e: IOException? ->
-            // println(response)
-
-            if (null != response) {
-
-                val header = response.getJSONObject("header")
-
-                if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
-                    val body = response.getJSONObject("body")
-                    val packageObj = body.getJSONObject("package")
-
-                    val stickers = packageObj.getJSONArray("stickers")
-
-                    for (i in 0 until stickers.length()) {
-                        stickerData.add(SPSticker(stickers.get(i) as JSONObject))
-                    }
-
-                    this.spPackage = SPPackage(packageObj)
-
-                    packageAnimated = this.spPackage.packageAnimated
-
-                    Glide.with(_context).load(this.spPackage.packageImg).into(_binding.packageImage)
-
-                    _binding.packageName.text = this.spPackage.packageName
-                    _binding.artistName.text = this.spPackage.artistName
-
-                    if (this.spPackage.isDownload) {
-                        _binding.downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
-                        _binding.downloadTV.text = getString(R.string.downloaded)
-                    } else {
-                        _binding.downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background)
-                        _binding.downloadTV.text = getString(R.string.download)
-
-                        val drawable2 = _binding.downloadTV.background as GradientDrawable
-                        drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
-                    }
-
-                    _binding.downloadTV.tag = this.spPackage.isDownload
+        _binding.downloadButton.setOnClickListener {
+            _viewModel.selectedPackage.value?.let {
+                val _intent = Intent().apply {
+                    putExtra(PACKAGE_ID, it.packageId)
                 }
-
-            } else {
-                e?.printStackTrace()
+                setResult(REQ_DOWNLOAD_PACKAGE, _intent)
             }
-
-            stickerAdapter.notifyDataSetChanged()
         }
 
-    }
+        _viewModel.selectedPackage.observe(this) {
 
-    private fun downloadPackage() {
+            Log.d(this::class.simpleName, "selectedPackage -> $it")
 
-        val params = JSONObject()
-        params.put("userId", Stipop.userId)
-        params.put("isPurchase", Config.allowPremium)
-        params.put("lang", Stipop.lang)
-        params.put("countryCode", Stipop.countryCode)
-
-        if (Config.allowPremium == "Y") {
-            // 움직이지 않는 스티커
-            var price = Config.pngPrice
-
-            if (packageAnimated == "Y") {
-                // 움직이는 스티커
-                price = Config.gifPrice
-            }
-            params.put("price", price)
-        }
-
-        APIClient.post(
-            this,
-            APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId",
-            params
-        ) { response: JSONObject?, e: IOException? ->
-            // println(response)
-
-            if (null != response) {
-
-                val header = response.getJSONObject("header")
-
-                if (Utils.getString(header, "status") == "success") {
-
-                    val intent = Intent()
-                    intent.putExtra("packageId", packageId)
-                    setResult(RESULT_OK, intent)
-
-                    // download
-                    PackUtils.downloadAndSaveLocal(this, this.spPackage) {
-                        _binding.downloadTV.text = getString(R.string.downloaded)
-                        _binding.downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
-
-                        Toast.makeText(
-                            _context,
-                            getString(R.string.download_done),
-                            Toast.LENGTH_LONG
-                        ).show()
+            it?.run {
+                Glide.with(_binding.root.context).load(this.packageImg).into(_binding.packageImage)
+                _binding.packageName.text = this.packageName
+                _binding.artistName.text = this.artistName
+                _binding.stickerGrid.adapter.apply {
+                    when (this) {
+                        is StoreDetailPackageAdapter -> {
+                            this.setItemList(it.stickers)
+                        }
                     }
                 }
+                if (this.isDownload) {
+                    _binding.downloadButton.text = getString(R.string.downloaded)
+                } else {
+                    _binding.downloadButton.text = getString(R.string.download)
+                }
 
-            } else {
-                e?.printStackTrace()
             }
         }
 
+        intent?.getIntExtra(PACKAGE_ID, -1)?.run {
+            _viewModel.loadPackage(this)
+        }
     }
-
 }
