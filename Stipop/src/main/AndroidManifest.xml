@@ -35,7 +35,7 @@
             android:windowSoftInputMode="adjustResize|stateHidden"/>
 
         <activity
-            android:name=".activity.StoreActivity"
+            android:name=".ui.pages.store.StoreActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
 

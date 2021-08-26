@@ -8,12 +8,11 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.stipop.Config
 
-open class SPView(context: Context, attrs: AttributeSet?) :
+open class SPView(context: Context, attrs: AttributeSet? = null) :
     View(context, attrs) {
 
-    override fun draw(canvas: Canvas?) {
-        super.draw(canvas)
-
-        canvas?.drawColor(Color.parseColor(Config.themeBackgroundColor))
+    override fun dispatchDraw(canvas: Canvas?) {
+        super.dispatchDraw(canvas)
+        setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
     }
 }

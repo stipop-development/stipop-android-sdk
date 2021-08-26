@@ -41,7 +41,7 @@ class StipopImageView : AppCompatImageView {
             return
         }
 
-        setColorFilter(Color.parseColor(Config.themeIconColor))
+        setColorFilter(Color.parseColor(Config.themeIconNormalColor))
     }
 
     fun setIconDefaultsColor40Opacity() {
@@ -49,7 +49,7 @@ class StipopImageView : AppCompatImageView {
             return
         }
 
-        var color = Config.themeIconColor
+        var color = Config.themeIconNormalColor
         color = color.replace("#", "")
         color = "#64$color"
 

@@ -1,4 +1,4 @@
-package io.stipop.activity
+package io.stipop.ui.pages.store
 
 import android.os.Bundle
 import android.util.Log
@@ -6,12 +6,9 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import io.stipop.Config
 import io.stipop.databinding.ActivityStoreBinding
-import io.stipop.fragment.MyPageFragment
-import io.stipop.fragment.StorePageFragment
-import io.stipop.viewModel.StoreMode
-import io.stipop.viewModel.StoreViewModel
+import io.stipop.view_model.StoreMode
+import io.stipop.view_model.StoreViewModel
 
 class StoreActivity : AppCompatActivity() {
 
@@ -59,23 +56,21 @@ class StoreActivity : AppCompatActivity() {
 
         when(mode) {
             StoreMode.STORE_PAGE -> {
-                _binding.storePageTabLabel.setTextColor(Config.getStoreNavigationTextColor(this, true))
-                _binding.storePageTabIndicator.visibility = View.VISIBLE
+                _binding.storePageTabLabel.isSelected = true
+                _binding.storePageTabIndicator.isSelected = true
                 _binding.storePageContainer.visibility = View.VISIBLE
 
-                _binding.myPageTabLabel.setTextColor(Config.getStoreNavigationTextColor(this, false))
-                _binding.myPageTabIndicator.visibility = View.GONE
+                _binding.myPageTabLabel.isSelected = false
+                _binding.myPageTabIndicator.isSelected = false
                 _binding.myPageContainer.visibility = View.GONE
             }
             StoreMode.MY_PAGE -> {
-
-
-                _binding.storePageTabLabel.setTextColor(Config.getStoreNavigationTextColor(this, false))
-                _binding.storePageTabIndicator.visibility = View.GONE
+                _binding.storePageTabLabel.isSelected = false
+                _binding.storePageTabIndicator.isSelected = false
                 _binding.storePageContainer.visibility = View.GONE
 
-                _binding.myPageTabLabel.setTextColor(Config.getStoreNavigationTextColor(this, true))
-                _binding.myPageTabIndicator.visibility = View.VISIBLE
+                _binding.myPageTabLabel.isSelected = true
+                _binding.myPageTabIndicator.isSelected = true
                 _binding.myPageContainer.visibility = View.VISIBLE
 
             }

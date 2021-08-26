@@ -1,4 +1,4 @@
-package io.stipop.fragment
+package io.stipop.ui.pages.store
 
 import android.content.Context
 import android.content.Intent
@@ -23,8 +23,8 @@ import io.stipop.adapter.store.storePage.SelectPackageCallback
 import io.stipop.adapter.store.storePage.StoreAllPackageAdapter
 import io.stipop.databinding.FragmentStorePageBinding
 import io.stipop.model.SPPackage
-import io.stipop.viewModel.StorePageMode
-import io.stipop.viewModel.StorePageViewModel
+import io.stipop.view_model.StorePageMode
+import io.stipop.view_model.StorePageViewModel
 
 
 class StorePageFragment : Fragment() {
@@ -123,20 +123,17 @@ class StorePageFragment : Fragment() {
                 }
             })
         }
-        _binding.eraseIV.apply {
-            this.setOnClickListener {
+
+        _binding.searchBar.apply {
+            setOnClickSearchDeleteButtonListener {
                 _viewModel.onChangeStorePageMode(StorePageMode.ALL)
             }
-        }
-        _binding.keywordET.apply {
-            this.setOnFocusChangeListener(object : View.OnFocusChangeListener {
-                override fun onFocusChange(v: View?, hasFocus: Boolean) {
-                    if (hasFocus) {
-                        _viewModel.onChangeStorePageMode(StorePageMode.SEARCH)
-                    }
+            setOnFocusChangeSearchKeywordListener { v, hasFocus ->
+                if (hasFocus) {
+                    _viewModel.onChangeStorePageMode(StorePageMode.SEARCH)
                 }
-            })
-            this.addTextChangedListener(object : TextWatcher {
+            }
+            addTextChangedSearchKeywordListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
                 override fun afterTextChanged(p0: Editable?) {
@@ -177,10 +174,6 @@ class StorePageFragment : Fragment() {
             StorePageMode.ALL -> {
                 _binding.storeAllPackageList.visibility = View.VISIBLE
                 _binding.searchPackageList.visibility = View.GONE
-
-                _binding.keywordET.clearFocus()
-                val inputMethodManager = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.hideSoftInputFromWindow(_binding.root.windowToken, 0)
             }
             StorePageMode.SEARCH -> {
                 _binding.storeAllPackageList.visibility = View.GONE

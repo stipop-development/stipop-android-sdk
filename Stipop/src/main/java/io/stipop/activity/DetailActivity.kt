@@ -14,7 +14,7 @@ import io.stipop.R
 import io.stipop.adapter.store.storePage.StoreDetailPackageAdapter
 import io.stipop.databinding.ActivityDetailBinding
 import io.stipop.ui.components.core.item_decoration.ItemPaddingDecoration
-import io.stipop.viewModel.DetailViewModel
+import io.stipop.view_model.DetailViewModel
 
 
 class DetailActivity : AppCompatActivity() {
@@ -89,6 +89,7 @@ class DetailActivity : AppCompatActivity() {
                 } else {
                     _binding.downloadButton.text = getString(R.string.download)
                 }
+                _binding.downloadButton.isEnabled = !isDownload
 
             }
         }

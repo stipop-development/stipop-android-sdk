@@ -51,11 +51,11 @@ class SearchActivity : Activity() {
         drawable2.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
         drawable2.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
 
-        _binding.searchIV.setImageResource(Config.getSearchbarResourceId(_context))
-        _binding.eraseIV.setImageResource(Config.getEraseResourceId(_context))
+        _binding.searchIV.setImageResource(Config.getSearchbarIconResourceId(_context))
+        _binding.eraseIV.setImageResource(Config.getSearchBarDeleteIconResourceId(_context))
 
-        _binding.titleTV.setTextColor(Config.getSearchTitleTextColor(_context))
-        _binding.keywordET.setTextColor(Config.getSearchTitleTextColor(_context))
+        _binding.titleTV.setTextColor(Config.getSearchKeywordTextColor(_context))
+        _binding.keywordET.setTextColor(Config.getSearchKeywordTextColor(_context))
 
 
         _binding.searchIV.setIconDefaultsColor()

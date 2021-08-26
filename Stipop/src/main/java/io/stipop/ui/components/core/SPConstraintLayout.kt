@@ -4,15 +4,15 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.util.AttributeSet
+import android.util.Log
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.stipop.Config
 
-class SPConstraintLayout(context: Context, attrs: AttributeSet?) :
+class SPConstraintLayout(context: Context, attrs: AttributeSet? = null) :
     ConstraintLayout(context, attrs) {
 
-    override fun draw(canvas: Canvas?) {
-        super.draw(canvas)
-
-        canvas?.drawColor(Color.parseColor(Config.themeBackgroundColor))
+    override fun dispatchDraw(canvas: Canvas?) {
+        super.dispatchDraw(canvas)
+        setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
     }
 }

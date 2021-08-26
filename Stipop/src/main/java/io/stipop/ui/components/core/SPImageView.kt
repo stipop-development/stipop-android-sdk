@@ -8,6 +8,6 @@ import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.stipop.Config
 
-class SPImageView(context: Context, attrs: AttributeSet?) :
+open class SPImageView(context: Context, attrs: AttributeSet? = null) :
     androidx.appcompat.widget.AppCompatImageView(context, attrs) {
 }

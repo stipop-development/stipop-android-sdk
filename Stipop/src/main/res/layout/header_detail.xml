@@ -30,7 +30,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"/>
 
-            <io.stipop.extend.StipopTextView
+            <io.stipop.ui.components.common.SPPackageNameLabel
                 android:id="@+id/package_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
                 android:textStyle="bold"
                 android:text="" />
 
-            <io.stipop.extend.StipopTextView
+            <io.stipop.ui.components.common.SPArtistNameLabel
                 android:id="@+id/artist_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

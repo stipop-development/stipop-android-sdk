@@ -1,4 +1,4 @@
-package io.stipop.fragment
+package io.stipop.ui.pages.store
 
 import android.app.Activity
 import android.content.Context

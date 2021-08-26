@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
+import android.util.Log
 import androidx.core.content.ContextCompat
 import org.json.JSONException
 import org.json.JSONObject
@@ -24,11 +26,8 @@ class Config {
         var themeGroupedContentBackgroundColor = "#f7f8f9"
         var themeMainColor = "#FF5D1E"
 
-        var themeIconColor = "#414141"
+        var themeIconNormalColor = "#414141"
         var themeIconTintColor = "#FF5D1E"
-
-//        var themeIconColorDark = "#646F7C"
-//        var themeIconTintColorDark = "#FF855B"
 
         var fontFamily = "system"
         var fontWeight = 400
@@ -50,7 +49,7 @@ class Config {
         private var storeTrendingOpacity = 0.0
 
         private var storeDownloadIconName = "ic_download_border_3"
-        private var storeCompleteIconName = "ic_downloaded_border_3"
+        private var storeDownloadedIconName = "ic_downloaded_border_3"
 
         var storeRecommendedTagShow = false
 
@@ -83,18 +82,20 @@ class Config {
             val jsonString = getJsonDataFromAsset(context) ?: return
 
             try {
+
+                Log.d(this::class.simpleName, "==========================================")
+                Log.d(this::class.simpleName, "Stipop configuration start")
                 val json = JSONObject(jsonString)
                 parse(context, json)
+                json.keys().forEach {
+                    Log.d(this::class.simpleName, "$it -> ${json[it]}")
+                }
+                Log.d(this::class.simpleName, "Stipop configuration succeed")
             } catch (e: JSONException) {
                 e.printStackTrace()
-
-                println("")
-                println("")
-                println("==========================================")
-                println("Stipop configuration check-out failed.")
-                println("==========================================")
-                println("")
-                println("")
+                Log.e(this::class.simpleName, "Stipop configuration failed")
+            } finally {
+                Log.d(this::class.simpleName, "==========================================")
             }
         }
 
@@ -144,34 +145,37 @@ class Config {
             800    Black, Extra Bold or Heavy
             900    Extra Black, Fat, Poster or Ultra Black
             */
-            var builder:Typeface.Builder? = null
-            try {
-                builder = Typeface.Builder(context.assets, fontFamily)
-                builder.setFontVariationSettings("'wght' $fontWeight, 'slnt' 20, 'ital' 0")
-                builder.setWeight(fontWeight) // Tell the system that this is a bold font.
-                fontFace = builder.build()
-            } catch (e:Exception) {}
 
-            if (fontFace == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                var builder: Typeface.Builder? = null
                 try {
-                    builder = Typeface.Builder(context.assets, "$fontFamily.ttf")
+                    builder = Typeface.Builder(context.assets, fontFamily)
                     builder.setFontVariationSettings("'wght' $fontWeight, 'slnt' 20, 'ital' 0")
                     builder.setWeight(fontWeight) // Tell the system that this is a bold font.
                     fontFace = builder.build()
-                } catch (e:Exception) {}
+                } catch (e: Exception) {
+                }
 
                 if (fontFace == null) {
                     try {
-                        builder = Typeface.Builder(context.assets, "$fontFamily.otf")
+                        builder = Typeface.Builder(context.assets, "$fontFamily.ttf")
                         builder.setFontVariationSettings("'wght' $fontWeight, 'slnt' 20, 'ital' 0")
                         builder.setWeight(fontWeight) // Tell the system that this is a bold font.
                         fontFace = builder.build()
-                    } catch (e:Exception) {}
+                    } catch (e: Exception) {
+                    }
+
+                    if (fontFace == null) {
+                        try {
+                            builder = Typeface.Builder(context.assets, "$fontFamily.otf")
+                            builder.setFontVariationSettings("'wght' $fontWeight, 'slnt' 20, 'ital' 0")
+                            builder.setWeight(fontWeight) // Tell the system that this is a bold font.
+                            fontFace = builder.build()
+                        } catch (e: Exception) {
+                        }
+                    }
                 }
             }
-
-
-
 
             stickerIconNormalName = Utils.getString(json, "StickerIcon", "ic_sticker_border_3")
 
@@ -195,7 +199,7 @@ class Config {
             storeTrendingOpacity = Utils.getDouble(trending, "opacity", 0.7)
 
             storeDownloadIconName = Utils.getString(liteStore, "downloadIcon", "ic_download_border_3")
-            storeCompleteIconName = Utils.getString(liteStore, "completeIcon", "ic_downloaded_border_3")
+            storeDownloadedIconName = Utils.getString(liteStore, "completeIcon", "ic_downloaded_border_3")
 
             storeRecommendedTagShow = Utils.getString(liteStore, "bottomOfSearch", "recommendedTags") == "recommendedTags"
 
@@ -233,7 +237,7 @@ class Config {
                 themeBackgroundColor = Utils.getString(backgroundColor, LIGHT_KEY, "#FFFFFF")
                 themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, LIGHT_KEY, "#F7F8F9")
                 themeMainColor = Utils.getString(mainColor, LIGHT_KEY, "#FF501E")
-                themeIconColor = Utils.getString(normalColor, LIGHT_KEY, "#414141")
+                themeIconNormalColor = Utils.getString(normalColor, LIGHT_KEY, "#414141")
                 themeIconTintColor = Utils.getString(tintColor, LIGHT_KEY, "#FF5D1E")
 
                 previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, LIGHT_KEY, "ic_favorites_on")
@@ -243,7 +247,7 @@ class Config {
                 themeBackgroundColor = Utils.getString(backgroundColor, DARK_KEY, "#171B1C")
                 themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, DARK_KEY, "#2E363A")
                 themeMainColor = Utils.getString(mainColor, DARK_KEY, "#FF8558")
-                themeIconColor = Utils.getString(normalColor, DARK_KEY, "#646F7C")
+                themeIconNormalColor = Utils.getString(normalColor, DARK_KEY, "#646F7C")
                 themeIconTintColor = Utils.getString(tintColor, DARK_KEY, "#FF855B")
 
                 previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, DARK_KEY, "ic_favorites_on")
@@ -268,7 +272,7 @@ class Config {
             }
         }
 
-        fun getSearchbarResourceId(context: Context): Int {
+        fun getSearchbarIconResourceId(context: Context): Int {
             return if (searchbarIconName.isNotEmpty()) {
                 Utils.getResource(searchbarIconName, context)
             } else {
@@ -276,7 +280,7 @@ class Config {
             }
         }
 
-        fun getEraseResourceId(context: Context): Int {
+        fun getSearchBarDeleteIconResourceId(context: Context): Int {
             return if (searchbarDeleteIconName.isNotEmpty()) {
                 Utils.getResource(searchbarDeleteIconName, context)
             } else {
@@ -292,10 +296,10 @@ class Config {
             return imageId
         }
 
-        fun getCompleteIconResourceId(context: Context): Int {
+        fun getDownloadedIconResourceId(context: Context): Int {
             var imageId = R.mipmap.ic_downloaded_border_3
-            if (storeCompleteIconName.isNotEmpty()) {
-                imageId = Utils.getResource(storeCompleteIconName, context)
+            if (storeDownloadedIconName.isNotEmpty()) {
+                imageId = Utils.getResource(storeDownloadedIconName, context)
             }
             return imageId
         }
@@ -378,18 +382,52 @@ class Config {
             return color
         }
 
-        fun getStoreNavigationTextColor(context: Context, selected: Boolean): Int {
-            return if (selected) {
-                if (!useLightMode) {
-                    ContextCompat.getColor(context, R.color.c_f3f4f5)
-                } else {
-                    ContextCompat.getColor(context, R.color.c_374553)
+        fun getStoreTabLabelColor(context: Context, selected: Boolean): Int {
+            return when (useLightMode) {
+                true -> {
+                    when (selected) {
+                        true -> {
+                            ContextCompat.getColor(context, R.color.c_374553)
+                        }
+                        false -> {
+                            ContextCompat.getColor(context, R.color.c_c6c8cf)
+                        }
+                    }
                 }
-            } else {
-                if (!useLightMode) {
-                    ContextCompat.getColor(context, R.color.c_646f7c)
-                } else {
-                    ContextCompat.getColor(context, R.color.c_c6c8cf)
+                false -> {
+                    when (selected) {
+                        true -> {
+                            ContextCompat.getColor(context, R.color.c_f3f4f5)
+                        }
+                        false -> {
+                            ContextCompat.getColor(context, R.color.c_646f7c)
+                        }
+                    }
+                }
+            }
+        }
+
+        fun getStoreTabIndicatorColor(context: Context, selected: Boolean): Int {
+            return when (useLightMode) {
+                true -> {
+                    when (selected) {
+                        true -> {
+                            ContextCompat.getColor(context, R.color.c_374553)
+                        }
+                        false -> {
+                            Color.TRANSPARENT
+                        }
+                    }
+                }
+                false -> {
+                    when (selected) {
+                        true -> {
+                            ContextCompat.getColor(context, R.color.c_f3f4f5)
+                        }
+                        false -> {
+                            Color.TRANSPARENT
+                        }
+                    }
                 }
             }
         }
@@ -488,20 +526,48 @@ class Config {
             return ContextCompat.getColor(context, R.color.c_f34539)
         }
 
-        fun getDetailPackageNameTextColor(context: Context): Int {
-            var color = ContextCompat.getColor(context, R.color.c_000000)
-            if (!useLightMode) {
-                color = ContextCompat.getColor(context, R.color.c_f7f8f9)
+        fun getPackageNameTextColor(context: Context): Int {
+            return when (useLightMode) {
+                true -> ContextCompat.getColor(context, R.color.c_000000)
+                false -> ContextCompat.getColor(context, R.color.c_f7f8f9)
             }
-            return color
         }
 
-        fun getSearchTitleTextColor(context: Context): Int {
+        fun getArtistNameTextColor(context: Context): Int {
+            return when (useLightMode) {
+                true -> ContextCompat.getColor(context, R.color.c_8f8f8f)
+                false -> ContextCompat.getColor(context, R.color.c_c6c8cf)
+            }
+        }
+
+        fun getSearchKeywordTextColor(context: Context): Int {
             var color = ContextCompat.getColor(context, R.color.c_374553)
             if (!useLightMode) {
                 color = ContextCompat.getColor(context, R.color.c_c6c8cf)
             }
             return color
+        }
+
+        fun getSearchKeywordHint(context: Context): String {
+            return context.getString(R.string.search)
+        }
+
+        fun getSearchKeywordHintColor(context: Context): Int {
+            return ContextCompat.getColor(context, R.color.c_646f7c)
+        }
+
+        fun getSearchBarBackgroundColor(context: Context): Int {
+            return when (useLightMode) {
+                true -> ContextCompat.getColor(context, R.color.c_eeeeee)
+                false -> ContextCompat.getColor(context, R.color.c_2e363a)
+            }
+        }
+
+        fun getTextDownloadButtonTextColor(context: Context): Int {
+            return when (useLightMode) {
+                true -> ContextCompat.getColor(context, R.color.c_ffffff)
+                false -> ContextCompat.getColor(context, R.color.c_ffffff)
+            }
         }
 
         fun setStoreTrendingBackground(context: Context, drawable: GradientDrawable): Int {

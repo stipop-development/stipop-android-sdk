@@ -1,4 +1,4 @@
-package io.stipop.viewModel
+package io.stipop.view_model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

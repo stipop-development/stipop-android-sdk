@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.StipopDelegate
-import io.stipop.activity.StoreActivity
+import io.stipop.ui.pages.store.StoreActivity
 import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker

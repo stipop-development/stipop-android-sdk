@@ -1,101 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+<io.stipop.ui.components.core.SPConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="12dp">
 
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    <io.stipop.ui.components.core.SPLinearLayout
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/image_container"
+        android:id="@+id/label_container"
+        android:layout_marginBottom="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingVertical="10dp"
-                android:paddingHorizontal="12dp"
-                android:orientation="vertical">
+        <io.stipop.ui.components.common.SPPackageNameLabel
+            android:id="@+id/package_name"
+            android:layout_width="wrap_content"
+            android:layout_height="22dp"
+            android:layout_marginRight="10dp"
+            android:textColor="#374553"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:lineHeight="22sp"
+            android:hint="package name"
+            android:text="" />
 
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+        <io.stipop.ui.components.common.SPArtistNameLabel
+            android:id="@+id/artist_name"
+            android:layout_width="wrap_content"
+            android:layout_height="15dp"
+            android:textColor="#646f7c"
+            android:textSize="12sp"
+            android:hint="artist name"
+            android:lineHeight="15sp"
+            android:text="" />
 
-                <io.stipop.extend.StipopTextView
-                        android:id="@+id/package_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
-                        android:textColor="#374553"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:lineHeight="22sp"
-                        android:text="" />
-
-                <io.stipop.extend.StipopTextView
-                        android:id="@+id/artist_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#646f7c"
-                        android:textSize="12sp"
-                        android:lineHeight="15sp"
-                        android:text="" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                    android:id="@+id/stickersLL"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp">
-
-                <io.stipop.extend.StipopImageView
-                        android:id="@+id/image1IV"
-                        android:layout_width="55dp"
-                        android:layout_height="55dp"
-                        android:layout_marginRight="8dp"
-                        android:scaleType="centerCrop" />
-
-                <io.stipop.extend.StipopImageView
-                        android:id="@+id/image2IV"
-                        android:layout_width="55dp"
-                        android:layout_height="55dp"
-                        android:layout_marginRight="8dp"
-                        android:scaleType="centerCrop" />
-
-                <io.stipop.extend.StipopImageView
-                        android:id="@+id/image3IV"
-                        android:layout_width="55dp"
-                        android:layout_height="55dp"
-                        android:layout_marginRight="8dp"
-                        android:scaleType="centerCrop" />
-
-                <io.stipop.extend.StipopImageView
-                        android:id="@+id/image4IV"
-                        android:layout_width="55dp"
-                        android:layout_height="55dp"
-                        android:layout_marginRight="8dp"
-                        android:scaleType="centerCrop" />
+    </io.stipop.ui.components.core.SPLinearLayout>
 
 
-            </LinearLayout>
+    <io.stipop.ui.components.core.SPConstraintLayout
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="24dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/download_button"
+        android:id="@+id/image_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
 
-        </LinearLayout>
+        <io.stipop.ui.components.core.SPImageView
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1"
+            android:id="@+id/image1IV"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop" />
 
-        <LinearLayout
-                android:id="@+id/downloadLL"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+        <io.stipop.ui.components.core.SPImageView
+            app:layout_constraintLeft_toRightOf="@id/image1IV"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1"
+            android:layout_marginLeft="16dp"
+            android:id="@+id/image2IV"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop" />
 
-            <io.stipop.extend.StipopImageView
-                    android:id="@+id/download_button"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_gravity="center"
-                    android:src="@mipmap/ic_download_border_3" />
+        <io.stipop.ui.components.core.SPImageView
+            app:layout_constraintLeft_toRightOf="@id/image2IV"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1"
+            android:layout_marginLeft="16dp"
+            android:id="@+id/image3IV"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop" />
 
-        </LinearLayout>
+        <io.stipop.ui.components.core.SPImageView
+            app:layout_constraintLeft_toRightOf="@id/image3IV"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintDimensionRatio="1"
+            android:layout_marginLeft="16dp"
+            android:id="@+id/image4IV"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop" />
 
-    </LinearLayout>
 
-</LinearLayout>
+    </io.stipop.ui.components.core.SPConstraintLayout>
+
+
+    <io.stipop.ui.components.common.SPIconDownloadButton
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/download_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:padding="12dp"
+        android:src="@mipmap/ic_download_border_3" />
+
+</io.stipop.ui.components.core.SPConstraintLayout>

@@ -110,7 +110,7 @@
                     android:layout_marginHorizontal="5dp"
                     android:orientation="vertical">
 
-                    <io.stipop.extend.StipopTextView
+                    <io.stipop.ui.components.common.SPPackageNameLabel
                         android:id="@+id/package_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
                         android:lineHeight="22sp"
                         android:text="JalGOM's Toon(Ver.1)"/>
 
-                    <io.stipop.extend.StipopTextView
+                    <io.stipop.ui.components.common.SPArtistNameLabel
                         android:id="@+id/artist_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

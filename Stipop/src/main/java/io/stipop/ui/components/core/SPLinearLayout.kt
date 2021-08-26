@@ -5,15 +5,13 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.util.AttributeSet
 import android.widget.LinearLayout
-import androidx.constraintlayout.widget.ConstraintLayout
 import io.stipop.Config
 
-class SPLinearLayout(context: Context, attrs: AttributeSet?) :
+open class SPLinearLayout(context: Context, attrs: AttributeSet? = null) :
     LinearLayout(context, attrs) {
 
-    override fun draw(canvas: Canvas?) {
-        super.draw(canvas)
-
-        canvas?.drawColor(Color.parseColor(Config.themeBackgroundColor))
+    override fun dispatchDraw(canvas: Canvas?) {
+        super.dispatchDraw(canvas)
+        setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
     }
 }

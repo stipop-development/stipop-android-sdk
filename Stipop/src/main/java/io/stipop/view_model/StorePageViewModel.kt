@@ -1,4 +1,4 @@
-package io.stipop.viewModel
+package io.stipop.view_model
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -6,6 +6,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.stipop.APIClient
+import io.stipop.Config
 import io.stipop.Stipop
 import io.stipop.model.SPPackage
 import io.stipop.model.SPPageMap
@@ -275,7 +276,88 @@ class StorePageViewModel : ViewModel(), StorePageViewModelProtocol {
     }
 
     override fun onDownload(item: SPPackage) {
-        TODO("Not yet implemented")
+        Log.d(this::class.simpleName, "onDownload : " +
+                "item.packageId -> ${item.packageId}")
+
+        val params = JSONObject()
+        params.put("userId", Stipop.userId)
+        params.put("isPurchase", Config.allowPremium)
+        params.put("lang", Stipop.lang)
+        params.put("countryCode", Stipop.countryCode)
+
+        if (Config.allowPremium == "Y") {
+            // 움직이지 않는 스티커
+            var price = Config.pngPrice
+
+            if (item.packageAnimated == "Y") {
+                // 움직이는 스티커
+                price = Config.gifPrice
+            }
+            params.put("price", price)
+        }
+
+        APIClient.post(
+            APIClient.APIPath.DOWNLOAD.rawValue + "/${item.packageId}",
+            params
+        ) { response: JSONObject?, e: IOException? ->
+
+            try {
+
+                e?.let { throw it }
+
+                response?.let {
+                    onLoadPackage(item)
+                }
+
+            } catch (e: Exception) {
+                Log.e(this::class.simpleName, e.message, e)
+            }
+        }
+    }
+
+    override fun onLoadPackage(item: SPPackage) {
+        Log.d(
+            this::class.simpleName, "onLoadPackage : " +
+        "item.packageId -> ${item.packageId}")
+
+        val params = JSONObject()
+        params.put("userId", Stipop.userId)
+
+        APIClient.get(
+            APIClient.APIPath.PACKAGE.rawValue + "/${item.packageId}",
+            params
+        ) { response: JSONObject?, e: IOException? ->
+            try {
+
+                e?.let { throw it }
+
+                response?.let {
+                    it.getJSONObject("body").getJSONObject("package").let {
+                        val _package = SPPackage(it)
+
+                        _storeAllPackageList.value?.let {
+
+                            val index = it.indexOfFirst { value -> value.packageId == item.packageId }
+
+                            Log.d(this::class.simpleName, "index -> $index")
+
+                            val result = arrayListOf<SPPackage>().apply {
+                                addAll(it)
+                                this[index] = _package
+                            }
+
+                            _storeAllPackageList.postValue(result)
+
+                        }
+
+                    }
+                }
+
+            } catch (e: Exception) {
+                Log.e(this::class.simpleName, e.message, e)
+            }
+        }
+
     }
 }
 
@@ -293,6 +375,7 @@ interface StorePageViewModelProtocol {
     fun onLoadMoreAllPackageList(lastIndex: Int)
     fun onLoadMoreSearchPackageList(lastIndex: Int)
     fun onDownload(item: SPPackage)
+    fun onLoadPackage(item: SPPackage)
 }
 
 enum class StorePageMode {
@@ -512,49 +595,6 @@ class StorePageViewModel : ViewModel() {
             }
         }
     }
-
-//    fun downloadPackage(idx: Int, spPackage: SPPackage) {
-//
-//        val params = JSONObject()
-//        params.put("userId", Stipop.userId)
-//        params.put("isPurchase", Config.allowPremium)
-//        params.put("lang", Stipop.lang)
-//        params.put("countryCode", Stipop.countryCode)
-//
-//        if (Config.allowPremium == "Y") {
-//            // 움직이지 않는 스티커
-//            var price = Config.pngPrice
-//
-//            if (spPackage.packageAnimated == "Y") {
-//                // 움직이는 스티커
-//                price = Config.gifPrice
-//            }
-//            params.put("price", price)
-//        }
-//
-//        APIClient.post(
-//            APIClient.APIPath.DOWNLOAD.rawValue + "/${spPackage.packageId}",
-//            params
-//        ) { response: JSONObject?, e: IOException? ->
-//
-//            if (null != response) {
-//
-//                val header = response.getJSONObject("header")
-//
-//                if (Utils.getString(header, "status") == "success") {
-//                    // download
-//                    PackUtils.downloadAndSaveLocal(activity as Activity, spPackage) {
-//                        allStickerAdapter.setDownload(idx)
-//                        Toast.makeText(_context, "다운로드 완료!", Toast.LENGTH_LONG).show()
-//                        allStickerAdapter.notifyDataSetChanged()
-//                    }
-//                }
-//
-//            } else {
-//                e?.printStackTrace()
-//            }
-//        }
-//    }
 //
 //    fun getKeyword() {
 //        APIClient.get(
@@ -621,36 +661,6 @@ class StorePageViewModel : ViewModel() {
 //        }
 //    }
 //
-//    fun getPackInfo(idx: Int, packageId: Int) {
-//
-//        val params = JSONObject()
-//        params.put("userId", Stipop.userId)
-//
-//        APIClient.get(
-//            activity as Activity,
-//            APIClient.APIPath.PACKAGE.rawValue + "/${packageId}",
-//            params
-//        ) { response: JSONObject?, e: IOException? ->
-//            // println(response)
-//
-//            if (null != response) {
-//
-//                val header = response.getJSONObject("header")
-//
-//                if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
-//                    val body = response.getJSONObject("body")
-//                    val packageObj = body.getJSONObject("package")
-//
-//                    val spPackage = SPPackage(packageObj)
-//
-////                    downloadPackage(idx, spPackage)
-//                }
-//
-//            } else {
-//                e?.printStackTrace()
-//            }
-//        }
-//
-//    }
+
 }
 */

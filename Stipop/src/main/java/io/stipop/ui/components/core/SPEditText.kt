@@ -10,6 +10,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.stipop.Config
 
-class SPEditText(context: Context, attrs: AttributeSet?) :
+class SPEditText(context: Context, attrs: AttributeSet? = null) :
     androidx.appcompat.widget.AppCompatEditText(context, attrs) {
 }

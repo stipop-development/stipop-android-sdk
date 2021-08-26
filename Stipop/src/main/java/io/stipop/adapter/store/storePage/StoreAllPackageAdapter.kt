@@ -120,9 +120,11 @@ class StoreAllPackageViewHolder(
                 _binding.root.setOnClickListener {
                     _selectPackageCallback?.onSelect(item)
                 }
+
                 _binding.downloadButton.setOnClickListener {
                     _downloadPackageCallback?.onDownload(item)
                 }
+                _binding.downloadButton.isEnabled = !item.isDownload
             }
         }
     }

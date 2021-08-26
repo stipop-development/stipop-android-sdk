@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.extend.StipopImageView
 import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
-import io.stipop.fragment.MyPageFragment
+import io.stipop.ui.pages.store.MyPageFragment
 import io.stipop.model.SPPackage
 import kotlin.collections.ArrayList
 

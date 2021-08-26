@@ -13,15 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <io.stipop.ui.components.common.SPBlurView
-        app:layout_constraintTop_toTopOf="@id/top_container"
-        app:layout_constraintLeft_toLeftOf="@id/top_container"
-        app:layout_constraintBottom_toBottomOf="@id/top_container"
-        app:layout_constraintRight_toRightOf="@id/top_container"
-        app:realtimeBlurRadius="20dp"
-        android:layout_width="0dp"
-        android:layout_height="0dp"/>
-
     <io.stipop.ui.components.core.SPLinearLayout
         android:id="@+id/top_container"
         android:layout_width="match_parent"
@@ -67,7 +58,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp" />
 
-        <io.stipop.ui.components.core.SPTextView
+        <io.stipop.ui.components.common.SPPackageNameLabel
             android:id="@+id/package_name"
             android:layout_width="match_parent"
             android:layout_height="26dp"
@@ -80,7 +71,7 @@
             android:hint="package name"
             android:text="" />
 
-        <io.stipop.ui.components.core.SPTextView
+        <io.stipop.ui.components.common.SPArtistNameLabel
             android:id="@+id/artist_name"
             android:layout_width="match_parent"
             android:layout_height="24dp"
@@ -93,7 +84,7 @@
             android:hint="artist name"
             android:text="" />
 
-        <io.stipop.ui.components.core.SPButton
+        <io.stipop.ui.components.common.SPTextDownloadButton
             android:id="@+id/download_button"
             android:layout_width="match_parent"
             android:layout_height="48dp"

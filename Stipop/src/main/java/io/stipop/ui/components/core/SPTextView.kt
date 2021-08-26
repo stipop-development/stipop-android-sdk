@@ -9,6 +9,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.stipop.Config
 
-class SPTextView(context: Context, attrs: AttributeSet?) :
+open class SPTextView(context: Context, attrs: AttributeSet? = null) :
     androidx.appcompat.widget.AppCompatTextView(context, attrs) {
 }
