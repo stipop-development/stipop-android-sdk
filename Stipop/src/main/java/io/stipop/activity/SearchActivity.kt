@@ -11,11 +11,11 @@ import android.view.View
 import android.widget.AbsListView
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.stipop.*
-import io.stipop.adapter.search.KeywordAdapter
-import io.stipop.adapter.StickerAdapter
 import io.stipop.databinding.ActivitySearchBinding
 import io.stipop.extend.RecyclerDecoration
-import io.stipop.model.SPSticker
+import io.stipop.refactor.data.models.SPSticker
+import io.stipop.refactor.present.ui.adapters.KeywordAdapter
+import io.stipop.refactor.present.ui.adapters.StickerAdapter
 import org.json.JSONObject
 import java.io.IOException
 
@@ -137,6 +137,9 @@ class SearchActivity : Activity() {
         })
 
         _binding.stickerGrid.setOnItemClickListener { adapterView, view, i, l ->
+/*
+// TODO refactor
+
             val sticker = stickerData[i]
 
             Stipop.send(sticker.stickerId, sticker.keyword) { result ->
@@ -146,6 +149,7 @@ class SearchActivity : Activity() {
                     finish()
                 }
             }
+            */
         }
 
         if (Config.searchTagsHidden) {
@@ -160,6 +164,9 @@ class SearchActivity : Activity() {
     }
 
     private fun getKeyword() {
+        /*
+        // TODO refactor
+
         keywords.clear()
 
         val params = JSONObject()
@@ -190,10 +197,13 @@ class SearchActivity : Activity() {
             keywordAdapter.notifyDataSetChanged()
 
         }
-
+*/
     }
 
     private fun search(keyword: String) {
+/*
+// TODO refactor
+
 
         val params = JSONObject()
         params.put("userId", Stipop.userId)
@@ -244,6 +254,7 @@ class SearchActivity : Activity() {
             stickerAdapter.notifyDataSetChanged()
 
         }
+*/
 
     }
 

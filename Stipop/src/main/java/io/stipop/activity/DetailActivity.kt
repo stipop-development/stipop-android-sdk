@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.adapter.store.storePage.StoreDetailPackageAdapter
+import io.stipop.Stipop
+import io.stipop.refactor.present.ui.adapters.StoreDetailPackageAdapter
 import io.stipop.databinding.ActivityDetailBinding
-import io.stipop.ui.components.core.item_decoration.ItemPaddingDecoration
-import io.stipop.view_model.DetailViewModel
+import io.stipop.refactor.present.ui.components.core.item_decoration.ItemPaddingDecoration
+import io.stipop.refactor.present.ui.view_model.DetailViewModel
+import javax.inject.Inject
 
 
 class DetailActivity : AppCompatActivity() {
@@ -25,13 +27,17 @@ class DetailActivity : AppCompatActivity() {
         const val REQ_DOWNLOAD_PACKAGE = 0X00
     }
 
-    lateinit var _binding: ActivityDetailBinding
-    lateinit var _viewModel: DetailViewModel
+    private lateinit var _binding: ActivityDetailBinding
+
+    @Inject
+    internal lateinit var _viewModel: DetailViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Stipop.appComponent.inject(this)
+
         _binding = ActivityDetailBinding.inflate(layoutInflater)
-        _viewModel = viewModels<DetailViewModel>().value
 
         setContentView(_binding.root)
 

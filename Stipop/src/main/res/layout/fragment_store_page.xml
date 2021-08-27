@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.stipop.ui.components.core.SPLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.stipop.refactor.present.ui.components.core.SPLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <io.stipop.ui.components.common.SPSearchBar
+    <io.stipop.refactor.present.ui.components.common.SPSearchBar
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_margin="12dp">
 
-    </io.stipop.ui.components.common.SPSearchBar>
+    </io.stipop.refactor.present.ui.components.common.SPSearchBar>
 
-    <io.stipop.ui.components.core.SPLinearLayout
+    <io.stipop.refactor.present.ui.components.core.SPLinearLayout
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -26,7 +26,7 @@
         android:visibility="gone"
         android:orientation="horizontal">
 
-        <io.stipop.ui.components.common.SPIconImageView
+        <io.stipop.refactor.present.ui.components.common.SPIconImageView
             android:id="@+id/searchIconIV"
             android:padding="12dp"
             android:layout_width="48dp"
@@ -34,7 +34,7 @@
             android:layout_gravity="center_vertical"
             android:src="@mipmap/icon_search" />
 
-        <io.stipop.ui.components.core.SPEditText
+        <io.stipop.refactor.present.ui.components.core.SPEditText
             android:id="@+id/keywordET"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -46,7 +46,7 @@
             android:background="@null"
             android:imeOptions="actionSearch" />
 
-        <io.stipop.ui.components.common.SPIconImageView
+        <io.stipop.refactor.present.ui.components.common.SPIconImageView
             android:id="@+id/eraseIV"
             android:padding="12dp"
             android:layout_width="48dp"
@@ -54,7 +54,7 @@
             android:layout_gravity="center_vertical"
             android:src="@mipmap/ic_erase_border_3" />
 
-    </io.stipop.ui.components.core.SPLinearLayout>
+    </io.stipop.refactor.present.ui.components.core.SPLinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -90,4 +90,4 @@
 
     </FrameLayout>
 
-</io.stipop.ui.components.core.SPLinearLayout>
+</io.stipop.refactor.present.ui.components.core.SPLinearLayout>

@@ -46,11 +46,18 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="" />
+
         <io.stipop.extend.StipopImageView
             android:id="@+id/stipopIV"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@mipmap/ic_sticker_border_3"/>
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@mipmap/ic_sticker_border_3" />
+
+        <io.stipop.extend.StipopImageView
+            android:id="@+id/stipopIV2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@mipmap/icon_search" />
     </LinearLayout>
 
 

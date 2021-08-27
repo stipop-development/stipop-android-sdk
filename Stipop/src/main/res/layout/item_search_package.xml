@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.stipop.ui.components.core.SPConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.stipop.refactor.present.ui.components.core.SPConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="12dp">
 
-    <io.stipop.ui.components.core.SPLinearLayout
+    <io.stipop.refactor.present.ui.components.core.SPLinearLayout
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/image_container"
@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <io.stipop.ui.components.common.SPPackageNameLabel
+        <io.stipop.refactor.present.ui.components.common.SPPackageNameLabel
             android:id="@+id/package_name"
             android:layout_width="wrap_content"
             android:layout_height="22dp"
@@ -27,7 +27,7 @@
             android:hint="package name"
             android:text="" />
 
-        <io.stipop.ui.components.common.SPArtistNameLabel
+        <io.stipop.refactor.present.ui.components.common.SPArtistNameLabel
             android:id="@+id/artist_name"
             android:layout_width="wrap_content"
             android:layout_height="15dp"
@@ -37,10 +37,10 @@
             android:lineHeight="15sp"
             android:text="" />
 
-    </io.stipop.ui.components.core.SPLinearLayout>
+    </io.stipop.refactor.present.ui.components.core.SPLinearLayout>
 
 
-    <io.stipop.ui.components.core.SPConstraintLayout
+    <io.stipop.refactor.present.ui.components.core.SPConstraintLayout
         android:layout_marginTop="8dp"
         android:layout_marginRight="24dp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -50,7 +50,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content">
 
-        <io.stipop.ui.components.core.SPImageView
+        <io.stipop.refactor.present.ui.components.core.SPImageView
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -60,7 +60,7 @@
             android:layout_height="0dp"
             android:scaleType="centerCrop" />
 
-        <io.stipop.ui.components.core.SPImageView
+        <io.stipop.refactor.present.ui.components.core.SPImageView
             app:layout_constraintLeft_toRightOf="@id/image1IV"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -71,7 +71,7 @@
             android:layout_height="0dp"
             android:scaleType="centerCrop" />
 
-        <io.stipop.ui.components.core.SPImageView
+        <io.stipop.refactor.present.ui.components.core.SPImageView
             app:layout_constraintLeft_toRightOf="@id/image2IV"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -82,7 +82,7 @@
             android:layout_height="0dp"
             android:scaleType="centerCrop" />
 
-        <io.stipop.ui.components.core.SPImageView
+        <io.stipop.refactor.present.ui.components.core.SPImageView
             app:layout_constraintLeft_toRightOf="@id/image3IV"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -95,10 +95,10 @@
             android:scaleType="centerCrop" />
 
 
-    </io.stipop.ui.components.core.SPConstraintLayout>
+    </io.stipop.refactor.present.ui.components.core.SPConstraintLayout>
 
 
-    <io.stipop.ui.components.common.SPIconDownloadButton
+    <io.stipop.refactor.present.ui.components.common.SPIconDownloadButton
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -109,4 +109,4 @@
         android:padding="12dp"
         android:src="@mipmap/ic_download_border_3" />
 
-</io.stipop.ui.components.core.SPConstraintLayout>
+</io.stipop.refactor.present.ui.components.core.SPConstraintLayout>

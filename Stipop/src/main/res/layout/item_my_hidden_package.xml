@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <io.stipop.refactor.present.ui.components.core.SPImageView
+        android:layout_margin="12dp"
+        android:id="@+id/package_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <io.stipop.refactor.present.ui.components.common.SPPackageNameLabel
+            android:id="@+id/package_name"
+            android:layout_width="wrap_content"
+            android:layout_height="22dp"
+            android:ellipsize="end"
+            android:lineHeight="22sp"
+            android:maxLines="1"
+            android:hint="package name"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <io.stipop.refactor.present.ui.components.common.SPArtistNameLabel
+            android:id="@+id/artist_name"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:lineHeight="20sp"
+            android:hint="artist name"
+            android:textColor="#8f8f8f"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <io.stipop.refactor.present.ui.components.core.SPImageButton
+        android:id="@+id/active_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@mipmap/ic_add_border_3" />
+
+</LinearLayout>

@@ -5,38 +5,34 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
-import android.util.DisplayMetrics
-import android.view.*
-import android.widget.*
+import android.view.View
 import io.stipop.activity.DetailActivity
-import io.stipop.activity.Keyboard
+import io.stipop.activity.KeyboardFragment
 import io.stipop.activity.SearchActivity
 import io.stipop.extend.StipopImageView
-import io.stipop.model.SPPackage
-import io.stipop.model.SPSticker
-import org.json.JSONObject
-import java.io.IOException
+import io.stipop.refactor.data.models.SPPackage
+import io.stipop.refactor.data.models.SPSticker
+import io.stipop.refactor.data.models.SPUser
+import io.stipop.refactor.data.repositories.UserRepository
+import io.stipop.refactor.present.di.ApplicationComponent
+import io.stipop.refactor.present.di.DaggerApplicationComponent
+import javax.inject.Inject
 
 interface StipopDelegate {
     fun onStickerSelected(sticker: SPSticker): Boolean
-    fun canDownload(spPackage:SPPackage): Boolean
+    fun canDownload(spPackage: SPPackage): Boolean
 }
 
 class Stipop(private val activity: Activity, private val stipopButton: StipopImageView, val delegate: StipopDelegate) {
+    @Inject
+    internal lateinit var userRepository: UserRepository
 
     companion object {
 
         @SuppressLint("StaticFieldLeak")
-        var instance:Stipop? = null
+        var instance: Stipop? = null
 
-        var userId = "-1"
-            private set
-
-        var lang = "en"
-            private set
-
-        var countryCode = "us"
-            private set
+        internal val appComponent: ApplicationComponent = DaggerApplicationComponent.create()
 
         var keyboardHeight = 0
             private set
@@ -47,13 +43,13 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
 
         fun connect(activity: Activity, stipopButton: StipopImageView, userId: String, lang: String, countryCode: String, delegate: StipopDelegate) {
 
-            Stipop.userId = userId
-            Stipop.lang = lang
-            Stipop.countryCode = countryCode
 
             instance = Stipop(activity, stipopButton, delegate)
 
-            instance!!.connect()
+
+            instance?.connect()
+            instance?.userRepository?.setUser(SPUser(userId, countryCode, lang, Config.apikey))
+
         }
 
         fun showSearch() {
@@ -61,7 +57,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
                 return
             }
 
-            instance!!.showSearch()
+            instance?.showSearch()
         }
 
         fun showKeyboard() {
@@ -69,39 +65,14 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
                 return
             }
 
-            instance!!.showKeyboard()
-        }
 
-        /*
-        fun show() {
-            if (instance == null) {
-                return
-            }
-
-            instance!!.show()
-        }
-
-        fun detail(packageId: Int) {
-            if (instance == null) {
-                return
-            }
-
-            instance!!.detail(packageId)
-        }
-        */
-
-        internal fun send(stickerId: Int, keyword: String, completionHandler: (result: Boolean) -> Unit) {
-            if (instance == null) {
-                return
-            }
-
-            instance!!.send(stickerId, keyword, completionHandler)
+            instance?.showKeyboard()
         }
     }
 
     private var maxTop = 0
     private var maxBottom = 0
-    private var keyboard: Keyboard? = null
+    private var keyboardFragment: KeyboardFragment? = null
     private lateinit var rootView: View
 
 
@@ -109,6 +80,9 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
     private var stickerIconEnabled = false
 
     fun connect() {
+
+        appComponent.inject(this)
+
         this.stipopButton.setImageResource(Config.getStickerIconResourceId(this.activity))
 
         this.connected = true
@@ -143,45 +117,6 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         this.activity.startActivity(intent)
     }
 
-    fun send(stickerId: Int, searchKeyword: String, completionHandler: (result: Boolean) -> Unit) {
-        if (!this.connected) {
-            return
-        }
-
-        val params = JSONObject()
-        params.put("userId", userId)
-        params.put("p", searchKeyword)
-        params.put("lang", lang)
-        params.put("countryCode", countryCode)
-
-        APIClient.post(
-            activity,
-            APIClient.APIPath.ANALYTICS_SEND.rawValue + "/${stickerId}",
-            params
-        ) { response: JSONObject?, e: IOException? ->
-
-            if (null != response) {
-                var success = true
-
-                if (response.isNull("header")) {
-                    success = false
-                } else {
-
-                    val header = response.getJSONObject("header")
-
-                    if (Utils.getString(header, "status") != "success" || Utils.getInt(header, "code", -1) == -1) {
-                        success = false
-                    }
-
-                }
-
-                completionHandler(success)
-            } else {
-                completionHandler(false)
-            }
-        }
-    }
-
     private fun enableStickerIcon() {
         if (this.connected) {
             this.stipopButton.setTint()
@@ -214,25 +149,28 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
 
         this.enableStickerIcon()
 
-        if(keyboard == null) {
-            keyboard = Keyboard(this.activity)
+        if (keyboardFragment == null) {
+            keyboardFragment = KeyboardFragment()
         }
 
-        if (keyboard!!.popupWindow.isShowing) {
-            this.keyboard!!.canShow = false
-            keyboard!!.hide()
-            this.disableStickerIcon()
-        } else {
+        keyboardFragment?.let {
 
-            if (Stipop.keyboardHeight == 0) {
-                Utils.showKeyboard(instance!!.activity)
+                keyboard ->
+
+            if (keyboard.popupWindow.isShowing) {
+                this.keyboardFragment?.canShow = false
+                keyboard.hide()
+                this.disableStickerIcon()
+            } else {
+                if (Stipop.keyboardHeight == 0) {
+                    Utils.showKeyboard(instance?.activity)
+                }
+
+                this.keyboardFragment?.canShow = true
+                keyboard.show()
             }
-
-            this.keyboard!!.canShow = true
-            keyboard!!.show()
         }
     }
-
 
     private fun setSizeForSoftKeyboard() {
 
@@ -262,24 +200,24 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
             if (heightDifference > 100) {
                 keyboardHeight = heightDifference
 
-                if(this.keyboard != null) {
-                    val preHeight = this.keyboard!!.popupWindow.height
-                    this.keyboard!!.popupWindow.height = keyboardHeight
+                this.keyboardFragment?.let { keyboard ->
+                    keyboard.popupWindow.let { popupWindow ->
+                        val preHeight = popupWindow.height
+                        popupWindow.height = keyboardHeight
 
-                    if (preHeight == 0 || !this.keyboard!!.popupWindow.isShowing) {
-                        this.keyboard!!.show()
-                        if(this.keyboard!!.canShow) {
-                            this.enableStickerIcon()
+                        if (preHeight == 0 || popupWindow.isShowing) {
+                            keyboard.show()
+                            if (keyboard.canShow) {
+                                this.enableStickerIcon()
+                            }
                         }
                     }
                 }
             } else {
                 keyboardHeight = 0
-                if(this.keyboard != null) {
-                    this.keyboard!!.popupWindow.height = 0
-                    this.keyboard!!.hide()
-                    this.disableStickerIcon()
-                }
+                this.keyboardFragment?.popupWindow?.height = 0
+                this.keyboardFragment?.hide()
+                this.disableStickerIcon()
             }
         }
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<io.stipop.ui.components.core.SPLinearLayout
+<io.stipop.refactor.present.ui.components.core.SPLinearLayout
         android:id="@+id/container"
         xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
@@ -9,7 +9,7 @@
     android:orientation="vertical"
     >
 
-    <io.stipop.ui.components.core.SPLinearLayout
+    <io.stipop.refactor.present.ui.components.core.SPLinearLayout
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -21,7 +21,7 @@
             android:layout_marginRight="12dp"
             android:orientation="horizontal">
 
-        <io.stipop.ui.components.core.SPConstraintLayout
+        <io.stipop.refactor.present.ui.components.core.SPConstraintLayout
                 android:id="@+id/store_page_tab"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -29,7 +29,7 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-            <io.stipop.ui.components.common.SPStoreTabLabel
+            <io.stipop.refactor.present.ui.components.common.SPStoreTabLabel
                     android:id="@+id/store_page_tab_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-            <io.stipop.ui.components.common.SPStoreTabIndicator
+            <io.stipop.refactor.present.ui.components.common.SPStoreTabIndicator
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -52,9 +52,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="2dp" />
 
-        </io.stipop.ui.components.core.SPConstraintLayout>
+        </io.stipop.refactor.present.ui.components.core.SPConstraintLayout>
 
-        <io.stipop.ui.components.core.SPConstraintLayout
+        <io.stipop.refactor.present.ui.components.core.SPConstraintLayout
                 android:id="@+id/my_page_tab"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -62,7 +62,7 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-            <io.stipop.ui.components.common.SPStoreTabLabel
+            <io.stipop.refactor.present.ui.components.common.SPStoreTabLabel
                     android:id="@+id/my_page_tab_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-            <io.stipop.ui.components.common.SPStoreTabIndicator
+            <io.stipop.refactor.present.ui.components.common.SPStoreTabIndicator
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -85,9 +85,9 @@
                     android:layout_height="2dp"
                     android:background="#292929"/>
 
-        </io.stipop.ui.components.core.SPConstraintLayout>
+        </io.stipop.refactor.present.ui.components.core.SPConstraintLayout>
 
-    </io.stipop.ui.components.core.SPLinearLayout>
+    </io.stipop.refactor.present.ui.components.core.SPLinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -106,4 +106,4 @@
 
     </FrameLayout>
 
-</io.stipop.ui.components.core.SPLinearLayout>
+</io.stipop.refactor.present.ui.components.core.SPLinearLayout>

@@ -583,5 +583,13 @@ class Config {
             return color
         }
 
+
+        fun getMyPackageActiveText(context: Context): String {
+            return context.getString(R.string.view_active_stickers)
+        }
+
+        fun getMyPackageHiddenText(context: Context): String {
+            return context.getString(R.string.view_hidden_stickers)
+        }
     }
 }

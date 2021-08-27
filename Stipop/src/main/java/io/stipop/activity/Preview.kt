@@ -8,11 +8,11 @@ import android.widget.*
 import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.extend.StipopImageView
-import io.stipop.model.SPSticker
+import io.stipop.refactor.data.models.SPSticker
 import org.json.JSONObject
 import java.io.IOException
 
-class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
+class Preview(val activity: Activity, val keyboardFragment: KeyboardFragment) : PopupWindow() {
 
     private lateinit var rootView: View
 
@@ -87,6 +87,10 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
 
     fun setFavorite() {
 
+        /*
+
+        // TODO refactor
+
         val params = JSONObject()
         params.put("stickerId", sticker.stickerId)
 
@@ -106,7 +110,7 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
 
                     setFavoriteImage()
 
-                    keyboard.changeFavorite(sticker.stickerId, sticker.favoriteYN, sticker.packageId)
+                    keyboardFragment.changeFavorite(sticker.stickerId, sticker.favoriteYN, sticker.packageId)
 
                 } else {
                     // println("ERROR!")
@@ -116,6 +120,7 @@ class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
 
             }
         }
+        */
 
     }
 

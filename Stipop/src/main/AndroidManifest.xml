@@ -30,12 +30,12 @@
         </provider>
 
         <activity
-            android:name=".activity.SearchActivity"
+            android:name="io.stipop.refactor.present.ui.pages.search_sticker.SearchActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
 
         <activity
-            android:name=".ui.pages.store.StoreActivity"
+            android:name="io.stipop.refactor.present.ui.pages.store.StoreActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
 

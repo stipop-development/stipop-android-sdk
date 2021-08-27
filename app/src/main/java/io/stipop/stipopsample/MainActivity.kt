@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.StipopDelegate
-import io.stipop.ui.pages.store.StoreActivity
+import io.stipop.refactor.present.ui.pages.store.StoreActivity
 import io.stipop.extend.StipopImageView
-import io.stipop.model.SPPackage
-import io.stipop.model.SPSticker
+import io.stipop.refactor.data.models.SPPackage
+import io.stipop.refactor.data.models.SPSticker
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
         mAdapter.setHasStableIds(true)
 
         val stipopIV = findViewById<StipopImageView>(R.id.stipopIV)
+        val stipopIV2 = findViewById<StipopImageView>(R.id.stipopIV2)
 
         chat_recyclerview = findViewById<RecyclerView>(R.id.chat_recyclerview);
         chat_recyclerview.adapter = mAdapter
@@ -48,8 +49,11 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
 //            .commitAllowingStateLoss()
 
         stipopIV.setOnClickListener {
+            Stipop.showKeyboard()
+        }
+
+        stipopIV2.setOnClickListener {
             Stipop.showSearch()
-//            Stipop.showKeyboard()
         }
 
         chatText.setOnEditorActionListener { textView, action, event ->
