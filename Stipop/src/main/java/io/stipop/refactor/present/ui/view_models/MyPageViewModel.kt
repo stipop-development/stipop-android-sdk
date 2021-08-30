@@ -1,4 +1,4 @@
-package io.stipop.refactor.present.ui.view_model
+package io.stipop.refactor.present.ui.view_models
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -6,7 +6,6 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.toLiveData
 import io.reactivex.rxjava3.core.BackpressureStrategy
-import io.stipop.Config.Companion.apikey
 import io.stipop.refactor.data.models.SPMyPageMode
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.data.models.SPUser
@@ -27,41 +26,8 @@ class MyPageViewModel @Inject constructor(
     private var _hasLoadingMyActivePackageList: Boolean = false
     private var _hasLoadingMyHiddenPackageList: Boolean = false
 
-    private var _hasMoreMyActivePackageList: Boolean = false
-    private var _hasMoreMyHiddenPackageList: Boolean = false
-
-    private var _myActivePackageListPageNumber: Int = 0
-    private var _myHiddenPackageListPageNumber: Int = 0
-
     private val _myPageMode: MutableLiveData<SPMyPageMode> = MutableLiveData<SPMyPageMode>().apply {
         postValue(SPMyPageMode.ACTIVE)
-    }
-    private val _activePackagePageMapChanges: MutableLiveData<PageMap?> = MutableLiveData()
-    private val _hiddenPackagePageMapChanges: MutableLiveData<PageMap?> = MutableLiveData()
-
-    private val _activePackagePageMap: MediatorLiveData<PageMap?> = MediatorLiveData<PageMap?>().apply {
-        addSource(_activePackagePageMapChanges) {
-
-            Log.d(this@MyPageViewModel::class.simpleName, "$it")
-            it?.let {
-                _myActivePackageListPageNumber = it.pageNumber
-                _hasMoreMyActivePackageList = it.pageCount > it.pageNumber
-            }
-
-            postValue(it)
-        }
-    }
-    private val _hiddenPackagePageMap: MediatorLiveData<PageMap?> = MediatorLiveData<PageMap?>().apply {
-        addSource(_hiddenPackagePageMapChanges) {
-
-            Log.d(this@MyPageViewModel::class.simpleName, "$it")
-            it?.let {
-                _myHiddenPackageListPageNumber = it.pageNumber
-                _hasMoreMyHiddenPackageList = it.pageCount > it.pageNumber
-            }
-
-            postValue(it)
-        }
     }
 
     private val _user: SPUser? get() = _userRepository.userChanges.value
@@ -72,10 +38,6 @@ class MyPageViewModel @Inject constructor(
         get() = _myStickersRepository.activePackageList.toFlowable(BackpressureStrategy.LATEST).toLiveData()
     override val hiddenPackageList: LiveData<List<SPPackage>>
         get() = _myStickersRepository.hiddenPackageList.toFlowable(BackpressureStrategy.LATEST).toLiveData()
-    override val activePackagePageMap: LiveData<PageMap?>
-        get() = _activePackagePageMap
-    override val hiddenPackagePageMap: LiveData<PageMap?>
-        get() = _hiddenPackagePageMap
 
     override fun onLoadMyActivePackageList() {
         if (!_hasLoadingMyActivePackageList) {
@@ -85,10 +47,9 @@ class MyPageViewModel @Inject constructor(
 
                     user ->
                 launch {
-                    _myStickersRepository.myStickerPacks(
+                    _myStickersRepository.onLoadActivePackageList(
                         user.apikey,
                         user.userId,
-                        pageNumber = _myActivePackageListPageNumber + 1
                     )
                     _hasLoadingMyActivePackageList = false
                 }
@@ -105,10 +66,9 @@ class MyPageViewModel @Inject constructor(
                 user ->
 
                 launch {
-                    _myStickersRepository.hiddenStickerPacks(
+                    _myStickersRepository.onLoadHiddenPackageList(
                         user.apikey,
                         user.userId,
-                        pageNumber = _myHiddenPackageListPageNumber + 1
                     )
                     _hasLoadingMyHiddenPackageList = false
                 }
@@ -158,8 +118,6 @@ interface MyPageViewModelProtocol {
     val myPageMode: LiveData<SPMyPageMode>
     val activePackageList: LiveData<List<SPPackage>>
     val hiddenPackageList: LiveData<List<SPPackage>>
-    val activePackagePageMap: LiveData<PageMap?>
-    val hiddenPackagePageMap: LiveData<PageMap?>
     fun onLoadMyActivePackageList()
     fun onLoadMyHiddenPackageList()
     fun onActivePackage(value: SPPackage)

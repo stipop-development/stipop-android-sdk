@@ -1,8 +1,7 @@
-package io.stipop.refactor.present.ui.view_model
+package io.stipop.refactor.present.ui.view_models
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import io.stipop.refactor.data.repositories.MyStickersRepository
 import io.stipop.refactor.data.repositories.StickerStoreRepository
 import io.stipop.refactor.data.repositories.UserRepository

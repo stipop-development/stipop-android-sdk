@@ -11,19 +11,15 @@ import io.stipop.refactor.domain.entities.VoidResponse
 import io.stipop.refactor.domain.repositories.MyStickersRepositoryProtocol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.coroutines.CoroutineContext
 
 @Singleton
 class MyStickersRepository @Inject constructor(
     private val remoteDatasource: MyStickersDatasource,
-) : MyStickersRepositoryProtocol, CoroutineScope {
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO
+) : MyStickersRepositoryProtocol {
 
     private val _activePackageListChanges: BehaviorSubject<List<SPPackage>> =
         BehaviorSubject.create<List<SPPackage>?>().apply {
@@ -67,24 +63,46 @@ class MyStickersRepository @Inject constructor(
             }
         }
 
+    suspend fun onLoadActivePackageList(
+        apikey: String,
+        userId: String,
+        limit: Int? = null,
+        pageNumber: Int? = (_activePackagePageMap?.pageNumber ?: 0) + 1
+    ) {
+        myStickerPacks(apikey, userId, limit, pageNumber)
+    }
+
+    suspend fun onLoadHiddenPackageList(
+        apikey: String,
+        userId: String,
+        limit: Int? = null,
+        pageNumber: Int? = (_hiddenPackagePageMap?.pageNumber ?: 0) + 1
+    ) {
+        hiddenStickerPacks(apikey, userId, limit, pageNumber)
+    }
+
     suspend fun onActivePackage(apikey: String, userId: String, value: SPPackage) {
         Log.d(
             this::class.simpleName, "onActivePackage : " +
                     "value.id -> ${value.packageId}"
         )
 
-        coroutineScope {
-            launch {
-                hideRecoverMyPack(apikey, userId, value.packageId)
-            }
-
-            _hiddenPackagePageMap?.let {
-                if (_hiddenPackageList.size - 1 < it.pageNumber * it.onePageCountRow) {
-                    hiddenStickerPacks(apikey, userId, pageNumber = (_hiddenPackageList.size - 1) / it.onePageCountRow + 1)
+        hiddenPackageList.subscribe { list ->
+            _hiddenPackagePageMap?.let { pageMap ->
+                if (list.size < pageMap.pageNumber * pageMap.onePageCountRow) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        onLoadHiddenPackageList(
+                            apikey,
+                            userId,
+                            pageNumber = list.size / pageMap.onePageCountRow + 1
+                        )
+                    }
                 }
             }
-            _activePackageListChanges.onNext(listOf(value))
-        }
+        }.dispose()
+
+        hideRecoverMyPack(apikey, userId, value.packageId)
+        _activePackageListChanges.onNext(listOf(value))
     }
 
     suspend fun onHiddenPackage(apikey: String, userId: String, value: SPPackage) {
@@ -93,19 +111,23 @@ class MyStickersRepository @Inject constructor(
                     "value.id -> ${value.packageId}"
         )
 
-        coroutineScope {
-            launch {
-                hideRecoverMyPack(apikey, userId, value.packageId)
-            }
-
-            _activePackagePageMap?.let {
-                if (_activePackageList.size - 1 < it.pageNumber * it.onePageCountRow) {
-                    myStickerPacks(apikey, userId, pageNumber = (_activePackageList.size - 1) / it.onePageCountRow + 1)
+        val scope = CoroutineScope(Dispatchers.IO)
+        activePackageList.subscribe { list ->
+            _activePackagePageMap?.let { pageMap ->
+                if (list.size < pageMap.pageNumber * pageMap.onePageCountRow) {
+                    scope.launch {
+                        onLoadActivePackageList(
+                            apikey,
+                            userId,
+                            pageNumber = list.size / pageMap.onePageCountRow + 1
+                        )
+                    }
                 }
             }
+        }.dispose()
 
-            _hiddenPackageListChanges.onNext(listOf(value))
-        }
+        hideRecoverMyPack(apikey, userId, value.packageId)
+        _hiddenPackageListChanges.onNext(listOf(value))
     }
 
     override suspend fun myStickerPacks(

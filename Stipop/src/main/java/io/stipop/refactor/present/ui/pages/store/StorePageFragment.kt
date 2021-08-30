@@ -21,8 +21,8 @@ import io.stipop.refactor.present.ui.adapters.SearchPackageAdapter
 import io.stipop.refactor.present.ui.adapters.StoreAllPackageAdapter
 import io.stipop.refactor.present.ui.listeners.OnClickPackageListener
 import io.stipop.refactor.present.ui.listeners.OnDownloadPackageListener
-import io.stipop.refactor.present.ui.view_model.StorePageMode
-import io.stipop.refactor.present.ui.view_model.StorePageViewModel
+import io.stipop.refactor.present.ui.view_models.StorePageMode
+import io.stipop.refactor.present.ui.view_models.StorePageViewModel
 import javax.inject.Inject
 
 

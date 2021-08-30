@@ -29,7 +29,7 @@ import io.stipop.refactor.data.models.SPSticker
 import io.stipop.refactor.present.ui.adapters.KeyboardPackageAdapter
 import io.stipop.refactor.present.ui.adapters.StickerAdapter
 import io.stipop.refactor.present.ui.pages.store.StoreActivity
-import io.stipop.refactor.present.ui.view_model.KeyboardViewModel
+import io.stipop.refactor.present.ui.view_models.KeyboardViewModel
 import javax.inject.Inject
 
 

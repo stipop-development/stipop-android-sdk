@@ -1,4 +1,4 @@
-package io.stipop.refactor.present.ui.view_model
+package io.stipop.refactor.present.ui.view_models
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

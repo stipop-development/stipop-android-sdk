@@ -1,6 +1,5 @@
 package io.stipop.refactor.present.ui.pages.store
 
-import android.app.Activity
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +10,6 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,9 +23,7 @@ import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.present.ui.adapters.MyHiddenPackageAdapter
 import io.stipop.refactor.present.ui.listeners.OnActivePackageListener
 import io.stipop.refactor.present.ui.listeners.OnHiddenPackageListener
-import io.stipop.refactor.present.ui.view_model.MyPageViewModel
-import org.json.JSONObject
-import java.io.IOException
+import io.stipop.refactor.present.ui.view_models.MyPageViewModel
 import javax.inject.Inject
 
 class MyPageFragment : Fragment(), OnRecyclerAdapterEventListener {

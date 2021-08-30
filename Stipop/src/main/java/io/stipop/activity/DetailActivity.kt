@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Display
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
@@ -15,7 +14,7 @@ import io.stipop.Stipop
 import io.stipop.refactor.present.ui.adapters.StoreDetailPackageAdapter
 import io.stipop.databinding.ActivityDetailBinding
 import io.stipop.refactor.present.ui.components.core.item_decoration.ItemPaddingDecoration
-import io.stipop.refactor.present.ui.view_model.DetailViewModel
+import io.stipop.refactor.present.ui.view_models.DetailViewModel
 import javax.inject.Inject
 
 

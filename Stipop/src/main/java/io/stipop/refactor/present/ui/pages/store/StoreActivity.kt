@@ -3,13 +3,12 @@ package io.stipop.refactor.present.ui.pages.store
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import io.stipop.Stipop
 import io.stipop.databinding.ActivityStoreBinding
-import io.stipop.refactor.present.ui.view_model.StoreMode
-import io.stipop.refactor.present.ui.view_model.StoreViewModel
+import io.stipop.refactor.present.ui.view_models.StoreMode
+import io.stipop.refactor.present.ui.view_models.StoreViewModel
 import javax.inject.Inject
 
 class StoreActivity : AppCompatActivity() {
