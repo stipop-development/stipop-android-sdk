@@ -1,118 +1,89 @@
 package io.stipop.refactor.data.repositories
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.stipop.refactor.data.datasources.MyStickersDatasource
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.domain.entities.PackageListResponse
+import io.stipop.refactor.domain.entities.PageMap
 import io.stipop.refactor.domain.entities.VoidResponse
 import io.stipop.refactor.domain.repositories.MyStickersRepositoryProtocol
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.CoroutineContext
 
 @Singleton
 class MyStickersRepository @Inject constructor(
     private val remoteDatasource: MyStickersDatasource,
-) : MyStickersRepositoryProtocol {
-    private val _activePackageListChanges: MutableLiveData<List<SPPackage>> = MutableLiveData()
-    private val _hiddenPackageListChanges: MutableLiveData<List<SPPackage>> = MutableLiveData()
+) : MyStickersRepositoryProtocol, CoroutineScope {
 
-    private val _activePackageList: MediatorLiveData<List<SPPackage>> =
-        MediatorLiveData<List<SPPackage>>().apply {
-            addSource(_activePackageListChanges) {
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO
 
-                    sourceList ->
-
-                val _arrayList = arrayListOf<SPPackage>()
-
-                value?.let {
-                    _arrayList.addAll(it)
-                }
-
-                sourceList.forEach { source ->
-                    if (_arrayList.contains(source)) {
-                        _arrayList[_arrayList.indexOf(source)] = source
-                    } else {
-                        _arrayList.add(source)
-                    }
-                }
-
-                postValue(_arrayList)
-
-            }
-            addSource(_hiddenPackageListChanges) {
-
-                    sourceList ->
-
-                val _arrayList = arrayListOf<SPPackage>()
-
-                value?.let {
-                    _arrayList.addAll(it)
-                }
-
-                sourceList.forEach { source ->
-                    _arrayList.remove(source)
-                }
-
-                postValue(_arrayList)
-
-            }
+    private val _activePackageListChanges: BehaviorSubject<List<SPPackage>> =
+        BehaviorSubject.create<List<SPPackage>?>().apply {
+            onNext(listOf())
+        }
+    private val _hiddenPackageListChanges: BehaviorSubject<List<SPPackage>> =
+        BehaviorSubject.create<List<SPPackage>?>().apply {
+            onNext(listOf())
         }
 
-    private val _hiddenPackageList: MediatorLiveData<List<SPPackage>> =
-        MediatorLiveData<List<SPPackage>>().apply {
-            addSource(_activePackageListChanges) {
+    private val _activePackageList: ArrayList<SPPackage> = arrayListOf()
+    private val _hiddenPackageList: ArrayList<SPPackage> = arrayListOf()
 
-                    sourceList ->
+    private var _activePackagePageMap: PageMap? = null
+    private var _hiddenPackagePageMap: PageMap? = null
 
-                val _arrayList = arrayListOf<SPPackage>()
-
-                value?.let {
-                    _arrayList.addAll(it)
-                }
-
-                sourceList.forEach { source ->
-                    _arrayList.remove(source)
-                }
-
-                postValue(_arrayList)
-
-            }
-            addSource(_hiddenPackageListChanges) {
-
-                    sourceList ->
-
-                val arrayList = arrayListOf<SPPackage>()
-
-                value?.let {
-                    arrayList.addAll(it)
-                }
-
-                sourceList.forEach { source ->
-                    if (arrayList.contains(source)) {
-                        arrayList[arrayList.indexOf(source)] = source
+    val activePackageList: Observable<List<SPPackage>> =
+        Observable.combineLatest(_activePackageListChanges, _hiddenPackageListChanges) { a, b ->
+            _activePackageList.apply {
+                a.forEach {
+                    if (contains(it)) {
+                        this[indexOf(it)] = it
                     } else {
-                        arrayList.add(source)
+                        add(it)
                     }
                 }
-
-                postValue(arrayList)
-
+                b.forEach { remove(it) }
             }
         }
-
-    val activePackageList: LiveData<List<SPPackage>> get() = _activePackageList
-    val hiddenPackageList: LiveData<List<SPPackage>> get() = _hiddenPackageList
+    val hiddenPackageList: Observable<List<SPPackage>> =
+        Observable.combineLatest(_hiddenPackageListChanges, _activePackageListChanges) { a, b ->
+            _hiddenPackageList.apply {
+                a.forEach {
+                    if (contains(it)) {
+                        this[indexOf(it)] = it
+                    } else {
+                        add(it)
+                    }
+                }
+                b.forEach { remove(it) }
+            }
+        }
 
     suspend fun onActivePackage(apikey: String, userId: String, value: SPPackage) {
         Log.d(
             this::class.simpleName, "onActivePackage : " +
                     "value.id -> ${value.packageId}"
         )
-        hideRecoverMyPack(apikey, userId, value.packageId).apply {
-            _activePackageListChanges.postValue(listOf(value))
+
+        coroutineScope {
+            launch {
+                hideRecoverMyPack(apikey, userId, value.packageId)
+            }
+
+            _hiddenPackagePageMap?.let {
+                if (_hiddenPackageList.size - 1 < it.pageNumber * it.onePageCountRow) {
+                    hiddenStickerPacks(apikey, userId, pageNumber = (_hiddenPackageList.size - 1) / it.onePageCountRow + 1)
+                }
+            }
+            _activePackageListChanges.onNext(listOf(value))
         }
     }
 
@@ -121,8 +92,19 @@ class MyStickersRepository @Inject constructor(
             this::class.simpleName, "onHiddenPackage : " +
                     "value.id -> ${value.packageId}"
         )
-        hideRecoverMyPack(apikey, userId, value.packageId).apply {
-            _hiddenPackageListChanges.postValue(listOf(value))
+
+        coroutineScope {
+            launch {
+                hideRecoverMyPack(apikey, userId, value.packageId)
+            }
+
+            _activePackagePageMap?.let {
+                if (_activePackageList.size - 1 < it.pageNumber * it.onePageCountRow) {
+                    myStickerPacks(apikey, userId, pageNumber = (_activePackageList.size - 1) / it.onePageCountRow + 1)
+                }
+            }
+
+            _hiddenPackageListChanges.onNext(listOf(value))
         }
     }
 
@@ -133,8 +115,9 @@ class MyStickersRepository @Inject constructor(
         pageNumber: Int?
     ): PackageListResponse {
         return remoteDatasource.myStickerPacks(apikey, userId, limit, pageNumber).apply {
+            _activePackagePageMap = body.pageMap
             body.packageList?.let {
-                _activePackageListChanges.postValue(it.map { SPPackage.fromEntity(it) })
+                _activePackageListChanges.onNext(it.map { SPPackage.fromEntity(it) })
             }
         }
     }
@@ -150,8 +133,9 @@ class MyStickersRepository @Inject constructor(
         pageNumber: Int?
     ): PackageListResponse {
         return remoteDatasource.hiddenStickerPacks(apikey, userId, limit, pageNumber).apply {
+            _hiddenPackagePageMap = body.pageMap
             body.packageList?.let {
-                _hiddenPackageListChanges.postValue(it.map { SPPackage.fromEntity(it) })
+                _hiddenPackageListChanges.onNext(it.map { SPPackage.fromEntity(it) })
             }
         }
     }

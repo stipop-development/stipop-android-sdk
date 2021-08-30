@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.toLiveData
+import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.stipop.Config.Companion.apikey
 import io.stipop.refactor.data.models.SPMyPageMode
 import io.stipop.refactor.data.models.SPPackage
@@ -67,9 +69,9 @@ class MyPageViewModel @Inject constructor(
     override val myPageMode: LiveData<SPMyPageMode>
         get() = _myPageMode
     override val activePackageList: LiveData<List<SPPackage>>
-        get() = _myStickersRepository.activePackageList
+        get() = _myStickersRepository.activePackageList.toFlowable(BackpressureStrategy.LATEST).toLiveData()
     override val hiddenPackageList: LiveData<List<SPPackage>>
-        get() = _myStickersRepository.hiddenPackageList
+        get() = _myStickersRepository.hiddenPackageList.toFlowable(BackpressureStrategy.LATEST).toLiveData()
     override val activePackagePageMap: LiveData<PageMap?>
         get() = _activePackagePageMap
     override val hiddenPackagePageMap: LiveData<PageMap?>
@@ -87,15 +89,7 @@ class MyPageViewModel @Inject constructor(
                         user.apikey,
                         user.userId,
                         pageNumber = _myActivePackageListPageNumber + 1
-                    ).let { response ->
-                        try {
-                            _myActivePackageListPageNumber = response.body.pageMap.pageNumber
-                            _hasMoreMyActivePackageList =
-                                response.body.pageMap.pageCount > response.body.pageMap.pageNumber
-                        } catch (e: Exception) {
-                            Log.e(this@MyPageViewModel::class.simpleName, e.message, e)
-                        }
-                    }
+                    )
                     _hasLoadingMyActivePackageList = false
                 }
             }
@@ -115,16 +109,7 @@ class MyPageViewModel @Inject constructor(
                         user.apikey,
                         user.userId,
                         pageNumber = _myHiddenPackageListPageNumber + 1
-                    ).let {
-                        response ->
-                        try {
-                            _myHiddenPackageListPageNumber = response.body.pageMap.pageNumber
-                            _hasMoreMyHiddenPackageList =
-                                response.body.pageMap.pageCount > response.body.pageMap.pageNumber
-                        } catch (e: Exception) {
-                            Log.e(this@MyPageViewModel::class.simpleName, e.message, e)
-                        }
-                    }
+                    )
                     _hasLoadingMyHiddenPackageList = false
                 }
             }
