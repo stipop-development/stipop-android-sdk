@@ -1,108 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/containerLL"
+<io.stipop.refactor.present.ui.components.core.SPLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/containerLL"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/search_background"
+    android:orientation="vertical">
+
+    <io.stipop.refactor.present.ui.components.common.SPSearchBar
+        android:layout_margin="12dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/search_background"
-        android:paddingHorizontal="12dp"
-        android:orientation="vertical">
+        android:layout_height="wrap_content" />
 
-    <LinearLayout
-            android:id="@+id/searchbarLL"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/search_bar"
-            android:orientation="horizontal">
+    <io.stipop.refactor.present.ui.components.core.SPLinearLayout
+        android:id="@+id/tagLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        <LinearLayout
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:gravity="center">
+        <io.stipop.refactor.present.ui.components.core.SPTextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginVertical="8dp"
+            android:layout_marginHorizontal="12dp"
+            android:height="20dp"
+            android:textStyle="bold"
+            android:textColor="@color/c_374553"
+            android:text="Recommended Tag" />
 
-            <io.stipop.extend.StipopImageView
-                    android:id="@+id/searchIV"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@mipmap/icon_search"/>
-
-        </LinearLayout>
-
-        <io.stipop.extend.StipopEditText
-                android:id="@+id/keywordET"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@null"
-                android:imeOptions="actionSearch"
-                android:hint="@string/search"
-                android:textColorHint="#646f7c"
-                android:maxLines="1" />
-
-        <LinearLayout
-                android:id="@+id/clearTextLL"
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-            <io.stipop.extend.StipopImageView
-                    android:id="@+id/eraseIV"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@mipmap/ic_erase_border_3"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-            android:id="@+id/tagLL"
+        <io.stipop.refactor.present.ui.components.core.SPRecyclerView
+            android:id="@+id/keywordRV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:minHeight="25dp"
+            android:layout_marginTop="10dp" />
 
-        <io.stipop.extend.StipopTextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="13dp"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/c_374553"
-                android:text="Recommended Tag"/>
+    </io.stipop.refactor.present.ui.components.core.SPLinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/keywordRV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="25dp"
-                android:layout_marginTop="10dp"/>
-
-    </LinearLayout>
-
-    <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginTop="14dp">
-
-        <GridView
-                android:id="@+id/sticker_grid"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:numColumns="3"
-                android:verticalSpacing="9dp"
-                android:horizontalSpacing="32dp"
-                android:scrollbars="none"/>
-
-        <View
-                android:id="@+id/shadowV"
-                android:layout_width="match_parent"
-                android:layout_height="10dp" />
-
-    </RelativeLayout>
-
-</LinearLayout>
+</io.stipop.refactor.present.ui.components.core.SPLinearLayout>

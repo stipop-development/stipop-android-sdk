@@ -9,4 +9,9 @@ import io.stipop.Config
 
 class SPConstraintLayout(context: Context, attrs: AttributeSet? = null) :
     ConstraintLayout(context, attrs) {
+
+    override fun draw(canvas: Canvas?) {
+        super.draw(canvas)
+        setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
+    }
 }

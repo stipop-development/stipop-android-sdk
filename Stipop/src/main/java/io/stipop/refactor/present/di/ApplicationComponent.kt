@@ -2,17 +2,22 @@ package io.stipop.refactor.present.di
 
 import dagger.Component
 import io.stipop.Stipop
-import io.stipop.refactor.present.ui.pages.store.SPDetailActivity
+import io.stipop.refactor.present.di.modules.DatasourceModule
+import io.stipop.refactor.present.di.modules.RepositoryModule
+import io.stipop.refactor.present.di.modules.ServiceModule
+import io.stipop.refactor.present.di.modules.ViewModelModule
 import io.stipop.refactor.present.ui.components.common.SPKeyboardFragment
 import io.stipop.refactor.present.ui.pages.search_sticker.SPSearchStickerActivity
-import io.stipop.refactor.present.di.modules.NetworkModule
 import io.stipop.refactor.present.ui.pages.store.*
 import javax.inject.Singleton
 
 @Singleton
 @Component(
     modules = [
-        NetworkModule::class,
+        DatasourceModule::class,
+        RepositoryModule::class,
+        ServiceModule::class,
+        ViewModelModule::class,
     ]
 )
 interface ApplicationComponent {

@@ -1,9 +1,11 @@
-package io.stipop.refactor.domain.repositories
+package io.stipop.refactor.domain.datasources
 
 import io.stipop.refactor.domain.entities.SPKeywordListResponse
 import io.stipop.refactor.domain.entities.SPPackageListResponse
+import io.stipop.refactor.domain.services.SearchServiceProtocol
+import javax.inject.Inject
 
-interface SearchRepositoryProtocol {
+interface SearchDatasource {
     suspend fun stickerSearch(
         apikey: String,
         q: String,

@@ -2,9 +2,9 @@ package io.stipop.refactor.present.ui.view_models
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.stipop.refactor.data.repositories.MyStickersRepository
-import io.stipop.refactor.data.repositories.StickerStoreRepository
-import io.stipop.refactor.data.repositories.UserRepository
+import io.stipop.refactor.domain.repositories.MyStickersRepository
+import io.stipop.refactor.domain.repositories.StickerStoreRepository
+import io.stipop.refactor.domain.repositories.UserRepository
 import javax.inject.Inject
 
 class StoreViewModel @Inject constructor(

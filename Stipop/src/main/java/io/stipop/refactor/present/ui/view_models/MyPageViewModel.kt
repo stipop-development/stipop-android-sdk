@@ -7,9 +7,9 @@ import androidx.lifecycle.toLiveData
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.stipop.refactor.data.models.SPMyPageMode
 import io.stipop.refactor.data.models.SPPackage
-import io.stipop.refactor.data.models.SPUser
-import io.stipop.refactor.data.repositories.MyStickersRepository
-import io.stipop.refactor.data.repositories.UserRepository
+import io.stipop.refactor.domain.entities.SPUser
+import io.stipop.refactor.domain.repositories.MyStickersRepository
+import io.stipop.refactor.domain.repositories.UserRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,7 +28,8 @@ class MyPageViewModel @Inject constructor(
         postValue(SPMyPageMode.ACTIVE)
     }
 
-    private val _user: SPUser? get() = _userRepository.userChanges.value
+    override val user: LiveData<SPUser>
+        get() = _userRepository.user.toFlowable(BackpressureStrategy.LATEST).toLiveData()
 
     override val myPageMode: LiveData<SPMyPageMode>
         get() = _myPageMode
@@ -41,7 +42,7 @@ class MyPageViewModel @Inject constructor(
         if (!_hasLoadingMyActivePackageList) {
             Log.d(this::class.simpleName, "onLoadMyActivePackageList")
             _hasLoadingMyActivePackageList = true
-            _user?.let {
+            _userRepository.currentUser?.let {
 
                     user ->
                 launch {
@@ -59,9 +60,9 @@ class MyPageViewModel @Inject constructor(
         if (!_hasLoadingMyHiddenPackageList) {
             Log.d(this::class.simpleName, "onLoadMyHiddenPackageList")
             _hasLoadingMyHiddenPackageList = true
-            _user?.let {
+            _userRepository.currentUser?.let {
 
-                user ->
+                    user ->
 
                 launch {
                     _myStickersRepository.onLoadHiddenPackageList(
@@ -80,7 +81,7 @@ class MyPageViewModel @Inject constructor(
             this::class.simpleName, "onActivePackage :" +
                     "value.id -> $${value.packageId}"
         )
-        _user?.run {
+        _userRepository.currentUser?.run {
             launch {
                 _myStickersRepository.onActivePackage(apikey, userId, value)
             }
@@ -92,7 +93,7 @@ class MyPageViewModel @Inject constructor(
             this::class.simpleName, "onHiddenPackage :" +
                     "value.id -> $${value.packageId}"
         )
-        _user?.run {
+        _userRepository.currentUser?.run {
             launch {
                 _myStickersRepository.onHiddenPackage(apikey, userId, value)
             }
@@ -113,6 +114,7 @@ class MyPageViewModel @Inject constructor(
 }
 
 interface MyPageViewModelProtocol {
+    val user: LiveData<SPUser>
     val myPageMode: LiveData<SPMyPageMode>
     val activePackageList: LiveData<List<SPPackage>>
     val hiddenPackageList: LiveData<List<SPPackage>>

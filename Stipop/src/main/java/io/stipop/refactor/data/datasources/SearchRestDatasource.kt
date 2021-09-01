@@ -1,14 +1,14 @@
 package io.stipop.refactor.data.datasources
 
-import io.stipop.refactor.domain.datasources.SearchDatasourceProtocol
+import io.stipop.refactor.domain.datasources.SearchDatasource
 import io.stipop.refactor.domain.entities.SPKeywordListResponse
 import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.services.SearchServiceProtocol
 import javax.inject.Inject
 
-class SearchDatasource @Inject constructor(
+class SearchRestDatasource @Inject constructor(
     private val service: SearchServiceProtocol
-) : SearchDatasourceProtocol {
+) : SearchDatasource {
     override suspend fun stickerSearch(
         apikey: String,
         q: String,

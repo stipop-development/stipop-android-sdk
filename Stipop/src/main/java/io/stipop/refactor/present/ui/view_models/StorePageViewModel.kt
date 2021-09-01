@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.toLiveData
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.stipop.refactor.data.models.SPPackage
-import io.stipop.refactor.data.models.SPUser
-import io.stipop.refactor.data.repositories.StickerStoreRepository
-import io.stipop.refactor.data.repositories.UserRepository
+import io.stipop.refactor.domain.entities.SPUser
+import io.stipop.refactor.domain.repositories.StickerStoreRepository
+import io.stipop.refactor.domain.repositories.UserRepository
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -19,7 +19,8 @@ class StorePageViewModel @Inject constructor(
 ) : StorePageViewModelProtocol, CoroutineScope {
 
     private var _currentJob: Job? = null
-    private val _user: SPUser? get() = _userRepository.userChanges.value
+    override val user: LiveData<SPUser>
+        get() = _userRepository.user.toFlowable(BackpressureStrategy.LATEST).toLiveData()
 
     private val _storePageMode: MutableLiveData<StorePageMode> = MutableLiveData<StorePageMode>().apply {
         postValue(StorePageMode.ALL)
@@ -61,7 +62,7 @@ class StorePageViewModel @Inject constructor(
         val supervisor = SupervisorJob()
         if (_currentJob == null || _currentJob?.isCompleted == true) {
             _currentJob = CoroutineScope(Dispatchers.IO + supervisor).launch {
-                _user?.let { user ->
+                _userRepository.currentUser?.let { user ->
                     Log.d(this::class.simpleName, "onLoadAllPackageList")
                     _stickerStoreRepository.onLoadAllPackageList(user.apikey, "", user.userId)
                 }
@@ -72,7 +73,7 @@ class StorePageViewModel @Inject constructor(
     override fun onLoadStoreSearchPackageList(keyword: String?, lastIndex: Int?) {
         if (_currentJob == null || _currentJob?.isCompleted == true) {
             _currentJob = launch {
-                _user?.let { user ->
+                _userRepository.currentUser?.let { user ->
                     keyword?.let { keyword ->
                         Log.d(this::class.simpleName, "onLoadSearchPackageList")
                         _stickerStoreRepository.onLoadSearchPackageList(user.apikey, user.userId, keyword, lastIndex)
@@ -91,7 +92,7 @@ class StorePageViewModel @Inject constructor(
 
         if (_currentJob == null || _currentJob?.isCompleted == true) {
             _currentJob = launch {
-                _user?.let { user ->
+                _userRepository.currentUser?.let { user ->
                     Log.d(this::class.simpleName, "onLoadSearchPackageList")
                     _stickerStoreRepository.onDownloadPackage(user.apikey, user.userId, item)
                 }
@@ -104,6 +105,7 @@ class StorePageViewModel @Inject constructor(
 }
 
 interface StorePageViewModelProtocol {
+    val user: LiveData<SPUser>
     val storePageMode: LiveData<StorePageMode>
     val storeAllPackageList: LiveData<List<SPPackage>>
     val storeSearchPackageList: LiveData<List<SPPackage>>

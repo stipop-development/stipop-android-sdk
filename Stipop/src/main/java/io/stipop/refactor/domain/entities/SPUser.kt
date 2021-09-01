@@ -1,4 +1,4 @@
-package io.stipop.refactor.data.models
+package io.stipop.refactor.domain.entities
 
 data class SPUser(val userId: String, val country: String, val language: String, val apikey: String) {
     override fun equals(other: Any?): Boolean {

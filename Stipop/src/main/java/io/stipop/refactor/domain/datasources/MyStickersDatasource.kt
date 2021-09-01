@@ -1,9 +1,9 @@
-package io.stipop.refactor.domain.repositories
+package io.stipop.refactor.domain.datasources
 
 import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.SPVoidResponse
 
-interface MyStickersRepositoryProtocol {
+interface MyStickersDatasource {
     suspend fun myStickerPacks(
         apikey: String,
         userId: String,

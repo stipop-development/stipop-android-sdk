@@ -1,10 +1,10 @@
-package io.stipop.refactor.domain.repositories
+package io.stipop.refactor.domain.datasources
 
 import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.PackageResponse
 import io.stipop.refactor.domain.entities.SPVoidResponse
 
-interface StickerStoreRepositoryProtocol {
+interface StickerStoreDatasource {
     suspend fun trendingStickerPacks(
         apikey: String,
         q: String,

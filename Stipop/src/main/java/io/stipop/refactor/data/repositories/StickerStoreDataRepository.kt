@@ -1,22 +1,23 @@
 package io.stipop.refactor.data.repositories
 
 import android.util.Log
-import dagger.Module
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.stipop.refactor.data.datasources.StickerStoreDatasource
+import io.stipop.refactor.data.datasources.StickerStoreRestDatasource
 import io.stipop.refactor.data.models.SPPackage
-import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.PackageResponse
+import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.SPPageMap
 import io.stipop.refactor.domain.entities.SPVoidResponse
-import io.stipop.refactor.domain.repositories.StickerStoreRepositoryProtocol
+import io.stipop.refactor.domain.repositories.StickerStoreRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@Module
-class StickerStoreRepository @Inject constructor(
-    private val remoteDatasource: StickerStoreDatasource,
-) : StickerStoreRepositoryProtocol {
+class StickerStoreDataRepository @Inject constructor(
+    private val remoteDatasource: StickerStoreRestDatasource,
+) : StickerStoreRepository {
     private var _hasMoreAllPackageList: Boolean = false
     private var _allPackagePageMap: SPPageMap? = null
     private val _allPackageList: ArrayList<SPPackage> = arrayListOf()
@@ -25,7 +26,7 @@ class StickerStoreRepository @Inject constructor(
             onNext(listOf())
         }
 
-    val allPackageList: Observable<List<SPPackage>> = _allPackageListChanges.map { list ->
+    override val allPackageList: Observable<List<SPPackage>> = _allPackageListChanges.map { list ->
         list.forEach {
             if (_allPackageList.contains(it)) {
                 _allPackageList[_allPackageList.indexOf(it)] = it
@@ -45,7 +46,7 @@ class StickerStoreRepository @Inject constructor(
             onNext(listOf())
         }
 
-    val searchPackageList: Observable<List<SPPackage>> = _searchPackageListChanges.map { list ->
+    override val searchPackageList: Observable<List<SPPackage>> = _searchPackageListChanges.map { list ->
         list.forEach {
             if (_searchPackageList.contains(it)) {
                 _searchPackageList[_searchPackageList.indexOf(it)] = it
@@ -98,16 +99,16 @@ class StickerStoreRepository @Inject constructor(
         return remoteDatasource.downloadPurchaseSticker(apikey, packId, userId, isPurchase, lang, countryCode, price)
     }
 
-    suspend fun onLoadAllPackageList(
+    override fun onLoadAllPackageList(
         apikey: String,
         q: String,
         userId: String,
-        lang: String? = null,
-        countryCode: String? = null,
-        premium: String? = null,
-        limit: Int? = null,
-        pageNumber: Int? = (_allPackagePageMap?.pageNumber ?: 0) + 1,
-        animated: String? = null
+        lang: String?,
+        countryCode: String?,
+        premium: String?,
+        limit: Int?,
+        pageNumber: Int?,
+        animated: String?,
     ) {
         Log.d(
             this::class.simpleName, "onLoadAllPackageList : \n" +
@@ -123,27 +124,29 @@ class StickerStoreRepository @Inject constructor(
                     ""
         )
 
-        val response =
-            trendingStickerPacks(apikey, q, userId, lang, countryCode, premium, limit, pageNumber, animated)
-        response.body.let { _body ->
-            _allPackagePageMap = _body.pageMap
-            _body.packageList?.let { list ->
-                _allPackageListChanges.onNext(list.map { SPPackage.fromEntity(it) })
+        CoroutineScope(Dispatchers.IO).launch {
+            val response =
+                trendingStickerPacks(apikey, q, userId, lang, countryCode, premium, limit, pageNumber, animated)
+            response.body.let { _body ->
+                _allPackagePageMap = _body.pageMap
+                _body.packageList?.let { list ->
+                    _allPackageListChanges.onNext(list.map { SPPackage.fromEntity(it) })
+                }
             }
         }
     }
 
-    suspend fun onLoadSearchPackageList(
+    override fun onLoadSearchPackageList(
         apikey: String,
         userId: String,
         keyword: String,
         lastIndex: Int?,
-        lang: String? = null,
-        countryCode: String? = null,
-        premium: String? = null,
-        limit: Int? = null,
-        pageNumber: Int? = (_allPackagePageMap?.pageNumber ?: 0) + 1,
-        animated: String? = null
+        lang: String?,
+        countryCode: String?,
+        premium: String?,
+        limit: Int?,
+        pageNumber: Int?,
+        animated: String?,
     ) {
         Log.d(
             this::class.simpleName, "onLoadSearchPackageList : \n" +
@@ -160,27 +163,32 @@ class StickerStoreRepository @Inject constructor(
                     ""
         )
 
-        val response =
-            trendingStickerPacks(apikey, keyword, userId, lang, countryCode, premium, limit, pageNumber, animated)
-        response.body.let { _body ->
-            _searchPackagePageMap = _body.pageMap
-            _body.packageList?.let { list ->
-                _searchPackageListChanges.onNext(list.map { SPPackage.fromEntity(it) })
+        CoroutineScope(Dispatchers.IO).launch {
+
+            val response =
+                trendingStickerPacks(apikey, keyword, userId, lang, countryCode, premium, limit, pageNumber, animated)
+            response.body.let { _body ->
+                _searchPackagePageMap = _body.pageMap
+                _body.packageList?.let { list ->
+                    _searchPackageListChanges.onNext(list.map { SPPackage.fromEntity(it) })
+                }
             }
         }
     }
 
-    suspend fun onDownloadPackage(
+    override fun onDownloadPackage(
         apikey: String,
         userId: String,
         pack: SPPackage,
-        isPurchase: String = "N",
-        lang: String? = null,
-        countryCode: String? = null,
-        price: String? = null
-    ): SPVoidResponse {
-        return downloadPurchaseSticker(apikey, pack.packageId, userId, isPurchase, lang, countryCode, price).apply {
-            onLoadPackage(apikey, userId, pack)
+        isPurchase: String,
+        lang: String?,
+        countryCode: String?,
+        price: String?,
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            downloadPurchaseSticker(apikey, pack.packageId, userId, isPurchase, lang, countryCode, price).apply {
+                onLoadPackage(apikey, userId, pack)
+            }
         }
     }
 

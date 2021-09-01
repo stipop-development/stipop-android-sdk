@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-class NetworkModule {
+class ServiceModule {
 
     private val _apiClient = Retrofit.Builder()
         .baseUrl("https://messenger.stipop.io/v1/")

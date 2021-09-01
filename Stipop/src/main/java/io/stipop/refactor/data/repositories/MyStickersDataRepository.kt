@@ -4,20 +4,18 @@ import android.util.Log
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.stipop.refactor.data.datasources.MyStickersDatasource
+import io.stipop.refactor.data.datasources.MyStickersRestDatasource
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.domain.entities.*
-import io.stipop.refactor.domain.repositories.MyStickersRepositoryProtocol
+import io.stipop.refactor.domain.repositories.MyStickersRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class MyStickersRepository @Inject constructor(
-    private val remoteDatasource: MyStickersDatasource,
-) : MyStickersRepositoryProtocol {
+class MyStickersDataRepository @Inject constructor(
+    private val remoteDatasource: MyStickersRestDatasource,
+) : MyStickersRepository {
     private val _disposable = CompositeDisposable()
 
     private val _activePackageListChanges: BehaviorSubject<List<SPPackage>> =
@@ -35,7 +33,7 @@ class MyStickersRepository @Inject constructor(
     private var _activePackagePageMap: SPPageMap? = null
     private var _hiddenPackagePageMap: SPPageMap? = null
 
-    val activePackageList: Observable<List<SPPackage>> =
+    override val activePackageList: Observable<List<SPPackage>> =
         Observable.combineLatest(_activePackageListChanges, _hiddenPackageListChanges) { a, b ->
             _activePackageList.apply {
                 a.forEach {
@@ -48,7 +46,7 @@ class MyStickersRepository @Inject constructor(
                 b.forEach { remove(it) }
             }
         }
-    val hiddenPackageList: Observable<List<SPPackage>> =
+    override val hiddenPackageList: Observable<List<SPPackage>> =
         Observable.combineLatest(_hiddenPackageListChanges, _activePackageListChanges) { a, b ->
             _hiddenPackageList.apply {
                 a.forEach {
@@ -62,31 +60,37 @@ class MyStickersRepository @Inject constructor(
             }
         }
 
-    suspend fun onLoadActivePackageList(
+    override fun onLoadActivePackageList(
         apikey: String,
         userId: String,
-        limit: Int? = null,
-        pageNumber: Int? = (_activePackagePageMap?.pageNumber ?: 0) + 1
+        limit: Int?,
+        pageNumber: Int?,
     ) {
-        myStickerPacks(apikey, userId, limit, pageNumber)
+        CoroutineScope(Dispatchers.IO).launch {
+            myStickerPacks(apikey, userId, limit, pageNumber)
+        }
     }
 
-    suspend fun onLoadHiddenPackageList(
+    override fun onLoadHiddenPackageList(
         apikey: String,
         userId: String,
-        limit: Int? = null,
-        pageNumber: Int? = (_hiddenPackagePageMap?.pageNumber ?: 0) + 1
+        limit: Int?,
+        pageNumber: Int?,
     ) {
-        hiddenStickerPacks(apikey, userId, limit, pageNumber)
+        CoroutineScope(Dispatchers.IO).launch {
+            hiddenStickerPacks(apikey, userId, limit, pageNumber)
+        }
     }
 
-    suspend fun onActivePackage(apikey: String, userId: String, value: SPPackage) {
+    override fun onActivePackage(apikey: String, userId: String, value: SPPackage) {
         Log.d(
             this::class.simpleName, "onActivePackage : " +
                     "value.id -> ${value.packageId}"
         )
 
-        hideRecoverMyPack(apikey, userId, value.packageId)
+        CoroutineScope(Dispatchers.IO).launch {
+            hideRecoverMyPack(apikey, userId, value.packageId)
+        }
         _activePackageListChanges.onNext(listOf(value))
 
         val hiddenPackageListSubscription = hiddenPackageList.subscribe { list ->
@@ -107,13 +111,15 @@ class MyStickersRepository @Inject constructor(
         _disposable.add(hiddenPackageListSubscription)
     }
 
-    suspend fun onHiddenPackage(apikey: String, userId: String, value: SPPackage) {
+    override fun onHiddenPackage(apikey: String, userId: String, value: SPPackage) {
         Log.d(
             this::class.simpleName, "onHiddenPackage : " +
                     "value.id -> ${value.packageId}"
         )
 
-        hideRecoverMyPack(apikey, userId, value.packageId)
+        CoroutineScope(Dispatchers.IO).launch {
+            hideRecoverMyPack(apikey, userId, value.packageId)
+        }
 
         _hiddenPackageListChanges.onNext(listOf(value))
 

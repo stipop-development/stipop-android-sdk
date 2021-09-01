@@ -1,6 +1,5 @@
 package io.stipop.refactor.data.services
 
-import io.stipop.refactor.domain.repositories.MyStickersRepositoryProtocol
 import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.SPVoidResponse
 import io.stipop.refactor.domain.services.MyStickersServiceProtocol

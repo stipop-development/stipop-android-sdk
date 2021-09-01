@@ -2,7 +2,6 @@ package io.stipop.refactor.data.services
 
 import io.stipop.refactor.domain.entities.SPKeywordListResponse
 import io.stipop.refactor.domain.entities.SPPackageListResponse
-import io.stipop.refactor.domain.repositories.SearchRepositoryProtocol
 import io.stipop.refactor.domain.services.SearchServiceProtocol
 import retrofit2.http.GET
 import retrofit2.http.Header

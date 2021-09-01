@@ -1,7 +1,7 @@
 package io.stipop.refactor.present.ui.view_models
 
-import io.stipop.refactor.data.repositories.MyStickersRepository
-import io.stipop.refactor.data.repositories.UserRepository
+import io.stipop.refactor.domain.repositories.MyStickersRepository
+import io.stipop.refactor.domain.repositories.UserRepository
 import javax.inject.Inject
 
 class KeyboardViewModel  @Inject constructor(

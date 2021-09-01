@@ -3,7 +3,6 @@ package io.stipop.refactor.data.services
 import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.PackageResponse
 import io.stipop.refactor.domain.entities.SPVoidResponse
-import io.stipop.refactor.domain.repositories.StickerStoreRepositoryProtocol
 import io.stipop.refactor.domain.services.StickerStoreServiceProtocol
 import retrofit2.http.*
 

@@ -11,8 +11,8 @@ import io.stipop.refactor.present.ui.pages.search_sticker.SPSearchStickerActivit
 import io.stipop.extend.StipopImageView
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.data.models.SPSticker
-import io.stipop.refactor.data.models.SPUser
-import io.stipop.refactor.data.repositories.UserRepository
+import io.stipop.refactor.domain.entities.SPUser
+import io.stipop.refactor.data.repositories.UserDataRepository
 import io.stipop.refactor.present.di.ApplicationComponent
 import io.stipop.refactor.present.di.DaggerApplicationComponent
 import io.stipop.refactor.present.ui.components.common.SPKeyboard
@@ -28,7 +28,7 @@ interface StipopDelegate {
 
 class Stipop(private val activity: Activity, private val stipopButton: StipopImageView, val delegate: StipopDelegate) {
     @Inject
-    internal lateinit var userRepository: UserRepository
+    internal lateinit var userRepository: UserDataRepository
 
     companion object {
 
