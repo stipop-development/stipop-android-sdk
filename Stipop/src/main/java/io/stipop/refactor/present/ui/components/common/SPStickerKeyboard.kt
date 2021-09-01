@@ -27,7 +27,6 @@ import io.stipop.Config
 import io.stipop.PackUtils
 import io.stipop.R
 import io.stipop.Stipop
-import io.stipop.activity.Preview
 import io.stipop.databinding.FragmentKeyboardBinding
 import io.stipop.databinding.LayoutKeyboardBinding
 import io.stipop.extend.StipopImageView
@@ -35,10 +34,9 @@ import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.data.models.SPSticker
 import io.stipop.refactor.present.ui.adapters.KeyboardPackageAdapter
 import io.stipop.refactor.present.ui.adapters.StickerAdapter
-import io.stipop.refactor.present.ui.pages.store.StoreActivity
+import io.stipop.refactor.present.ui.pages.store.SPStoreActivity
 import io.stipop.refactor.present.ui.view_models.KeyboardViewModel
 import io.stipop.refactor.present.ui.view_models.StoreMode
-import io.stipop.refactor.present.ui.view_models.StoreViewModel
 import javax.inject.Inject
 
 
@@ -111,13 +109,13 @@ class SPKeyboardPopupWindow(private val activity: Activity) : PopupWindow(), SPK
             }
 
             settingButton.setOnClickListener {
-                activity.startActivity(Intent(activity, StoreActivity::class.java).apply {
+                activity.startActivity(Intent(activity, SPStoreActivity::class.java).apply {
                     putExtra(StoreMode.TAG, StoreMode.MY_PAGE.rawValue)
                 })
             }
 
             storeButton.setOnClickListener {
-                activity.startActivity(Intent(activity, StoreActivity::class.java).apply {
+                activity.startActivity(Intent(activity, SPStoreActivity::class.java).apply {
                     putExtra(StoreMode.TAG, StoreMode.STORE_PAGE.rawValue)
                 })
             }
@@ -234,7 +232,7 @@ class SPKeyboardFragment : Fragment() {
     var stickerPage = 1
     var stickerTotalPage = 1
 
-    lateinit var preview: Preview
+    lateinit var preview: SPStickerPreview
 
     //    var popupWindow:PopupWindow? = null
     internal var canShow = true
@@ -269,7 +267,7 @@ class SPKeyboardFragment : Fragment() {
 //            height = Stipop.keyboardHeight
 //        }
 
-        preview = Preview(_activity, this)
+        preview = SPStickerPreview(_activity, this)
 
         view.findViewById<LinearLayout>(R.id.containerLL)
             .setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
@@ -501,7 +499,7 @@ class SPKeyboardFragment : Fragment() {
 
         this.hide()
 
-        val intent = Intent(_activity, StoreActivity::class.java)
+        val intent = Intent(_activity, SPStoreActivity::class.java)
         intent.putExtra("tab", tab)
         _activity.startActivity(intent)
     }

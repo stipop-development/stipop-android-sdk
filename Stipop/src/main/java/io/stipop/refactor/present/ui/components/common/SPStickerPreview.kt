@@ -1,4 +1,4 @@
-package io.stipop.activity
+package io.stipop.refactor.present.ui.components.common
 
 import android.app.Activity
 import android.os.Build
@@ -9,9 +9,8 @@ import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.extend.StipopImageView
 import io.stipop.refactor.data.models.SPSticker
-import io.stipop.refactor.present.ui.components.common.SPKeyboardFragment
 
-class Preview(val activity: Activity, val keyboardFragment: SPKeyboardFragment) : PopupWindow() {
+class SPStickerPreview(val activity: Activity, val keyboardFragment: SPKeyboardFragment) : PopupWindow() {
 
     private lateinit var rootView: View
 

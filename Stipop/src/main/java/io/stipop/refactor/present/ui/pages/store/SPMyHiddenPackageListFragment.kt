@@ -17,7 +17,7 @@ import io.stipop.refactor.present.ui.listeners.OnActivePackageListener
 import io.stipop.refactor.present.ui.view_models.MyPageViewModel
 import javax.inject.Inject
 
-class MyHiddenPackageListFragment : Fragment() {
+class SPMyHiddenPackageListFragment : Fragment() {
 
     private lateinit var _binding: FragmentMyHiddenPackageListBinding
 

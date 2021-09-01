@@ -1,4 +1,4 @@
-package io.stipop.activity
+package io.stipop.refactor.present.ui.pages.store
 
 import android.content.Intent
 import android.os.Bundle
@@ -18,7 +18,7 @@ import io.stipop.refactor.present.ui.view_models.DetailViewModel
 import javax.inject.Inject
 
 
-class DetailActivity : AppCompatActivity() {
+class SPDetailActivity : AppCompatActivity() {
 
     companion object {
         const val PACKAGE_ID = "packageId"

@@ -1,24 +1,17 @@
 package io.stipop.refactor.present.ui.pages.store
 
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import io.stipop.*
 import io.stipop.databinding.FragmentMyActivePackageListBinding
 import io.stipop.refactor.present.ui.adapters.MyActivePackageAdapter
-import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.present.ui.components.common.SPBottomSheetDialog
 import io.stipop.refactor.present.ui.listeners.OnHiddenPackageListener
@@ -27,7 +20,7 @@ import io.stipop.refactor.present.ui.listeners.OnStartDragListener
 import io.stipop.refactor.present.ui.view_models.MyPageViewModel
 import javax.inject.Inject
 
-class MyActivePackageListFragment : Fragment() {
+class SPMyActivePackageListFragment : Fragment() {
 
     private lateinit var _binding: FragmentMyActivePackageListBinding
 
@@ -66,14 +59,14 @@ class MyActivePackageListFragment : Fragment() {
                 }
                 onMovePackageListener = object : OnMovePackageListener {
                     override fun onStartMove(item: SPPackage) {
-                        Log.d(this@MyActivePackageListFragment::class.simpleName, "onStartMove : \n" +
+                        Log.d(this@SPMyActivePackageListFragment::class.simpleName, "onStartMove : \n" +
                                 "item.id -> ${item.packageId}\n")
                     }
                 }
                 onStartDragListener = object : OnStartDragListener {
                     override fun onStartDrag(viewHolder: RecyclerView.ViewHolder?) {
 
-                        Log.d(this@MyActivePackageListFragment::class.simpleName, "onStartDrag")
+                        Log.d(this@SPMyActivePackageListFragment::class.simpleName, "onStartDrag")
 
                         viewHolder?.let {
                             itemTouchHelper.startDrag(it)

@@ -10,19 +10,19 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.AbsListView
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.stipop.*
-import io.stipop.databinding.ActivitySearchBinding
+import io.stipop.Config
+import io.stipop.R
+import io.stipop.Utils
+import io.stipop.databinding.ActivitySearchStickerBinding
 import io.stipop.extend.RecyclerDecoration
 import io.stipop.refactor.data.models.SPSticker
 import io.stipop.refactor.present.ui.adapters.KeywordAdapter
 import io.stipop.refactor.present.ui.adapters.StickerAdapter
 import org.json.JSONObject
-import java.io.IOException
 
-class SearchActivity : Activity() {
+class SPSearchStickerActivity : Activity() {
 
-    lateinit var _binding: ActivitySearchBinding
-    lateinit var _context: Context
+    lateinit var _binding: ActivitySearchStickerBinding
 
     lateinit var keywordAdapter: KeywordAdapter
     lateinit var stickerAdapter: StickerAdapter
@@ -38,57 +38,8 @@ class SearchActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _binding = ActivitySearchBinding.inflate(layoutInflater)
+        _binding = ActivitySearchStickerBinding.inflate(layoutInflater)
         setContentView(_binding.root)
-
-        _context = this
-
-
-        val drawable = _binding.containerLL.background as GradientDrawable
-        drawable.setColor(Color.parseColor(Config.themeBackgroundColor))
-
-        val drawable2 = _binding.searchbarLL.background as GradientDrawable
-        drawable2.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
-        drawable2.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
-
-        _binding.searchIV.setImageResource(Config.getSearchbarIconResourceId(_context))
-        _binding.eraseIV.setImageResource(Config.getSearchBarDeleteIconResourceId(_context))
-
-        _binding.title.setTextColor(Config.getSearchKeywordTextColor(_context))
-        _binding.keywordET.setTextColor(Config.getSearchKeywordTextColor(_context))
-
-
-        _binding.searchIV.setIconDefaultsColor()
-        _binding.eraseIV.setIconDefaultsColor()
-
-
-        val gd = GradientDrawable(
-            GradientDrawable.Orientation.TOP_BOTTOM,
-            intArrayOf(Color.parseColor(Config.themeBackgroundColor), Color.TRANSPARENT)
-        )
-
-        _binding.shadowV.background = gd
-
-        _binding.clearTextLL.setOnClickListener {
-            _binding.keywordET.setText("")
-        }
-
-        _binding.keywordET.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                val keyword = Utils.getString(_binding.keywordET)
-
-                page = 1
-                search(keyword)
-            }
-        })
 
         keywordAdapter = KeywordAdapter(keywords)
         keywordAdapter.setOnItemClickListener(object : KeywordAdapter.OnItemClickListener {
@@ -104,37 +55,37 @@ class SearchActivity : Activity() {
             }
         })
 
-        stickerAdapter = StickerAdapter(_context, R.layout.item_sticker, stickerData)
-
-        val mLayoutManager = LinearLayoutManager(this)
-        mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-
-        _binding.keywordRV.layoutManager = mLayoutManager
-        _binding.keywordRV.addItemDecoration(RecyclerDecoration(10))
-        _binding.keywordRV.adapter = keywordAdapter
-
-        _binding.stickerGrid.numColumns = Config.searchNumOfColumns
-        _binding.stickerGrid.adapter = stickerAdapter
-        _binding.stickerGrid.setOnScrollListener(object : AbsListView.OnScrollListener {
-            override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
-                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > page) {
-                    page += 1
-
-                    search(Utils.getString(_binding.keywordET))
-                }
-            }
-
-            override fun onScroll(
-                view: AbsListView?,
-                firstVisibleItem: Int,
-                visibleItemCount: Int,
-                totalItemCount: Int
-            ) {
-                lastItemVisibleFlag =
-                    (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount)
-            }
-
-        })
+//        stickerAdapter = StickerAdapter(_context, R.layout.item_sticker, stickerData)
+//
+//        val mLayoutManager = LinearLayoutManager(this)
+//        mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+//
+//        _binding.keywordRV.layoutManager = mLayoutManager
+//        _binding.keywordRV.addItemDecoration(RecyclerDecoration(10))
+//        _binding.keywordRV.adapter = keywordAdapter
+//
+//        _binding.stickerGrid.numColumns = Config.searchNumOfColumns
+//        _binding.stickerGrid.adapter = stickerAdapter
+//        _binding.stickerGrid.setOnScrollListener(object : AbsListView.OnScrollListener {
+//            override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
+//                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > page) {
+//                    page += 1
+//
+//                    search(Utils.getString(_binding.keywordET))
+//                }
+//            }
+//
+//            override fun onScroll(
+//                view: AbsListView?,
+//                firstVisibleItem: Int,
+//                visibleItemCount: Int,
+//                totalItemCount: Int
+//            ) {
+//                lastItemVisibleFlag =
+//                    (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount)
+//            }
+//
+//        })
 
         _binding.stickerGrid.setOnItemClickListener { adapterView, view, i, l ->
 /*

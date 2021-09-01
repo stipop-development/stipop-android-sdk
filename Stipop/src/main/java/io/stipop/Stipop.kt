@@ -7,7 +7,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.util.Log
 import android.view.View
-import io.stipop.refactor.present.ui.pages.search_sticker.SearchActivity
+import io.stipop.refactor.present.ui.pages.search_sticker.SPSearchStickerActivity
 import io.stipop.extend.StipopImageView
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.data.models.SPSticker
@@ -109,7 +109,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
 
         // this.enableStickerIcon()
 
-        val intent = Intent(this.activity, SearchActivity::class.java)
+        val intent = Intent(this.activity, SPSearchStickerActivity::class.java)
         this.activity.startActivity(intent)
     }
 

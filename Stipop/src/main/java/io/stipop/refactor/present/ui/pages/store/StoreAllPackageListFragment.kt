@@ -3,8 +3,6 @@ package io.stipop.refactor.present.ui.pages.store
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,15 +12,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
-import io.stipop.activity.DetailActivity
 import io.stipop.databinding.FragmentStoreAllPackageListBinding
-import io.stipop.databinding.FragmentStorePageBinding
 import io.stipop.refactor.data.models.SPPackage
-import io.stipop.refactor.present.ui.adapters.SearchPackageAdapter
 import io.stipop.refactor.present.ui.adapters.StoreAllPackageAdapter
 import io.stipop.refactor.present.ui.listeners.OnClickPackageListener
 import io.stipop.refactor.present.ui.listeners.OnDownloadPackageListener
-import io.stipop.refactor.present.ui.view_models.StorePageMode
 import io.stipop.refactor.present.ui.view_models.StorePageViewModel
 import javax.inject.Inject
 
@@ -54,8 +48,8 @@ class StoreAllPackageListFragment : Fragment() {
             this.adapter = StoreAllPackageAdapter().apply {
                 this.onClickPackageListener = object : OnClickPackageListener {
                     override fun onClick(item: SPPackage) {
-                        startActivity(Intent(activity, DetailActivity::class.java).apply {
-                            this.putExtra(DetailActivity.PACKAGE_ID, item.packageId)
+                        startActivity(Intent(activity, SPDetailActivity::class.java).apply {
+                            this.putExtra(SPDetailActivity.PACKAGE_ID, item.packageId)
                         })
                     }
                 }

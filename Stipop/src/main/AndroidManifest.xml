@@ -30,17 +30,17 @@
         </provider>
 
         <activity
-            android:name=".refactor.present.ui.pages.search_sticker.SearchActivity"
+            android:name=".refactor.present.ui.pages.search_sticker.SPSearchStickerActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
 
         <activity
-            android:name=".refactor.present.ui.pages.store.StoreActivity"
+            android:name=".refactor.present.ui.pages.store.SPStoreActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <activity
-            android:name=".activity.DetailActivity"
+            android:name=".refactor.present.ui.pages.store.SPDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
 

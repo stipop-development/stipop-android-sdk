@@ -12,15 +12,15 @@ import io.stipop.refactor.data.models.SPMyPageMode
 import io.stipop.refactor.present.ui.view_models.MyPageViewModel
 import javax.inject.Inject
 
-class MyPageFragment : Fragment() {
+class SPMyPageFragment : Fragment() {
 
     private lateinit var _binding: FragmentMyPageBinding
 
     @Inject
     internal lateinit var _viewModel: MyPageViewModel
 
-    private val _myActivePackageListFragment: MyActivePackageListFragment = MyActivePackageListFragment()
-    private val _myHiddenPackageListFragment: MyHiddenPackageListFragment = MyHiddenPackageListFragment()
+    private val _myActivePackageListFragment: SPMyActivePackageListFragment = SPMyActivePackageListFragment()
+    private val _myHiddenPackageListFragment: SPMyHiddenPackageListFragment = SPMyHiddenPackageListFragment()
 
     override fun onCreateView(
         inflater: LayoutInflater,
