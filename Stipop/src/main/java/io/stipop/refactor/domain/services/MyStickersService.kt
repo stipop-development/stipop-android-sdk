@@ -3,7 +3,7 @@ package io.stipop.refactor.domain.services
 import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.SPVoidResponse
 
-interface MyStickersServiceProtocol {
+interface MyStickersService {
     suspend fun myStickerPacks(
         apikey: String,
         userId: String,

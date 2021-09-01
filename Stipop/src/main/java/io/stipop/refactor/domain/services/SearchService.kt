@@ -4,7 +4,7 @@ import io.stipop.refactor.domain.entities.SPKeywordListResponse
 import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.SPStickerListResponse
 
-interface SearchServiceProtocol {
+interface SearchService {
     suspend fun stickerSearch(
         apikey: String,
         q: String,

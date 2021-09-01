@@ -3,11 +3,11 @@ package io.stipop.refactor.data.datasources
 import io.stipop.refactor.domain.datasources.MyStickersDatasource
 import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.SPVoidResponse
-import io.stipop.refactor.domain.services.MyStickersServiceProtocol
+import io.stipop.refactor.domain.services.MyStickersService
 import javax.inject.Inject
 
 class MyStickersRestDatasource @Inject constructor(
-    private val myStickersService: MyStickersServiceProtocol
+    private val myStickersService: MyStickersService
 ) : MyStickersDatasource {
     override suspend fun myStickerPacks(
         apikey: String,

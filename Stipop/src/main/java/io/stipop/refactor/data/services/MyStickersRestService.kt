@@ -2,10 +2,10 @@ package io.stipop.refactor.data.services
 
 import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.SPVoidResponse
-import io.stipop.refactor.domain.services.MyStickersServiceProtocol
+import io.stipop.refactor.domain.services.MyStickersService
 import retrofit2.http.*
 
-interface MyStickersRestService : MyStickersServiceProtocol {
+interface MyStickersRestService : MyStickersService {
     @GET("mysticker/{userId}")
     override suspend fun myStickerPacks(
         @Header("apikey")

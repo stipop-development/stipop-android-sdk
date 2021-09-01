@@ -3,10 +3,9 @@ package io.stipop.refactor.present.di.modules
 import dagger.Module
 import dagger.Provides
 import io.stipop.refactor.data.services.*
-import io.stipop.refactor.domain.services.MyStickersServiceProtocol
-import io.stipop.refactor.domain.services.SearchServiceProtocol
-import io.stipop.refactor.domain.services.StickerStoreServiceProtocol
-import okhttp3.OkHttp
+import io.stipop.refactor.domain.services.MyStickersService
+import io.stipop.refactor.domain.services.SearchService
+import io.stipop.refactor.domain.services.StickerStoreService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -31,21 +30,21 @@ class ServiceModule {
 
     @Singleton
     @Provides
-    fun provideMyStickersService(): MyStickersServiceProtocol {
+    fun provideMyStickersService(): MyStickersService {
         return _apiClient
             .create(MyStickersRestService::class.java)
     }
 
     @Singleton
     @Provides
-    fun provideSearchService(): SearchServiceProtocol {
+    fun provideSearchService(): SearchService {
         return _apiClient
             .create(SearchRestService::class.java)
     }
 
     @Singleton
     @Provides
-    fun provideStickerStoreService(): StickerStoreServiceProtocol {
+    fun provideStickerStoreService(): StickerStoreService {
         return _apiClient
             .create(StickerStoreRestService::class.java)
     }

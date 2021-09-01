@@ -4,7 +4,7 @@ import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.PackageResponse
 import io.stipop.refactor.domain.entities.SPVoidResponse
 
-interface StickerStoreServiceProtocol {
+interface StickerStoreService {
     suspend fun trendingStickerPacks(
         apikey: String,
         q: String,

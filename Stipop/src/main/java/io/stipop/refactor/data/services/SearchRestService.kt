@@ -1,14 +1,13 @@
 package io.stipop.refactor.data.services
 
 import io.stipop.refactor.domain.entities.SPKeywordListResponse
-import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.SPStickerListResponse
-import io.stipop.refactor.domain.services.SearchServiceProtocol
+import io.stipop.refactor.domain.services.SearchService
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
 
-interface SearchRestService : SearchServiceProtocol {
+interface SearchRestService : SearchService {
 
     @GET("search")
     override suspend fun stickerSearch(

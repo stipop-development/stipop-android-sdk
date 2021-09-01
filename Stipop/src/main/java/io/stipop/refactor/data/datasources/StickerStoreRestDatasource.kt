@@ -4,11 +4,11 @@ import io.stipop.refactor.domain.datasources.StickerStoreDatasource
 import io.stipop.refactor.domain.entities.PackageResponse
 import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.SPVoidResponse
-import io.stipop.refactor.domain.services.StickerStoreServiceProtocol
+import io.stipop.refactor.domain.services.StickerStoreService
 import javax.inject.Inject
 
 class StickerStoreRestDatasource @Inject constructor(
-    private val service: StickerStoreServiceProtocol
+    private val service: StickerStoreService
 ) : StickerStoreDatasource {
     override suspend fun trendingStickerPacks(
         apikey: String,
