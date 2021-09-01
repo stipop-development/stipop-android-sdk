@@ -2,7 +2,7 @@ package io.stipop.refactor.data.datasources
 
 import io.stipop.refactor.domain.datasources.SearchDatasource
 import io.stipop.refactor.domain.entities.SPKeywordListResponse
-import io.stipop.refactor.domain.entities.SPPackageListResponse
+import io.stipop.refactor.domain.entities.SPStickerListResponse
 import io.stipop.refactor.domain.services.SearchServiceProtocol
 import javax.inject.Inject
 
@@ -17,17 +17,18 @@ class SearchRestDatasource @Inject constructor(
         countryCode: String?,
         limit: Int?,
         pageNumber: Int?
-    ): SPPackageListResponse {
+    ): SPStickerListResponse {
         return service.stickerSearch(apikey, q, userId, lang, countryCode, limit, pageNumber)
     }
 
     override suspend fun trendingSearchTerms(
         apikey: String,
+        userId: String,
         lang: String?,
         countryCode: String?,
         limit: Int?
     ): SPKeywordListResponse {
-        return service.trendingSearchTerms(apikey, lang, countryCode, limit)
+        return service.trendingSearchTerms(apikey, userId, lang, countryCode, limit)
     }
 
     override suspend fun recentSearch(apikey: String, userId: String): SPKeywordListResponse {

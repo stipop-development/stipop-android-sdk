@@ -1,6 +1,8 @@
 package io.stipop.refactor.present.ui.pages.search_sticker
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import io.stipop.Stipop
@@ -20,14 +22,25 @@ class SPSearchStickerActivity : AppCompatActivity() {
 
         Stipop.appComponent.inject(this)
 
-        _binding = ActivitySearchStickerBinding.inflate(layoutInflater)
+        _binding = ActivitySearchStickerBinding.inflate(layoutInflater).apply {
+            searchBar.addTextChangedSearchKeywordListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+                override fun afterTextChanged(p0: Editable?) {
+                    _viewModel.onChangeSearchKeyword("$p0")
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            })
+
+        }
         setContentView(_binding.root)
 
 
         Log.d(this::class.simpleName, "view model -> $_viewModel")
 
-        _viewModel.user.observe(this) { user ->
-            Log.d(this::class.simpleName, "observe user : $user")
+        _viewModel.apply {
+            onLoadSearchKeywordList()
         }
     }
 

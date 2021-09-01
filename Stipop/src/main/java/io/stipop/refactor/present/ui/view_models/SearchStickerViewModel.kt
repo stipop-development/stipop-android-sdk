@@ -41,9 +41,7 @@ class SearchStickerViewModel @Inject constructor(
             this::class.simpleName, "onLoadSearchKeywordList : \n"
         )
         _userRepository.currentUser?.let { user ->
-            CoroutineScope(Dispatchers.IO).launch {
-                _searchRepository.trendingSearchTerms(user.apikey)
-            }
+            _searchRepository.onLoadSearchKeywordList(user.apikey, user.userId)
         }
     }
 
@@ -55,7 +53,7 @@ class SearchStickerViewModel @Inject constructor(
         )
         _userRepository.currentUser?.let { user ->
             CoroutineScope(Dispatchers.IO).launch {
-                _searchRepository.stickerSearch(user.apikey, keyword ?: "", user.userId)
+                _searchRepository.onLoadSearchStickerList(user.apikey, user.userId, keyword ?: "")
             }
         }
     }

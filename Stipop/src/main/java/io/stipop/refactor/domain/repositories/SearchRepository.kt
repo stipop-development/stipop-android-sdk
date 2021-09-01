@@ -1,10 +1,7 @@
 package io.stipop.refactor.domain.repositories
 
 import io.reactivex.rxjava3.core.Observable
-import io.stipop.refactor.domain.entities.SPKeywordItem
-import io.stipop.refactor.domain.entities.SPKeywordListResponse
-import io.stipop.refactor.domain.entities.SPPackageListResponse
-import io.stipop.refactor.domain.entities.SPStickerItem
+import io.stipop.refactor.domain.entities.*
 
 interface SearchRepository {
 
@@ -19,10 +16,11 @@ interface SearchRepository {
         countryCode: String? = "US",
         limit: Int? = 20,
         pageNumber: Int? = 1
-    ): SPPackageListResponse
+    ): SPStickerListResponse
 
     suspend fun trendingSearchTerms(
         apikey: String,
+        userId: String,
         lang: String? = "en",
         countryCode: String? = "US",
         limit: Int? = 20,
@@ -32,4 +30,13 @@ interface SearchRepository {
         apikey: String,
         userId: String,
     ): SPKeywordListResponse
+
+    fun onLoadSearchKeywordList(apikey: String, userId: String)
+    fun onLoadSearchStickerList(apikey: String,
+                                userId: String,
+                                keyword: String,
+                                lang: String? = "en",
+                                countryCode: String? = "US",
+                                limit: Int? = 20,
+                                pageNumber: Int? = 1)
 }

@@ -7,8 +7,8 @@ interface MyStickersServiceProtocol {
     suspend fun myStickerPacks(
         apikey: String,
         userId: String,
-        limit: Int? = 20,
-        pageNumber: Int? = 1
+        limit: Int?,
+        pageNumber: Int?,
     ): SPPackageListResponse
 
     suspend fun hideRecoverMyPack(
@@ -20,8 +20,8 @@ interface MyStickersServiceProtocol {
     suspend fun hiddenStickerPacks(
         apikey: String,
         userId: String,
-        limit: Int? = 20,
-        pageNumber: Int? = 1
+        limit: Int?,
+        pageNumber: Int?,
     ): SPPackageListResponse
 
     suspend fun myStickerOrder(

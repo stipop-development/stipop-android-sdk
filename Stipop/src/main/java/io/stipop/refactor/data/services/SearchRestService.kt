@@ -2,6 +2,7 @@ package io.stipop.refactor.data.services
 
 import io.stipop.refactor.domain.entities.SPKeywordListResponse
 import io.stipop.refactor.domain.entities.SPPackageListResponse
+import io.stipop.refactor.domain.entities.SPStickerListResponse
 import io.stipop.refactor.domain.services.SearchServiceProtocol
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -31,12 +32,15 @@ interface SearchRestService : SearchServiceProtocol {
 
         @Query("pageNumber")
         pageNumber: Int?
-    ): SPPackageListResponse
+    ): SPStickerListResponse
 
     @GET("search/keyword")
     override suspend fun trendingSearchTerms(
         @Header("apikey")
         apikey: String,
+
+        @Query("userId")
+        userId: String,
 
         @Query("lang")
         lang: String?,

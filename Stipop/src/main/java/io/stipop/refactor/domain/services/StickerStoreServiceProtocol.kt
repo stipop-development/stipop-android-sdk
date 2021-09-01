@@ -9,11 +9,11 @@ interface StickerStoreServiceProtocol {
         apikey: String,
         q: String,
         userId: String,
-        lang: String? = "en",
-        countryCode: String? = "US",
+        lang: String?,
+        countryCode: String?,
         premium: String?,
-        limit: Int? = 20,
-        pageNumber: Int? = 1,
+        limit: Int?,
+        pageNumber: Int?,
         animated: String?
     ): SPPackageListResponse
 
@@ -28,8 +28,8 @@ interface StickerStoreServiceProtocol {
         packId: Int,
         userId: String,
         isPurchase: String,
-        lang: String? = "en",
-        countryCode: String? = "US",
+        lang: String?,
+        countryCode: String?,
         price: String?,
     ): SPVoidResponse
 }
