@@ -1,33 +1,41 @@
 package io.stipop.refactor.present.ui.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
-import io.stipop.ItemTouchHelperAdapter
 import io.stipop.databinding.ItemMyActivePackageBinding
-import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.present.ui.listeners.OnHiddenPackageListener
 import io.stipop.refactor.present.ui.listeners.OnMovePackageListener
+import io.stipop.refactor.present.ui.listeners.OnStartDragListener
 
 class MyActivePackageAdapter :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>(), ItemTouchHelperAdapter {
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val _dataList: ArrayList<SPPackage> = arrayListOf()
 
-    var fromPosition = -1
-    var toPosition = -1
-
-    private var onEventListener: OnRecyclerAdapterEventListener? = null
-
-    fun setOnRecyclerAdapterEventListener(l: OnRecyclerAdapterEventListener) {
-        onEventListener = l
-    }
-
     var onHiddenPackageListener: OnHiddenPackageListener? = null
     var onMovePackageListener: OnMovePackageListener? = null
+    var onStartDragListener: OnStartDragListener? = null
+
+    val itemTouchHelperCallback: ItemTouchHelper.Callback = object :
+        ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            TODO("Not yet implemented")
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return MyActivePackageViewHolder(
@@ -37,7 +45,7 @@ class MyActivePackageAdapter :
                 false
             ),
             onHiddenPackageListener,
-            onMovePackageListener,
+            onStartDragListener,
         )
     }
 
@@ -55,71 +63,35 @@ class MyActivePackageAdapter :
         return _dataList.size
     }
 
-    override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
-        swap(fromPosition, toPosition)
-        return true
-    }
-
-    override fun onItemRemove(position: Int) {
-        _dataList.removeAt(position)
-        notifyDataSetChanged()
-    }
-
-    private fun swap(from: Int, to: Int) {
-        if (this.fromPosition == -1) {
-            this.fromPosition = from
-        }
-
-        this.toPosition = to
-
-        // Collections.swap(dataList, from, to)
-        notifyItemMoved(from, to)
-
-    }
-
-    override fun finishedDragAndDrop() {
-
-        if (this.fromPosition < 0 || this.toPosition < 0 && this.fromPosition == this.toPosition) {
-            this.fromPosition = -1
-            this.toPosition = -1
-            return
-        }
-
-//         myPackageFragment.myStickerOrder(this.fromPosition, this.toPosition)
-
-        this.fromPosition = -1
-        this.toPosition = -1
-    }
-
     fun setItemList(itemList: List<SPPackage>) {
         _dataList.clear()
         _dataList.addAll(itemList)
         notifyDataSetChanged()
     }
-
 }
 
 class MyActivePackageViewHolder(
     private val _binding: ViewBinding,
     private val _onHiddenPackageListener: OnHiddenPackageListener?,
-    private val _onMovePackageListener: OnMovePackageListener?,
+    private val _onStartDragListener: OnStartDragListener?,
 ) : RecyclerView.ViewHolder(_binding.root) {
 
     fun setItem(item: SPPackage) {
         when (_binding) {
             is ItemMyActivePackageBinding -> {
-                _binding.apply {
-                    Glide.with(packageImage).load(item.packageImg).into(packageImage)
-                    packageName.text = item.packageName
-                    artistName.text = item.artistName
-                    hiddenButton.setOnClickListener {
+                _binding.let {
+                    Glide.with(it.packageImage).load(item.packageImg).into(it.packageImage)
+                    it.packageName.text = item.packageName
+                    it.artistName.text = item.artistName
+                    it.hiddenButton.setOnClickListener {
                         _onHiddenPackageListener?.onHidden(item)
                     }
-                    moveButton.setOnClickListener {
-                        _onMovePackageListener?.onMove(item)
+                    it.moveButton.setOnDragListener { v, event ->
+                        Log.d(this::class.simpleName, "setOnDragListener")
+                        _onStartDragListener?.onStartDrag(this)
+                        false
                     }
                 }
-
             }
         }
     }

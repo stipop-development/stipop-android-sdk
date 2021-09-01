@@ -35,5 +35,11 @@ interface StoreViewModelProtocol {
 
 enum class StoreMode {
     STORE_PAGE,
-    MY_PAGE,
+    MY_PAGE;
+
+    val rawValue: Int get() = StoreMode.values().indexOf(this)
+
+    companion object {
+        const val TAG: String = "StoreMode"
+    }
 }

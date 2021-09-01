@@ -3,12 +3,10 @@ package io.stipop.refactor.present.di
 import dagger.Component
 import io.stipop.Stipop
 import io.stipop.activity.DetailActivity
-import io.stipop.activity.KeyboardFragment
-import io.stipop.activity.SearchActivity
+import io.stipop.refactor.present.ui.components.common.SPKeyboardFragment
+import io.stipop.refactor.present.ui.pages.search_sticker.SearchActivity
 import io.stipop.refactor.present.di.modules.NetworkModule
-import io.stipop.refactor.present.ui.pages.store.MyPageFragment
-import io.stipop.refactor.present.ui.pages.store.StoreActivity
-import io.stipop.refactor.present.ui.pages.store.StorePageFragment
+import io.stipop.refactor.present.ui.pages.store.*
 import javax.inject.Singleton
 
 @Singleton
@@ -20,9 +18,13 @@ import javax.inject.Singleton
 interface ApplicationComponent {
     fun inject(activity: StoreActivity)
     fun inject(fragment: StorePageFragment)
+    fun inject(fragment: StoreSearchPackageListFragment)
+    fun inject(fragment: StoreAllPackageListFragment)
     fun inject(fragment: MyPageFragment)
+    fun inject(fragment: MyActivePackageListFragment)
+    fun inject(fragment: MyHiddenPackageListFragment)
     fun inject(activity: SearchActivity)
     fun inject(activity: DetailActivity)
-    fun inject(fragment: KeyboardFragment)
+    fun inject(fragment: SPKeyboardFragment)
     fun inject(instance: Stipop)
 }

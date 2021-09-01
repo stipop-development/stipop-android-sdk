@@ -1,15 +1,15 @@
 package io.stipop.refactor.data.datasources
 
-import io.stipop.refactor.data.services.StickerStoreService
-import io.stipop.refactor.domain.entities.PackageListResponse
+import io.stipop.refactor.domain.datasources.StickerStoreDatasourceProtocol
 import io.stipop.refactor.domain.entities.PackageResponse
-import io.stipop.refactor.domain.entities.VoidResponse
-import io.stipop.refactor.domain.repositories.StickerStoreRepositoryProtocol
+import io.stipop.refactor.domain.entities.SPPackageListResponse
+import io.stipop.refactor.domain.entities.SPVoidResponse
+import io.stipop.refactor.domain.services.StickerStoreServiceProtocol
 import javax.inject.Inject
 
 class StickerStoreDatasource @Inject constructor(
-    private val stickerStoreService: StickerStoreService
-) : StickerStoreRepositoryProtocol {
+    private val service: StickerStoreServiceProtocol
+) : StickerStoreDatasourceProtocol {
     override suspend fun trendingStickerPacks(
         apikey: String,
         q: String,
@@ -20,8 +20,8 @@ class StickerStoreDatasource @Inject constructor(
         limit: Int?,
         pageNumber: Int?,
         animated: String?
-    ): PackageListResponse {
-        return stickerStoreService.trendingStickerPacks(
+    ): SPPackageListResponse {
+        return service.trendingStickerPacks(
             apikey,
             q,
             userId,
@@ -34,20 +34,20 @@ class StickerStoreDatasource @Inject constructor(
         )
     }
 
-    override suspend fun stickerPackInfo(apikey: String, packId: String, userId: String): PackageResponse {
-        return stickerStoreService.stickerPackInfo(apikey, packId, userId)
+    override suspend fun stickerPackInfo(apikey: String, packId: Int, userId: String): PackageResponse {
+        return service.stickerPackInfo(apikey, packId, userId)
     }
 
     override suspend fun downloadPurchaseSticker(
         apikey: String,
-        packId: String,
+        packId: Int,
         userId: String,
         isPurchase: String,
         lang: String?,
         countryCode: String?,
         price: String?
-    ): VoidResponse {
-        return stickerStoreService.downloadPurchaseSticker(apikey, packId, userId, isPurchase, lang, countryCode, price)
+    ): SPVoidResponse {
+        return service.downloadPurchaseSticker(apikey, packId, userId, isPurchase, lang, countryCode, price)
     }
 
 }

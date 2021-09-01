@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <io.stipop.refactor.present.ui.components.core.SPLinearLayout
-        android:id="@+id/container"
         xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -90,20 +88,9 @@
     </io.stipop.refactor.present.ui.components.core.SPLinearLayout>
 
     <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <FrameLayout
-            android:id="@+id/store_page_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <FrameLayout
-            android:id="@+id/my_page_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </FrameLayout>
+        android:layout_weight="1" />
 
 </io.stipop.refactor.present.ui.components.core.SPLinearLayout>

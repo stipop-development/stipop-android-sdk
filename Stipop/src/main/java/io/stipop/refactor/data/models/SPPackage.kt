@@ -1,14 +1,14 @@
 package io.stipop.refactor.data.models
 
 import io.stipop.Utils
-import io.stipop.refactor.domain.entities.PackageItem
+import io.stipop.refactor.domain.entities.SPPackageItem
 import org.json.JSONObject
 
 class SPPackage() {
 
     companion object {
 
-        fun fromEntity(entity: PackageItem): SPPackage {
+        fun fromEntity(entity: SPPackageItem): SPPackage {
             val _artistName: String = entity.artistName
             val _download: String = entity.isDownload
             val _language: String = entity.language

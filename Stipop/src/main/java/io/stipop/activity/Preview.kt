@@ -9,10 +9,9 @@ import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.extend.StipopImageView
 import io.stipop.refactor.data.models.SPSticker
-import org.json.JSONObject
-import java.io.IOException
+import io.stipop.refactor.present.ui.components.common.SPKeyboardFragment
 
-class Preview(val activity: Activity, val keyboardFragment: KeyboardFragment) : PopupWindow() {
+class Preview(val activity: Activity, val keyboardFragment: SPKeyboardFragment) : PopupWindow() {
 
     private lateinit var rootView: View
 

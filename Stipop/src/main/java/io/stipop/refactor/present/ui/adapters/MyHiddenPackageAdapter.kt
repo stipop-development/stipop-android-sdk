@@ -5,12 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
-import io.stipop.ItemTouchHelperAdapter
+import io.stipop.extend.dragdrop.ItemTouchHelperAdapter
 import io.stipop.databinding.ItemMyHiddenPackageBinding
 import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.present.ui.listeners.OnActivePackageListener
-import io.stipop.refactor.present.ui.listeners.OnClickPackageListener
 
 class MyHiddenPackageAdapter :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), ItemTouchHelperAdapter {

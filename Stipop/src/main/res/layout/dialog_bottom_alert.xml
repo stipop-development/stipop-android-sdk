@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.stipop.refactor.present.ui.components.core.SPLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <io.stipop.refactor.present.ui.components.core.SPLinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:background="@drawable/bottom_alert_background"
+        android:orientation="vertical"
+        android:layout_margin="12dp">
+
+        <io.stipop.refactor.present.ui.components.core.SPTextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#d3d3d3"
+            android:layout_margin="12dp"
+            android:text="@string/bottom_alert_title"/>
+
+        <io.stipop.refactor.present.ui.components.core.SPTextView
+            android:id="@+id/contents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#d3d3d3"
+            android:text="@string/bottom_alert_contents"/>
+
+        <io.stipop.refactor.present.ui.components.core.SPLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <io.stipop.refactor.present.ui.components.common.SPTextButton
+                android:id="@+id/cancel_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#2d8cbf"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:text="@string/cancel"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="10dp"
+                android:background="#eeeeee"/>
+
+            <io.stipop.refactor.present.ui.components.common.SPTextButton
+                android:id="@+id/confirm_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#2d8cbf"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:text="@string/hide"/>
+
+        </io.stipop.refactor.present.ui.components.core.SPLinearLayout>
+
+    </io.stipop.refactor.present.ui.components.core.SPLinearLayout>
+
+
+</io.stipop.refactor.present.ui.components.core.SPLinearLayout>

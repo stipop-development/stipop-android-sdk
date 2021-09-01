@@ -3,12 +3,12 @@ package io.stipop.refactor.domain.entities
 
 import com.google.gson.annotations.SerializedName
 
-data class KeywordListResponse(
+data class SPKeywordListResponse(
     @SerializedName("header")
-    val header: Header,
+    override val header: SPHeader,
     @SerializedName("body")
-    val body: KeywordListBody
-)
+    override val body: SPKeywordListBody
+): SPResponse<SPKeywordListBody>
 
 
 

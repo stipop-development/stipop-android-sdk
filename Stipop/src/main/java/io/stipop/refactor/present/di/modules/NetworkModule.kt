@@ -3,6 +3,9 @@ package io.stipop.refactor.present.di.modules
 import dagger.Module
 import dagger.Provides
 import io.stipop.refactor.data.services.*
+import io.stipop.refactor.domain.services.MyStickersServiceProtocol
+import io.stipop.refactor.domain.services.SearchServiceProtocol
+import io.stipop.refactor.domain.services.StickerStoreServiceProtocol
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -17,22 +20,22 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideMyStickersService(): MyStickersService {
+    fun provideMyStickersService(): MyStickersServiceProtocol {
         return _apiClient
-            .create(MyStickersService::class.java)
+            .create(MyStickersRestService::class.java)
     }
 
     @Singleton
     @Provides
-    fun provideSearchService(): SearchService {
+    fun provideSearchService(): SearchServiceProtocol {
         return _apiClient
-            .create(SearchService::class.java)
+            .create(SearchRestService::class.java)
     }
 
     @Singleton
     @Provides
-    fun provideStickerStoreService(): StickerStoreService {
+    fun provideStickerStoreService(): StickerStoreServiceProtocol {
         return _apiClient
-            .create(StickerStoreService::class.java)
+            .create(StickerStoreRestService::class.java)
     }
 }

@@ -11,11 +11,13 @@ import io.stipop.refactor.present.ui.components.core.SPButton
 
 class SPTextDownloadButton(context: Context, attrs: AttributeSet? = null): SPButton(context, attrs) {
 
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        setTextColor(Config.getTextDownloadButtonTextColor(context))
+    }
+
     override fun dispatchDraw(canvas: Canvas?) {
         super.dispatchDraw(canvas)
-
-        setTextColor(Config.getTextDownloadButtonTextColor(context))
-
         val shape = GradientDrawable()
         shape.cornerRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, Config.searchbarRadius.toFloat(), context.resources.displayMetrics)
         when (isEnabled) {

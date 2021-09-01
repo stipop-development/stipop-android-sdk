@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <io.stipop.refactor.present.ui.components.common.SPMyPackageToggleButton
@@ -17,36 +18,10 @@
         android:layout_margin="12dp"
         android:gravity="center" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/active_package_list"
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="16dp"
-        android:paddingBottom="64dp"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:scrollbars="none" />
-
-    <io.stipop.refactor.present.ui.components.core.SPRecyclerView
-        android:id="@+id/hidden_package_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="16dp"
-        android:paddingBottom="64dp"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:scrollbars="none" />
-
-    <io.stipop.refactor.present.ui.components.core.SPTextView
-        android:id="@+id/noneTV"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/no_result"
-        android:textColor="@color/c_374553"
-        android:textStyle="bold"
-        android:visibility="gone" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
 </io.stipop.refactor.present.ui.components.core.SPLinearLayout>

@@ -5,10 +5,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
-import io.stipop.activity.DetailActivity
-import io.stipop.activity.KeyboardFragment
-import io.stipop.activity.SearchActivity
+import io.stipop.refactor.present.ui.pages.search_sticker.SearchActivity
 import io.stipop.extend.StipopImageView
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.data.models.SPSticker
@@ -16,6 +15,10 @@ import io.stipop.refactor.data.models.SPUser
 import io.stipop.refactor.data.repositories.UserRepository
 import io.stipop.refactor.present.di.ApplicationComponent
 import io.stipop.refactor.present.di.DaggerApplicationComponent
+import io.stipop.refactor.present.ui.components.common.SPKeyboard
+import io.stipop.refactor.present.ui.components.common.SPKeyboardFragment
+import io.stipop.refactor.present.ui.components.common.SPKeyboardPopupWindow
+import io.stipop.refactor.present.ui.components.common.SPKeyboardPresenter
 import javax.inject.Inject
 
 interface StipopDelegate {
@@ -60,19 +63,21 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
             instance?.showSearch()
         }
 
-        fun showKeyboard() {
+        fun onToggleKeyboard() {
             if (instance == null) {
                 return
             }
 
 
-            instance?.showKeyboard()
+            instance?.onToggleKeyboard()
         }
     }
 
     private var maxTop = 0
     private var maxBottom = 0
-    private var keyboardFragment: KeyboardFragment? = null
+    private var keyboardFragment: SPKeyboardFragment? = null
+    private var _spKeyboardPresenter: SPKeyboard.Presenter? = null
+
     private lateinit var rootView: View
 
 
@@ -80,6 +85,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
     private var stickerIconEnabled = false
 
     fun connect() {
+        Log.d(this::class.simpleName, "connect")
 
         appComponent.inject(this)
 
@@ -90,48 +96,13 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
 
         this.setSizeForSoftKeyboard()
-    }
 
-    fun show() {
-        if (!this.connected) {
-            return
-        }
-
-        if (this.stickerIconEnabled) {
-            this.showKeyboard()
-        } else {
-            this.enableStickerIcon()
-
-            val intent = Intent(this.activity, SearchActivity::class.java)
-            this.activity.startActivity(intent)
-        }
-    }
-
-    fun detail(packageId: Int) {
-        if (!this.connected) {
-            return
-        }
-
-        val intent = Intent(this.activity, DetailActivity::class.java)
-        intent.putExtra("packageId", packageId)
-        this.activity.startActivity(intent)
-    }
-
-    private fun enableStickerIcon() {
-        if (this.connected) {
-            this.stipopButton.setTint()
-
-            this.stickerIconEnabled = true
-        }
-    }
-
-    private fun disableStickerIcon() {
-        if (this.connected) {
-            this.stipopButton.clearTint()
-        }
+        _spKeyboardPresenter = SPKeyboardPresenter()
+        _spKeyboardPresenter?.setView(SPKeyboardPopupWindow(this.activity))
     }
 
     private fun showSearch() {
+        Log.d(this::class.simpleName, "showSearch")
         if (!this.connected) {
             return
         }
@@ -142,34 +113,43 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         this.activity.startActivity(intent)
     }
 
-    private fun showKeyboard() {
+    private fun onToggleKeyboard() {
+        Log.d(this::class.simpleName, "showKeyboard")
         if (!this.connected) {
             return
         }
 
-        this.enableStickerIcon()
-
-        if (keyboardFragment == null) {
-            keyboardFragment = KeyboardFragment()
-        }
-
-        keyboardFragment?.let {
-
-                keyboard ->
-
-            if (keyboard.popupWindow.isShowing) {
-                this.keyboardFragment?.canShow = false
-                keyboard.hide()
-                this.disableStickerIcon()
+        _spKeyboardPresenter?.let {
+            if (it.isShow) {
+                it.onDismiss()
             } else {
-                if (Stipop.keyboardHeight == 0) {
-                    Utils.showKeyboard(instance?.activity)
-                }
-
-                this.keyboardFragment?.canShow = true
-                keyboard.show()
+                it.onShow()
             }
         }
+
+//        this.enableStickerIcon()
+//
+//        if (keyboardFragment == null) {
+//            keyboardFragment = SPKeyboardFragment()
+//        }
+//
+//        keyboardFragment?.let {
+//
+//                keyboardFragment ->
+//
+//            if (keyboardFragment.popupWindow?.isShowing) {
+//                this.keyboardFragment?.canShow = false
+//                keyboardFragment.hide()
+//                this.disableStickerIcon()
+//            } else {
+//                if (Stipop.keyboardHeight == 0) {
+//                    Utils.showKeyboard(instance?.activity)
+//                }
+//
+//                this.keyboardFragment?.canShow = true
+//                keyboardFragment.show()
+//            }
+//        }
     }
 
     private fun setSizeForSoftKeyboard() {
@@ -201,23 +181,23 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
                 keyboardHeight = heightDifference
 
                 this.keyboardFragment?.let { keyboard ->
-                    keyboard.popupWindow.let { popupWindow ->
-                        val preHeight = popupWindow.height
-                        popupWindow.height = keyboardHeight
-
-                        if (preHeight == 0 || popupWindow.isShowing) {
-                            keyboard.show()
-                            if (keyboard.canShow) {
-                                this.enableStickerIcon()
-                            }
-                        }
-                    }
+//                    keyboard.popupWindow.let { popupWindow ->
+//                        val preHeight = popupWindow.height
+//                        popupWindow.height = keyboardHeight
+//
+//                        if (preHeight == 0 || popupWindow.isShowing) {
+//                            keyboard.show()
+//                            if (keyboard.canShow) {
+//                                this.enableStickerIcon()
+//                            }
+//                        }
+//                    }
                 }
             } else {
-                keyboardHeight = 0
-                this.keyboardFragment?.popupWindow?.height = 0
-                this.keyboardFragment?.hide()
-                this.disableStickerIcon()
+//                keyboardHeight = 0
+//                this.keyboardFragment?.popupWindow?.height = 0
+//                this.keyboardFragment?.hide()
+//                this.disableStickerIcon()
             }
         }
     }

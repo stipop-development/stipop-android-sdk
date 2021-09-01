@@ -1,102 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.stipop.refactor.present.ui.components.core.SPConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.stipop.refactor.present.ui.components.core.SPLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="12dp">
+    android:padding="12dp"
+    android:orientation="horizontal">
 
     <io.stipop.refactor.present.ui.components.core.SPLinearLayout
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/image_container"
-        android:id="@+id/label_container"
-        android:layout_marginBottom="8dp"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <io.stipop.refactor.present.ui.components.common.SPPackageNameLabel
-            android:id="@+id/package_name"
+        <io.stipop.refactor.present.ui.components.core.SPLinearLayout
+            android:id="@+id/label_container"
+            android:layout_marginBottom="8dp"
             android:layout_width="wrap_content"
-            android:layout_height="22dp"
-            android:layout_marginRight="10dp"
-            android:textColor="#374553"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:lineHeight="22sp"
-            android:hint="package name"
-            android:text="" />
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <io.stipop.refactor.present.ui.components.common.SPArtistNameLabel
-            android:id="@+id/artist_name"
-            android:layout_width="wrap_content"
-            android:layout_height="15dp"
-            android:textColor="#646f7c"
-            android:textSize="12sp"
-            android:hint="artist name"
-            android:lineHeight="15sp"
-            android:text="" />
+            <io.stipop.refactor.present.ui.components.common.SPPackageNameLabel
+                android:id="@+id/package_name"
+                android:layout_width="wrap_content"
+                android:layout_height="22dp"
+                android:layout_marginRight="10dp"
+                android:textColor="#374553"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:lineHeight="22sp"
+                android:hint="package name"
+                android:text="" />
+
+            <io.stipop.refactor.present.ui.components.common.SPArtistNameLabel
+                android:id="@+id/artist_name"
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:textColor="#646f7c"
+                android:textSize="12sp"
+                android:hint="artist name"
+                android:lineHeight="15sp"
+                android:text="" />
+
+        </io.stipop.refactor.present.ui.components.core.SPLinearLayout>
+
+        <io.stipop.refactor.present.ui.components.core.SPConstraintLayout
+            android:id="@+id/image_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <io.stipop.refactor.present.ui.components.core.SPImageView
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1"
+                android:id="@+id/image1IV"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop" />
+
+            <io.stipop.refactor.present.ui.components.core.SPImageView
+                app:layout_constraintLeft_toRightOf="@id/image1IV"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1"
+                android:layout_marginLeft="16dp"
+                android:id="@+id/image2IV"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop" />
+
+            <io.stipop.refactor.present.ui.components.core.SPImageView
+                app:layout_constraintLeft_toRightOf="@id/image2IV"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1"
+                android:layout_marginLeft="16dp"
+                android:id="@+id/image3IV"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop" />
+
+            <io.stipop.refactor.present.ui.components.core.SPImageView
+                app:layout_constraintLeft_toRightOf="@id/image3IV"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintDimensionRatio="1"
+                android:layout_marginLeft="16dp"
+                android:id="@+id/image4IV"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop" />
+
+
+        </io.stipop.refactor.present.ui.components.core.SPConstraintLayout>
 
     </io.stipop.refactor.present.ui.components.core.SPLinearLayout>
 
-
-    <io.stipop.refactor.present.ui.components.core.SPConstraintLayout
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="24dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/download_button"
-        android:id="@+id/image_container"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content">
-
-        <io.stipop.refactor.present.ui.components.core.SPImageView
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1"
-            android:id="@+id/image1IV"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:scaleType="centerCrop" />
-
-        <io.stipop.refactor.present.ui.components.core.SPImageView
-            app:layout_constraintLeft_toRightOf="@id/image1IV"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1"
-            android:layout_marginLeft="16dp"
-            android:id="@+id/image2IV"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:scaleType="centerCrop" />
-
-        <io.stipop.refactor.present.ui.components.core.SPImageView
-            app:layout_constraintLeft_toRightOf="@id/image2IV"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1"
-            android:layout_marginLeft="16dp"
-            android:id="@+id/image3IV"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:scaleType="centerCrop" />
-
-        <io.stipop.refactor.present.ui.components.core.SPImageView
-            app:layout_constraintLeft_toRightOf="@id/image3IV"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintDimensionRatio="1"
-            android:layout_marginLeft="16dp"
-            android:id="@+id/image4IV"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:scaleType="centerCrop" />
-
-
-    </io.stipop.refactor.present.ui.components.core.SPConstraintLayout>
-
+    <Space
+        android:layout_width="4dp"
+        android:layout_height="wrap_content" />
 
     <io.stipop.refactor.present.ui.components.common.SPIconDownloadButton
         app:layout_constraintRight_toRightOf="parent"
@@ -109,4 +113,4 @@
         android:padding="12dp"
         android:src="@mipmap/ic_download_border_3" />
 
-</io.stipop.refactor.present.ui.components.core.SPConstraintLayout>
+</io.stipop.refactor.present.ui.components.core.SPLinearLayout>

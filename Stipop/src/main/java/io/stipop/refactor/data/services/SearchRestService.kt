@@ -1,13 +1,14 @@
 package io.stipop.refactor.data.services
 
-import io.stipop.refactor.domain.entities.KeywordListResponse
-import io.stipop.refactor.domain.entities.PackageListResponse
+import io.stipop.refactor.domain.entities.SPKeywordListResponse
+import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.repositories.SearchRepositoryProtocol
+import io.stipop.refactor.domain.services.SearchServiceProtocol
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
 
-interface SearchService : SearchRepositoryProtocol {
+interface SearchRestService : SearchServiceProtocol {
 
     @GET("search")
     override suspend fun stickerSearch(
@@ -31,7 +32,7 @@ interface SearchService : SearchRepositoryProtocol {
 
         @Query("pageNumber")
         pageNumber: Int?
-    ): PackageListResponse
+    ): SPPackageListResponse
 
     @GET("search/keyword")
     override suspend fun trendingSearchTerms(
@@ -46,7 +47,7 @@ interface SearchService : SearchRepositoryProtocol {
 
         @Query("limit")
         limit: Int?
-    ): KeywordListResponse
+    ): SPKeywordListResponse
 
     @GET("search/recent")
     override suspend fun recentSearch(
@@ -55,6 +56,6 @@ interface SearchService : SearchRepositoryProtocol {
 
         @Query("userId")
         userId: String
-    ): KeywordListResponse
+    ): SPKeywordListResponse
 
 }

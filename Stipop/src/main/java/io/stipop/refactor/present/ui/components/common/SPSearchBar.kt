@@ -99,12 +99,15 @@ class SPSearchBar(context: Context, attrs: AttributeSet? = null) : SPLinearLayou
         addView(searchDeleteButton)
     }
 
-    override fun dispatchDraw(canvas: Canvas?) {
-        super.dispatchDraw(canvas)
-
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        super.onLayout(changed, l, t, r, b)
         searchKeyword.apply {
             setTextColor(Config.getSearchKeywordTextColor(context))
         }
+    }
+
+    override fun dispatchDraw(canvas: Canvas?) {
+        super.dispatchDraw(canvas)
 
         val shape = GradientDrawable()
         shape.cornerRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, Config.searchbarRadius.toFloat(), context.resources.displayMetrics)

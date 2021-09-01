@@ -13,13 +13,8 @@ open class SPImageButton(context: Context, attrs: AttributeSet? = null) :
         background = null
     }
 
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
-        setColorFilter(Color.parseColor(Config.themeIconNormalColor))
-    }
-
-    override fun dispatchDraw(canvas: Canvas?) {
-        super.dispatchDraw(canvas)
+    override fun draw(canvas: Canvas?) {
+        super.draw(canvas)
         setColorFilter(Color.parseColor(Config.themeIconNormalColor))
     }
 }

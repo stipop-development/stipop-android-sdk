@@ -1,4 +1,4 @@
-package io.stipop.activity
+package io.stipop.refactor.present.ui.pages.search_sticker
 
 import android.app.Activity
 import android.content.Context
@@ -54,7 +54,7 @@ class SearchActivity : Activity() {
         _binding.searchIV.setImageResource(Config.getSearchbarIconResourceId(_context))
         _binding.eraseIV.setImageResource(Config.getSearchBarDeleteIconResourceId(_context))
 
-        _binding.titleTV.setTextColor(Config.getSearchKeywordTextColor(_context))
+        _binding.title.setTextColor(Config.getSearchKeywordTextColor(_context))
         _binding.keywordET.setTextColor(Config.getSearchKeywordTextColor(_context))
 
 

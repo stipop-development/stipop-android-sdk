@@ -1,11 +1,12 @@
 package io.stipop.refactor.data.services
 
 import io.stipop.refactor.domain.repositories.MyStickersRepositoryProtocol
-import io.stipop.refactor.domain.entities.PackageListResponse
-import io.stipop.refactor.domain.entities.VoidResponse
+import io.stipop.refactor.domain.entities.SPPackageListResponse
+import io.stipop.refactor.domain.entities.SPVoidResponse
+import io.stipop.refactor.domain.services.MyStickersServiceProtocol
 import retrofit2.http.*
 
-interface MyStickersService : MyStickersRepositoryProtocol {
+interface MyStickersRestService : MyStickersServiceProtocol {
     @GET("mysticker/{userId}")
     override suspend fun myStickerPacks(
         @Header("apikey")
@@ -19,7 +20,7 @@ interface MyStickersService : MyStickersRepositoryProtocol {
 
         @Query("pageNumber")
         pageNumber: Int?
-    ): PackageListResponse
+    ): SPPackageListResponse
 
     @PUT("mysticker/hide/{userId}/{packageId}")
     override suspend fun hideRecoverMyPack(
@@ -31,7 +32,7 @@ interface MyStickersService : MyStickersRepositoryProtocol {
 
         @Path("packageId")
         packId: Int
-    ): VoidResponse
+    ): SPVoidResponse
 
     @GET("mysticker/hide/{userId}")
     override suspend fun hiddenStickerPacks(
@@ -46,7 +47,7 @@ interface MyStickersService : MyStickersRepositoryProtocol {
 
         @Query("pageNumber")
         pageNumber: Int?
-    ): PackageListResponse
+    ): SPPackageListResponse
 
     @PUT("mysticker/order/{userId}")
     override suspend fun myStickerOrder(
@@ -61,5 +62,5 @@ interface MyStickersService : MyStickersRepositoryProtocol {
 
         @Query("newOrder")
         newOrder: Int
-    ): VoidResponse
+    ): SPVoidResponse
 }

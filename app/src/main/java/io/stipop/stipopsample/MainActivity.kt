@@ -1,6 +1,5 @@
 package io.stipop.stipopsample
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.StipopDelegate
-import io.stipop.refactor.present.ui.pages.store.StoreActivity
 import io.stipop.extend.StipopImageView
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.data.models.SPSticker
@@ -41,7 +39,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
 
         chatText = findViewById(R.id.chatET)
 
-        Stipop.connect(this, stipopIV, "9937", "en", "US", this)
+        Stipop.connect(this, stipopIV, "0000", "en", "US", this)
 
 //        val keyboardView = Keyboard(this)
 //        supportFragmentManager.beginTransaction()
@@ -49,7 +47,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
 //            .commitAllowingStateLoss()
 
         stipopIV.setOnClickListener {
-            Stipop.showKeyboard()
+            Stipop.onToggleKeyboard()
         }
 
         stipopIV2.setOnClickListener {
@@ -60,9 +58,6 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
             sendMessage()
             true
         }
-
-        startActivity(Intent(this, StoreActivity::class.java))
-
     }
 
     private fun sendMessage() {

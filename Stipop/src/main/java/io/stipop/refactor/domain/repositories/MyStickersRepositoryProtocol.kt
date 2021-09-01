@@ -1,7 +1,7 @@
 package io.stipop.refactor.domain.repositories
 
-import io.stipop.refactor.domain.entities.PackageListResponse
-import io.stipop.refactor.domain.entities.VoidResponse
+import io.stipop.refactor.domain.entities.SPPackageListResponse
+import io.stipop.refactor.domain.entities.SPVoidResponse
 
 interface MyStickersRepositoryProtocol {
     suspend fun myStickerPacks(
@@ -9,25 +9,25 @@ interface MyStickersRepositoryProtocol {
         userId: String,
         limit: Int? = 20,
         pageNumber: Int? = 1
-    ): PackageListResponse
+    ): SPPackageListResponse
 
     suspend fun hideRecoverMyPack(
         apikey: String,
         userId: String,
         packId: Int,
-    ): VoidResponse
+    ): SPVoidResponse
 
     suspend fun hiddenStickerPacks(
         apikey: String,
         userId: String,
         limit: Int? = 20,
         pageNumber: Int? = 1
-    ): PackageListResponse
+    ): SPPackageListResponse
 
     suspend fun myStickerOrder(
         apikey: String,
         userId: String,
         currentOrder: Int,
         newOrder: Int,
-    ): VoidResponse
+    ): SPVoidResponse
 }

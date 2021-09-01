@@ -4,7 +4,6 @@ import android.graphics.Canvas
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.stipop.ItemTouchHelperAdapter
 
 class SimpleItemTouchHelperCallback(val adapter: ItemTouchHelperAdapter) :
     ItemTouchHelper.Callback() {

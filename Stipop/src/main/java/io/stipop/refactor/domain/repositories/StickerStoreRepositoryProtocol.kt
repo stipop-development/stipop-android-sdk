@@ -1,8 +1,8 @@
 package io.stipop.refactor.domain.repositories
 
-import io.stipop.refactor.domain.entities.PackageListResponse
+import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.PackageResponse
-import io.stipop.refactor.domain.entities.VoidResponse
+import io.stipop.refactor.domain.entities.SPVoidResponse
 
 interface StickerStoreRepositoryProtocol {
     suspend fun trendingStickerPacks(
@@ -15,21 +15,21 @@ interface StickerStoreRepositoryProtocol {
         limit: Int? = 20,
         pageNumber: Int? = 1,
         animated: String?
-    ): PackageListResponse
+    ): SPPackageListResponse
 
     suspend fun stickerPackInfo(
         apikey: String,
-        packId: String,
+        packId: Int,
         userId: String,
     ): PackageResponse
 
     suspend fun downloadPurchaseSticker(
         apikey: String,
-        packId: String,
+        packId: Int,
         userId: String,
         isPurchase: String,
         lang: String? = "en",
         countryCode: String? = "US",
         price: String?,
-    ): VoidResponse
+    ): SPVoidResponse
 }

@@ -1,12 +1,13 @@
 package io.stipop.refactor.data.services
 
-import io.stipop.refactor.domain.entities.PackageListResponse
+import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.entities.PackageResponse
-import io.stipop.refactor.domain.entities.VoidResponse
+import io.stipop.refactor.domain.entities.SPVoidResponse
 import io.stipop.refactor.domain.repositories.StickerStoreRepositoryProtocol
+import io.stipop.refactor.domain.services.StickerStoreServiceProtocol
 import retrofit2.http.*
 
-interface StickerStoreService : StickerStoreRepositoryProtocol {
+interface StickerStoreRestService : StickerStoreServiceProtocol {
 
     @GET("package")
     override suspend fun trendingStickerPacks(
@@ -36,7 +37,7 @@ interface StickerStoreService : StickerStoreRepositoryProtocol {
 
         @Query("animated")
         animated: String?
-    ): PackageListResponse
+    ): SPPackageListResponse
 
     @GET("package/{packageId}")
     override suspend fun stickerPackInfo(
@@ -44,7 +45,7 @@ interface StickerStoreService : StickerStoreRepositoryProtocol {
         apikey: String,
 
         @Path("packageId")
-        packId: String,
+        packId: Int,
 
         @Query("userId")
         userId: String
@@ -56,7 +57,7 @@ interface StickerStoreService : StickerStoreRepositoryProtocol {
         apikey: String,
 
         @Path("packageId")
-        packId: String,
+        packId: Int,
 
         @Query("userId")
         userId: String,
@@ -72,5 +73,5 @@ interface StickerStoreService : StickerStoreRepositoryProtocol {
 
         @Query("price")
         price: String?
-    ): VoidResponse
+    ): SPVoidResponse
 }

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.stipop.refactor.present.ui.components.core.SPLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <io.stipop.refactor.present.ui.components.core.SPLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#eaebee"
+        android:orientation="horizontal">
+
+        <io.stipop.refactor.present.ui.components.core.SPImageButton
+            android:id="@+id/recent_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@mipmap/ic_recents_active" />
+
+        <io.stipop.refactor.present.ui.components.core.SPRecyclerView
+            android:id="@+id/my_active_package_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <io.stipop.refactor.present.ui.components.core.SPImageButton
+            android:id="@+id/setting_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@mipmap/ic_setting" />
+
+        <io.stipop.refactor.present.ui.components.core.SPImageButton
+            android:id="@+id/store_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@mipmap/ic_store" />
+
+
+    </io.stipop.refactor.present.ui.components.core.SPLinearLayout>
+
+    <io.stipop.refactor.present.ui.components.core.SPRecyclerView
+        android:id="@+id/sticker_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+</io.stipop.refactor.present.ui.components.core.SPLinearLayout>

@@ -13,10 +13,4 @@ class SPPackageNameLabel(context: Context, attrs: AttributeSet? = null) : SPText
 
         setTextColor(Config.getPackageNameTextColor(context))
     }
-
-    override fun dispatchDraw(canvas: Canvas?) {
-        super.dispatchDraw(canvas)
-
-        setTextColor(Config.getPackageNameTextColor(context))
-    }
 }

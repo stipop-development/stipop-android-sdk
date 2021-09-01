@@ -2,9 +2,9 @@ package io.stipop.refactor.domain.entities
 
 import com.google.gson.annotations.SerializedName
 
-data class StickerListBody(
+data class SPStickerListBody(
     @SerializedName("stickerList")
-    val stickerList: List<StickerItem>?,
+    val stickerList: List<SPStickerItem>?,
     @SerializedName("pageMap")
-    val pageMap: PageMap
+    val pageMap: SPPageMap
 )

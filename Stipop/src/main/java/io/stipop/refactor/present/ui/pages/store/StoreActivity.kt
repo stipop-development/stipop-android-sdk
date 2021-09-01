@@ -2,7 +2,6 @@ package io.stipop.refactor.present.ui.pages.store
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import io.stipop.Stipop
@@ -17,6 +16,9 @@ class StoreActivity : AppCompatActivity() {
 
     @Inject
     internal lateinit var _viewModel: StoreViewModel
+
+    private val _storePageFragment: StorePageFragment = StorePageFragment()
+    private val _myPageFragment: MyPageFragment = MyPageFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,20 +37,16 @@ class StoreActivity : AppCompatActivity() {
         }
 
         _viewModel.storeMode.observe(this, Observer {
-           onChangeStoreMode(it)
+            onChangeStoreMode(it)
         })
 
-        intent.getIntExtra("tab", 1).let {
-            when(it) {
-                1 -> _viewModel.onChangeStoreMode(StoreMode.STORE_PAGE)
-                2 -> _viewModel.onChangeStoreMode(StoreMode.MY_PAGE)
+        intent.getIntExtra(StoreMode.TAG, StoreMode.STORE_PAGE.rawValue).let {
+            try {
+                _viewModel.onChangeStoreMode(StoreMode.values()[it])
+            } catch (e: Exception) {
+                Log.e(this::class.simpleName, "Incorrect store mode value", e)
             }
         }
-
-        val _fragmentTransaction = supportFragmentManager.beginTransaction()
-        _fragmentTransaction.replace(_binding.storePageContainer.id, StorePageFragment())
-        _fragmentTransaction.replace(_binding.myPageContainer.id, MyPageFragment())
-        _fragmentTransaction.commit()
 
         setContentView(_binding.root)
     }
@@ -60,21 +58,25 @@ class StoreActivity : AppCompatActivity() {
             StoreMode.STORE_PAGE -> {
                 _binding.storePageTabLabel.isSelected = true
                 _binding.storePageTabIndicator.isSelected = true
-                _binding.storePageContainer.visibility = View.VISIBLE
 
                 _binding.myPageTabLabel.isSelected = false
                 _binding.myPageTabIndicator.isSelected = false
-                _binding.myPageContainer.visibility = View.GONE
             }
             StoreMode.MY_PAGE -> {
                 _binding.storePageTabLabel.isSelected = false
                 _binding.storePageTabIndicator.isSelected = false
-                _binding.storePageContainer.visibility = View.GONE
 
                 _binding.myPageTabLabel.isSelected = true
                 _binding.myPageTabIndicator.isSelected = true
-                _binding.myPageContainer.visibility = View.VISIBLE
+            }
+        }
 
+        when (mode) {
+            StoreMode.STORE_PAGE -> {
+                supportFragmentManager.beginTransaction().replace(_binding.container.id, _storePageFragment).commit()
+            }
+            StoreMode.MY_PAGE -> {
+                supportFragmentManager.beginTransaction().replace(_binding.container.id, _myPageFragment).commit()
             }
         }
     }

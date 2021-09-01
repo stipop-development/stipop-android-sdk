@@ -1,7 +1,7 @@
 package io.stipop.refactor.domain.repositories
 
-import io.stipop.refactor.domain.entities.KeywordListResponse
-import io.stipop.refactor.domain.entities.PackageListResponse
+import io.stipop.refactor.domain.entities.SPKeywordListResponse
+import io.stipop.refactor.domain.entities.SPPackageListResponse
 
 interface SearchRepositoryProtocol {
     suspend fun stickerSearch(
@@ -12,17 +12,17 @@ interface SearchRepositoryProtocol {
         countryCode: String? = "US",
         limit: Int? = 20,
         pageNumber: Int? = 1
-    ): PackageListResponse
+    ): SPPackageListResponse
 
     suspend fun trendingSearchTerms(
         apikey: String,
         lang: String? = "en",
         countryCode: String? = "US",
         limit: Int? = 20,
-    ): KeywordListResponse
+    ): SPKeywordListResponse
 
     suspend fun recentSearch(
         apikey: String,
         userId: String,
-    ): KeywordListResponse
+    ): SPKeywordListResponse
 }

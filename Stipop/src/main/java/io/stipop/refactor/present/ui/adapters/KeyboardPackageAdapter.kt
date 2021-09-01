@@ -12,12 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.activity.KeyboardFragment
+import io.stipop.refactor.present.ui.components.common.SPKeyboardFragment
 import io.stipop.extend.StipopImageView
 import io.stipop.refactor.data.models.SPPackage
 
 
-class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var context: Context, var keyboardFragment: KeyboardFragment):
+class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var context: Context, var keyboardFragment: SPKeyboardFragment):
     RecyclerView.Adapter<KeyboardPackageAdapter.ViewHolder>() {
 
     interface OnItemClickListener {

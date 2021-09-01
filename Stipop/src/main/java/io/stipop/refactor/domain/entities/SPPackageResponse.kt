@@ -4,12 +4,11 @@ package io.stipop.refactor.domain.entities
 import com.google.gson.annotations.SerializedName
 
 data class PackageResponse(@SerializedName("header")
-                           val header: Header,
+                           override val header: SPHeader,
                            @SerializedName("body")
-                           val body: PackageBody)
+                           override val body: PackageBody) : SPResponse<PackageBody>
 
 
-data class PackageBody(@SerializedName("package")
-                val _package: PackageItem)
+
 
 

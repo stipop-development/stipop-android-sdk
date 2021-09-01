@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.stipop.refactor.present.ui.components.core.SPRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/store_all_package_list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:divider="@null"
+    android:dividerHeight="0dp"
+    android:scrollbars="vertical"
+    android:listSelector="@android:color/transparent" />

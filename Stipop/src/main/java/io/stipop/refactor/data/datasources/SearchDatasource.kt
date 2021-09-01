@@ -1,14 +1,14 @@
 package io.stipop.refactor.data.datasources
 
-import io.stipop.refactor.data.services.SearchService
-import io.stipop.refactor.domain.entities.KeywordListResponse
-import io.stipop.refactor.domain.entities.PackageListResponse
-import io.stipop.refactor.domain.repositories.SearchRepositoryProtocol
+import io.stipop.refactor.domain.datasources.SearchDatasourceProtocol
+import io.stipop.refactor.domain.entities.SPKeywordListResponse
+import io.stipop.refactor.domain.entities.SPPackageListResponse
+import io.stipop.refactor.domain.services.SearchServiceProtocol
 import javax.inject.Inject
 
 class SearchDatasource @Inject constructor(
-    private val searchService: SearchService
-) : SearchRepositoryProtocol {
+    private val service: SearchServiceProtocol
+) : SearchDatasourceProtocol {
     override suspend fun stickerSearch(
         apikey: String,
         q: String,
@@ -17,8 +17,8 @@ class SearchDatasource @Inject constructor(
         countryCode: String?,
         limit: Int?,
         pageNumber: Int?
-    ): PackageListResponse {
-        return searchService.stickerSearch(apikey, q, userId, lang, countryCode, limit, pageNumber)
+    ): SPPackageListResponse {
+        return service.stickerSearch(apikey, q, userId, lang, countryCode, limit, pageNumber)
     }
 
     override suspend fun trendingSearchTerms(
@@ -26,11 +26,11 @@ class SearchDatasource @Inject constructor(
         lang: String?,
         countryCode: String?,
         limit: Int?
-    ): KeywordListResponse {
-        return searchService.trendingSearchTerms(apikey, lang, countryCode, limit)
+    ): SPKeywordListResponse {
+        return service.trendingSearchTerms(apikey, lang, countryCode, limit)
     }
 
-    override suspend fun recentSearch(apikey: String, userId: String): KeywordListResponse {
-        return searchService.recentSearch(apikey, userId)
+    override suspend fun recentSearch(apikey: String, userId: String): SPKeywordListResponse {
+        return service.recentSearch(apikey, userId)
     }
 }

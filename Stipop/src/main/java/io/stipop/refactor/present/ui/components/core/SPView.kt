@@ -9,9 +9,4 @@ import io.stipop.Config
 
 open class SPView(context: Context, attrs: AttributeSet? = null) :
     View(context, attrs) {
-
-    override fun dispatchDraw(canvas: Canvas?) {
-        super.dispatchDraw(canvas)
-        setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
-    }
 }

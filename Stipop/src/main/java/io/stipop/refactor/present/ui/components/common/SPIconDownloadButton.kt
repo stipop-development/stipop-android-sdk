@@ -6,8 +6,7 @@ import android.util.AttributeSet
 import io.stipop.Config
 
 class SPIconDownloadButton(context: Context, attrs: AttributeSet? = null) : SPIconImageButton(context, attrs) {
-    override fun dispatchDraw(canvas: Canvas?) {
-        super.dispatchDraw(canvas)
+    override fun draw(canvas: Canvas?) {
         when (isEnabled) {
             true -> {
                 setImageResource(Config.getDownloadIconResourceId(context))
@@ -16,5 +15,6 @@ class SPIconDownloadButton(context: Context, attrs: AttributeSet? = null) : SPIc
                 setImageResource(Config.getDownloadedIconResourceId(context))
             }
         }
+        super.draw(canvas)
     }
 }

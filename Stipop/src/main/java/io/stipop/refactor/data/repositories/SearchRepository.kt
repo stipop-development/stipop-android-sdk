@@ -3,8 +3,8 @@ package io.stipop.refactor.data.repositories
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import dagger.Module
-import io.stipop.refactor.domain.entities.KeywordListResponse
-import io.stipop.refactor.domain.entities.PackageListResponse
+import io.stipop.refactor.domain.entities.SPKeywordListResponse
+import io.stipop.refactor.domain.entities.SPPackageListResponse
 import io.stipop.refactor.domain.repositories.SearchRepositoryProtocol
 import javax.inject.Inject
 
@@ -23,7 +23,7 @@ class SearchRepository @Inject constructor() : SearchRepositoryProtocol {
         countryCode: String?,
         limit: Int?,
         pageNumber: Int?
-    ): PackageListResponse {
+    ): SPPackageListResponse {
         TODO("Not yet implemented")
     }
 
@@ -32,11 +32,11 @@ class SearchRepository @Inject constructor() : SearchRepositoryProtocol {
         lang: String?,
         countryCode: String?,
         limit: Int?
-    ): KeywordListResponse {
+    ): SPKeywordListResponse {
         TODO("Not yet implemented")
     }
 
-    override suspend fun recentSearch(apikey: String, userId: String): KeywordListResponse {
+    override suspend fun recentSearch(apikey: String, userId: String): SPKeywordListResponse {
         TODO("Not yet implemented")
     }
 }

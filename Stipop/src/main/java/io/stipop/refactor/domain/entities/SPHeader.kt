@@ -2,9 +2,9 @@ package io.stipop.refactor.domain.entities
 
 import com.google.gson.annotations.SerializedName
 
-data class Header(@SerializedName("code")
+data class SPHeader(@SerializedName("code")
                   val code: String = "",
-                  @SerializedName("message")
+                    @SerializedName("message")
                   val message: String = "",
-                  @SerializedName("status")
+                    @SerializedName("status")
                   val status: String = "")

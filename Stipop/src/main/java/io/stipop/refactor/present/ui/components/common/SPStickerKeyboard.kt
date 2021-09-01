@@ -1,18 +1,22 @@
-package io.stipop.activity
+package io.stipop.refactor.present.ui.components.common
 
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.os.Build
+import android.inputmethodservice.InputMethodService
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +27,9 @@ import io.stipop.Config
 import io.stipop.PackUtils
 import io.stipop.R
 import io.stipop.Stipop
+import io.stipop.activity.Preview
+import io.stipop.databinding.FragmentKeyboardBinding
+import io.stipop.databinding.LayoutKeyboardBinding
 import io.stipop.extend.StipopImageView
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.data.models.SPSticker
@@ -30,10 +37,170 @@ import io.stipop.refactor.present.ui.adapters.KeyboardPackageAdapter
 import io.stipop.refactor.present.ui.adapters.StickerAdapter
 import io.stipop.refactor.present.ui.pages.store.StoreActivity
 import io.stipop.refactor.present.ui.view_models.KeyboardViewModel
+import io.stipop.refactor.present.ui.view_models.StoreMode
+import io.stipop.refactor.present.ui.view_models.StoreViewModel
 import javax.inject.Inject
 
 
-class KeyboardFragment : Fragment() {
+interface SPKeyboard {
+
+    interface View {
+        val isShow: Boolean
+        fun onShow()
+        fun onDismiss()
+    }
+
+    interface Presenter {
+        val isShow: Boolean
+        fun onShow()
+        fun onDismiss()
+        fun setView(view: View?)
+    }
+}
+
+class SPKeyboardPresenter : SPKeyboard.Presenter {
+    private var _view: SPKeyboard.View? = null
+
+    override val isShow: Boolean get() = _view?.isShow ?: false
+
+    override fun onShow() {
+        Log.d(this::class.simpleName, "onShow")
+        _view?.onShow()
+    }
+
+    override fun onDismiss() {
+        Log.d(this::class.simpleName, "onDismiss")
+        _view?.onDismiss()
+    }
+
+    override fun setView(view: SPKeyboard.View?) {
+        Log.d(this::class.simpleName, "setView")
+        _view = view
+    }
+}
+
+class SPKeyboardPopupWindow(private val activity: Activity) : PopupWindow(), SPKeyboard.View {
+
+    private var rootView: View? = null
+
+    private lateinit var _binding: LayoutKeyboardBinding
+
+    @Inject
+    internal lateinit var _viewModel: KeyboardViewModel
+
+    private val _metrics: DisplayMetrics
+        get() {
+            return Resources.getSystem().displayMetrics ?: DisplayMetrics()
+        }
+
+    private val _activityHeight: Int get() = _metrics.heightPixels
+    private val _activityWidth: Int get() = _metrics.widthPixels
+
+    private var _isShowKeyboard = false
+    private var _keyboardHeight: Int = -1
+    private val _keyboardWidth: Int get() = _activityWidth
+
+    override val isShow: Boolean
+        get() = isShowing
+
+    init {
+        _binding = LayoutKeyboardBinding.inflate(LayoutInflater.from(activity)).apply {
+
+            recentButton.setOnClickListener {
+
+            }
+
+            settingButton.setOnClickListener {
+                activity.startActivity(Intent(activity, StoreActivity::class.java).apply {
+                    putExtra(StoreMode.TAG, StoreMode.MY_PAGE.rawValue)
+                })
+            }
+
+            storeButton.setOnClickListener {
+                activity.startActivity(Intent(activity, StoreActivity::class.java).apply {
+                    putExtra(StoreMode.TAG, StoreMode.STORE_PAGE.rawValue)
+                })
+            }
+
+        }
+        contentView = _binding.root
+        rootView = with(activity.window.decorView.findViewById<View?>(android.R.id.content)) {
+           this
+        }
+        rootView?.let {
+
+            it.viewTreeObserver.addOnPreDrawListener {
+                _keyboardHeight = if (_activityHeight > it.height) {
+                    _activityHeight - it.height
+                } else {
+                    _keyboardHeight
+                }
+                _isShowKeyboard = _activityHeight > it.height
+
+                true
+            }
+
+            it.viewTreeObserver.addOnDrawListener {
+                if (_isShowKeyboard) {
+                    update(0, 0, _keyboardWidth, _keyboardHeight)
+                } else {
+                    onDismiss()
+                }
+            }
+        }
+    }
+
+
+    override fun onShow() {
+        Log.d(this::class.simpleName, "onShow")
+
+        rootView?.let {
+            Log.d(this::class.simpleName, "showAtLocation")
+            showAtLocation(it.rootView, Gravity.DISPLAY_CLIP_HORIZONTAL or Gravity.BOTTOM, 0, 0)
+            update(0, 0, _keyboardWidth, _keyboardHeight)
+
+            if (!_isShowKeyboard) {
+                val inputMethodManager = (activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                Log.d(
+                    this::class.simpleName,
+                    "inputMethodManager.lastInputMethodSubtype -> ${inputMethodManager.lastInputMethodSubtype}"
+                )
+                inputMethodManager
+                    .toggleSoftInput(
+                        InputMethodManager.SHOW_FORCED,
+                        0
+                    )
+
+            }
+
+        }
+    }
+
+    override fun onDismiss() {
+        Log.d(this::class.simpleName, "onDismiss")
+        dismiss()
+    }
+}
+
+class SPStickerKeyboardService : InputMethodService() {
+
+    lateinit var _binding: LayoutKeyboardBinding
+
+    override fun onCreate() {
+        super.onCreate()
+
+        _binding = LayoutKeyboardBinding.inflate(layoutInflater)
+    }
+
+    override fun onCreateInputView(): View {
+        return _binding.root.apply {
+        }
+    }
+}
+
+class SPKeyboardFragment : Fragment() {
+
+    private lateinit var _binding: FragmentKeyboardBinding
 
     @Inject
     internal lateinit var _viewModel: KeyboardViewModel
@@ -69,24 +236,15 @@ class KeyboardFragment : Fragment() {
 
     lateinit var preview: Preview
 
-    lateinit var popupWindow:PopupWindow
+    //    var popupWindow:PopupWindow? = null
     internal var canShow = true
 
     val _activity: Activity get() = activity ?: throw Error("Hasn't activity")
 
-    init {
-        this.initPopup(null)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Stipop.appComponent.inject(this)
-        return inflater.inflate(R.layout.keyboard, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        initPopup(view)
+        _binding = FragmentKeyboardBinding.inflate(layoutInflater)
+        return _binding.root
     }
 
     var reloadPackageReciver: BroadcastReceiver? = object : BroadcastReceiver() {
@@ -97,30 +255,26 @@ class KeyboardFragment : Fragment() {
         }
     }
 
-    private fun initPopup(v: View?) {
-
-        var view = View.inflate(this.activity, R.layout.keyboard,null)
-        if (v != null) {
-            view = v
-        }
-
-        popupWindow = PopupWindow(
-            view,
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            popupWindow.elevation = 10.0F
-        }
-
-        // set size
-        popupWindow.height = Stipop.keyboardHeight
+    private fun initPopup(view: View) {
+//        popupWindow = PopupWindow(
+//            view,
+//            LinearLayout.LayoutParams.MATCH_PARENT,
+//            LinearLayout.LayoutParams.WRAP_CONTENT
+//        ).apply {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                elevation = 10.0F
+//            }
+//
+//            // set size
+//            height = Stipop.keyboardHeight
+//        }
 
         preview = Preview(_activity, this)
 
-        view.findViewById<LinearLayout>(R.id.containerLL).setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
-        view.findViewById<LinearLayout>(R.id.packageListLL).setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
+        view.findViewById<LinearLayout>(R.id.containerLL)
+            .setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
+        view.findViewById<LinearLayout>(R.id.packageListLL)
+            .setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
 
         favoriteRL = view.findViewById(R.id.favoriteRL)
         recentlyIV = view.findViewById(R.id.recentlyIV)
@@ -185,7 +339,8 @@ class KeyboardFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+                val lastVisibleItemPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 val itemTotalCount = packageData.size
 
                 if (lastVisibleItemPosition + 1 == itemTotalCount && totalPage > page) {
@@ -231,7 +386,12 @@ class KeyboardFragment : Fragment() {
                 }
             }
 
-            override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+            override fun onScroll(
+                view: AbsListView?,
+                firstVisibleItem: Int,
+                visibleItemCount: Int,
+                totalItemCount: Int
+            ) {
                 lastItemVisibleFlag = (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount)
             }
 
@@ -264,7 +424,7 @@ class KeyboardFragment : Fragment() {
         }
 
         view.findViewById<Button>(R.id.button_popup).setOnClickListener {
-            popupWindow.dismiss()
+//            popupWindow?.dismiss()
         }
 
         view.findViewById<LinearLayout>(R.id.storeLL).setOnClickListener {
@@ -324,17 +484,17 @@ class KeyboardFragment : Fragment() {
         val rootView = _activity.window.decorView.findViewById(android.R.id.content) as View
 
         if (Stipop.keyboardHeight > 0) {
-            popupWindow.showAtLocation(
-                rootView,
-                Gravity.BOTTOM,
-                0,
-                0
-            )
+//            popupWindow?.showAtLocation(
+//                rootView,
+//                Gravity.BOTTOM,
+//                0,
+//                0
+//            )
         }
     }
 
     internal fun hide() {
-        popupWindow.dismiss()
+//        popupWindow?.dismiss()
     }
 
     fun showStore(tab: Int) {

@@ -32,6 +32,9 @@ class StorePageFragment : Fragment() {
     @Inject
     internal lateinit var _viewModel: StorePageViewModel
 
+    private val _searchPackageListFragment: StoreSearchPackageListFragment = StoreSearchPackageListFragment()
+    private val _allPackageListFragment: StoreAllPackageListFragment = StoreAllPackageListFragment()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,63 +51,6 @@ class StorePageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(this::class.simpleName, "onViewCreated")
-        _binding.storeAllPackageList.apply {
-            this.layoutManager = LinearLayoutManager(context)
-            this.adapter = StoreAllPackageAdapter().apply {
-                this.onClickPackageListener = object : OnClickPackageListener {
-                    override fun onClick(item: SPPackage) {
-                        startActivity(Intent(activity, DetailActivity::class.java).apply {
-                            this.putExtra(DetailActivity.PACKAGE_ID, item.packageId)
-                        })
-                    }
-                }
-                this.onDownloadPackageListener = object : OnDownloadPackageListener {
-                    override fun onDownload(item: SPPackage) {
-                        _viewModel.onDownload(item)
-                    }
-                }
-            }
-            this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                        _binding.keywordET.clearFocus()
-                        val inputMethodManager =
-                            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-                    }
-                }
-
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (recyclerView.layoutManager is LinearLayoutManager) {
-                        _viewModel.onLoadMoreAllPackageList((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition())
-                    }
-                }
-            })
-        }
-        _binding.searchPackageList.apply {
-            this.layoutManager = LinearLayoutManager(context)
-            this.adapter = SearchPackageAdapter()
-            this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                        _binding.keywordET.clearFocus()
-                        val inputMethodManager =
-                            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-                    }
-                }
-
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (recyclerView.layoutManager is LinearLayoutManager) {
-                        _viewModel.onLoadMoreSearchPackageList((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition())
-                    }
-                }
-            })
-        }
 
         _binding.searchBar.apply {
             setOnClickSearchDeleteButtonListener {
@@ -131,22 +77,6 @@ class StorePageFragment : Fragment() {
                 Log.d(this::class.simpleName, "storeMode -> $value")
                 _onChangeStorePageMode(value)
             }
-
-            _viewModel.storeAllPackageList.observe(it) { value ->
-                Log.d(this::class.simpleName, "storePackageSectionList.size -> ${value.size}")
-                with(_binding.storeAllPackageList.adapter as? StoreAllPackageAdapter) {
-                    this?.setItemList(value)
-                }
-            }
-
-            _viewModel.storeSearchPackageList.observe(it) { value ->
-                Log.d(this::class.simpleName, "searchPackageList.size -> ${value.size}")
-                with(_binding.searchPackageList.adapter as? SearchPackageAdapter) {
-                    this?.setItemList(value)
-                }
-            }
-
-            _viewModel.onLoadAllPackageList()
         }
     }
 
@@ -154,14 +84,11 @@ class StorePageFragment : Fragment() {
         Log.d(this::class.simpleName, "onChangeStoreMode")
         when (mode) {
             StorePageMode.ALL -> {
-                _binding.storeAllPackageList.visibility = View.VISIBLE
-                _binding.searchPackageList.visibility = View.GONE
+                childFragmentManager.beginTransaction().replace(_binding.container.id, _allPackageListFragment).commit()
             }
             StorePageMode.SEARCH -> {
-                _binding.storeAllPackageList.visibility = View.GONE
-                _binding.searchPackageList.visibility = View.VISIBLE
+                childFragmentManager.beginTransaction().replace(_binding.container.id, _searchPackageListFragment).commit()
             }
         }
-        _binding.keywordET.setText("")
     }
 }

@@ -13,10 +13,4 @@ class SPArtistNameLabel(context: Context, attrs: AttributeSet? = null) : SPTextV
 
         setTextColor(Config.getArtistNameTextColor(context))
     }
-
-    override fun dispatchDraw(canvas: Canvas?) {
-        super.dispatchDraw(canvas)
-
-        setTextColor(Config.getArtistNameTextColor(context))
-    }
 }

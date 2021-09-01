@@ -2,7 +2,6 @@ package io.stipop.refactor.present.ui.view_models
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.toLiveData
 import io.reactivex.rxjava3.core.BackpressureStrategy
@@ -11,7 +10,6 @@ import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.data.models.SPUser
 import io.stipop.refactor.data.repositories.MyStickersRepository
 import io.stipop.refactor.data.repositories.UserRepository
-import io.stipop.refactor.domain.entities.PageMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
