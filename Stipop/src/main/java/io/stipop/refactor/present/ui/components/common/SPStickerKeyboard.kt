@@ -19,6 +19,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -32,6 +33,8 @@ import io.stipop.databinding.LayoutKeyboardBinding
 import io.stipop.extend.StipopImageView
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.data.models.SPSticker
+import io.stipop.refactor.domain.entities.SPPackageItem
+import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.present.ui.adapters.KeyboardPackageAdapter
 import io.stipop.refactor.present.ui.adapters.StickerAdapter
 import io.stipop.refactor.present.ui.pages.store.SPStoreActivity
@@ -79,12 +82,15 @@ class SPKeyboardPresenter : SPKeyboard.Presenter {
 
 class SPKeyboardPopupWindow(private val activity: Activity) : PopupWindow(), SPKeyboard.View {
 
-    private var rootView: View? = null
+    private var _rootView: View? = null
 
-    private lateinit var _binding: LayoutKeyboardBinding
+    private var _binding: LayoutKeyboardBinding
 
     @Inject
-    internal lateinit var _viewModel: KeyboardViewModel
+    lateinit var _viewModel: KeyboardViewModel
+
+    private var _packagePagingPresenter: SPPaging.Presenter<SPPackageItem>? = null
+    private var _stickerPagingPresenter: SPPaging.Presenter<SPStickerItem>? = null
 
     private val _metrics: DisplayMetrics
         get() {
@@ -102,6 +108,33 @@ class SPKeyboardPopupWindow(private val activity: Activity) : PopupWindow(), SPK
         get() = isShowing
 
     init {
+
+        _packagePagingPresenter = object : SPPaging.Presenter<SPPackageItem> {
+
+            var _view: SPPaging.View<SPPackageItem>? = null
+
+            override fun onBind(view: SPPaging.View<SPPackageItem>?) {
+                _view = view
+            }
+
+            override fun onLoadMoreList(offset: Int) {
+                _viewModel.onLoadMorePackageList(offset)
+            }
+        }
+
+        _stickerPagingPresenter = object : SPPaging.Presenter<SPStickerItem> {
+
+            var _view: SPPaging.View<SPStickerItem>? = null
+
+            override fun onBind(view: SPPaging.View<SPStickerItem>?) {
+                _view = view
+            }
+
+            override fun onLoadMoreList(offset: Int) {
+                _viewModel.onLoadMorePackageList(offset)
+            }
+        }
+
         _binding = LayoutKeyboardBinding.inflate(LayoutInflater.from(activity)).apply {
 
             recentButton.setOnClickListener {
@@ -119,13 +152,31 @@ class SPKeyboardPopupWindow(private val activity: Activity) : PopupWindow(), SPK
                     putExtra(StoreMode.TAG, StoreMode.STORE_PAGE.rawValue)
                 })
             }
+        }
 
-        }
         contentView = _binding.root
-        rootView = with(activity.window.decorView.findViewById<View?>(android.R.id.content)) {
-           this
+
+        contentView.findViewTreeLifecycleOwner()?.let {
+
+                lifecycleOwner ->
+
+            _viewModel.let {
+
+                    viewModel ->
+                viewModel.packageList.observe(lifecycleOwner) {
+
+                }
+
+
+            }
         }
-        rootView?.let {
+
+
+
+        _rootView = with(activity.window.decorView.findViewById<View?>(android.R.id.content)) {
+            this
+        }
+        _rootView?.let {
 
             it.viewTreeObserver.addOnPreDrawListener {
                 _keyboardHeight = if (_activityHeight > it.height) {
@@ -152,7 +203,7 @@ class SPKeyboardPopupWindow(private val activity: Activity) : PopupWindow(), SPK
     override fun onShow() {
         Log.d(this::class.simpleName, "onShow")
 
-        rootView?.let {
+        _rootView?.let {
             Log.d(this::class.simpleName, "showAtLocation")
             showAtLocation(it.rootView, Gravity.DISPLAY_CLIP_HORIZONTAL or Gravity.BOTTOM, 0, 0)
             update(0, 0, _keyboardWidth, _keyboardHeight)

@@ -3,7 +3,9 @@ package io.stipop.refactor.data.repositories
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.stipop.refactor.data.datasources.SearchRestDatasource
-import io.stipop.refactor.domain.entities.*
+import io.stipop.refactor.domain.entities.SPKeywordItem
+import io.stipop.refactor.domain.entities.SPPageMap
+import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.domain.repositories.SearchRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,58 +15,70 @@ import javax.inject.Inject
 class SearchDataRepository @Inject constructor(
     private val _remoteDatasource: SearchRestDatasource
 ) : SearchRepository {
-    private var _searchKeywordChanges: BehaviorSubject<String> = BehaviorSubject.create<String>().apply {
-        onNext("")
-    }
+    private val _recentSearchKeywordListChanges: BehaviorSubject<List<SPKeywordItem>> =
+        BehaviorSubject.create<List<SPKeywordItem>?>().apply {
+            onNext(listOf())
+        }
+    private val _recentSearchKeywordList: ArrayList<SPKeywordItem> = arrayListOf()
+    override val recentSearchKeywordList: Observable<List<SPKeywordItem>>
+        get() = _recentSearchKeywordListChanges.map {
+            it.forEach {
+                if (_recentSearchKeywordList.contains(it)) {
+                    _recentSearchKeywordList[_recentSearchKeywordList.indexOf(it)] = it
+                } else {
+                    _recentSearchKeywordList.add(it)
+                }
+            }
+            _recentSearchKeywordList
+        }
+
     private var _searchKeywordListChanges: BehaviorSubject<List<SPKeywordItem>> =
         BehaviorSubject.create<List<SPKeywordItem>?>().apply {
             onNext(listOf())
         }
-    private var _searchKeywordList: List<SPKeywordItem> = listOf()
+    private var _searchKeywordList: ArrayList<SPKeywordItem> = arrayListOf()
+    override val searchKeywordList: Observable<List<SPKeywordItem>>
+        get() = _searchKeywordListChanges.map {
+            it.forEach {
+                if (_searchKeywordList.contains(it)) {
+                    _searchKeywordList[_searchKeywordList.indexOf(it)] = it
+                } else {
+                    _searchKeywordList.add(it)
+                }
+            }
+            _searchKeywordList
+        }
+
 
     private var _searchStickerListChanges: BehaviorSubject<List<SPStickerItem>> =
         BehaviorSubject.create<List<SPStickerItem>?>().apply {
             onNext(listOf())
         }
-    private var _searchStickerList: List<SPStickerItem> = listOf()
-
-    override val searchKeywordList: Observable<List<SPKeywordItem>> get() = _searchKeywordListChanges
+    private val _searchStickerList: ArrayList<SPStickerItem> = arrayListOf()
     override val searchStickerList: Observable<List<SPStickerItem>>
-        get() = Observable.combineLatest(
-            _searchKeywordChanges, _searchKeywordListChanges
-        ) { a, b ->
-            listOf<SPStickerItem>()
+        get() = _searchStickerListChanges.map {
+            it.forEach {
+                if (_searchStickerList.contains(it)) {
+                    _searchStickerList[_searchStickerList.indexOf(it)] = it
+                } else {
+                    _searchStickerList.add(it)
+                }
+            }
+            _searchStickerList
         }
+    override val searchStickerListPageMap: Observable<SPPageMap>
+        get() = TODO("Not yet implemented")
 
-    override suspend fun stickerSearch(
-        apikey: String,
-        q: String,
-        userId: String,
-        lang: String?,
-        countryCode: String?,
-        limit: Int?,
-        pageNumber: Int?
-    ): SPStickerListResponse {
-        return _remoteDatasource.stickerSearch(apikey, q, userId, lang, countryCode, limit, pageNumber)
-    }
 
-    override suspend fun trendingSearchTerms(
+    override fun onLoadSearchKeywordList(
         apikey: String,
         userId: String,
-        lang: String?,
+        language: String?,
         countryCode: String?,
         limit: Int?
-    ): SPKeywordListResponse {
-        return _remoteDatasource.trendingSearchTerms(apikey, userId, lang, countryCode, limit)
-    }
-
-    override suspend fun recentSearch(apikey: String, userId: String): SPKeywordListResponse {
-        return _remoteDatasource.recentSearch(apikey, userId)
-    }
-
-    override fun onLoadSearchKeywordList(apikey: String, userId: String) {
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
-            trendingSearchTerms(apikey, userId)
+            _remoteDatasource.trendingSearchTerms(apikey, userId, language, countryCode, limit)
                 .run {
                     body.keywordList?.let {
                         _searchKeywordListChanges.onNext(it)
@@ -73,15 +87,21 @@ class SearchDataRepository @Inject constructor(
         }
     }
 
-    override fun onLoadSearchStickerList(apikey: String,
-                                         userId: String,
-                                         keyword: String,
-                                         lang: String?,
-                                         countryCode: String?,
-                                         limit: Int?,
-                                         pageNumber: Int?) {
+    override fun onLoadRecentSearchKeywordList(apikey: String, userId: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onLoadSearchStickerList(
+        apikey: String,
+        userId: String,
+        keyword: String,
+        lang: String?,
+        countryCode: String?,
+        limit: Int?,
+        pageNumber: Int?
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
-            stickerSearch(apikey, keyword, userId, lang, countryCode, limit, pageNumber).run {
+            _remoteDatasource.stickerSearch(apikey, keyword, userId, lang, countryCode, limit, pageNumber).run {
                 body.stickerList?.let {
                     _searchStickerListChanges.onNext(it)
                 }
