@@ -8,9 +8,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
 interface PagingRepository<T> {
-    val list: List<T>?
+    var list: List<T>?
+    var pageMap: SPPageMap?
+
     val listChanges: Observable<List<T>>
-    val pageMap: SPPageMap?
 
     fun getPageNumber(offset: Int?, pageMap: SPPageMap?): Int {
         return (pageMap?.pageNumber ?: 0)
@@ -64,9 +65,21 @@ interface PagingRepository<T> {
         Log.d(this::class.simpleName, "has more = ${getHasMore(list, pageMap, offset)}")
         Log.d(this::class.simpleName, "has valid position = ${getValidLoadPosition(list, pageMap, offset)}")
 
-        if (getHasMore(list, pageMap, offset) && getValidLoadPosition(list, pageMap, offset)) {
+
+        val _offset = if (offset < 0) {
+            list = null
+            pageMap = null
+            0
+        } else {
+            offset
+        }
+
+        if (getHasMore(list, pageMap, _offset) && getValidLoadPosition(list, pageMap, _offset)) {
             runBlocking(Dispatchers.IO) {
-                onLoadList(user, keyword, offset, limit)
+
+
+
+                onLoadList(user, keyword, _offset, limit)
             }
         }
     }

@@ -6,6 +6,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.stipop.refactor.data.datasources.SearchRestDatasource
 import io.stipop.refactor.domain.entities.SPKeywordItem
 import io.stipop.refactor.domain.entities.SPPageMap
+import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.domain.entities.SPUser
 import io.stipop.refactor.domain.repositories.SearchKeywordRepository
 import kotlinx.coroutines.Dispatchers
@@ -15,15 +16,27 @@ import javax.inject.Inject
 class SearchKeywordDataRepository @Inject constructor(
     private val _remoteDatasource: SearchRestDatasource
 ) : SearchKeywordRepository {
-    private var _list: List<SPKeywordItem>? = null
-    override val list: List<SPKeywordItem>?
-        get() = _list
+    override var list: List<SPKeywordItem>? = null
     val _listChanged: BehaviorSubject<List<SPKeywordItem>> = BehaviorSubject.create()
     override val listChanges: Observable<List<SPKeywordItem>>
-        get() = _listChanged
-    private var _pageMap: SPPageMap? = null
-    override val pageMap: SPPageMap?
-        get() = _pageMap
+        get() = _listChanged.map {
+            arrayListOf<SPKeywordItem>().apply {
+                addAll(list ?: listOf())
+
+                it?.forEach {
+
+                    if (this.contains(it)) {
+                        this[this.indexOf(it)] = it
+                    } else {
+                        this.add(it)
+                    }
+                }
+
+                list = this
+            }
+        }
+
+    override var pageMap: SPPageMap? = null
 
     override fun onLoadList(user: SPUser, keyword: String, offset: Int?, limit: Int?) {
         Log.d(
@@ -35,12 +48,6 @@ class SearchKeywordDataRepository @Inject constructor(
                     "pageNumber -> ${getPageNumber(offset, pageMap)} \n" +
                     ""
         )
-
-        offset?.let {
-            if (it < 0) {
-                _list = listOf()
-            }
-        }
 
         runBlocking(Dispatchers.IO) {
             try {

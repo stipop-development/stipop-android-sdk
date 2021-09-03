@@ -17,16 +17,12 @@ class MyActiveStickersDataRepository
     private val _remoteDatasource: MyStickersDatasource
 ) : MyActiveStickersRepository {
 
-    private var _job = SupervisorJob()
-
-    private var _list: ArrayList<SPPackageItem>? = null
-    override val list: List<SPPackageItem>?
-        get() = _list
+    override var list: List<SPPackageItem>? = null
     private val _listChanged: PublishSubject<List<SPPackageItem>> = PublishSubject.create()
     override val listChanges: Observable<List<SPPackageItem>>
         get() = _listChanged.map { _changed ->
             arrayListOf<SPPackageItem>().apply {
-                addAll(_list ?: listOf())
+                addAll(list ?: listOf())
                 _changed?.let {
                     it.forEach {
                         if (contains(it)) {
@@ -35,13 +31,12 @@ class MyActiveStickersDataRepository
                             this.add(it)
                         }
                     }
-                    _list = this
+                    list = this
                 }
             }
         }
 
-    private var _pageMap: SPPageMap? = null
-    override val pageMap: SPPageMap? get() = _pageMap
+    override var pageMap: SPPageMap? = null
 
     override fun onLoadList(
         user: SPUser,
@@ -69,7 +64,7 @@ class MyActiveStickersDataRepository
                     .run {
                         body.packageList?.let {
                             if (it.isNotEmpty()) {
-                                _pageMap = body.pageMap
+                                pageMap= body.pageMap
                                 _listChanged.onNext(it)
                             }
                         }
@@ -89,16 +84,18 @@ class MyActiveStickersDataRepository
                     "userId -> ${user.userId} \n" +
                     "index -> $index \n"
         )
-        CoroutineScope(Dispatchers.IO).launch {
+        runBlocking(Dispatchers.IO) {
             try {
-                _list?.let {
+                list?.let {
+
                     val _item = it[index]
                     _remoteDatasource.hideRecoverMyPack(user.apikey, user.userId, _item.packageId)
+                    _listChanged.onNext(arrayListOf<SPPackageItem>().apply {
+                        addAll(it)
+                        remove(_item)
+                    })
 
-                    it.remove(_item)
-                    _listChanged.onNext(it)
-
-                    _pageMap?.let {
+                    pageMap?.let {
                         delay(300)
                         onLoadList(user, "", index)
                     }
@@ -109,8 +106,6 @@ class MyActiveStickersDataRepository
             } finally {
 
             }
-
-
         }
     }
 }

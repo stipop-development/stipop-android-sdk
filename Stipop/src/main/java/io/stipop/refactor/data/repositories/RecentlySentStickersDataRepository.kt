@@ -17,8 +17,9 @@ class RecentlySentStickersDataRepository @Inject constructor(
 ) : RecentlySentStickersRepository {
     private var _list: List<SPStickerItem>? = null
 
-    override val list: List<SPStickerItem>?
+    override var list: List<SPStickerItem>?
         get() = _list
+        set(value) { _list = value }
 
     private val _listChanged: BehaviorSubject<List<SPStickerItem>> = BehaviorSubject.createDefault(listOf())
 
@@ -40,8 +41,9 @@ class RecentlySentStickersDataRepository @Inject constructor(
 
     private var _pageMap: SPPageMap? = null
 
-    override val pageMap: SPPageMap?
+    override var pageMap: SPPageMap?
         get() = _pageMap
+        set(value) { _pageMap = value }
 
     override fun onLoadList(user: SPUser, keyword: String, offset: Int?, limit: Int?) {
         Log.d(

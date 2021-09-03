@@ -15,15 +15,26 @@ import javax.inject.Inject
 class SearchStickerDataRepository @Inject constructor(
     private val _remoteDatasource: SearchRestDatasource
 ) : SearchStickerRepository {
-    private var _list: List<SPStickerItem>? = null
-    override val list: List<SPStickerItem>?
-        get() = _list
+    override var list: List<SPStickerItem>? = null
     val _listChanged: BehaviorSubject<List<SPStickerItem>> = BehaviorSubject.create()
     override val listChanges: Observable<List<SPStickerItem>>
-        get() = _listChanged
-    private var _pageMap: SPPageMap? = null
-    override val pageMap: SPPageMap?
-        get() = _pageMap
+        get() = _listChanged.map {
+            arrayListOf<SPStickerItem>().apply {
+                addAll(list ?: listOf())
+
+                it?.forEach {
+
+                    if (this.contains(it)) {
+                        this[this.indexOf(it)] = it
+                    } else {
+                        this.add(it)
+                    }
+                }
+
+                list = this
+            }
+        }
+    override var pageMap: SPPageMap? = null
 
     override fun onLoadList(user: SPUser, keyword: String, offset: Int?, limit: Int?) {
         Log.d(
@@ -35,6 +46,7 @@ class SearchStickerDataRepository @Inject constructor(
                     "pageNumber -> ${getPageNumber(offset, pageMap)} \n" +
                     ""
         )
+
         runBlocking(Dispatchers.IO) {
             try {
                 _remoteDatasource.stickerSearch(
@@ -49,7 +61,7 @@ class SearchStickerDataRepository @Inject constructor(
                     .run {
                         body.stickerList?.let {
                             if (it.isNotEmpty()) {
-                                _pageMap = body.pageMap
+                                pageMap = body.pageMap
                                 _listChanged.onNext(it)
                             }
                         }
