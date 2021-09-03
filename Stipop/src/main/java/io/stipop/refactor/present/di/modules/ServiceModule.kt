@@ -21,7 +21,7 @@ class ServiceModule {
 
     private val _httpClient = with(OkHttpClient.Builder()) {
         addInterceptor(HttpLoggingInterceptor().apply {
-            setLevel(HttpLoggingInterceptor.Level.BODY)
+            setLevel(HttpLoggingInterceptor.Level.HEADERS)
         })
         build()
     }

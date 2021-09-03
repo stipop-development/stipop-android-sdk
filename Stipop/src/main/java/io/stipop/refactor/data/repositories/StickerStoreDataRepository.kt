@@ -195,8 +195,8 @@ class StickerStoreDataRepository @Inject constructor(
     suspend fun onLoadPackage(apikey: String, userId: String, pack: SPPackage) {
         stickerPackInfo(apikey, pack.packageId, userId).apply {
             body.let {
-                _allPackageListChanges.onNext(listOf(SPPackage.fromEntity(it._package)))
-                _searchPackageListChanges.onNext(listOf(SPPackage.fromEntity(it._package)))
+                _allPackageListChanges.onNext(listOf(SPPackage.fromEntity(it.packageItem)))
+                _searchPackageListChanges.onNext(listOf(SPPackage.fromEntity(it.packageItem)))
             }
         }
     }

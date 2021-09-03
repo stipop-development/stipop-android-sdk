@@ -1,4 +1,4 @@
-package io.stipop.refactor.domain.repositories.sticker_store
+package io.stipop.refactor.domain.repositories.common
 
 import io.reactivex.rxjava3.core.Observable
 import io.stipop.refactor.domain.entities.SPPackageItem

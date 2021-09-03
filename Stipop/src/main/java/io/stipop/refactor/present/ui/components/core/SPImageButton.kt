@@ -9,12 +9,8 @@ import io.stipop.Config
 open class SPImageButton(context: Context, attrs: AttributeSet? = null) :
     androidx.appcompat.widget.AppCompatImageButton(context, attrs) {
 
-    init {
-        background = null
-    }
-
-    override fun draw(canvas: Canvas?) {
-        super.draw(canvas)
-        setColorFilter(Color.parseColor(Config.themeIconNormalColor))
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+        setBackgroundColor(Color.TRANSPARENT)
     }
 }

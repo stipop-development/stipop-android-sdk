@@ -1,9 +1,10 @@
 package io.stipop.refactor.domain.repositories
 
 import io.reactivex.rxjava3.core.Observable
-import io.stipop.Config.Companion.apikey
 import io.stipop.refactor.domain.entities.SPPageMap
 import io.stipop.refactor.domain.entities.SPUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 interface PagingRepository<T> {
     val list: List<T>?
@@ -11,29 +12,33 @@ interface PagingRepository<T> {
     val pageMap: SPPageMap?
 
     fun getPageNumber(offset: Int?, pageMap: SPPageMap?): Int {
-        return pageMap?.let { _pageMap ->
-            offset?.let { _offset ->
-                _offset / _pageMap.onePageCountRow
-            }
-        } ?: 1
+        return (pageMap?.pageNumber ?: 0)
     }
 
     fun getLimit(pageMap: SPPageMap?): Int {
         return pageMap?.onePageCountRow ?: 20
     }
 
-    val hasMore: Boolean
-        get() {
-            return list?.let { list ->
-                pageMap?.let { pageMap ->
-                    pageMap.totalCount > list.size
-                } ?: false
-            } ?: true
-        }
+    fun getHasMore(list: List<T>?, pageMap: SPPageMap?, offset: Int): Boolean {
+        return list?.let {
+
+            if (it.size - 1 == offset) {
+                return true
+            }
+
+            pageMap?.let {
+
+                pageMap.pageCount > pageMap.pageNumber
+
+            } ?: false
+
+
+        } ?: true
+    }
 
     val isEmpty: Boolean
         get() {
-            return list == null || (list?.isEmpty() ?: false && !hasMore)
+            return list?.isEmpty() ?: true
         }
 
     fun onLoadList(
@@ -49,8 +54,28 @@ interface PagingRepository<T> {
         offset: Int,
         limit: Int? = 20,
     ) {
-        if (hasMore) {
-            onLoadList(user, keyword, offset, limit)
+        if (getHasMore(list, pageMap, offset) && getValidLoadPosition(list, pageMap, offset)) {
+            runBlocking(Dispatchers.IO) {
+                onLoadList(user, keyword, offset, limit)
+            }
         }
+    }
+
+    fun getValidLoadPosition(list: List<T>?, pageMap: SPPageMap?, offset: Int): Boolean {
+        return list?.let {
+
+                list ->
+
+            pageMap?.let {
+
+                    pageMap ->
+
+                list.size - pageMap.onePageCountRow * 2 < offset
+
+
+            } ?: false
+
+
+        } ?: true
     }
 }

@@ -27,4 +27,6 @@ data class SPPackageItem(@SerializedName("packageCategory")
                          @SerializedName("isWish")
                            val isWish: String = "",
                          @SerializedName("order")
-                           val order: Int = 0)
+                           val order: Int = 0,
+                         @SerializedName("stickers")
+                           val stickers: List<SPStickerItem> = listOf())

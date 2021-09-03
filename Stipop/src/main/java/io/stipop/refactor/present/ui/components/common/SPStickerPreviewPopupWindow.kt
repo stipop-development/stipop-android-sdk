@@ -10,7 +10,7 @@ import io.stipop.*
 import io.stipop.extend.StipopImageView
 import io.stipop.refactor.data.models.SPSticker
 
-class SPStickerPreview(val activity: Activity, val keyboardFragment: SPKeyboardFragment) : PopupWindow() {
+class SPStickerPreviewPopupWindow(val activity: Activity) : PopupWindow() {
 
     private lateinit var rootView: View
 

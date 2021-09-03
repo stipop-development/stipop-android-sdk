@@ -7,15 +7,16 @@ import android.util.AttributeSet
 import io.stipop.Config
 import io.stipop.refactor.present.ui.components.core.SPImageButton
 
-open class SPIconImageButton(context: Context, attrs: AttributeSet? = null) : SPImageButton(context, attrs) {
+open class SPKeyboardImageTabButton(context: Context, attrs: AttributeSet? = null) : SPImageButton(context, attrs) {
+
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
-        when (isEnabled) {
+        when (isSelected) {
             true -> {
-                setColorFilter(Color.parseColor(Config.themeIconTintColor))
+                setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
             }
             false -> {
-                setColorFilter(Color.parseColor(Config.themeIconNormalColor))
+                setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
             }
         }
     }

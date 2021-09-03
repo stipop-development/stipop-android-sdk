@@ -1,91 +1,68 @@
 package io.stipop.refactor.present.ui.adapters
 
-import android.content.Context
-import android.graphics.Color
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
-import io.stipop.Config
-import io.stipop.R
-import io.stipop.refactor.present.ui.components.common.SPKeyboardFragment
-import io.stipop.extend.StipopImageView
-import io.stipop.refactor.data.models.SPPackage
+import io.stipop.databinding.ItemKeyboardPackageBinding
+import io.stipop.refactor.domain.entities.SPPackageItem
+import io.stipop.refactor.present.ui.components.common.SPPaging
 
 
-class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var context: Context, var keyboardFragment: SPKeyboardFragment):
-    RecyclerView.Adapter<KeyboardPackageAdapter.ViewHolder>() {
+class KeyboardPackageAdapter :
+    RecyclerView.Adapter<KeyboardPackageAdapter.ViewHolder>(), SPPaging.View<SPPackageItem> {
 
-    interface OnItemClickListener {
-        fun onItemClick(position: Int)
+    private lateinit var _binding: ItemKeyboardPackageBinding
+    private var _presenter: SPPaging.Presenter<SPPackageItem>? = null
+    private var _itemList: List<SPPackageItem> = listOf()
+
+    class ViewHolder(private val _binding: ViewBinding) : RecyclerView.ViewHolder(_binding.root) {
+
+        fun onBind(item: SPPackageItem) {
+            when (_binding) {
+                is ItemKeyboardPackageBinding -> {
+                    Glide.with(_binding.stickerImage).load(item.packageImg).into(_binding.stickerImage)
+                }
+            }
+        }
     }
 
-    private var mListener: OnItemClickListener? = null
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageIV: StipopImageView = view.findViewById(R.id.sticker_image)
-        val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
-    }
-
-    override fun getItemId(position: Int): Long {
-        return dataList[position].hashCode().toLong()
-    }
-
-    // Create new views (invoked by the layout manager)
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        // Create a new view, which defines the UI of the list item
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.item_keyboard_package, viewGroup, false)
-
-        return ViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        _binding = ItemKeyboardPackageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(_binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
-        val item = dataList[position]
-
-        if (item.packageId == -999) {
-            // Settings
-            holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-            holder.imageIV.setImageResource(R.mipmap.ic_setting)
-            holder.imageIV.setIconDefaultsColor()
-        } else {
-            val packageImg = item.packageImg
-
-            Glide.with(context).load(packageImg).dontAnimate().into(holder.imageIV)
-
-            val matrix = ColorMatrix()
-
-            if (keyboardFragment.selectedPackageId == item.packageId) {
-                holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
-                matrix.setSaturation(1.0f)
-            } else {
-                holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-                matrix.setSaturation(0.0f)
-            }
-
-            holder.imageIV.colorFilter = ColorMatrixColorFilter(matrix)
-        }
-
-        holder.containerLL.setOnClickListener {
-            if (mListener != null) {
-                mListener!!.onItemClick(position)
-            }
-        }
-
+        val item = _itemList[position]
+        holder.onBind(item)
+        notifyCurrentPosition(position)
     }
 
     override fun getItemCount(): Int {
-        return dataList.size
+        return _itemList.size
     }
 
-    // OnItemClickListener 리스너 객체 참조를 어댑터에 전달하는 메서드
-    fun setOnItemClickListener(listener: OnItemClickListener?) {
-        mListener = listener
+    override fun onBind(presenter: SPPaging.Presenter<SPPackageItem>?) {
+        _presenter = presenter
     }
+
+    override fun notifyCurrentPosition(index: Int) {
+        _presenter?.onLoadMoreList(index)
+    }
+
+    override fun setItemList(itemList: List<SPPackageItem>) {
+        Log.d(this::class.simpleName, "setItemList : \n" +
+                "itemList.size -> ${itemList.size}")
+        _itemList = itemList
+        notifyDataSetChanged()
+    }
+
+    override val itemList: List<SPPackageItem>
+        get() = _itemList
+
+    override val presenter: SPPaging.Presenter<SPPackageItem>?
+        get() = _presenter
 
 }

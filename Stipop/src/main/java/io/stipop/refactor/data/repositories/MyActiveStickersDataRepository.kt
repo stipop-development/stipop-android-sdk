@@ -9,16 +9,15 @@ import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.domain.entities.SPPageMap
 import io.stipop.refactor.domain.entities.SPUser
 import io.stipop.refactor.domain.repositories.MyActiveStickersRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class MyActiveStickersDataRepository
 @Inject constructor(
     private val _remoteDatasource: MyStickersDatasource
 ) : MyActiveStickersRepository {
+
+    private var _job = SupervisorJob()
 
     private var _list: ArrayList<SPPackageItem>? = null
     override val list: List<SPPackageItem>?
@@ -50,18 +49,29 @@ class MyActiveStickersDataRepository
         offset: Int?,
         limit: Int?
     ) {
-
-        CoroutineScope(Dispatchers.IO).launch {
+        Log.d(
+            this::class.simpleName, "onLoadList : \n " +
+                    "user -> $user \n" +
+                    "keyword -> $keyword \n" +
+                    "offset -> $offset \n" +
+                    "limit -> $limit \n" +
+                    "pageNumber -> ${getPageNumber(offset, pageMap)} \n" +
+                    ""
+        )
+        runBlocking(Dispatchers.IO) {
             try {
                 _remoteDatasource.myStickerPacks(
                     user.apikey,
                     user.userId,
                     limit,
-                    getPageNumber(offset, pageMap)
+                    getPageNumber(offset, pageMap) + 1
                 )
                     .run {
                         body.packageList?.let {
-                            _listChanged.onNext(it)
+                            if (it.isNotEmpty()) {
+                                _pageMap = body.pageMap
+                                _listChanged.onNext(it)
+                            }
                         }
                     }
             } catch (e: Exception) {
@@ -96,6 +106,8 @@ class MyActiveStickersDataRepository
 
             } catch (e: Exception) {
                 Log.e(this::class.simpleName, e.message, e)
+            } finally {
+
             }
 
 
