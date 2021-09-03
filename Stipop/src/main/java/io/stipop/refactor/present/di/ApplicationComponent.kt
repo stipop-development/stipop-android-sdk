@@ -7,7 +7,9 @@ import io.stipop.refactor.present.di.modules.RepositoryModule
 import io.stipop.refactor.present.di.modules.ServiceModule
 import io.stipop.refactor.present.di.modules.ViewModelModule
 import io.stipop.refactor.present.ui.components.common.KeyboardPackagePresenter
+import io.stipop.refactor.present.ui.components.common.KeyboardStickerPresenter
 import io.stipop.refactor.present.ui.components.common.SPStickerKeyboardPopupWindow
+import io.stipop.refactor.present.ui.components.common.SPStickerKeyboardPresenter
 import io.stipop.refactor.present.ui.pages.search_sticker.SPSearchStickerActivity
 import io.stipop.refactor.present.ui.pages.store.*
 import javax.inject.Singleton
@@ -34,4 +36,6 @@ interface ApplicationComponent {
     fun inject(instance: Stipop)
     fun inject(window: SPStickerKeyboardPopupWindow)
     fun inject(presenter: KeyboardPackagePresenter)
+    fun inject(presenter: KeyboardStickerPresenter)
+    fun inject(present: SPStickerKeyboardPresenter)
 }

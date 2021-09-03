@@ -29,37 +29,48 @@ import javax.inject.Inject
 interface SPStickerKeyboard {
 
     interface View {
+        val presenter: Presenter?
         val isShow: Boolean
+
+        fun onBind(presenter: Presenter?)
         fun onShow()
         fun onDismiss()
     }
 
     interface Presenter {
-        val isShow: Boolean
-        fun onShow()
-        fun onDismiss()
-        fun setView(view: View?)
+        fun willShow()
+        fun didShow()
+        fun willDismiss()
+        fun didDismiss()
     }
 }
 
 class SPStickerKeyboardPresenter : SPStickerKeyboard.Presenter {
-    private var _view: SPStickerKeyboard.View? = null
 
-    override val isShow: Boolean get() = _view?.isShow ?: false
-
-    override fun onShow() {
-        Log.d(this::class.simpleName, "onShow")
-        _view?.onShow()
+    init {
+        Stipop.appComponent.inject(this)
     }
 
-    override fun onDismiss() {
-        Log.d(this::class.simpleName, "onDismiss")
-        _view?.onDismiss()
+    @Inject
+    lateinit var _viewModel: StickerKeyboardViewModel
+
+    override fun willShow() {
+        Log.d(this::class.simpleName, "willShow")
+        _viewModel.onLoadMoreRecentlyStickerList(0)
+        _viewModel.onLoadMorePackageList(0)
     }
 
-    override fun setView(view: SPStickerKeyboard.View?) {
-        Log.d(this::class.simpleName, "setView")
-        _view = view
+    override fun didShow() {
+        Log.d(this::class.simpleName, "didShow")
+
+    }
+
+    override fun willDismiss() {
+        Log.d(this::class.simpleName, "willDismiss")
+    }
+
+    override fun didDismiss() {
+        Log.d(this::class.simpleName, "didDismiss")
     }
 }
 
@@ -91,6 +102,15 @@ class SPStickerKeyboardPopupWindow(
 
     override val isShow: Boolean
         get() = isShowing
+
+    private var _presenter: SPStickerKeyboard.Presenter? = null
+
+    override val presenter: SPStickerKeyboard.Presenter?
+        get() = _presenter
+
+    override fun onBind(presenter: SPStickerKeyboard.Presenter?) {
+        _presenter = presenter
+    }
 
     init {
 
@@ -132,7 +152,13 @@ class SPStickerKeyboardPopupWindow(
     private fun _setViewModel() {
         _viewModel.run {
             packageList.observe(_activity) {
-                _packagePagingPresenter?.setItemList(it)
+                Log.d(this::class.simpleName, "packageList.size = ${it.size}")
+                (_binding.myActivePackageList.adapter as? SPPaging.View<SPPackageItem>)?.setItemList(it)
+            }
+
+            stickerList.observe(_activity) {
+                Log.d(this::class.simpleName, "stickerList.size = ${it.size}")
+                (_binding.stickerList.adapter as? SPPaging.View<SPStickerItem>)?.setItemList(it)
             }
         }
     }
@@ -161,14 +187,12 @@ class SPStickerKeyboardPopupWindow(
                 layoutManager = LinearLayoutManager(_activity, RecyclerView.HORIZONTAL, false)
                 adapter = KeyboardPackageAdapter().apply {
                     onBind(_packagePagingPresenter)
-                    _packagePagingPresenter?.onBind(this)
                 }
             }
             stickerList.apply {
                 layoutManager = GridLayoutManager(_activity, 3)
                 adapter = KeyboardStickerAdapter().apply {
                     onBind(_stickerPagingPresenter)
-                    _stickerPagingPresenter?.onBind(this)
                 }
             }
         }
@@ -180,21 +204,20 @@ class SPStickerKeyboardPopupWindow(
         Log.d(this::class.simpleName, "onShow")
 
         _rootView?.let {
-            Log.d(this::class.simpleName, "showAtLocation")
-
-            _viewModel.onLoadMorePackageList(0)
 
             showAtLocation(it.rootView, Gravity.DISPLAY_CLIP_HORIZONTAL or Gravity.BOTTOM, 0, 0)
             update(0, 0, _keyboardWidth, _keyboardHeight)
 
             if (!_isShowKeyboard) {
-                    (_activity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.toggleSoftInput(
-                        InputMethodManager.SHOW_FORCED,
-                        0
-                    )
+                (_activity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.toggleSoftInput(
+                    InputMethodManager.SHOW_FORCED,
+                    0
+                )
 
             }
 
+            _viewModel.onLoadMoreRecentlyStickerList(0)
+            _viewModel.onLoadMorePackageList(0)
         }
     }
 
@@ -213,49 +236,40 @@ class KeyboardPackagePresenter : SPPaging.Presenter<SPPackageItem> {
     @Inject
     lateinit var _viewModel: StickerKeyboardViewModel
 
-    var _view: SPPaging.View<SPPackageItem>? = null
-
-    override fun onBind(view: SPPaging.View<SPPackageItem>?) {
-        Log.d(this::class.simpleName, "onBind : \n" +
-                "view -> $view")
-        _view = view
-    }
-
     override fun onLoadMoreList(index: Int) {
-        Log.d(this::class.simpleName, "onLoadMoreList : \n" +
-                "index -> $index")
-
+        Log.d(
+            this::class.simpleName, "onLoadMoreList : \n" +
+                    "index -> $index"
+        )
         _viewModel.onLoadMorePackageList(index)
     }
 
-    override val view: SPPaging.View<SPPackageItem>?
-        get() = _view
-
-    override fun setItemList(itemList: List<SPPackageItem>) {
-        Log.d(this::class.simpleName, "setItemList : \n" +
-                "itemList.size -> ${itemList.size}")
-        view?.setItemList(itemList)
+    override fun onClickedItem(item: SPPackageItem) {
+        _viewModel.onSelectPackage(item)
     }
 }
 
 class KeyboardStickerPresenter: SPPaging.Presenter<SPStickerItem> {
 
+    init {
+        Stipop.appComponent.inject(this)
+    }
+
     @Inject
     lateinit var _viewModel: StickerKeyboardViewModel
 
-    var _view: SPPaging.View<SPStickerItem>? = null
-
-    override fun onBind(view: SPPaging.View<SPStickerItem>?) {
-        _view = view
-    }
-
     override fun onLoadMoreList(index: Int) {
+        Log.d(
+            this::class.simpleName, "onLoadMoreList : \n" +
+                    "index -> ${index}"
+        )
     }
 
-    override val view: SPPaging.View<SPStickerItem>?
-        get() = _view
-
-    override fun setItemList(itemList: List<SPStickerItem>) {
-
+    override fun onClickedItem(item: SPStickerItem) {
+        Log.d(
+            this::class.simpleName, "onClickedItem : \n" +
+                    "item -> $item"
+        )
+        _viewModel.onSelectSticker(item)
     }
 }

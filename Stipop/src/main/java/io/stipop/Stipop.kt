@@ -1,7 +1,6 @@
 package io.stipop
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -14,7 +13,6 @@ import io.stipop.refactor.domain.entities.SPUser
 import io.stipop.refactor.domain.repositories.UserRepository
 import io.stipop.refactor.present.di.ApplicationComponent
 import io.stipop.refactor.present.di.DaggerApplicationComponent
-import io.stipop.refactor.present.ui.components.common.SPStickerKeyboard
 import io.stipop.refactor.present.ui.components.common.SPStickerKeyboardPopupWindow
 import io.stipop.refactor.present.ui.components.common.SPStickerKeyboardPresenter
 import io.stipop.refactor.present.ui.pages.search_sticker.SPSearchStickerActivity
@@ -25,7 +23,14 @@ interface StipopDelegate {
     fun canDownload(spPackage: SPPackage): Boolean
 }
 
-class Stipop(private val activity: AppCompatActivity, private val stipopButton: StipopImageView, val delegate: StipopDelegate) {
+class Stipop(
+    private val _activity: AppCompatActivity,
+    private val stipopButton: StipopImageView,
+    val delegate: StipopDelegate
+) {
+    private var _stickerKeyboardPopupWindow: SPStickerKeyboardPopupWindow? = null
+    private var _stickerKeyboardPresenter: SPStickerKeyboardPresenter? = null
+
     @Inject
     internal lateinit var userRepository: UserRepository
 
@@ -69,7 +74,6 @@ class Stipop(private val activity: AppCompatActivity, private val stipopButton: 
 
     private var maxTop = 0
     private var maxBottom = 0
-    private var _spKeyboardPresenter: SPStickerKeyboard.Presenter? = null
 
     private lateinit var rootView: View
 
@@ -79,17 +83,17 @@ class Stipop(private val activity: AppCompatActivity, private val stipopButton: 
 
     fun connect() {
         Log.d(this::class.simpleName, "connect")
-
         appComponent.inject(this)
 
-        this.stipopButton.setImageResource(Config.getStickerIconResourceId(this.activity))
-
+        this.stipopButton.setImageResource(Config.getStickerIconResourceId(this._activity))
         this.connected = true
+        this.rootView = this._activity.window.decorView.findViewById(android.R.id.content) as View
 
-        this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
+        _stickerKeyboardPresenter = SPStickerKeyboardPresenter()
+        _stickerKeyboardPopupWindow = SPStickerKeyboardPopupWindow(_activity).apply {
+            onBind(_stickerKeyboardPresenter)
+        }
 
-        _spKeyboardPresenter = SPStickerKeyboardPresenter()
-        _spKeyboardPresenter?.setView(SPStickerKeyboardPopupWindow(activity))
     }
 
     private fun showSearch() {
@@ -98,8 +102,8 @@ class Stipop(private val activity: AppCompatActivity, private val stipopButton: 
             return
         }
 
-        val intent = Intent(this.activity, SPSearchStickerActivity::class.java)
-        this.activity.startActivity(intent)
+        val intent = Intent(this._activity, SPSearchStickerActivity::class.java)
+        this._activity.startActivity(intent)
     }
 
     private fun onToggleKeyboard() {
@@ -108,11 +112,11 @@ class Stipop(private val activity: AppCompatActivity, private val stipopButton: 
             return
         }
 
-        _spKeyboardPresenter?.let {
-            if (it.isShow) {
-                it.onDismiss()
+        _stickerKeyboardPopupWindow?.run {
+            if (isShow) {
+                onDismiss()
             } else {
-                it.onShow()
+                onShow()
             }
         }
     }

@@ -37,6 +37,9 @@ class KeyboardPackageAdapter :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = _itemList[position]
         holder.onBind(item)
+        holder.itemView.setOnClickListener {
+            onClickItem(item)
+        }
         notifyCurrentPosition(position)
     }
 
@@ -64,5 +67,9 @@ class KeyboardPackageAdapter :
 
     override val presenter: SPPaging.Presenter<SPPackageItem>?
         get() = _presenter
+
+    override fun onClickItem(item: SPPackageItem) {
+        presenter?.onClickedItem(item)
+    }
 
 }

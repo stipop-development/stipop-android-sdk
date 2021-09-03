@@ -1,5 +1,6 @@
 package io.stipop.refactor.domain.repositories
 
+import android.util.Log
 import io.reactivex.rxjava3.core.Observable
 import io.stipop.refactor.domain.entities.SPPageMap
 import io.stipop.refactor.domain.entities.SPUser
@@ -54,6 +55,15 @@ interface PagingRepository<T> {
         offset: Int,
         limit: Int? = 20,
     ) {
+        Log.d(this::class.simpleName, "onLoadMoreList : \n" +
+                "user -> $user \n" +
+                "keyword -> $keyword \n" +
+                "offset -> $offset \n" +
+                "limit -> $limit \n"
+        )
+        Log.d(this::class.simpleName, "has more = ${getHasMore(list, pageMap, offset)}")
+        Log.d(this::class.simpleName, "has valid position = ${getValidLoadPosition(list, pageMap, offset)}")
+
         if (getHasMore(list, pageMap, offset) && getValidLoadPosition(list, pageMap, offset)) {
             runBlocking(Dispatchers.IO) {
                 onLoadList(user, keyword, offset, limit)

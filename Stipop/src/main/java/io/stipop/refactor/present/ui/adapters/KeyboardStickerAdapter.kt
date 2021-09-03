@@ -1,12 +1,11 @@
 package io.stipop.refactor.present.ui.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
-import io.stipop.R
-import io.stipop.extend.StipopImageView
+import androidx.viewbinding.ViewBinding
+import com.bumptech.glide.Glide
+import io.stipop.databinding.ItemStickerBinding
 import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.present.ui.components.common.SPPaging
 
@@ -14,33 +13,32 @@ import io.stipop.refactor.present.ui.components.common.SPPaging
 class KeyboardStickerAdapter :
     RecyclerView.Adapter<KeyboardStickerAdapter.ViewHolder>(), SPPaging.View<SPStickerItem> {
 
-    interface OnItemClickListener {
-        fun onItemClick(position: Int)
-    }
-
+    private lateinit var _binding: ItemStickerBinding
     private var _presenter: SPPaging.Presenter<SPStickerItem>? = null
     private var _itemList: List<SPStickerItem> = listOf()
-    private var mListener: OnItemClickListener? = null
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageIV: StipopImageView = view.findViewById(R.id.sticker_image)
-        val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
+    class ViewHolder(private val _binding: ViewBinding) : RecyclerView.ViewHolder(_binding.root) {
+        fun onBind(item: SPStickerItem) {
+            when (_binding) {
+                is ItemStickerBinding -> {
+                    Glide.with(_binding.stickerImage).load(item.stickerImg).into(_binding.stickerImage)
+                }
+            }
+        }
     }
 
-    // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        // Create a new view, which defines the UI of the list item
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.item_keyboard_package, viewGroup, false)
-
-        return ViewHolder(view)
+        _binding = ItemStickerBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+        return ViewHolder(_binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         val item = itemList[position]
+        holder.onBind(item)
+        holder.itemView.setOnClickListener {
+            onClickItem(item)
+        }
         notifyCurrentPosition(position)
-
     }
 
     override fun getItemCount(): Int {
@@ -49,6 +47,7 @@ class KeyboardStickerAdapter :
 
     override val presenter: SPPaging.Presenter<SPStickerItem>?
         get() = _presenter
+
     override val itemList: List<SPStickerItem>
         get() = _itemList
 
@@ -63,6 +62,10 @@ class KeyboardStickerAdapter :
     override fun setItemList(itemList: List<SPStickerItem>) {
         _itemList = itemList
         notifyDataSetChanged()
+    }
+
+    override fun onClickItem(item: SPStickerItem) {
+        presenter?.onClickedItem(item)
     }
 
 }

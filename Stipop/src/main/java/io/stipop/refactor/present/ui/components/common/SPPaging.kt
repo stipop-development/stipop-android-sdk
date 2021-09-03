@@ -9,13 +9,11 @@ interface SPPaging {
         fun onBind(presenter: Presenter<T>?)
         fun notifyCurrentPosition(index: Int)
         fun setItemList(itemList: List<T>)
+        fun onClickItem(item: T)
     }
 
     interface Presenter<T> {
-        val view: View<T>?
-
-        fun onBind(view: View<T>?)
         fun onLoadMoreList(index: Int)
-        fun setItemList(itemList: List<T>)
+        fun onClickedItem(item: T)
     }
 }
