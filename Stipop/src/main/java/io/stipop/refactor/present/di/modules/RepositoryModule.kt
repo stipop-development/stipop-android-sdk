@@ -25,7 +25,7 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    fun bindSearchRepository(repository: SearchDataRepository): SearchRepository
+    fun bindSearchRepository(repository: SearchStickerDataRepository): SearchStickerRepository
 
     @Singleton
     @Binds
@@ -42,4 +42,8 @@ interface RepositoryModule {
     @Singleton
     @Binds
     fun bindRecentlySentStickersRepository(repository: RecentlySentStickersDataRepository): RecentlySentStickersRepository
+
+    @Singleton
+    @Binds
+    fun bindSearchKeywordRepository(repository: SearchKeywordDataRepository): SearchKeywordRepository
 }

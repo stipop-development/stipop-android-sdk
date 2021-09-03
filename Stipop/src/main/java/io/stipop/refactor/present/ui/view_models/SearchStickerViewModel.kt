@@ -7,55 +7,63 @@ import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.stipop.refactor.domain.entities.SPKeywordItem
 import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.domain.entities.SPUser
-import io.stipop.refactor.domain.repositories.SearchRepository
+import io.stipop.refactor.domain.repositories.SearchKeywordRepository
+import io.stipop.refactor.domain.repositories.SearchStickerRepository
 import io.stipop.refactor.domain.repositories.UserRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class SearchStickerViewModel @Inject constructor(
     private val _userRepository: UserRepository,
-    private val _searchRepository: SearchRepository,
+    private val _searchStickerRepository: SearchStickerRepository,
+    private val _searchKeywordRepository: SearchKeywordRepository,
 ) : SearchStickerViewModelProtocol {
 
     override val user: LiveData<SPUser>
         get() = _userRepository.user.toFlowable(BackpressureStrategy.LATEST).toLiveData()
 
     override val searchKeywordList: LiveData<List<SPKeywordItem>>
-        get() = _searchRepository.searchKeywordList.toFlowable(BackpressureStrategy.LATEST).toLiveData()
+        get() = _searchKeywordRepository.listChanges.toFlowable(BackpressureStrategy.LATEST).toLiveData()
 
     override val searchStickerList: LiveData<List<SPStickerItem>>
-        get() = _searchRepository.searchStickerList.toFlowable(BackpressureStrategy.LATEST).toLiveData()
+        get() = _searchStickerRepository.listChanges.toFlowable(BackpressureStrategy.LATEST).toLiveData()
 
     override fun onChangeSearchKeyword(keyword: String?) {
         Log.d(
             this::class.simpleName, "onChangeSearchKeyword : \n" +
                     "keyword -> $keyword \n"
         )
-        onLoadSearchStickerList(keyword)
+        keyword?.let {
+            onLoadSearchStickerList(it, 0)
+        }
     }
 
-    override fun onLoadSearchKeywordList() {
+    override fun onLoadSearchKeywordList(index: Int) {
         Log.d(
             this::class.simpleName, "onLoadSearchKeywordList : \n"
         )
-        _userRepository.currentUser?.let { user ->
-            _searchRepository.onLoadSearchKeywordList(user.apikey, user.userId)
+        runBlocking(Dispatchers.IO) {
+            _userRepository.currentUser?.let { user ->
+                _searchKeywordRepository.onLoadMoreList(user, "", index)
+            }
         }
     }
 
-    override fun onLoadSearchStickerList(keyword: String?, lastIndex: Int?) {
+    override fun onLoadSearchStickerList(keyword: String, index: Int) {
         Log.d(
             this::class.simpleName, "onLoadSearchStickerList : \n" +
                     "keyword -> $keyword \n" +
-                    "lastIndex -> $lastIndex \n"
+                    "index -> $index \n"
         )
-        _userRepository.currentUser?.let { user ->
-            CoroutineScope(Dispatchers.IO).launch {
-                _searchRepository.onLoadSearchStickerList(user.apikey, user.userId, keyword ?: "")
+        runBlocking(Dispatchers.IO) {
+            _userRepository.currentUser?.let { user ->
+                _searchStickerRepository.onLoadMoreList(user, keyword, index)
             }
         }
+
     }
 }
 
@@ -66,6 +74,6 @@ interface SearchStickerViewModelProtocol {
     val searchStickerList: LiveData<List<SPStickerItem>>
 
     fun onChangeSearchKeyword(keyword: String?)
-    fun onLoadSearchKeywordList()
-    fun onLoadSearchStickerList(keyword: String? = "", lastIndex: Int? = -1)
+    fun onLoadSearchKeywordList(index: Int)
+    fun onLoadSearchStickerList(keyword: String, index: Int)
 }

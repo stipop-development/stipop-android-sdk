@@ -3,43 +3,25 @@ package io.stipop.refactor.data.repositories
 import android.util.Log
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.stipop.refactor.data.datasources.SearchRestDatasource
 import io.stipop.refactor.domain.entities.SPPageMap
 import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.domain.entities.SPUser
-import io.stipop.refactor.domain.repositories.sticker_send.RecentlySentStickersRepository
-import io.stipop.refactor.domain.services.StickerSendService
+import io.stipop.refactor.domain.repositories.SearchStickerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
-class RecentlySentStickersDataRepository @Inject constructor(
-    private val stickerSendService: StickerSendService,
-) : RecentlySentStickersRepository {
+class SearchStickerDataRepository @Inject constructor(
+    private val _remoteDatasource: SearchRestDatasource
+) : SearchStickerRepository {
     private var _list: List<SPStickerItem>? = null
-
     override val list: List<SPStickerItem>?
         get() = _list
-
-    private val _listChanged: BehaviorSubject<List<SPStickerItem>> = BehaviorSubject.createDefault(listOf())
-
+    val _listChanged: BehaviorSubject<List<SPStickerItem>> = BehaviorSubject.create()
     override val listChanges: Observable<List<SPStickerItem>>
-        get() = _listChanged.map {
-
-            arrayListOf<SPStickerItem>().apply {
-                addAll(_list ?: listOf())
-                it?.forEach {
-                    if (this.contains(it)) {
-                        this[this.indexOf(it)] = it
-                    } else {
-                        this.add(it)
-                    }
-                }
-                _list = this
-            }
-        }
-
+        get() = _listChanged
     private var _pageMap: SPPageMap? = null
-
     override val pageMap: SPPageMap?
         get() = _pageMap
 
@@ -55,9 +37,12 @@ class RecentlySentStickersDataRepository @Inject constructor(
         )
         runBlocking(Dispatchers.IO) {
             try {
-                stickerSendService.recentlySentStickers(
+                _remoteDatasource.stickerSearch(
                     user.apikey,
+                    keyword,
                     user.userId,
+                    user.language,
+                    user.country,
                     limit,
                     getPageNumber(offset, pageMap) + 1
                 )
@@ -75,4 +60,5 @@ class RecentlySentStickersDataRepository @Inject constructor(
             }
         }
     }
+
 }
