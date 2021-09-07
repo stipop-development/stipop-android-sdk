@@ -59,14 +59,18 @@ class StickerKeyboardViewModelV1
             }
         }
 
-    override fun onSelectPackage(item: SPPackageItem) {
+    override fun onSelectPackage(item: SPPackageItem?) {
         Log.d(
             this::class.simpleName, "onSelectPackage : \n" +
                     "item -> $item"
         )
         runBlocking(Dispatchers.IO) {
             _userRepository.currentUser?.let { user ->
-                _stickerPackInfoRepository.onLoad(user, item.packageId)
+                if (item == null) {
+                    _recentlySentStickersRepository.onLoadMoreList(user, "", -1)
+                } else {
+                    _stickerPackInfoRepository.onLoad(user, item.packageId)
+                }
             }
         }
     }
@@ -126,7 +130,7 @@ interface StickerKeyboardViewModel {
     val packageList: LiveData<List<SPPackageItem>>
     val stickerList: LiveData<List<SPStickerItem>>
 
-    fun onSelectPackage(item: SPPackageItem)
+    fun onSelectPackage(item: SPPackageItem?)
     fun onLoadMorePackageList(index: Int)
     fun onLoadMoreStickerList(index: Int)
     fun onLoadMoreRecentlyStickerList(index: Int)

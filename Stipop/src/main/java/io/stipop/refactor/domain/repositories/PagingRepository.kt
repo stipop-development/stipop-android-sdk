@@ -62,9 +62,6 @@ interface PagingRepository<T> {
                 "offset -> $offset \n" +
                 "limit -> $limit \n"
         )
-        Log.d(this::class.simpleName, "has more = ${getHasMore(list, pageMap, offset)}")
-        Log.d(this::class.simpleName, "has valid position = ${getValidLoadPosition(list, pageMap, offset)}")
-
 
         val _offset = if (offset < 0) {
             list = null
@@ -76,9 +73,6 @@ interface PagingRepository<T> {
 
         if (getHasMore(list, pageMap, _offset) && getValidLoadPosition(list, pageMap, _offset)) {
             runBlocking(Dispatchers.IO) {
-
-
-
                 onLoadList(user, keyword, _offset, limit)
             }
         }

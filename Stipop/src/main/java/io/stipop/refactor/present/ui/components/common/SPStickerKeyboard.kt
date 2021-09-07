@@ -56,7 +56,6 @@ class SPStickerKeyboardPresenter : SPStickerKeyboard.Presenter {
 
     override fun willShow() {
         Log.d(this::class.simpleName, "willShow")
-        _viewModel.onLoadMoreRecentlyStickerList(0)
         _viewModel.onLoadMorePackageList(0)
     }
 
@@ -167,8 +166,7 @@ class SPStickerKeyboardPopupWindow(
         _binding = LayoutKeyboardBinding.inflate(LayoutInflater.from(_activity)).apply {
 
             recentButton.setOnClickListener {
-                it?.isSelected = true
-                _viewModel.onLoadMoreRecentlyStickerList(0)
+                _viewModel.onSelectPackage(null)
             }
 
             settingButton.setOnClickListener {
@@ -216,8 +214,7 @@ class SPStickerKeyboardPopupWindow(
 
             }
 
-            _viewModel.onLoadMoreRecentlyStickerList(0)
-            _viewModel.onLoadMorePackageList(0)
+            _viewModel.onLoadMorePackageList(-1)
         }
     }
 

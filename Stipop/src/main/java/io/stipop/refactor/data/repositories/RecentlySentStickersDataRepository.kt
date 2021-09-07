@@ -25,7 +25,6 @@ class RecentlySentStickersDataRepository @Inject constructor(
 
     override val listChanges: Observable<List<SPStickerItem>>
         get() = _listChanged.map {
-
             arrayListOf<SPStickerItem>().apply {
                 addAll(_list ?: listOf())
                 it?.forEach {
@@ -55,25 +54,22 @@ class RecentlySentStickersDataRepository @Inject constructor(
                     "pageNumber -> ${getPageNumber(offset, pageMap)} \n" +
                     ""
         )
+
         runBlocking(Dispatchers.IO) {
-            try {
-                stickerSendService.recentlySentStickers(
-                    user.apikey,
-                    user.userId,
-                    limit,
-                    getPageNumber(offset, pageMap) + 1
-                )
-                    .run {
-                        body.stickerList?.let {
-                            if (it.isNotEmpty()) {
-                                _pageMap = body.pageMap
-                                _listChanged.onNext(it)
-                            }
-                        }
-                    }
-            } catch (e: Exception) {
-                _listChanged.onNext(listOf())
-                Log.e(this::class.simpleName, e.message, e)
+            stickerSendService.recentlySentStickers(
+                user.apikey,
+                user.userId,
+                limit,
+                getPageNumber(offset, pageMap) + 1
+            )
+        }.let {
+            it.body.let {
+                if (it.stickerList == null || it.stickerList.isEmpty()) {
+                    _listChanged.onNext(listOf())
+                } else {
+                    _listChanged.onNext(it.stickerList)
+                    pageMap = it.pageMap
+                }
             }
         }
     }
