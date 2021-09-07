@@ -149,14 +149,21 @@ class SPStickerKeyboardPopupWindow(
     }
 
     private fun _setViewModel() {
-        _viewModel.run {
-            packageList.observe(_activity) {
-                Log.d(this::class.simpleName, "packageList.size = ${it.size}")
+        _viewModel.let {
+
+            it.selectedPackage.observe(_activity) {
+                Log.d(this::class.simpleName, "selectedPackage -> ${it}")
+                _binding.recentButton.isSelected = it == null
+                (_binding.myActivePackageList.adapter as? KeyboardPackageAdapter)?.onSelectItem(it)
+            }
+
+            it.packageList.observe(_activity) {
+                Log.d(this::class.simpleName, "packageList.size -> ${it.size}")
                 (_binding.myActivePackageList.adapter as? SPPaging.View<SPPackageItem>)?.setItemList(it)
             }
 
-            stickerList.observe(_activity) {
-                Log.d(this::class.simpleName, "stickerList.size = ${it.size}")
+            it.stickerList.observe(_activity) {
+                Log.d(this::class.simpleName, "stickerList.size -> ${it.size}")
                 (_binding.stickerList.adapter as? SPPaging.View<SPStickerItem>)?.setItemList(it)
             }
         }
@@ -200,6 +207,8 @@ class SPStickerKeyboardPopupWindow(
 
     override fun onShow() {
         Log.d(this::class.simpleName, "onShow")
+
+        _viewModel.onLoadMorePackageList(-1)
 
         _rootView?.let {
 

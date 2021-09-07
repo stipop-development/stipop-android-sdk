@@ -72,4 +72,12 @@ class KeyboardPackageAdapter :
         presenter?.onClickedItem(item)
     }
 
+    fun onSelectItem(item: SPPackageItem?) {
+        _itemList.indexOf(item).let {
+            if (it >= 0) {
+
+            }
+        }
+    }
+
 }

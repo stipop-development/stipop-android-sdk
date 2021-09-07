@@ -20,25 +20,9 @@ class StickerKeyboardViewModelV1
     private val _stickerPackInfoRepository: StickerPackInfoRepository,
     private val _recentlySentStickersRepository: RecentlySentStickersRepository,
 ) : StickerKeyboardViewModel {
-    init {
-        _userRepository.user.distinctUntilChanged().subscribe {
-            onSelectPackage(null)
-            onLoadMorePackageList(-1)
-        }
-
-        _recentlySentStickersRepository.listChanges.subscribe {
-            _stickerList.postValue(it)
-        }
-        _stickerPackInfoRepository.packageItemChanges.subscribe {
-            _stickerList.postValue(it.stickers)
-        }
-        _myActiveStickersRepository.listChanges.subscribe {
-            _packageList.postValue(it)
-        }
-    }
 
     private val _selectedPackage: MutableLiveData<SPPackageItem?> =
-        MutableLiveData<SPPackageItem?>().apply { postValue(null) }
+        MutableLiveData()
     override val selectedPackage: LiveData<SPPackageItem?>
         get() = _selectedPackage
 
@@ -63,8 +47,14 @@ class StickerKeyboardViewModelV1
         runBlocking(Dispatchers.IO) {
             _userRepository.currentUser?.let { user ->
                 if (item == null) {
+                    _recentlySentStickersRepository.listChanges.firstElement().subscribe {
+                        _stickerList.postValue(it)
+                    }
                     _recentlySentStickersRepository.onLoadMoreList(user, "", -1)
                 } else {
+                    _stickerPackInfoRepository.packageItemChanges.firstElement().subscribe {
+                        _stickerList.postValue(it.stickers)
+                    }
                     _stickerPackInfoRepository.onLoad(user, item.packageId)
                 }
             }
@@ -78,9 +68,13 @@ class StickerKeyboardViewModelV1
         )
         runBlocking(Dispatchers.IO) {
             _userRepository.currentUser?.let { user ->
+                _myActiveStickersRepository.listChanges.firstElement().subscribe {
+                    _packageList.postValue(it)
+                }
                 _myActiveStickersRepository.onLoadMoreList(user, "", index)
             }
         }
+
     }
 
     override fun onLoadMoreStickerList(index: Int) {
@@ -88,11 +82,6 @@ class StickerKeyboardViewModelV1
             this::class.simpleName, "onLoadMoreStickerList : \n" +
                     "index -> $index"
         )
-        runBlocking(Dispatchers.IO) {
-            _userRepository.currentUser?.let { user ->
-//                _stickerPackInfoRepository.onLoad(user)
-            }
-        }
     }
 
     override fun onLoadMoreRecentlyStickerList(index: Int) {
