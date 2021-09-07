@@ -5,11 +5,11 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.stipop.core.Stipop
-import io.stipop.core.StipopDelegate
-import io.stipop.core.extend.StipopImageView
-import io.stipop.core.refactor.data.models.SPPackage
-import io.stipop.core.refactor.data.models.SPSticker
+import io.stipop.Stipop
+import io.stipop.StipopDelegate
+import io.stipop.extend.StipopImageView
+import io.stipop.refactor.data.models.SPPackage
+import io.stipop.refactor.data.models.SPSticker
 import java.text.SimpleDateFormat
 import java.util.*
 

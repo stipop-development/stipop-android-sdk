@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.toLiveData
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.domain.entities.SPStickerItem
@@ -33,30 +32,13 @@ class StickerKeyboardViewModelV1
     override val selectedSticker: LiveData<SPStickerItem?>
         get() = _selectedSticker
 
-    private val _packageList =
-        _myActiveStickersRepository.listChanges.toFlowable(BackpressureStrategy.LATEST).toLiveData()
+    private val _packageList: MutableLiveData<List<SPPackageItem>> = MutableLiveData()
     override val packageList: LiveData<List<SPPackageItem>>
         get() = _packageList
 
-    private val _recentlySentStickerList: LiveData<List<SPStickerItem>> =
-        _recentlySentStickersRepository.listChanges.toFlowable(
-            BackpressureStrategy.LATEST
-        ).toLiveData()
-
-    private val _selectedStickerList: LiveData<List<SPStickerItem>> =
-        _stickerPackInfoRepository.packageItemChanges.map {
-            it.stickers
-        }.toFlowable(
-            BackpressureStrategy.LATEST
-        ).toLiveData()
     override val stickerList: LiveData<List<SPStickerItem>>
         get() = MediatorLiveData<List<SPStickerItem>>().apply {
-            addSource(_recentlySentStickerList) {
-                postValue(it)
-            }
-            addSource(_selectedStickerList) {
-                postValue(it)
-            }
+
         }
 
     override fun onSelectPackage(item: SPPackageItem?) {

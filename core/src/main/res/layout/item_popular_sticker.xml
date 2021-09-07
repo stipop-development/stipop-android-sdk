@@ -10,7 +10,7 @@
         android:background="@drawable/popular_sticker_background"
         android:padding="7dp">
 
-        <io.stipop.core.extend.StipopImageView
+        <io.stipop.extend.StipopImageView
             android:id="@+id/sticker_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

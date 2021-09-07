@@ -3,8 +3,6 @@ package io.stipop.refactor.present.ui.view_models
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.toLiveData
-import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.stipop.refactor.domain.entities.SPKeywordItem
 import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.domain.entities.SPUser
@@ -23,22 +21,25 @@ class SearchStickerViewModel @Inject constructor(
 
     private var _keyword: String = ""
 
+    private val _user: MutableLiveData<SPUser> = MutableLiveData()
     override val user: LiveData<SPUser>
-        get() = _userRepository.user.toFlowable(BackpressureStrategy.LATEST).toLiveData()
+        get() = _user
 
-    val _selectedKeyword: MutableLiveData<SPKeywordItem?> = MutableLiveData()
+    private val _selectedKeyword: MutableLiveData<SPKeywordItem?> = MutableLiveData()
     override val selectedKeyword: LiveData<SPKeywordItem?>
         get() = _selectedKeyword
 
-    val _selectedSticker: MutableLiveData<SPStickerItem?> = MutableLiveData()
+    private val _selectedSticker: MutableLiveData<SPStickerItem?> = MutableLiveData()
     override val selectedSticker: LiveData<SPStickerItem?>
         get() = _selectedSticker
 
+    private val _searchKeywordList: MutableLiveData<List<SPKeywordItem>> = MutableLiveData()
     override val searchKeywordList: LiveData<List<SPKeywordItem>>
-        get() = _searchKeywordRepository.listChanges.toFlowable(BackpressureStrategy.LATEST).toLiveData()
+        get() = _searchKeywordList
 
+    private val _searchStickerList: MutableLiveData<List<SPStickerItem>> = MutableLiveData()
     override val searchStickerList: LiveData<List<SPStickerItem>>
-        get() = _searchStickerRepository.listChanges.toFlowable(BackpressureStrategy.LATEST).toLiveData()
+        get() = _searchStickerList
 
     override fun onChangeSearchKeyword(keyword: String?) {
         Log.d(

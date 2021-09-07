@@ -47,13 +47,13 @@
             android:layout_weight="1"
             android:text="" />
 
-        <io.stipop.core.extend.StipopImageView
+        <io.stipop.extend.StipopImageView
             android:id="@+id/stipopIV"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@mipmap/ic_sticker_border_3" />
 
-        <io.stipop.core.extend.StipopImageView
+        <io.stipop.extend.StipopImageView
             android:id="@+id/stipopIV2"
             android:layout_width="48dp"
             android:layout_height="48dp"

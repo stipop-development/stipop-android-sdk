@@ -20,14 +20,14 @@
             android:layout_width="48dp"
             android:layout_height="match_parent">
 
-            <io.stipop.core.extend.StipopImageView
+            <io.stipop.extend.StipopImageView
                 android:id="@+id/recentlyIV"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:src="@mipmap/ic_recents_active"
                 android:layout_margin="4dp"/>
 
-            <io.stipop.core.extend.StipopImageView
+            <io.stipop.extend.StipopImageView
                 android:id="@+id/favoriteIV"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
@@ -36,7 +36,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_margin="4dp"/>
 
-            <io.stipop.core.extend.StipopImageView
+            <io.stipop.extend.StipopImageView
                 android:id="@+id/recentPreviewOffIV"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
@@ -59,7 +59,7 @@
             android:layout_height="match_parent"
             android:gravity="center">
 
-            <io.stipop.core.extend.StipopImageView
+            <io.stipop.extend.StipopImageView
                 android:id="@+id/storeIV"
                 android:layout_width="24dp"
                 android:layout_height="18dp"
@@ -98,7 +98,7 @@
                 android:gravity="center_vertical"
                 android:visibility="gone">
 
-                <io.stipop.core.extend.StipopImageView
+                <io.stipop.extend.StipopImageView
                     android:id="@+id/package_image"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
@@ -130,7 +130,7 @@
                         android:lineHeight="20sp"
                         android:text="©Cmaker"/>
 
-                    <io.stipop.core.extend.StipopTextView
+                    <io.stipop.extend.StipopTextView
                         android:id="@+id/download_button"
                         android:layout_width="wrap_content"
                         android:layout_height="34dp"

@@ -19,17 +19,17 @@
         android:requestLegacyExternalStorage="true">
 
         <activity
-            android:name=".core.refactor.present.ui.pages.search_sticker.SPSearchStickerActivity"
+            android:name=".refactor.present.ui.pages.search_sticker.SPSearchStickerActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
 
         <activity
-            android:name=".core.refactor.present.ui.pages.store.SPStoreActivity"
+            android:name=".refactor.present.ui.pages.store.SPStoreActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <activity
-            android:name=".core.refactor.present.ui.pages.store.SPDetailActivity"
+            android:name=".refactor.present.ui.pages.store.SPDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
 

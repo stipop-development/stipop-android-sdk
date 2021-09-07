@@ -17,13 +17,13 @@
             android:layout_marginRight="12dp"
             android:gravity="right">
 
-            <io.stipop.core.extend.StipopImageView
+            <io.stipop.extend.StipopImageView
                 android:id="@+id/favoriteIV"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@mipmap/ic_favorites_off"/>
 
-            <io.stipop.core.extend.StipopImageView
+            <io.stipop.extend.StipopImageView
                 android:id="@+id/closeIV"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -31,7 +31,7 @@
 
         </LinearLayout>
 
-        <io.stipop.core.extend.StipopImageView
+        <io.stipop.extend.StipopImageView
             android:id="@+id/stickerIV"
             android:layout_width="100dp"
             android:layout_height="100dp"
