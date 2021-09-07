@@ -24,10 +24,6 @@ interface PagingRepository<T> {
     fun getHasMore(list: List<T>?, pageMap: SPPageMap?, offset: Int): Boolean {
         return list?.let {
 
-            if (it.size - 1 == offset) {
-                return true
-            }
-
             pageMap?.let {
 
                 pageMap.pageCount > pageMap.pageNumber

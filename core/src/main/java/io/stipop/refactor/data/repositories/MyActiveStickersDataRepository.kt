@@ -9,7 +9,9 @@ import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.domain.entities.SPPageMap
 import io.stipop.refactor.domain.entities.SPUser
 import io.stipop.refactor.domain.repositories.MyActiveStickersRepository
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class MyActiveStickersDataRepository
@@ -54,25 +56,20 @@ class MyActiveStickersDataRepository
                     ""
         )
         runBlocking(Dispatchers.IO) {
-            try {
-                _remoteDatasource.myStickerPacks(
-                    user.apikey,
-                    user.userId,
-                    limit,
-                    getPageNumber(offset, pageMap) + 1
-                )
-                    .run {
-                        body.packageList?.let {
-                            if (it.isNotEmpty()) {
-                                pageMap= body.pageMap
-                                _listChanged.onNext(it)
-                            }
+            _remoteDatasource.myStickerPacks(
+                user.apikey,
+                user.userId,
+                limit,
+                getPageNumber(offset, pageMap) + 1
+            )
+                .let { response ->
+                    response.body.let { body ->
+                        body.packageList.let { packageList ->
+                            pageMap = body.pageMap
+                            _listChanged.onNext(packageList ?: listOf())
                         }
                     }
-            } catch (e: Exception) {
-                _listChanged.onNext(listOf())
-                Log.e(this::class.simpleName, e.message, e)
-            }
+                }
         }
     }
 

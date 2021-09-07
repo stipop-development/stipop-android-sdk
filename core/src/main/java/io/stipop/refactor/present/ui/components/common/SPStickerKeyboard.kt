@@ -213,8 +213,6 @@ class SPStickerKeyboardPopupWindow(
                 )
 
             }
-
-            _viewModel.onLoadMorePackageList(-1)
         }
     }
 

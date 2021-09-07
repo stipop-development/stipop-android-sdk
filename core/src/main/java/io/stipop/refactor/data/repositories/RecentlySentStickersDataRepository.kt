@@ -3,6 +3,7 @@ package io.stipop.refactor.data.repositories
 import android.util.Log
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import io.stipop.refactor.domain.entities.SPPageMap
 import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.domain.entities.SPUser
@@ -21,7 +22,7 @@ class RecentlySentStickersDataRepository @Inject constructor(
         get() = _list
         set(value) { _list = value }
 
-    private val _listChanged: BehaviorSubject<List<SPStickerItem>> = BehaviorSubject.createDefault(listOf())
+    private val _listChanged: PublishSubject<List<SPStickerItem>> = PublishSubject.create()
 
     override val listChanges: Observable<List<SPStickerItem>>
         get() = _listChanged.map {

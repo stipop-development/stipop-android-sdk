@@ -2,9 +2,7 @@ package io.stipop.refactor.present.ui.view_models
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.domain.repositories.MyActiveStickersRepository
@@ -22,6 +20,22 @@ class StickerKeyboardViewModelV1
     private val _stickerPackInfoRepository: StickerPackInfoRepository,
     private val _recentlySentStickersRepository: RecentlySentStickersRepository,
 ) : StickerKeyboardViewModel {
+    init {
+        _userRepository.user.distinctUntilChanged().subscribe {
+            onSelectPackage(null)
+            onLoadMorePackageList(-1)
+        }
+
+        _recentlySentStickersRepository.listChanges.subscribe {
+            _stickerList.postValue(it)
+        }
+        _stickerPackInfoRepository.packageItemChanges.subscribe {
+            _stickerList.postValue(it.stickers)
+        }
+        _myActiveStickersRepository.listChanges.subscribe {
+            _packageList.postValue(it)
+        }
+    }
 
     private val _selectedPackage: MutableLiveData<SPPackageItem?> =
         MutableLiveData<SPPackageItem?>().apply { postValue(null) }
@@ -36,16 +50,16 @@ class StickerKeyboardViewModelV1
     override val packageList: LiveData<List<SPPackageItem>>
         get() = _packageList
 
+    private val _stickerList: MutableLiveData<List<SPStickerItem>> = MutableLiveData()
     override val stickerList: LiveData<List<SPStickerItem>>
-        get() = MediatorLiveData<List<SPStickerItem>>().apply {
-
-        }
+        get() = _stickerList
 
     override fun onSelectPackage(item: SPPackageItem?) {
         Log.d(
             this::class.simpleName, "onSelectPackage : \n" +
                     "item -> $item"
         )
+        _selectedPackage.postValue(item)
         runBlocking(Dispatchers.IO) {
             _userRepository.currentUser?.let { user ->
                 if (item == null) {
@@ -93,7 +107,7 @@ class StickerKeyboardViewModelV1
         }
     }
 
-    override fun onSelectSticker(item: SPStickerItem) {
+    override fun onSelectSticker(item: SPStickerItem?) {
         Log.d(
             this::class.simpleName, "onSelectSticker : \n" +
                     "item -> $item"
@@ -116,6 +130,6 @@ interface StickerKeyboardViewModel {
     fun onLoadMorePackageList(index: Int)
     fun onLoadMoreStickerList(index: Int)
     fun onLoadMoreRecentlyStickerList(index: Int)
-    fun onSelectSticker(item: SPStickerItem)
+    fun onSelectSticker(item: SPStickerItem?)
 
 }
