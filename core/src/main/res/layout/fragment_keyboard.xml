@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/containerLL"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:id="@+id/packageListLL"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="#eaebee"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/favoriteRL"
+            android:layout_width="48dp"
+            android:layout_height="match_parent">
+
+            <io.stipop.core.extend.StipopImageView
+                android:id="@+id/recentlyIV"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@mipmap/ic_recents_active"
+                android:layout_margin="4dp"/>
+
+            <io.stipop.core.extend.StipopImageView
+                android:id="@+id/favoriteIV"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@mipmap/ic_favorites_normal"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_margin="4dp"/>
+
+            <io.stipop.core.extend.StipopImageView
+                android:id="@+id/recentPreviewOffIV"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@mipmap/ic_recents_active"
+                android:layout_centerInParent="true"
+                app:stipop_tint="true"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/storeTrendingList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/storeLL"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <io.stipop.core.extend.StipopImageView
+                android:id="@+id/storeIV"
+                android:layout_width="24dp"
+                android:layout_height="18dp"
+                android:src="@mipmap/ic_store"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <GridView
+                android:id="@+id/sticker_grid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="15dp"
+                android:numColumns="3"
+                android:verticalSpacing="5dp"
+                android:horizontalSpacing="25dp"
+                android:scrollbars="none"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:id="@+id/downloadLL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <io.stipop.core.extend.StipopImageView
+                    android:id="@+id/package_image"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginRight="6dp"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:orientation="vertical">
+
+                    <io.stipop.refactor.present.ui.components.common.SPPackageNameLabel
+                        android:id="@+id/package_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:textColor="#374553"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:lineHeight="22sp"
+                        android:text="JalGOM's Toon(Ver.1)"/>
+
+                    <io.stipop.refactor.present.ui.components.common.SPArtistNameLabel
+                        android:id="@+id/artist_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#646f7c"
+                        android:textSize="10sp"
+                        android:lineHeight="20sp"
+                        android:text="©Cmaker"/>
+
+                    <io.stipop.core.extend.StipopTextView
+                        android:id="@+id/download_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="34dp"
+                        android:layout_marginTop="11dp"
+                        android:paddingHorizontal="10dp"
+                        android:gravity="center"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:text="DOWNLOAD"
+                        android:background="@drawable/detail_download_btn_background"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/button_popup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Close Me"
+        android:visibility="gone"
+        />
+
+</LinearLayout>
