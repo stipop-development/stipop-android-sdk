@@ -1,4 +1,4 @@
-package io.stipop.stipopsample
+package io.stipop.samples
 
 import org.junit.Test
 
