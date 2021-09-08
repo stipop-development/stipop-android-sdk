@@ -1,4 +1,4 @@
-package io.stipop.stipopsample
+package io.stipop.samples
 
 import android.app.Application
 import android.content.Context

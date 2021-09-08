@@ -1,4 +1,4 @@
-package io.stipop.stipopsample
+package io.stipop.samples
 
 import android.os.Bundle
 import android.widget.EditText
