@@ -1,11 +1,13 @@
 package io.stipop.refactor.present.ui.adapters
 
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
+import io.stipop.Config
 import io.stipop.databinding.ItemKeyboardPackageBinding
 import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.present.ui.components.common.SPPaging
@@ -17,13 +19,21 @@ class KeyboardPackageAdapter :
     private lateinit var _binding: ItemKeyboardPackageBinding
     private var _presenter: SPPaging.Presenter<SPPackageItem>? = null
     private var _itemList: List<SPPackageItem> = listOf()
+    private var _selectedPackage: SPPackageItem? = null
 
     class ViewHolder(private val _binding: ViewBinding) : RecyclerView.ViewHolder(_binding.root) {
-
         fun onBind(item: SPPackageItem) {
             when (_binding) {
                 is ItemKeyboardPackageBinding -> {
-                    Glide.with(_binding.stickerImage).load(item.packageImg).into(_binding.stickerImage)
+                    Glide.with(_binding.stickerImageButton).load(item.packageImg).into(_binding.stickerImageButton)
+                }
+            }
+        }
+
+        fun onSelect(selected: Boolean) {
+            when (_binding) {
+                is ItemKeyboardPackageBinding -> {
+                    _binding.stickerImageButton.isSelected = selected
                 }
             }
         }
@@ -37,6 +47,7 @@ class KeyboardPackageAdapter :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = _itemList[position]
         holder.onBind(item)
+        holder.onSelect(_selectedPackage == item)
         holder.itemView.setOnClickListener {
             onClickItem(item)
         }
@@ -69,15 +80,13 @@ class KeyboardPackageAdapter :
         get() = _presenter
 
     override fun onClickItem(item: SPPackageItem) {
+        _selectedPackage = item
         presenter?.onClickedItem(item)
     }
 
     fun onSelectItem(item: SPPackageItem?) {
-        _itemList.indexOf(item).let {
-            if (it >= 0) {
-
-            }
-        }
+        _selectedPackage = item
+        notifyDataSetChanged()
     }
 
 }

@@ -14,7 +14,7 @@ import io.stipop.refactor.domain.repositories.UserRepository
 import io.stipop.refactor.present.di.ApplicationComponent
 import io.stipop.refactor.present.di.DaggerApplicationComponent
 import io.stipop.refactor.present.ui.components.common.SPStickerKeyboardPopupWindow
-import io.stipop.refactor.present.ui.components.common.SPStickerKeyboardPresenter
+import io.stipop.refactor.present.ui.components.common.StipopPresenter
 import io.stipop.refactor.present.ui.pages.search_sticker.SPSearchStickerActivity
 import javax.inject.Inject
 
@@ -29,10 +29,7 @@ class Stipop(
     val delegate: StipopDelegate
 ) {
     private var _stickerKeyboardPopupWindow: SPStickerKeyboardPopupWindow? = null
-    private var _stickerKeyboardPresenter: SPStickerKeyboardPresenter? = null
-
-    @Inject
-    internal lateinit var userRepository: UserRepository
+    private var _stickerKeyboardPresenter: StipopPresenter? = null
 
     companion object {
 
@@ -51,7 +48,6 @@ class Stipop(
         fun connect(activity: AppCompatActivity, stipopButton: StipopImageView, userId: String, lang: String, countryCode: String, delegate: StipopDelegate) {
             instance = Stipop(activity, stipopButton, delegate)
             instance?.connect()
-            instance?.userRepository?.setUser(SPUser(userId, countryCode, lang, Config.apikey))
         }
 
         fun showSearch() {
@@ -62,13 +58,13 @@ class Stipop(
             instance?.showSearch()
         }
 
-        fun onToggleKeyboard() {
+        fun showKeyboard() {
             if (instance == null) {
                 return
             }
 
 
-            instance?.onToggleKeyboard()
+            instance?.showKeyboard()
         }
     }
 
@@ -83,13 +79,12 @@ class Stipop(
 
     fun connect() {
         Log.d(this::class.simpleName, "connect")
-        appComponent.inject(this)
 
         this.stipopButton.setImageResource(Config.getStickerIconResourceId(this._activity))
         this.connected = true
         this.rootView = this._activity.window.decorView.findViewById(android.R.id.content) as View
 
-        _stickerKeyboardPresenter = SPStickerKeyboardPresenter()
+        _stickerKeyboardPresenter = StipopPresenter()
         _stickerKeyboardPopupWindow = SPStickerKeyboardPopupWindow(_activity).apply {
             onBind(_stickerKeyboardPresenter)
         }
@@ -106,7 +101,7 @@ class Stipop(
         this._activity.startActivity(intent)
     }
 
-    private fun onToggleKeyboard() {
+    private fun showKeyboard() {
         Log.d(this::class.simpleName, "showKeyboard")
         if (!this.connected) {
             return

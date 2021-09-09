@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
 //            .commitAllowingStateLoss()
 
         stipopIV.setOnClickListener {
-            Stipop.onToggleKeyboard()
+            Stipop.showKeyboard()
         }
 
         stipopIV2.setOnClickListener {

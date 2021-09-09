@@ -45,7 +45,7 @@ interface SPStickerKeyboard {
     }
 }
 
-class SPStickerKeyboardPresenter : SPStickerKeyboard.Presenter {
+class StipopPresenter : SPStickerKeyboard.Presenter {
 
     init {
         Stipop.appComponent.inject(this)
@@ -78,11 +78,7 @@ class SPStickerKeyboardPopupWindow(
 ) : PopupWindow(), SPStickerKeyboard.View {
 
     private var _rootView: View? = null
-
     private lateinit var _binding: LayoutKeyboardBinding
-
-    @Inject
-    internal lateinit var _viewModel: StickerKeyboardViewModel
 
     private var _packagePagingPresenter: SPPaging.Presenter<SPPackageItem>? = null
     private var _stickerPagingPresenter: SPPaging.Presenter<SPStickerItem>? = null
@@ -112,15 +108,11 @@ class SPStickerKeyboardPopupWindow(
     }
 
     init {
-
-        Stipop.appComponent.inject(this)
-
         _packagePagingPresenter = KeyboardPackagePresenter()
 
         _stickerPagingPresenter = KeyboardStickerPresenter()
 
         _setBinding()
-        _setViewModel()
 
         _rootView = with(_activity.window.decorView.findViewById<View?>(android.R.id.content)) {
             this
@@ -148,32 +140,10 @@ class SPStickerKeyboardPopupWindow(
         }
     }
 
-    private fun _setViewModel() {
-        _viewModel.let {
-
-            it.selectedPackage.observe(_activity) {
-                Log.d(this::class.simpleName, "selectedPackage -> ${it}")
-                _binding.recentButton.isSelected = it == null
-                (_binding.myActivePackageList.adapter as? KeyboardPackageAdapter)?.onSelectItem(it)
-            }
-
-            it.packageList.observe(_activity) {
-                Log.d(this::class.simpleName, "packageList.size -> ${it.size}")
-                (_binding.myActivePackageList.adapter as? SPPaging.View<SPPackageItem>)?.setItemList(it)
-            }
-
-            it.stickerList.observe(_activity) {
-                Log.d(this::class.simpleName, "stickerList.size -> ${it.size}")
-                (_binding.stickerList.adapter as? SPPaging.View<SPStickerItem>)?.setItemList(it)
-            }
-        }
-    }
-
     private fun _setBinding() {
         _binding = LayoutKeyboardBinding.inflate(LayoutInflater.from(_activity)).apply {
 
             recentButton.setOnClickListener {
-                _viewModel.onSelectPackage(null)
             }
 
             settingButton.setOnClickListener {
@@ -207,8 +177,6 @@ class SPStickerKeyboardPopupWindow(
 
     override fun onShow() {
         Log.d(this::class.simpleName, "onShow")
-
-        _viewModel.onLoadMorePackageList(-1)
 
         _rootView?.let {
 
