@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.stipop.samples"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.stipop.samples">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -14,10 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StipopSample"
         tools:replace="android:theme,android:allowBackup">
-        <activity android:name="io.stipop.samples.MainActivity">
+        <activity
+            android:name="io.stipop.samples.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
