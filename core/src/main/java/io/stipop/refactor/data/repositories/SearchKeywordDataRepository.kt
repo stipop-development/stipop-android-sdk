@@ -32,9 +32,9 @@ class SearchKeywordDataRepository @Inject constructor(
             try {
                 _remoteDatasource.trendingSearchTerms(
                     user.apikey,
-                    keyword,
                     user.userId,
                     user.language,
+                    user.country,
                     limit,
                 )
                     .run {
