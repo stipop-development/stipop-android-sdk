@@ -5,8 +5,8 @@ import dagger.Module
 import io.stipop.refactor.data.repositories.*
 import io.stipop.refactor.data.repositories.common.StickerPackInfoDataRepository
 import io.stipop.refactor.domain.repositories.*
-import io.stipop.refactor.domain.repositories.common.StickerPackInfoRepository
-import io.stipop.refactor.domain.repositories.sticker_send.RecentlySentStickersRepository
+import io.stipop.refactor.domain.repositories.StickerPackInfoRepository
+import io.stipop.refactor.domain.repositories.RecentlySentStickersRepository
 import javax.inject.Singleton
 
 @Module(includes = [

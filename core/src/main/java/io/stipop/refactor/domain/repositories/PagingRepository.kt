@@ -1,17 +1,38 @@
 package io.stipop.refactor.domain.repositories
 
 import android.util.Log
-import io.reactivex.rxjava3.core.Observable
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import io.stipop.refactor.domain.entities.SPPageMap
 import io.stipop.refactor.domain.entities.SPUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
-interface PagingRepository<T> {
-    var list: List<T>?
-    var pageMap: SPPageMap?
+abstract class PagingRepository<T> {
+    var list: List<T>? = null
+    var pageMap: SPPageMap? = null
 
-    val listChanges: Observable<List<T>>
+    protected val _listChanged: MutableLiveData<List<T>> = MutableLiveData<List<T>>()
+    val listChanges: LiveData<List<T>> = MediatorLiveData<List<T>>().apply {
+        addSource(_listChanged) {
+            arrayListOf<T>().apply {
+                addAll(list ?: listOf())
+                it?.let {
+                    it.forEach {
+                        if (contains(it)) {
+                            this[this.indexOf(it)] = it
+                        } else {
+                            this.add(it)
+                        }
+                    }
+                    list = this
+                }
+            }.run {
+                postValue(this)
+            }
+        }
+    }
 
     fun getPageNumber(offset: Int?, pageMap: SPPageMap?): Int {
         return (pageMap?.pageNumber ?: 0)
@@ -39,7 +60,7 @@ interface PagingRepository<T> {
             return list?.isEmpty() ?: true
         }
 
-    fun onLoadList(
+    protected abstract fun onLoadList(
         user: SPUser,
         keyword: String,
         offset: Int?,

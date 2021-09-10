@@ -2,13 +2,14 @@ package io.stipop.refactor.present.ui.view_models
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.domain.repositories.MyActiveStickersRepository
 import io.stipop.refactor.domain.repositories.UserRepository
-import io.stipop.refactor.domain.repositories.common.StickerPackInfoRepository
-import io.stipop.refactor.domain.repositories.sticker_send.RecentlySentStickersRepository
+import io.stipop.refactor.domain.repositories.StickerPackInfoRepository
+import io.stipop.refactor.domain.repositories.RecentlySentStickersRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -30,13 +31,18 @@ class StickerKeyboardViewModelV1
     override val selectedSticker: LiveData<SPStickerItem?>
         get() = _selectedSticker
 
-    private val _packageList: MutableLiveData<List<SPPackageItem>> = MutableLiveData()
     override val packageList: LiveData<List<SPPackageItem>>
-        get() = _packageList
+        get() = _myActiveStickersRepository.listChanges
 
     private val _stickerList: MutableLiveData<List<SPStickerItem>> = MutableLiveData()
-    override val stickerList: LiveData<List<SPStickerItem>>
-        get() = _stickerList
+    override val stickerList: LiveData<List<SPStickerItem>> = MediatorLiveData<List<SPStickerItem>>().apply {
+        addSource(_recentlySentStickersRepository.listChanges) {
+            postValue(it)
+        }
+        addSource(_stickerPackInfoRepository.packageItemChanges) {
+            postValue(it.stickers)
+        }
+    }
 
     override fun onSelectPackage(item: SPPackageItem?) {
         Log.d(
@@ -47,18 +53,22 @@ class StickerKeyboardViewModelV1
         runBlocking(Dispatchers.IO) {
             _userRepository.currentUser?.let { user ->
                 if (item == null) {
-                    _recentlySentStickersRepository.listChanges.firstElement().subscribe {
-                        _stickerList.postValue(it)
-                    }
                     _recentlySentStickersRepository.onLoadMoreList(user, "", -1)
+
                 } else {
-                    _stickerPackInfoRepository.packageItemChanges.firstElement().subscribe {
-                        _stickerList.postValue(it.stickers)
-                    }
                     _stickerPackInfoRepository.onLoad(user, item.packageId)
+                }
+
+                if (item == null) {
+                    _stickerList.postValue(_recentlySentStickersRepository.list)
+                } else {
+                    _stickerList.postValue(
+                        _stickerPackInfoRepository.packageItem?.stickers
+                    )
                 }
             }
         }
+
     }
 
     override fun onLoadMorePackageList(index: Int) {
@@ -68,9 +78,6 @@ class StickerKeyboardViewModelV1
         )
         runBlocking(Dispatchers.IO) {
             _userRepository.currentUser?.let { user ->
-                _myActiveStickersRepository.listChanges.firstElement().subscribe {
-                    _packageList.postValue(it)
-                }
                 _myActiveStickersRepository.onLoadMoreList(user, "", index)
             }
         }

@@ -1,13 +1,8 @@
 package io.stipop.refactor.data.repositories
 
 import android.util.Log
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
-import io.stipop.refactor.domain.entities.SPPageMap
-import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.domain.entities.SPUser
-import io.stipop.refactor.domain.repositories.sticker_send.RecentlySentStickersRepository
+import io.stipop.refactor.domain.repositories.RecentlySentStickersRepository
 import io.stipop.refactor.domain.services.StickerSendService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -15,35 +10,7 @@ import javax.inject.Inject
 
 class RecentlySentStickersDataRepository @Inject constructor(
     private val stickerSendService: StickerSendService,
-) : RecentlySentStickersRepository {
-    private var _list: List<SPStickerItem>? = null
-
-    override var list: List<SPStickerItem>?
-        get() = _list
-        set(value) { _list = value }
-
-    private val _listChanged: PublishSubject<List<SPStickerItem>> = PublishSubject.create()
-
-    override val listChanges: Observable<List<SPStickerItem>>
-        get() = _listChanged.map {
-            arrayListOf<SPStickerItem>().apply {
-                addAll(_list ?: listOf())
-                it?.forEach {
-                    if (this.contains(it)) {
-                        this[this.indexOf(it)] = it
-                    } else {
-                        this.add(it)
-                    }
-                }
-                _list = this
-            }
-        }
-
-    private var _pageMap: SPPageMap? = null
-
-    override var pageMap: SPPageMap?
-        get() = _pageMap
-        set(value) { _pageMap = value }
+) : RecentlySentStickersRepository() {
 
     override fun onLoadList(user: SPUser, keyword: String, offset: Int?, limit: Int?) {
         Log.d(
@@ -66,9 +33,9 @@ class RecentlySentStickersDataRepository @Inject constructor(
         }.let {
             it.body.let {
                 if (it.stickerList == null || it.stickerList.isEmpty()) {
-                    _listChanged.onNext(listOf())
+                    _listChanged.postValue(listOf())
                 } else {
-                    _listChanged.onNext(it.stickerList)
+                    _listChanged.postValue(it.stickerList)
                     pageMap = it.pageMap
                 }
             }

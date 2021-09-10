@@ -1,13 +1,14 @@
 package io.stipop.refactor.domain.repositories
 
-import io.reactivex.rxjava3.core.Observable
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import io.stipop.refactor.domain.entities.SPUser
 
-interface UserRepository {
+abstract class UserRepository {
+    protected val _userChanged: MutableLiveData<SPUser> = MutableLiveData()
+    val userChanges: LiveData<SPUser> = _userChanged
+    val currentUser: SPUser? get() = userChanges.value
 
-    val user: Observable<SPUser>
-    val currentUser: SPUser?
-
-    fun setUser(user: SPUser?)
+    abstract fun setUser(user: SPUser?)
 }
 

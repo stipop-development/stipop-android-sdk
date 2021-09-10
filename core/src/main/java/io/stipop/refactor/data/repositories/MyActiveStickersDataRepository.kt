@@ -1,8 +1,9 @@
 package io.stipop.refactor.data.repositories
 
 import android.util.Log
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.subjects.PublishSubject
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import io.stipop.Config.Companion.apikey
 import io.stipop.refactor.domain.datasources.MyStickersDatasource
 import io.stipop.refactor.domain.entities.SPPackageItem
@@ -17,28 +18,7 @@ import javax.inject.Inject
 class MyActiveStickersDataRepository
 @Inject constructor(
     private val _remoteDatasource: MyStickersDatasource
-) : MyActiveStickersRepository {
-
-    override var list: List<SPPackageItem>? = null
-    private val _listChanged: PublishSubject<List<SPPackageItem>> = PublishSubject.create()
-    override val listChanges: Observable<List<SPPackageItem>>
-        get() = _listChanged.map { _changed ->
-            arrayListOf<SPPackageItem>().apply {
-                addAll(list ?: listOf())
-                _changed?.let {
-                    it.forEach {
-                        if (contains(it)) {
-                            this[this.indexOf(it)] = it
-                        } else {
-                            this.add(it)
-                        }
-                    }
-                    list = this
-                }
-            }
-        }
-
-    override var pageMap: SPPageMap? = null
+) : MyActiveStickersRepository() {
 
     override fun onLoadList(
         user: SPUser,
@@ -66,7 +46,7 @@ class MyActiveStickersDataRepository
                     response.body.let { body ->
                         body.packageList.let { packageList ->
                             pageMap = body.pageMap
-                            _listChanged.onNext(packageList ?: listOf())
+                            _listChanged.postValue(packageList ?: listOf())
                         }
                     }
                 }
@@ -87,7 +67,7 @@ class MyActiveStickersDataRepository
 
                     val _item = it[index]
                     _remoteDatasource.hideRecoverMyPack(user.apikey, user.userId, _item.packageId)
-                    _listChanged.onNext(arrayListOf<SPPackageItem>().apply {
+                    _listChanged.postValue(arrayListOf<SPPackageItem>().apply {
                         addAll(it)
                         remove(_item)
                     })
