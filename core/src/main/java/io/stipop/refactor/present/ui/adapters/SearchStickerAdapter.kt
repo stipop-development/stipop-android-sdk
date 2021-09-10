@@ -7,16 +7,16 @@ import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import io.stipop.databinding.ItemStickerBinding
 import io.stipop.refactor.domain.entities.SPStickerItem
-import io.stipop.refactor.present.ui.components.common.SPPaging
+import io.stipop.refactor.present.ui.contracts.PagingContract
 
 
 class SearchStickerAdapter() :
     RecyclerView.Adapter<SearchStickerAdapter.ViewHolder>(),
-    SPPaging.View<SPStickerItem> {
+    PagingContract.View<SPStickerItem> {
 
 
     private lateinit var _binding: ItemStickerBinding
-    private var _presenter: SPPaging.Presenter<SPStickerItem>? = null
+    private var _presenter: PagingContract.Presenter<SPStickerItem>? = null
     private var _itemList: List<SPStickerItem> = arrayListOf()
 
     class ViewHolder(private val _binding: ViewBinding) : RecyclerView.ViewHolder(_binding.root) {
@@ -50,12 +50,12 @@ class SearchStickerAdapter() :
         return itemList.size
     }
 
-    override val presenter: SPPaging.Presenter<SPStickerItem>?
+    override val presenter: PagingContract.Presenter<SPStickerItem>?
         get() = _presenter
     override val itemList: List<SPStickerItem>
         get() = _itemList
 
-    override fun onBind(presenter: SPPaging.Presenter<SPStickerItem>?) {
+    override fun onBind(presenter: PagingContract.Presenter<SPStickerItem>?) {
         _presenter = presenter
     }
 

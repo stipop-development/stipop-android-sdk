@@ -23,7 +23,7 @@ class SPStoreActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Stipop.appComponent.inject(this)
+        Stipop._appComponent.inject(this)
 
         _binding = ActivityStoreBinding.inflate(layoutInflater)
         _binding.storePageTab.setOnClickListener {

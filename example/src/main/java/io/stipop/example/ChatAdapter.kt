@@ -14,12 +14,8 @@ import com.bumptech.glide.Glide
 class ChatAdapter(val context: Context, val arrayList: ArrayList<ChatModel>)
     :  RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    internal lateinit var preferences: SharedPreferences
-
     fun addItem(item: ChatModel) {
-        if (arrayList != null) {
-            arrayList.add(item)
-        }
+        arrayList.add(item)
     }
 
     override fun getItemId(position: Int): Long {

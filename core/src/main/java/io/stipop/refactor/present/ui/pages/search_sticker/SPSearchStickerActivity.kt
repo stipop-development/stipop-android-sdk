@@ -14,7 +14,7 @@ import io.stipop.refactor.domain.entities.SPKeywordItem
 import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.present.ui.adapters.SearchKeywordAdapter
 import io.stipop.refactor.present.ui.adapters.SearchStickerAdapter
-import io.stipop.refactor.present.ui.components.common.SPPaging
+import io.stipop.refactor.present.ui.contracts.PagingContract
 import io.stipop.refactor.present.ui.view_models.SearchStickerViewModelProtocol
 import javax.inject.Inject
 
@@ -22,7 +22,7 @@ class SPSearchStickerActivity : AppCompatActivity() {
 
     lateinit var _binding: ActivitySearchStickerBinding
 
-    private var _searchKeywordPresenter = object : SPPaging.Presenter<SPKeywordItem> {
+    private var _searchKeywordPresenter = object : PagingContract.Presenter<SPKeywordItem> {
         override fun onLoadMoreList(index: Int) {
             _viewModel.onLoadSearchKeywordList(index)
         }
@@ -32,7 +32,7 @@ class SPSearchStickerActivity : AppCompatActivity() {
         }
     }
 
-    private var _searchStickerPresenter = object : SPPaging.Presenter<SPStickerItem> {
+    private var _searchStickerPresenter = object : PagingContract.Presenter<SPStickerItem> {
         override fun onLoadMoreList(index: Int) {
             _viewModel.onLoadSearchStickerList(index)
         }
@@ -49,7 +49,7 @@ class SPSearchStickerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Stipop.appComponent.inject(this)
+        Stipop._appComponent.inject(this)
 
         _viewModel.let {
 
@@ -57,7 +57,7 @@ class SPSearchStickerActivity : AppCompatActivity() {
 
                 Log.e(this::class.simpleName, "search Keyword List.size -> ${it.size}")
 
-                (_binding.stickerList.adapter as? SPPaging.View<SPKeywordItem>)?.apply {
+                (_binding.stickerList.adapter as? PagingContract.View<SPKeywordItem>)?.apply {
                     setItemList(it)
                 }
             }
@@ -68,7 +68,7 @@ class SPSearchStickerActivity : AppCompatActivity() {
 
 
 
-                (_binding.stickerList.adapter as? SPPaging.View<SPStickerItem>)?.apply {
+                (_binding.stickerList.adapter as? PagingContract.View<SPStickerItem>)?.apply {
                     setItemList(it)
                 }
             }

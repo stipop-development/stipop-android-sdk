@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <io.stipop.refactor.present.ui.components.common.SPKeyboardImageTabButton
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/sticker_image_button"
+    android:id="@+id/package_image_button"
     android:layout_width="48dp"
     android:layout_height="48dp"
     android:scaleType="fitCenter" />

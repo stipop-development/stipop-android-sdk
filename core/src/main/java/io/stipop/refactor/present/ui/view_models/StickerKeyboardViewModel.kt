@@ -84,18 +84,6 @@ class StickerKeyboardViewModelV1
         )
     }
 
-    override fun onLoadMoreRecentlyStickerList(index: Int) {
-        Log.d(
-            this::class.simpleName, "onLoadMoreRecentlyStickerList : \n" +
-                    "index -> $index"
-        )
-        runBlocking(Dispatchers.IO) {
-            _userRepository.currentUser?.let { user ->
-                _recentlySentStickersRepository.onLoadMoreList(user, "", index)
-            }
-        }
-    }
-
     override fun onSelectSticker(item: SPStickerItem?) {
         Log.d(
             this::class.simpleName, "onSelectSticker : \n" +
@@ -103,8 +91,6 @@ class StickerKeyboardViewModelV1
         )
         _selectedSticker.postValue(item)
     }
-
-
 }
 
 interface StickerKeyboardViewModel {
@@ -118,7 +104,6 @@ interface StickerKeyboardViewModel {
     fun onSelectPackage(item: SPPackageItem?)
     fun onLoadMorePackageList(index: Int)
     fun onLoadMoreStickerList(index: Int)
-    fun onLoadMoreRecentlyStickerList(index: Int)
     fun onSelectSticker(item: SPStickerItem?)
 
 }

@@ -28,7 +28,7 @@ class SPMyPageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         Log.d(this::class.simpleName, "onCreateView")
-        Stipop.appComponent.inject(this)
+        Stipop._appComponent.inject(this)
 
         _binding = FragmentMyPageBinding.inflate(layoutInflater, container, false).apply {
 

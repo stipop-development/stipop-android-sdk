@@ -33,7 +33,7 @@ class StoreAllPackageListFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         Log.d(this::class.simpleName, "onCreateView")
-        Stipop.appComponent.inject(this)
+        Stipop._appComponent.inject(this)
 
         _binding = FragmentStoreAllPackageListBinding.inflate(layoutInflater, container, false)
 

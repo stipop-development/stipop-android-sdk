@@ -1,6 +1,6 @@
-package io.stipop.refactor.present.ui.components.common
+package io.stipop.refactor.present.ui.contracts
 
-interface SPPaging {
+interface PagingContract<T> {
 
     interface View<T> {
         val presenter: Presenter<T>?

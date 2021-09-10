@@ -2,21 +2,20 @@ package io.stipop.refactor.present.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.AdapterView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import io.stipop.databinding.ItemKeywordBinding
 import io.stipop.refactor.domain.entities.SPKeywordItem
-import io.stipop.refactor.present.ui.components.common.SPPaging
+import io.stipop.refactor.present.ui.contracts.PagingContract
 
 
 class SearchKeywordAdapter() :
     RecyclerView.Adapter<SearchKeywordAdapter.ViewHolder>(),
-    SPPaging.View<SPKeywordItem> {
+    PagingContract.View<SPKeywordItem> {
 
 
     private lateinit var _binding: ItemKeywordBinding
-    private var _presenter: SPPaging.Presenter<SPKeywordItem>? = null
+    private var _presenter: PagingContract.Presenter<SPKeywordItem>? = null
     private var _itemList: List<SPKeywordItem> = arrayListOf()
 
     class ViewHolder(private val _binding: ViewBinding) : RecyclerView.ViewHolder(_binding.root) {
@@ -50,12 +49,12 @@ class SearchKeywordAdapter() :
         return itemList.size
     }
 
-    override val presenter: SPPaging.Presenter<SPKeywordItem>?
+    override val presenter: PagingContract.Presenter<SPKeywordItem>?
         get() = _presenter
     override val itemList: List<SPKeywordItem>
         get() = _itemList
 
-    override fun onBind(presenter: SPPaging.Presenter<SPKeywordItem>?) {
+    override fun onBind(presenter: PagingContract.Presenter<SPKeywordItem>?) {
         _presenter = presenter
     }
 

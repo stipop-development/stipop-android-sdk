@@ -1,92 +1,64 @@
 package io.stipop.refactor.present.ui.adapters
 
-import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
-import io.stipop.Config
 import io.stipop.databinding.ItemKeyboardPackageBinding
 import io.stipop.refactor.domain.entities.SPPackageItem
-import io.stipop.refactor.present.ui.components.common.SPPaging
-
 
 class KeyboardPackageAdapter :
-    RecyclerView.Adapter<KeyboardPackageAdapter.ViewHolder>(), SPPaging.View<SPPackageItem> {
+    ListAdapter<SPPackageItem, ItemKeyboardPackageBinding>() {
 
-    private lateinit var _binding: ItemKeyboardPackageBinding
-    private var _presenter: SPPaging.Presenter<SPPackageItem>? = null
-    private var _itemList: List<SPPackageItem> = listOf()
-    private var _selectedPackage: SPPackageItem? = null
+    companion object {
+        enum class Type(val rawValue: Int) {
+            UNSELECTED_ITEM(0X00),
+            SELECTED_ITEM(0X01);
 
-    class ViewHolder(private val _binding: ViewBinding) : RecyclerView.ViewHolder(_binding.root) {
-        fun onBind(item: SPPackageItem) {
-            when (_binding) {
-                is ItemKeyboardPackageBinding -> {
-                    Glide.with(_binding.stickerImageButton).load(item.packageImg).into(_binding.stickerImageButton)
-                }
-            }
-        }
-
-        fun onSelect(selected: Boolean) {
-            when (_binding) {
-                is ItemKeyboardPackageBinding -> {
-                    _binding.stickerImageButton.isSelected = selected
+            companion object {
+                fun fromRawValue(rawValue: Int): Type {
+                    return Type.values().first { it.rawValue == rawValue }
                 }
             }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        _binding = ItemKeyboardPackageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(_binding)
-    }
+    var selectedItem: SPPackageItem? = null
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = _itemList[position]
-        holder.onBind(item)
-        holder.onSelect(_selectedPackage == item)
-        holder.itemView.setOnClickListener {
-            onClickItem(item)
+    class KeyboardPackageViewHolder(override val binding: ItemKeyboardPackageBinding) :
+        ListAdapter.ListViewHolder<SPPackageItem, ItemKeyboardPackageBinding>(
+            binding
+        ) {
+        override fun onBind(item: SPPackageItem) {
+            Glide.with(binding.packageImageButton).load(item.packageImg).into(binding.packageImageButton)
         }
-        notifyCurrentPosition(position)
     }
 
-    override fun getItemCount(): Int {
-        return _itemList.size
+    override fun getItemViewType(position: Int): Int {
+        return when (selectedItem == itemList[position]) {
+            true -> Type.SELECTED_ITEM
+            false -> Type.UNSELECTED_ITEM
+        }.rawValue
     }
 
-    override fun onBind(presenter: SPPaging.Presenter<SPPackageItem>?) {
-        _presenter = presenter
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ListViewHolder<SPPackageItem, ItemKeyboardPackageBinding> {
+        return KeyboardPackageViewHolder(
+            ItemKeyboardPackageBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            ).apply {
+                when (Type.fromRawValue(viewType)) {
+                    Type.UNSELECTED_ITEM -> {
+                        root.isSelected = false
+                    }
+                    Type.SELECTED_ITEM -> {
+                        root.isSelected = true
+                    }
+                }
+            }
+        )
     }
-
-    override fun notifyCurrentPosition(index: Int) {
-        _presenter?.onLoadMoreList(index)
-    }
-
-    override fun setItemList(itemList: List<SPPackageItem>) {
-        Log.d(this::class.simpleName, "setItemList : \n" +
-                "itemList.size -> ${itemList.size}")
-        _itemList = itemList
-        notifyDataSetChanged()
-    }
-
-    override val itemList: List<SPPackageItem>
-        get() = _itemList
-
-    override val presenter: SPPaging.Presenter<SPPackageItem>?
-        get() = _presenter
-
-    override fun onClickItem(item: SPPackageItem) {
-        _selectedPackage = item
-        presenter?.onClickedItem(item)
-    }
-
-    fun onSelectItem(item: SPPackageItem?) {
-        _selectedPackage = item
-        notifyDataSetChanged()
-    }
-
 }

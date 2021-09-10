@@ -9,8 +9,4 @@ import io.stipop.Config
 
 class SPRecyclerView(context: Context, attrs: AttributeSet? = null) :
     RecyclerView(context, attrs) {
-    override fun dispatchDraw(canvas: Canvas?) {
-        super.dispatchDraw(canvas)
-        setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-    }
 }

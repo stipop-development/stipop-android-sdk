@@ -23,10 +23,6 @@ class SPStickerPreviewPopupWindow(val activity: Activity) : PopupWindow() {
 
     fun show() {
 
-        if (Stipop.keyboardHeight == 0) {
-            return
-        }
-
         val view = View.inflate(this.activity, R.layout.activity_preview,null)
 
         popupWindow = PopupWindow(
@@ -57,12 +53,12 @@ class SPStickerPreviewPopupWindow(val activity: Activity) : PopupWindow() {
 
         // show
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
-        popupWindow.showAtLocation(
-            this.rootView,
-            Gravity.BOTTOM,
-            0,
-            Stipop.keyboardHeight + Config.previewPadding + Utils.getNavigationBarSize(this.activity).y
-        )
+//        popupWindow.showAtLocation(
+//            this.rootView,
+//            Gravity.BOTTOM,
+//            0,
+//            Stipop.keyboardHeight + Config.previewPadding + Utils.getNavigationBarSize(this.activity).y
+//        )
     }
 
     fun windowIsShowing() : Boolean {

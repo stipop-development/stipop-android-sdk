@@ -18,7 +18,7 @@
             android:src="@mipmap/ic_recents_active" />
 
         <io.stipop.refactor.present.ui.components.core.SPRecyclerView
-            android:id="@+id/my_active_package_list"
+            android:id="@+id/package_list"
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_weight="1" />
