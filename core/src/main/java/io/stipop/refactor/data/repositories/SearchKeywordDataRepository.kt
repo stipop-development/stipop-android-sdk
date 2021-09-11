@@ -9,8 +9,7 @@ import io.stipop.refactor.domain.entities.SPPageMap
 import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.domain.entities.SPUser
 import io.stipop.refactor.domain.repositories.SearchKeywordRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class SearchKeywordDataRepository @Inject constructor(
@@ -27,7 +26,8 @@ class SearchKeywordDataRepository @Inject constructor(
                     "pageNumber -> ${getPageNumber(offset, pageMap)} \n" +
                     ""
         )
-        runBlocking(Dispatchers.IO) {
+        launch {
+            hasLoading = coroutineContext.isActive
             _remoteDatasource.trendingSearchTerms(
                 user.apikey,
                 user.userId,
@@ -40,7 +40,10 @@ class SearchKeywordDataRepository @Inject constructor(
                         _listChanged.postValue(it ?: listOf())
                     }
                 }
+            cancel()
+            hasLoading = coroutineContext.isActive
         }
+
     }
 
 }
