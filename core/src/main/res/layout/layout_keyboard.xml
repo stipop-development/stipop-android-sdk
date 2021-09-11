@@ -21,6 +21,7 @@
             android:id="@+id/package_list"
             android:layout_width="48dp"
             android:layout_height="match_parent"
+            android:overScrollMode="never"
             android:layout_weight="1" />
 
         <io.stipop.refactor.present.ui.components.core.SPImageButton
@@ -42,6 +43,7 @@
         android:id="@+id/sticker_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:overScrollMode="never"
         android:layout_weight="1" />
 
 </io.stipop.refactor.present.ui.components.core.SPLinearLayout>

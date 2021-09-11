@@ -17,8 +17,6 @@ interface StipopContract {
         fun didShow()
         fun willDismiss()
         fun didDismiss()
-        fun onShow()
-        fun onDismiss()
     }
 }
 
@@ -33,11 +31,6 @@ class StipopPresenter : StipopContract.Presenter {
         Log.d(this::class.simpleName, "willShow")
     }
 
-    override fun onShow() {
-        Log.d(this::class.simpleName, "onShow")
-        _view?.onShow()
-    }
-
     override fun didShow() {
         Log.d(this::class.simpleName, "didShow")
 
@@ -45,11 +38,6 @@ class StipopPresenter : StipopContract.Presenter {
 
     override fun willDismiss() {
         Log.d(this::class.simpleName, "willDismiss")
-    }
-
-    override fun onDismiss() {
-        Log.d(this::class.simpleName, "onDismiss")
-        _view?.onDismiss()
     }
 
     override fun didDismiss() {

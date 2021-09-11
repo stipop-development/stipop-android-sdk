@@ -3,8 +3,6 @@ package io.stipop.refactor.present.ui.components.common
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
-import android.graphics.Canvas
-import android.graphics.Color
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Log
@@ -33,18 +31,46 @@ import io.stipop.refactor.present.ui.view_models.StoreMode
 import javax.inject.Inject
 
 class SPStickerKeyboardPopupWindow(
-    private val _activity: AppCompatActivity,
-) : PopupWindow(SPStickerKeyboard(_activity)), StipopContract.View {
+    val _targetView: View,
+) : PopupWindow(SPStickerKeyboard(_targetView.context)), StipopContract.View {
+
+    init {
+        _targetView.let {
+            it.viewTreeObserver.addOnPreDrawListener {
+                _keyboardHeight = if (_activityHeight > it.height) {
+                    _activityHeight - it.height
+                } else {
+                    _keyboardHeight
+                }
+
+                _isShowKeyboard = _activityHeight - it.height > 0
+
+                true
+            }
+            it.viewTreeObserver.addOnDrawListener {
+                Log.d("HELLO", "_activityHeight -> $_activityHeight")
+                Log.d("HELLO", "_keyboardHeight -> $_keyboardHeight")
+                if (_isShowKeyboard) {
+                    update(0, 0, _keyboardWidth, _keyboardHeight)
+                } else {
+                    onDismiss()
+                }
+            }
+        }
+
+    }
 
     private val _metrics: DisplayMetrics
         get() {
             return Resources.getSystem().displayMetrics ?: DisplayMetrics()
         }
 
-    private val _activityHeight: Int get() = _metrics.heightPixels
-    private val _activityWidth: Int get() = _metrics.widthPixels
+    private val _inputMethodManager: InputMethodManager? get() = (_targetView.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
 
-    private var _isShowKeyboard = false
+    private val _activityHeight: Int = _metrics.heightPixels
+    private val _activityWidth: Int = _metrics.widthPixels
+
+    private var _isShowKeyboard: Boolean = false
     private var _keyboardHeight: Int = -1
     private val _keyboardWidth: Int get() = _activityWidth
 
@@ -55,54 +81,31 @@ class SPStickerKeyboardPopupWindow(
     override val presenter: StipopContract.Presenter?
         get() = _presenter
 
-
     override fun onShow() {
         Log.d(this::class.simpleName, "onShow")
-        _activity.window.decorView.findViewById<View?>(android.R.id.content).let {
-            it.viewTreeObserver.addOnPreDrawListener {
-                _keyboardHeight = if (_activityHeight > it.height) {
-                    _activityHeight - it.height
-                } else {
-                    _keyboardHeight
-                }
-                _isShowKeyboard = _activityHeight > it.height
-
-                true
-            }
-
-            it.viewTreeObserver.addOnDrawListener {
-                if (_isShowKeyboard) {
-                    update(0, 0, _keyboardWidth, _keyboardHeight)
-                } else {
-                    onDismiss()
-                }
-            }
-
-            showAtLocation(it.rootView, Gravity.DISPLAY_CLIP_HORIZONTAL or Gravity.BOTTOM, 0, 0)
-            update(0, 0, _keyboardWidth, _keyboardHeight)
+        _targetView.let {
+            showAtLocation(it, Gravity.BOTTOM, 0, 0)
 
             if (!_isShowKeyboard) {
-                (_activity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.toggleSoftInput(
-                    InputMethodManager.SHOW_FORCED,
-                    0
-                )
+                _inputMethodManager?.run {
+                    showSoftInput(_targetView.rootView, InputMethodManager.SHOW_FORCED).run {
+                        update(0, 0, _keyboardWidth, _keyboardHeight)
+                    }
+                }
             }
-
         }
+
     }
 
+    //    https://messenger.stipop.io/v1/mysticker/0000?limit=20&pageNumber=1
     override fun onDismiss() {
         Log.d(this::class.simpleName, "onDismiss")
-
-        if (_isShowKeyboard) {
-            dismiss()
-        } else {
-            dismiss()
-        }
+        dismiss()
     }
 }
 
 class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLayout(context, attrs) {
+
     private lateinit var _binding: LayoutKeyboardBinding
 
     @Inject
@@ -202,13 +205,7 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
                     onShowStorePage()
                 }
             }
-
         }
-    }
-
-    override fun draw(canvas: Canvas?) {
-        super.draw(canvas)
-        setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
     }
 
     private fun onChangePackage(item: SPPackageItem?) {

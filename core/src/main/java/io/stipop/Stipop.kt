@@ -6,6 +6,9 @@ import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import io.stipop.extend.StipopImageView
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.data.models.SPSticker
@@ -26,7 +29,7 @@ interface StipopDelegate {
 class Stipop {
     private var _searchStickerIntent: Intent? = null
     private var _searchStickerLauncher: ActivityResultLauncher<Intent>? = null
-    private var _keyboardView: StipopContract.View? = null
+    private var _stickerKeyboardPopupWindow: StipopContract.View? = null
 
     @Inject
     internal lateinit var _userRepository: UserRepository
@@ -62,7 +65,13 @@ class Stipop {
 
         _userRepository.setUser(SPUser(userId, countryCode, lang, Config.apikey))
 
-        _keyboardView = SPStickerKeyboardPopupWindow(activity)
+        activity.lifecycle.addObserver(object : LifecycleObserver {
+            @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            fun onCreate() {
+                _stickerKeyboardPopupWindow = SPStickerKeyboardPopupWindow(activity.window.decorView.findViewById(android.R.id.content))
+            }
+        })
+
         _searchStickerIntent = Intent(activity, SPSearchStickerActivity::class.java)
         _searchStickerLauncher = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
 
@@ -87,7 +96,7 @@ class Stipop {
 
     private fun showKeyboard() {
         Log.d(this::class.simpleName, "showKeyboard")
-        _keyboardView?.run {
+        _stickerKeyboardPopupWindow?.run {
             if (isShow) {
                 onDismiss()
             } else {
