@@ -3,6 +3,7 @@ package io.stipop.refactor.present.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.databinding.ItemKeyboardPackageBinding
 import io.stipop.refactor.domain.entities.SPPackageItem
 
@@ -29,7 +30,9 @@ class KeyboardPackageAdapter :
             binding
         ) {
         override fun onBind(item: SPPackageItem) {
-            Glide.with(binding.packageImageButton).load(item.packageImg).into(binding.packageImageButton)
+            Glide.with(binding.packageImageButton).load(item.packageImg)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(binding.packageImageButton).clearOnDetach()
         }
     }
 

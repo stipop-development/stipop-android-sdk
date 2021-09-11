@@ -3,7 +3,7 @@ package io.stipop.refactor.present.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.databinding.ItemStickerBinding
 import io.stipop.refactor.domain.entities.SPStickerItem
 
@@ -17,7 +17,7 @@ class SearchStickerAdapter :
 
             Glide.with(itemView)
                 .load(item.stickerImg)
-                .transition(withCrossFade())
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.stickerImage)
                 .clearOnDetach()
         }
