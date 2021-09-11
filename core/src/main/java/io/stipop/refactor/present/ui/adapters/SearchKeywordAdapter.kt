@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.stipop.databinding.ItemKeywordBinding
 import io.stipop.refactor.domain.entities.SPKeywordItem
-import io.stipop.refactor.present.ui.listeners.OnItemSelectListener
-
 
 class SearchKeywordAdapter() :
     ViewBindingAdapter<SPKeywordItem, ItemKeywordBinding>() {

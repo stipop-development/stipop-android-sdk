@@ -109,7 +109,7 @@ class SPSearchStickerActivity : AppCompatActivity() {
     }
 
     private fun onChangeKeyword(keyword: String) {
-        _viewModel.onChangeKeyword(keyword)
+        _binding.searchBar.text = keyword
     }
 
     override fun onStart() {

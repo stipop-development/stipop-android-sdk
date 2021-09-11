@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.inputmethod.InputMethodManager
+import com.bumptech.glide.Glide.init
 import io.stipop.Config
 import io.stipop.refactor.present.ui.components.core.SPEditText
 import io.stipop.refactor.present.ui.components.core.SPLinearLayout
@@ -26,6 +27,10 @@ class SPSearchBar(context: Context, attrs: AttributeSet? = null) : SPLinearLayou
     private val searchIcon: SPIconImageButton = SPIconImageButton(context)
     private val searchKeyword: SPEditText = SPEditText(context)
     private val searchDeleteButton: SPIconImageButton = SPIconImageButton(context)
+
+    var text: String
+    get() = searchKeyword.text.toString()
+    set(value) = searchKeyword.setText(value)
 
     init {
 
