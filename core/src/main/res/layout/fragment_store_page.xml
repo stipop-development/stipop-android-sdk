@@ -6,11 +6,9 @@
 
     <io.stipop.refactor.present.ui.components.common.SPSearchBar
         android:id="@+id/search_bar"
+        android:layout_margin="12dp"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_margin="12dp">
-
-    </io.stipop.refactor.present.ui.components.common.SPSearchBar>
+        android:layout_height="48dp" />
 
     <FrameLayout
         android:id="@+id/container"

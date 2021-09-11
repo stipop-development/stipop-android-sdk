@@ -10,10 +10,8 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity.CENTER
 import android.view.View
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.inputmethod.InputMethodManager
-import com.bumptech.glide.Glide.init
 import io.stipop.Config
 import io.stipop.refactor.present.ui.components.core.SPEditText
 import io.stipop.refactor.present.ui.components.core.SPLinearLayout
@@ -32,11 +30,8 @@ class SPSearchBar(context: Context, attrs: AttributeSet? = null) : SPLinearLayou
     get() = searchKeyword.text.toString()
     set(value) = searchKeyword.setText(value)
 
-    init {
-
-        layoutParams = LayoutParams(
-            MATCH_PARENT, WRAP_CONTENT
-        )
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
 
         gravity = CENTER
 
@@ -49,11 +44,10 @@ class SPSearchBar(context: Context, attrs: AttributeSet? = null) : SPLinearLayou
             layoutParams = LayoutParams(
                 0, WRAP_CONTENT, 1f
             )
+            isSingleLine = true
             background = null
             hint = Config.getSearchKeywordHint(context)
             setHintTextColor(Config.getSearchKeywordHintColor(context))
-
-            setTextColor(Color.RED)
             setOnFocusChangeListener { v, hasFocus ->
                 run {
                     if (hasFocus) {
@@ -86,7 +80,6 @@ class SPSearchBar(context: Context, attrs: AttributeSet? = null) : SPLinearLayou
         searchDeleteButton.apply {
             isEnabled = false
             setImageResource(Config.getSearchBarDeleteIconResourceId(context))
-            setColorFilter(Color.RED)
             setOnClickListener { v ->
                 run {
                     searchKeyword.text = null

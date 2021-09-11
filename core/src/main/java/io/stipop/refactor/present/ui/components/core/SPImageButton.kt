@@ -11,6 +11,7 @@ open class SPImageButton(context: Context, attrs: AttributeSet? = null) :
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        setBackgroundColor(Color.TRANSPARENT)
+
+        background = null
     }
 }

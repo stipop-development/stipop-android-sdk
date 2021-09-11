@@ -36,7 +36,8 @@ class SPStickerKeyboardPopupWindow(
 
     init {
         _targetView.let {
-            it.viewTreeObserver.addOnPreDrawListener {
+
+            it.viewTreeObserver.addOnGlobalLayoutListener {
                 _keyboardHeight = if (_activityHeight > it.height) {
                     _activityHeight - it.height
                 } else {
@@ -45,11 +46,6 @@ class SPStickerKeyboardPopupWindow(
 
                 _isShowKeyboard = _activityHeight - it.height > 0
 
-                true
-            }
-            it.viewTreeObserver.addOnDrawListener {
-                Log.d("HELLO", "_activityHeight -> $_activityHeight")
-                Log.d("HELLO", "_keyboardHeight -> $_keyboardHeight")
                 if (_isShowKeyboard) {
                     update(0, 0, _keyboardWidth, _keyboardHeight)
                 } else {
@@ -97,7 +93,6 @@ class SPStickerKeyboardPopupWindow(
 
     }
 
-    //    https://messenger.stipop.io/v1/mysticker/0000?limit=20&pageNumber=1
     override fun onDismiss() {
         Log.d(this::class.simpleName, "onDismiss")
         dismiss()
