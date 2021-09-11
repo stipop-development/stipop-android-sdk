@@ -1,9 +1,12 @@
 package io.stipop.refactor.present.ui.pages.search_sticker
 
+import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +15,7 @@ import io.stipop.Config
 import io.stipop.Stipop
 import io.stipop.databinding.ActivitySearchStickerBinding
 import io.stipop.refactor.domain.entities.SPKeywordItem
+import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.present.ui.adapters.SearchKeywordAdapter
 import io.stipop.refactor.present.ui.adapters.SearchStickerAdapter
 import io.stipop.refactor.present.ui.listeners.OnItemSelectListener
@@ -19,6 +23,22 @@ import io.stipop.refactor.present.ui.view_models.SearchStickerViewModel
 import javax.inject.Inject
 
 class SPSearchStickerActivity : AppCompatActivity() {
+
+    companion object {
+        enum class Request(val rawValue: Int) {
+            INITIAL(-1),
+            CANCEL(0),
+            OK(1);
+
+            fun fromRawValue(rawValue: Int): Request {
+                return Request.values().first { it.rawValue == rawValue }
+            }
+
+            companion object {
+                val TAG = "stickerId"
+            }
+        }
+    }
 
     lateinit var _binding: ActivitySearchStickerBinding
 
@@ -52,8 +72,8 @@ class SPSearchStickerActivity : AppCompatActivity() {
 
         _binding = ActivitySearchStickerBinding.inflate(layoutInflater).apply {
 
-            searchBar.let {
-                it.addTextChangedSearchKeywordListener(object : TextWatcher {
+            searchBar.apply {
+                addTextChangedSearchKeywordListener(object : TextWatcher {
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
                     override fun afterTextChanged(p0: Editable?) {
@@ -71,8 +91,8 @@ class SPSearchStickerActivity : AppCompatActivity() {
                             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                                 super.onScrollStateChanged(recyclerView, newState)
                                 when (newState) {
-                                    RecyclerView.SCROLL_STATE_DRAGGING -> {
-                                        _viewModel.onLoadKeywordList(findLastCompletelyVisibleItemPosition())
+                                    RecyclerView.SCROLL_STATE_IDLE -> {
+                                        _viewModel.onLoadKeywordList(findLastVisibleItemPosition())
                                     }
                                 }
                             }
@@ -88,24 +108,43 @@ class SPSearchStickerActivity : AppCompatActivity() {
             }
 
             stickerList.apply {
+                addItemDecoration(TestDeco2())
+
                 layoutManager = GridLayoutManager(this@SPSearchStickerActivity, Config.detailNumOfColumns).apply {
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
                         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                             super.onScrollStateChanged(recyclerView, newState)
                             when (newState) {
-                                RecyclerView.SCROLL_STATE_DRAGGING -> {
-                                    _viewModel.onLoadStickerList(findLastCompletelyVisibleItemPosition())
+                                RecyclerView.SCROLL_STATE_IDLE -> {
+                                    _viewModel.onLoadStickerList(findLastVisibleItemPosition())
                                 }
                             }
                         }
                     })
                 }
-                adapter = SearchStickerAdapter()
+                adapter = SearchStickerAdapter().apply {
+                    onItemSelectListener = object : OnItemSelectListener<SPStickerItem> {
+                        override fun onSelect(item: SPStickerItem) {
+                            onSelectSticker(item)
+                        }
+                    }
+                }
             }
         }
         setContentView(_binding.root)
 
         Log.d(this::class.simpleName, "view model -> $_viewModel")
+    }
+
+    private fun onSelectSticker(item: SPStickerItem) {
+        setResult(
+            Request.OK.rawValue,
+            Intent().apply {
+                putExtra(Request.TAG, item.stickerId)
+            }
+        ).run {
+            finish()
+        }
     }
 
     private fun onChangeKeyword(keyword: String) {
@@ -117,5 +156,18 @@ class SPSearchStickerActivity : AppCompatActivity() {
 
         _viewModel.onLoadKeywordList(-1)
         _viewModel.onLoadStickerList(-1)
+    }
+}
+
+class TestDeco2 : RecyclerView.ItemDecoration() {
+
+    val value: Int = 100
+
+    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+        super.getItemOffsets(outRect, view, parent, state)
+        outRect.top = value
+        outRect.bottom = value
+        outRect.left = value
+        outRect.right = value
     }
 }

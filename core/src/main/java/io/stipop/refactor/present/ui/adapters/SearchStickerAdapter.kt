@@ -3,6 +3,8 @@ package io.stipop.refactor.present.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import io.stipop.databinding.ItemStickerBinding
 import io.stipop.refactor.domain.entities.SPStickerItem
 
@@ -13,7 +15,10 @@ class SearchStickerAdapter :
     class SearchStickerViewHolder(binding: ItemStickerBinding) :
         ViewBindingHolder<SPStickerItem, ItemStickerBinding>(binding) {
         override fun onBind(item: SPStickerItem) {
-            Glide.with(binding.stickerImage).load(item.stickerImg).into(binding.stickerImage)
+            Glide.with(binding.stickerImage).load(item.stickerImg)
+                .transition(withCrossFade())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(binding.stickerImage);
         }
     }
 

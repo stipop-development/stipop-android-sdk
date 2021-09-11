@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content">
+<io.stipop.refactor.present.ui.components.core.SPLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="6dp"
+    android:textColor="@color/white"
+    android:textSize="12sp">
 
     <io.stipop.refactor.present.ui.components.core.SPTextView
-        android:id="@+id/keywordTV"
+        android:id="@+id/keyword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/keyword_background"
+        android:paddingVertical="6dp"
         android:paddingHorizontal="12dp"
-        android:paddingVertical="4dp"
         android:textColor="@color/white"
         android:textSize="12sp"/>
 
-</LinearLayout>
+</io.stipop.refactor.present.ui.components.core.SPLinearLayout>

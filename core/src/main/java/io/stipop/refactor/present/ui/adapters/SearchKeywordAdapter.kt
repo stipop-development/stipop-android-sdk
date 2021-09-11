@@ -1,6 +1,5 @@
 package io.stipop.refactor.present.ui.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.stipop.databinding.ItemKeywordBinding
@@ -12,8 +11,7 @@ class SearchKeywordAdapter() :
     class SearchKeywordViewHolder(binding: ItemKeywordBinding) :
         ViewBindingHolder<SPKeywordItem, ItemKeywordBinding>(binding) {
         override fun onBind(item: SPKeywordItem) {
-            binding.keywordTV.text = item.keyword
-            Log.d(this::class.simpleName, "item = $item")
+            binding.keyword.text = item.keyword
         }
     }
 
