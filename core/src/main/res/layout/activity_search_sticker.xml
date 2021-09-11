@@ -22,14 +22,14 @@
         android:height="20dp"
         android:textStyle="bold"
         android:textColor="@color/c_374553"
-        android:text="Recommended Tag" />
+        android:text="@string/recommended_tag" />
 
     <io.stipop.refactor.present.ui.components.core.SPRecyclerView
         android:id="@+id/keyword_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="25dp"
-        android:layout_marginTop="10dp" />
+        android:paddingHorizontal="6dp"
+         />
 
     <io.stipop.refactor.present.ui.components.core.SPRecyclerView
         android:id="@+id/sticker_list"
