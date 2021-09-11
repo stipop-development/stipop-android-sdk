@@ -158,7 +158,7 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
                     it
                 }
                 adapter = KeyboardPackageAdapter().let {
-                    it.itemSelectListener = object : OnItemSelectListener<SPPackageItem> {
+                    it.onItemSelectListener = object : OnItemSelectListener<SPPackageItem> {
                         override fun onSelect(item: SPPackageItem) {
                             onSelectPackage(item)
                         }
@@ -182,7 +182,7 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
                     it
                 }
                 adapter = KeyboardStickerAdapter().let {
-                    it.itemSelectListener = object : OnItemSelectListener<SPStickerItem> {
+                    it.onItemSelectListener = object : OnItemSelectListener<SPStickerItem> {
                         override fun onSelect(item: SPStickerItem) {
                             onSelectSticker(item)
                         }

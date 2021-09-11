@@ -5,8 +5,8 @@ import androidx.viewbinding.ViewBinding
 import io.stipop.refactor.present.ui.listeners.OnItemSelectListener
 
 
-abstract class ListAdapter<T, B : ViewBinding> : RecyclerView.Adapter<ListAdapter.ListViewHolder<T, B>>() {
-    abstract class ListViewHolder<T, B : ViewBinding>(open val binding: B) : RecyclerView.ViewHolder(binding.root) {
+abstract class ViewBindingAdapter<T, B : ViewBinding> : RecyclerView.Adapter<ViewBindingAdapter.ViewBindingHolder<T, B>>() {
+    abstract class ViewBindingHolder<T, B : ViewBinding>(open val binding: B) : RecyclerView.ViewHolder(binding.root) {
         abstract fun onBind(item: T)
     }
 
@@ -14,13 +14,13 @@ abstract class ListAdapter<T, B : ViewBinding> : RecyclerView.Adapter<ListAdapte
 
     var itemList: List<T> = listOf()
 
-    var itemSelectListener: OnItemSelectListener<T>? = null
+    var onItemSelectListener: OnItemSelectListener<T>? = null
 
-    override fun onBindViewHolder(holder: ListViewHolder<T, B>, position: Int) {
+    override fun onBindViewHolder(holder: ViewBindingHolder<T, B>, position: Int) {
         val item = itemList[position]
         holder.onBind(item)
         holder.itemView.setOnClickListener {
-            itemSelectListener?.onSelect(item)
+            onItemSelectListener?.onSelect(item)
         }
     }
 

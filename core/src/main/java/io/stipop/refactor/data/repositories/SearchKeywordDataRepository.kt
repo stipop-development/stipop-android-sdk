@@ -27,27 +27,19 @@ class SearchKeywordDataRepository @Inject constructor(
                     "pageNumber -> ${getPageNumber(offset, pageMap)} \n" +
                     ""
         )
-
         runBlocking(Dispatchers.IO) {
-            try {
-                _remoteDatasource.trendingSearchTerms(
-                    user.apikey,
-                    user.userId,
-                    user.language,
-                    user.country,
-                    limit,
-                )
-                    .run {
-                        body.keywordList?.let {
-                            if (it.isNotEmpty()) {
-                                _listChanged.postValue(it)
-                            }
-                        }
+            _remoteDatasource.trendingSearchTerms(
+                user.apikey,
+                user.userId,
+                user.language,
+                user.country,
+                limit,
+            )
+                .run {
+                    body.keywordList.let {
+                        _listChanged.postValue(it ?: listOf())
                     }
-            } catch (e: Exception) {
-                _listChanged.postValue(listOf())
-                Log.e(this::class.simpleName, e.message, e)
-            }
+                }
         }
     }
 

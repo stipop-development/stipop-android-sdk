@@ -13,17 +13,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
-class SearchStickerViewModel @Inject constructor(
+class SearchStickerViewModelV1 @Inject constructor(
     private val _userRepository: UserRepository,
     private val _searchStickerRepository: SearchStickerRepository,
     private val _searchKeywordRepository: SearchKeywordRepository,
-) : SearchStickerViewModelProtocol {
+) : SearchStickerViewModel {
 
     private var _keyword: String = ""
 
-    private val _user: MutableLiveData<SPUser> = MutableLiveData()
     override val user: LiveData<SPUser>
-        get() = _user
+        get() = _userRepository.userChanges
 
     private val _selectedKeyword: MutableLiveData<SPKeywordItem?> = MutableLiveData()
     override val selectedKeyword: LiveData<SPKeywordItem?>
@@ -33,26 +32,24 @@ class SearchStickerViewModel @Inject constructor(
     override val selectedSticker: LiveData<SPStickerItem?>
         get() = _selectedSticker
 
-    private val _searchKeywordList: MutableLiveData<List<SPKeywordItem>> = MutableLiveData()
-    override val searchKeywordList: LiveData<List<SPKeywordItem>>
-        get() = _searchKeywordList
+    override val keywordList: LiveData<List<SPKeywordItem>>
+        get() = _searchKeywordRepository.listChanges
 
-    private val _searchStickerList: MutableLiveData<List<SPStickerItem>> = MutableLiveData()
-    override val searchStickerList: LiveData<List<SPStickerItem>>
-        get() = _searchStickerList
+    override val stickerList: LiveData<List<SPStickerItem>>
+        get() = _searchStickerRepository.listChanges
 
-    override fun onChangeSearchKeyword(keyword: String?) {
+    override fun onChangeKeyword(keyword: String?) {
         Log.d(
             this::class.simpleName, "onChangeSearchKeyword : \n" +
                     "keyword -> $keyword \n"
         )
         keyword?.let {
             _keyword = keyword
-            onLoadSearchStickerList(-1)
+            onLoadStickerList(-1)
         }
     }
 
-    override fun onLoadSearchKeywordList(index: Int) {
+    override fun onLoadKeywordList(index: Int) {
         Log.d(
             this::class.simpleName, "onLoadSearchKeywordList : \n"
         )
@@ -63,7 +60,7 @@ class SearchStickerViewModel @Inject constructor(
         }
     }
 
-    override fun onLoadSearchStickerList(index: Int) {
+    override fun onLoadStickerList(index: Int) {
         Log.d(
             this::class.simpleName, "onLoadSearchStickerList : \n" +
                     "keyword -> $_keyword \n" +
@@ -86,17 +83,17 @@ class SearchStickerViewModel @Inject constructor(
     }
 }
 
-interface SearchStickerViewModelProtocol {
+interface SearchStickerViewModel {
 
     val user: LiveData<SPUser>
     val selectedKeyword: LiveData<SPKeywordItem?>
     val selectedSticker: LiveData<SPStickerItem?>
-    val searchKeywordList: LiveData<List<SPKeywordItem>>
-    val searchStickerList: LiveData<List<SPStickerItem>>
+    val keywordList: LiveData<List<SPKeywordItem>>
+    val stickerList: LiveData<List<SPStickerItem>>
 
-    fun onChangeSearchKeyword(keyword: String?)
-    fun onLoadSearchKeywordList(index: Int)
-    fun onLoadSearchStickerList(index: Int)
+    fun onChangeKeyword(keyword: String?)
+    fun onLoadKeywordList(index: Int)
+    fun onLoadStickerList(index: Int)
     fun onSelectStickerItem(item: SPStickerItem?)
     fun onSelectKeyword(item: SPKeywordItem?)
 }
