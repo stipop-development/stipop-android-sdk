@@ -4,8 +4,7 @@ import android.util.Log
 import io.stipop.refactor.domain.entities.SPUser
 import io.stipop.refactor.domain.repositories.RecentlySentStickersRepository
 import io.stipop.refactor.domain.services.StickerSendService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class RecentlySentStickersDataRepository @Inject constructor(
@@ -22,6 +21,26 @@ class RecentlySentStickersDataRepository @Inject constructor(
                     "pageNumber -> ${getPageNumber(offset, pageMap)} \n" +
                     ""
         )
+        launch {
+            hasLoading = coroutineContext.isActive
+            stickerSendService.recentlySentStickers(
+                user.apikey,
+                user.userId,
+                limit,
+                getPageNumber(offset, pageMap) + 1
+            )
+                .run {
+                    body.stickerList?.let {
+                        if (it.isNotEmpty()) {
+                            pageMap = body.pageMap
+                            _listChanged.postValue(it)
+                        }
+                    }
+                }
+            cancel()
+            hasLoading = coroutineContext.isActive
+        }
+
 
         runBlocking(Dispatchers.IO) {
             stickerSendService.recentlySentStickers(
