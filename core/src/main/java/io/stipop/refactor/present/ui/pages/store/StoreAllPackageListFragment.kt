@@ -85,8 +85,12 @@ class StoreAllPackageListFragment : Fragment() {
                     this?.setItemList(value)
                 }
             }
-
-            _viewModel.onLoadAllPackageList()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        _viewModel.onLoadAllPackageList(-1)
     }
 }

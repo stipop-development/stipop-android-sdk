@@ -76,7 +76,6 @@ abstract class PagingRepository<T> : CoroutineScope {
                     "limit -> $limit \n"
             )
             onLoadList(user, keyword, _offset, limit)
-
         }
     }
 

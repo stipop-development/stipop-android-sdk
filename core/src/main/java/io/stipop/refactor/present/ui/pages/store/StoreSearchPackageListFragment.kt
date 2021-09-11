@@ -69,8 +69,12 @@ class StoreSearchPackageListFragment : Fragment() {
                     this?.setItemList(value)
                 }
             }
-
-            _viewModel.onLoadStoreSearchPackageList("")
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        _viewModel.onLoadStoreSearchPackageList("", -1)
     }
 }

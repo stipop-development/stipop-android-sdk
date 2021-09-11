@@ -3,7 +3,7 @@ package io.stipop.refactor.present.di.modules
 import dagger.Binds
 import dagger.Module
 import io.stipop.refactor.data.repositories.*
-import io.stipop.refactor.data.repositories.common.StickerPackInfoDataRepository
+import io.stipop.refactor.data.repositories.StickerPackInfoDataRepository
 import io.stipop.refactor.domain.repositories.*
 import io.stipop.refactor.domain.repositories.StickerPackInfoRepository
 import io.stipop.refactor.domain.repositories.RecentlySentStickersRepository
@@ -46,4 +46,12 @@ interface RepositoryModule {
     @Singleton
     @Binds
     fun bindSearchKeywordRepository(repository: SearchKeywordDataRepository): SearchKeywordRepository
+
+    @Singleton
+    @Binds
+    fun bindAllPackageRepository(repository: StoreAllPackageDataRepository): StoreAllPackageRepository
+
+    @Singleton
+    @Binds
+    fun bindSearchPackageRepository(repository: StoreSearchPackageDataRepository): StoreSearchPackageRepository
 }

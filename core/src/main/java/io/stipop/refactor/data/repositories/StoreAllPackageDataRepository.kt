@@ -1,18 +1,17 @@
 package io.stipop.refactor.data.repositories
 
 import android.util.Log
-import io.stipop.refactor.data.datasources.SearchRestDatasource
+import io.stipop.refactor.data.datasources.StickerStoreRestDatasource
 import io.stipop.refactor.domain.entities.SPUser
-import io.stipop.refactor.domain.repositories.SearchStickerRepository
+import io.stipop.refactor.domain.repositories.StoreAllPackageRepository
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SearchStickerDataRepository @Inject constructor(
-    private val _remoteDatasource: SearchRestDatasource
-) : SearchStickerRepository() {
-
+class StoreAllPackageDataRepository @Inject constructor(
+    private val _remoteDatasource: StickerStoreRestDatasource
+) : StoreAllPackageRepository() {
     override fun onLoadList(user: SPUser, keyword: String, offset: Int?, limit: Int?) {
         Log.d(
             this::class.simpleName, "onLoadList : \n " +
@@ -25,17 +24,19 @@ class SearchStickerDataRepository @Inject constructor(
         )
         launch {
             hasLoading = coroutineContext.isActive
-            _remoteDatasource.stickerSearch(
+            _remoteDatasource.trendingStickerPacks(
                 user.apikey,
                 keyword,
                 user.userId,
                 user.language,
                 user.country,
+                null,
                 limit,
-                getPageNumber(offset, pageMap) + 1
+                getPageNumber(offset, pageMap) + 1,
+                null
             )
                 .run {
-                    body.stickerList?.let {
+                    body.packageList?.let {
                         if (it.isNotEmpty()) {
                             pageMap = body.pageMap
                             _listChanged.postValue(it)
@@ -46,5 +47,4 @@ class SearchStickerDataRepository @Inject constructor(
             hasLoading = coroutineContext.isActive
         }
     }
-
 }

@@ -1,4 +1,4 @@
-package io.stipop.refactor.data.repositories.common
+package io.stipop.refactor.data.repositories
 
 import android.util.Log
 import androidx.lifecycle.LiveData

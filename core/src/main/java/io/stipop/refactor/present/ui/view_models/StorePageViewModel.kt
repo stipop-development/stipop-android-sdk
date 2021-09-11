@@ -5,22 +5,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.domain.entities.SPUser
-import io.stipop.refactor.domain.repositories.StickerStoreRepository
+import io.stipop.refactor.domain.repositories.StoreAllPackageRepository
+import io.stipop.refactor.domain.repositories.StoreSearchPackageRepository
 import io.stipop.refactor.domain.repositories.UserRepository
 import kotlinx.coroutines.*
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
-class StorePageViewModel @Inject constructor(
+class StorePageViewModelV1 @Inject constructor(
     private val _userRepository: UserRepository,
-    private val _stickerStoreRepository: StickerStoreRepository,
-) : StorePageViewModelProtocol, CoroutineScope {
+    private val _storeAllPackageRepository: StoreAllPackageRepository,
+    private val _storeSearchPackageRepository: StoreSearchPackageRepository,
+) : StorePageViewModel {
 
-    private var _currentJob: Job? = null
-
-    private val _user: MutableLiveData<SPUser> = MutableLiveData()
     override val user: LiveData<SPUser>
-        get() = _user
+        get() = _userRepository.userChanges
 
     private val _storePageMode: MutableLiveData<StorePageMode> = MutableLiveData<StorePageMode>().apply {
         postValue(StorePageMode.ALL)
@@ -57,31 +55,21 @@ class StorePageViewModel @Inject constructor(
             this::class.simpleName, "onChangeSearchKeyword : " +
                     "keyword -> $keyword"
         )
-        onLoadStoreSearchPackageList(keyword)
+        onLoadStoreSearchPackageList(keyword, -1)
     }
 
-    override fun onLoadAllPackageList(lastIndex: Int?) {
-        val supervisor = SupervisorJob()
-        if (_currentJob == null || _currentJob?.isCompleted == true) {
-            _currentJob = CoroutineScope(Dispatchers.IO + supervisor).launch {
-                _userRepository.currentUser?.let { user ->
-                    Log.d(this::class.simpleName, "onLoadAllPackageList")
-                    _stickerStoreRepository.onLoadAllPackageList(user.apikey, "", user.userId)
-                }
-            }
+    override fun onLoadAllPackageList(lastIndex: Int) {
+        _userRepository.currentUser?.let { user ->
+            Log.d(this::class.simpleName, "onLoadAllPackageList")
+            _storeAllPackageRepository.onLoadMoreList(user, "", lastIndex)
         }
     }
 
-    override fun onLoadStoreSearchPackageList(keyword: String?, lastIndex: Int?) {
-        if (_currentJob == null || _currentJob?.isCompleted == true) {
-            _currentJob = launch {
-                _userRepository.currentUser?.let { user ->
-                    keyword?.let { keyword ->
-                        Log.d(this::class.simpleName, "onLoadSearchPackageList")
-                        _stickerStoreRepository.onLoadSearchPackageList(user.apikey, user.userId, keyword, lastIndex)
-                    }
-
-                }
+    override fun onLoadStoreSearchPackageList(keyword: String?, lastIndex: Int) {
+        _userRepository.currentUser?.let { user ->
+            keyword?.let { keyword ->
+                Log.d(this::class.simpleName, "onLoadSearchPackageList")
+                _storeSearchPackageRepository.onLoadMoreList(user, keyword, lastIndex)
             }
         }
     }
@@ -91,22 +79,14 @@ class StorePageViewModel @Inject constructor(
             this::class.simpleName, "onDownload : " +
                     "item.packageId -> ${item.packageId}"
         )
-
-        if (_currentJob == null || _currentJob?.isCompleted == true) {
-            _currentJob = launch {
-                _userRepository.currentUser?.let { user ->
-                    Log.d(this::class.simpleName, "onLoadSearchPackageList")
-                    _stickerStoreRepository.onDownloadPackage(user.apikey, user.userId, item)
-                }
-            }
+        _userRepository.currentUser?.let { user ->
+            Log.d(this::class.simpleName, "onLoadSearchPackageList")
+//            _storeAllPackageRepository.onDownloadPackage(user.apikey, user.userId, item)
         }
     }
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO + SupervisorJob()
 }
 
-interface StorePageViewModelProtocol {
+interface StorePageViewModel {
     val user: LiveData<SPUser>
     val storePageMode: LiveData<StorePageMode>
     val storeAllPackageList: LiveData<List<SPPackage>>
@@ -114,8 +94,8 @@ interface StorePageViewModelProtocol {
 
     fun onChangeStorePageMode(mode: StorePageMode)
     fun onChangeSearchKeyword(keyword: String?)
-    fun onLoadAllPackageList(lastIndex: Int? = -1)
-    fun onLoadStoreSearchPackageList(keyword: String? = "", lastIndex: Int? = -1)
+    fun onLoadAllPackageList(lastIndex: Int)
+    fun onLoadStoreSearchPackageList(keyword: String? = "", lastIndex: Int)
     fun onDownload(item: SPPackage)
 }
 
