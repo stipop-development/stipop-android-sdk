@@ -66,6 +66,15 @@ class Stipop {
         _searchStickerIntent = Intent(activity, SPSearchStickerActivity::class.java)
         _searchStickerLauncher = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
 
+            it?.let {
+                when (it.resultCode) {
+                    SPSearchStickerActivity.Companion.Request.OK.rawValue -> {
+                        it.data?.getIntExtra(SPSearchStickerActivity.Companion.Request.TAG, -1)?.let {
+                            Log.d(this::class.simpleName, "${SPSearchStickerActivity.Companion.Request.TAG} -> $it")
+                        }
+                    }
+                }
+            }
         }
     }
 

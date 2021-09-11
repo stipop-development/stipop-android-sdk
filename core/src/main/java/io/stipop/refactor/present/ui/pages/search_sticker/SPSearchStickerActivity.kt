@@ -1,12 +1,11 @@
 package io.stipop.refactor.present.ui.pages.search_sticker
 
+import android.content.Context
 import android.content.Intent
-import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -50,19 +49,15 @@ class SPSearchStickerActivity : AppCompatActivity() {
 
         Stipop._appComponent.inject(this)
 
-        _viewModel.let {
-
-            it.keywordList.observe(this) {
-
-                Log.e(this::class.simpleName, "it -> $it")
-
+        _viewModel.run {
+            keywordList.observe(this@SPSearchStickerActivity) {
                 (_binding.keywordList.adapter as? SearchKeywordAdapter)?.apply {
                     itemList = it
                     notifyDataSetChanged()
                 }
             }
 
-            it.stickerList.observe(this) {
+            stickerList.observe(this@SPSearchStickerActivity) {
                 (_binding.stickerList.adapter as? SearchStickerAdapter)?.apply {
                     itemList = it
                     notifyDataSetChanged()
@@ -92,7 +87,7 @@ class SPSearchStickerActivity : AppCompatActivity() {
                                 super.onScrollStateChanged(recyclerView, newState)
                                 when (newState) {
                                     RecyclerView.SCROLL_STATE_IDLE -> {
-                                        _viewModel.onLoadKeywordList(findLastVisibleItemPosition())
+                                        _viewModel.onLoadKeywordList(findFirstVisibleItemPosition())
                                     }
                                 }
                             }
@@ -108,17 +103,24 @@ class SPSearchStickerActivity : AppCompatActivity() {
             }
 
             stickerList.apply {
-                addItemDecoration(TestDeco2())
-
                 layoutManager = GridLayoutManager(this@SPSearchStickerActivity, Config.detailNumOfColumns).apply {
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
                         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                             super.onScrollStateChanged(recyclerView, newState)
                             when (newState) {
-                                RecyclerView.SCROLL_STATE_IDLE -> {
-                                    _viewModel.onLoadStickerList(findLastVisibleItemPosition())
+                                RecyclerView.SCROLL_STATE_DRAGGING -> {
+                                        (getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
+                                            ?.hideSoftInputFromWindow(
+                                            windowToken,
+                                            0
+                                        )
                                 }
                             }
+                        }
+
+                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                            super.onScrolled(recyclerView, dx, dy)
+                            _viewModel.onLoadStickerList(findLastVisibleItemPosition())
                         }
                     })
                 }
@@ -132,8 +134,6 @@ class SPSearchStickerActivity : AppCompatActivity() {
             }
         }
         setContentView(_binding.root)
-
-        Log.d(this::class.simpleName, "view model -> $_viewModel")
     }
 
     private fun onSelectSticker(item: SPStickerItem) {
@@ -156,18 +156,5 @@ class SPSearchStickerActivity : AppCompatActivity() {
 
         _viewModel.onLoadKeywordList(-1)
         _viewModel.onLoadStickerList(-1)
-    }
-}
-
-class TestDeco2 : RecyclerView.ItemDecoration() {
-
-    val value: Int = 100
-
-    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-        super.getItemOffsets(outRect, view, parent, state)
-        outRect.top = value
-        outRect.bottom = value
-        outRect.left = value
-        outRect.right = value
     }
 }

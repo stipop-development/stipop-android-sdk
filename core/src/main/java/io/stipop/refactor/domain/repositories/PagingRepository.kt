@@ -6,12 +6,13 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import io.stipop.refactor.domain.entities.SPPageMap
 import io.stipop.refactor.domain.entities.SPUser
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-abstract class PagingRepository<T> {
+abstract class PagingRepository<T> : CoroutineScope {
     var list: List<T>? = null
     var pageMap: SPPageMap? = null
+    var hasLoading: Boolean = false
 
     protected val _listChanged: MutableLiveData<List<T>> = MutableLiveData<List<T>>()
     val listChanges: LiveData<List<T>> = MediatorLiveData<List<T>>().apply {
@@ -42,24 +43,6 @@ abstract class PagingRepository<T> {
         return pageMap?.onePageCountRow ?: 20
     }
 
-    fun getHasMore(list: List<T>?, pageMap: SPPageMap?, offset: Int): Boolean {
-        return list?.let {
-
-            pageMap?.let {
-
-                pageMap.pageCount > pageMap.pageNumber
-
-            } ?: false
-
-
-        } ?: true
-    }
-
-    val isEmpty: Boolean
-        get() {
-            return list?.isEmpty() ?: true
-        }
-
     protected abstract fun onLoadList(
         user: SPUser,
         keyword: String,
@@ -73,13 +56,6 @@ abstract class PagingRepository<T> {
         offset: Int,
         limit: Int? = 20,
     ) {
-        Log.d(this::class.simpleName, "onLoadMoreList : \n" +
-                "user -> $user \n" +
-                "keyword -> $keyword \n" +
-                "offset -> $offset \n" +
-                "limit -> $limit \n"
-        )
-
         val _offset = if (offset < 0) {
             list = null
             pageMap = null
@@ -88,28 +64,29 @@ abstract class PagingRepository<T> {
             offset
         }
 
-        if (getHasMore(list, pageMap, _offset) && getValidLoadPosition(list, pageMap, _offset)) {
-            runBlocking(Dispatchers.IO) {
-                onLoadList(user, keyword, _offset, limit)
-            }
+        if (
+            getValidLoadPosition(list, pageMap, _offset)
+            && !hasLoading
+        ) {
+
+            Log.d(this::class.simpleName, "onLoadMoreList : \n" +
+                    "user -> $user \n" +
+                    "keyword -> $keyword \n" +
+                    "offset -> $offset \n" +
+                    "limit -> $limit \n"
+            )
+            onLoadList(user, keyword, _offset, limit)
+
         }
     }
 
     fun getValidLoadPosition(list: List<T>?, pageMap: SPPageMap?, offset: Int): Boolean {
-        return list?.let {
-
-                list ->
-
-            pageMap?.let {
-
-                    pageMap ->
-
+        return list?.let { list ->
+            pageMap?.let { pageMap ->
                 list.size - pageMap.onePageCountRow * 2 < offset
-
-
             } ?: false
-
-
         } ?: true
     }
+
+    override val coroutineContext: CoroutineContext = Dispatchers.IO
 }
