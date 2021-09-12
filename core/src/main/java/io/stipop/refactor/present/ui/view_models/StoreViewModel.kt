@@ -7,11 +7,11 @@ import io.stipop.refactor.domain.repositories.StickerStoreRepository
 import io.stipop.refactor.domain.repositories.UserRepository
 import javax.inject.Inject
 
-class StoreViewModel @Inject constructor(
+class StoreViewModelV1 @Inject constructor(
     val userRepository: UserRepository,
     val stickerStoreRepository: StickerStoreRepository,
     val myStickersRepository: MyStickersRepository,
-    ) : StoreViewModelProtocol {
+    ) : StoreViewModel {
     private val _storeMode: MutableLiveData<StoreMode> = MutableLiveData()
     override val storeMode: LiveData<StoreMode>
         get() = _storeMode
@@ -25,7 +25,7 @@ class StoreViewModel @Inject constructor(
     }
 }
 
-interface StoreViewModelProtocol {
+interface StoreViewModel {
 
     val storeMode: LiveData<StoreMode>
 

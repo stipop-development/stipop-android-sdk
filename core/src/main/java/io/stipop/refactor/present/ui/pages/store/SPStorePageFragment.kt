@@ -15,14 +15,14 @@ import io.stipop.refactor.present.ui.view_models.StorePageViewModel
 import javax.inject.Inject
 
 
-class StorePageFragment : Fragment() {
+class SPStorePageFragment : Fragment() {
     private lateinit var _binding: FragmentStorePageBinding
 
     @Inject
     internal lateinit var _viewModel: StorePageViewModel
 
-    private val _searchPackageListFragment: StoreSearchPackageListFragment = StoreSearchPackageListFragment()
-    private val _allPackageListFragment: StoreAllPackageListFragment = StoreAllPackageListFragment()
+    private val _searchPackageListFragment: SPStoreSearchPackageFragment = SPStoreSearchPackageFragment()
+    private val _allPackageListFragment: SPStoreAllPackageFragment = SPStoreAllPackageFragment()
 
     override fun onCreateView(
         inflater: LayoutInflater,

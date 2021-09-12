@@ -6,19 +6,17 @@ import io.stipop.refactor.present.ui.listeners.OnItemBindListener
 import io.stipop.refactor.present.ui.listeners.OnItemSelectListener
 
 
-abstract class ViewBindingAdapter<T, B : ViewBinding> : RecyclerView.Adapter<ViewBindingAdapter.ViewBindingHolder<T, B>>() {
-    abstract class ViewBindingHolder<T, B : ViewBinding>(open val binding: B) : RecyclerView.ViewHolder(binding.root) {
+abstract class ViewBindingAdapter<T> : RecyclerView.Adapter<ViewBindingAdapter.ViewBindingHolder<T>>() {
+    abstract class ViewBindingHolder<T>(open val binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
         abstract fun onBind(item: T)
     }
-
-    lateinit var binding: B
 
     var itemList: List<T> = listOf()
 
     var onItemSelectListener: OnItemSelectListener<T>? = null
     var onItemBindListener: OnItemBindListener<T>? = null
 
-    override fun onBindViewHolder(holder: ViewBindingHolder<T, B>, position: Int) {
+    override fun onBindViewHolder(holder: ViewBindingHolder<T>, position: Int) {
         val item = itemList[position]
         holder.onBind(item)
         holder.itemView.setOnClickListener {

@@ -10,10 +10,16 @@ import io.stipop.refactor.domain.repositories.RecentlySentStickersRepository
 import javax.inject.Singleton
 
 @Module(includes = [
-    DatasourceModule::class,
-    ServiceModule::class,
+    DatasourceBindsModule::class,
+    ServiceProvidesModule::class,
 ])
-interface RepositoryModule {
+interface RepositoryBindsModule {
+
+    @Singleton
+    @Binds
+    fun bindMyStickersRepository(repository: MyStickersDataRepository): MyStickersRepository
+
+
 
     @Singleton
     @Binds
@@ -21,11 +27,7 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    fun bindMyStickersRepository(repository: MyStickersDataRepository): MyStickersRepository
-
-    @Singleton
-    @Binds
-    fun bindSearchRepository(repository: SearchStickerDataRepository): SearchStickerRepository
+    fun bindSearchStickerRepository(repository: SearchStickerDataRepository): SearchStickerRepository
 
     @Singleton
     @Binds
@@ -33,7 +35,11 @@ interface RepositoryModule {
 
     @Singleton
     @Binds
-    fun bindMyActiveStickersRepository(repository: MyActiveStickersDataRepository): MyActiveStickersRepository
+    fun bindMyActivePackageRepository(repository: MyActivePackageDataRepository): MyActivePackageRepository
+
+    @Singleton
+    @Binds
+    fun bindMyHiddenPackageRepository(repository: MyHiddenPackageDataRepository): MyHiddenPackageRepository
 
     @Singleton
     @Binds

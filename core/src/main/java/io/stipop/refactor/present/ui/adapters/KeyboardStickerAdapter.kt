@@ -9,10 +9,10 @@ import io.stipop.refactor.domain.entities.SPStickerItem
 
 
 class KeyboardStickerAdapter :
-    ViewBindingAdapter<SPStickerItem, ItemStickerBinding>() {
+    ViewBindingAdapter<SPStickerItem>() {
 
     class KeyboardStickerViewHolder(override val binding: ItemStickerBinding) :
-        ViewBindingAdapter.ViewBindingHolder<SPStickerItem, ItemStickerBinding>(
+        ViewBindingAdapter.ViewBindingHolder<SPStickerItem>(
             binding
         ) {
         override fun onBind(item: SPStickerItem) {
@@ -25,7 +25,7 @@ class KeyboardStickerAdapter :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ViewBindingHolder<SPStickerItem, ItemStickerBinding> {
+    ): ViewBindingHolder<SPStickerItem> {
         return KeyboardStickerViewHolder(ItemStickerBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 }

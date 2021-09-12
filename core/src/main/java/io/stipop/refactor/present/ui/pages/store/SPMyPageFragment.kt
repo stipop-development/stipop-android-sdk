@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import io.stipop.Stipop
 import io.stipop.databinding.FragmentMyPageBinding
 import io.stipop.refactor.data.models.SPMyPageMode
-import io.stipop.refactor.present.ui.view_models.MyPageViewModel
+import io.stipop.refactor.present.ui.view_models.MyPageViewModelV1
 import javax.inject.Inject
 
 class SPMyPageFragment : Fragment() {
@@ -17,10 +17,10 @@ class SPMyPageFragment : Fragment() {
     private lateinit var _binding: FragmentMyPageBinding
 
     @Inject
-    internal lateinit var _viewModel: MyPageViewModel
+    internal lateinit var _viewModel: MyPageViewModelV1
 
-    private val _myActivePackageListFragment: SPMyActivePackageListFragment = SPMyActivePackageListFragment()
-    private val _myHiddenPackageListFragment: SPMyHiddenPackageListFragment = SPMyHiddenPackageListFragment()
+    private val _myActivePackageListFragment: SPMyActivePackageFragment = SPMyActivePackageFragment()
+    private val _myHiddenPackageListFragment: SPMyHiddenPackageFragment = SPMyHiddenPackageFragment()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,19 +47,6 @@ class SPMyPageFragment : Fragment() {
         activity?.let {
             _viewModel.myPageMode.observe(it) { value ->
                 Log.d(this::class.simpleName, "myPageMode -> $value")
-
-                when (value) {
-                    SPMyPageMode.ACTIVE -> {
-                        _viewModel.onLoadMyActivePackageList()
-                    }
-                    SPMyPageMode.HIDDEN -> {
-                        _viewModel.onLoadMyHiddenPackageList()
-                    }
-                    else -> {
-                        Log.e(this::class.simpleName, "incorrect mode -> $value")
-                    }
-                }
-
                 _onChangeMyPageMode(value)
             }
         }

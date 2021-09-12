@@ -8,7 +8,7 @@ import io.stipop.databinding.ItemKeyboardPackageBinding
 import io.stipop.refactor.domain.entities.SPPackageItem
 
 class KeyboardPackageAdapter :
-    ViewBindingAdapter<SPPackageItem, ItemKeyboardPackageBinding>() {
+    ViewBindingAdapter<SPPackageItem>() {
 
     companion object {
         enum class Type(val rawValue: Int) {
@@ -26,7 +26,7 @@ class KeyboardPackageAdapter :
     var selectedItem: SPPackageItem? = null
 
     class KeyboardPackageViewHolder(override val binding: ItemKeyboardPackageBinding) :
-        ViewBindingAdapter.ViewBindingHolder<SPPackageItem, ItemKeyboardPackageBinding>(
+        ViewBindingAdapter.ViewBindingHolder<SPPackageItem>(
             binding
         ) {
         override fun onBind(item: SPPackageItem) {
@@ -46,7 +46,7 @@ class KeyboardPackageAdapter :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ViewBindingHolder<SPPackageItem, ItemKeyboardPackageBinding> {
+    ): ViewBindingHolder<SPPackageItem> {
         return KeyboardPackageViewHolder(
             ItemKeyboardPackageBinding.inflate(
                 LayoutInflater.from(parent.context),

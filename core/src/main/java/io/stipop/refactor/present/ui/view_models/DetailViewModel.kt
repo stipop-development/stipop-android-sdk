@@ -7,10 +7,10 @@ import io.stipop.refactor.domain.repositories.StickerStoreRepository
 import io.stipop.refactor.domain.repositories.UserRepository
 import javax.inject.Inject
 
-class DetailViewModel @Inject constructor(
+class DetailViewModelV1 @Inject constructor(
     private val userRepository: UserRepository,
     private val stickerStoreRepository: StickerStoreRepository
-) : DetailViewModelProtocol {
+) : DetailViewModel {
 
     private var _selectedPackage: MutableLiveData<SPPackage> = MutableLiveData()
 
@@ -46,6 +46,6 @@ class DetailViewModel @Inject constructor(
     }
 }
 
-interface DetailViewModelProtocol {
+interface DetailViewModel {
     val selectedPackage: LiveData<SPPackage>
 }

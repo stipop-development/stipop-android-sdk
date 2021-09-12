@@ -17,8 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-class ServiceModule {
-
+class ServiceProvidesModule {
     private val _httpClient = with(OkHttpClient.Builder()) {
         addInterceptor(HttpLoggingInterceptor().apply {
             setLevel(HttpLoggingInterceptor.Level.BASIC)
@@ -32,28 +31,24 @@ class ServiceModule {
         .client(_httpClient)
         .build()
 
-    @Singleton
     @Provides
     fun provideMyStickersService(): MyStickersService {
         return _apiClient
             .create(MyStickersRestService::class.java)
     }
 
-    @Singleton
     @Provides
     fun provideSearchService(): SearchService {
         return _apiClient
             .create(SearchRestService::class.java)
     }
 
-    @Singleton
     @Provides
     fun provideStickerStoreService(): StickerStoreService {
         return _apiClient
             .create(StickerStoreRestService::class.java)
     }
 
-    @Singleton
     @Provides
     fun provideStickerSendService(): StickerSendService {
         return _apiClient

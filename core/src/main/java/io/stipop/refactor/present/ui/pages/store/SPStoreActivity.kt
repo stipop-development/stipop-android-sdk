@@ -7,7 +7,7 @@ import androidx.lifecycle.Observer
 import io.stipop.Stipop
 import io.stipop.databinding.ActivityStoreBinding
 import io.stipop.refactor.present.ui.view_models.StoreMode
-import io.stipop.refactor.present.ui.view_models.StoreViewModel
+import io.stipop.refactor.present.ui.view_models.StoreViewModelV1
 import javax.inject.Inject
 
 class SPStoreActivity : AppCompatActivity() {
@@ -15,9 +15,9 @@ class SPStoreActivity : AppCompatActivity() {
     private lateinit var _binding: ActivityStoreBinding
 
     @Inject
-    internal lateinit var _viewModel: StoreViewModel
+    internal lateinit var _viewModel: StoreViewModelV1
 
-    private val _storePageFragment: StorePageFragment = StorePageFragment()
+    private val _storePageFragment: SPStorePageFragment = SPStorePageFragment()
     private val _myPageFragment: SPMyPageFragment = SPMyPageFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {

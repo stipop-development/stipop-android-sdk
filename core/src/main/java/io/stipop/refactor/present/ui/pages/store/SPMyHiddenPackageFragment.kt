@@ -13,15 +13,15 @@ import io.stipop.databinding.FragmentMyHiddenPackageListBinding
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.present.ui.adapters.MyHiddenPackageAdapter
 import io.stipop.refactor.present.ui.listeners.OnActivePackageListener
-import io.stipop.refactor.present.ui.view_models.MyPageViewModel
+import io.stipop.refactor.present.ui.view_models.MyPageViewModelV1
 import javax.inject.Inject
 
-class SPMyHiddenPackageListFragment : Fragment() {
+class SPMyHiddenPackageFragment : Fragment() {
 
     private lateinit var _binding: FragmentMyHiddenPackageListBinding
 
     @Inject
-    internal lateinit var _viewModel: MyPageViewModel
+    internal lateinit var _viewModel: MyPageViewModelV1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +36,7 @@ class SPMyHiddenPackageListFragment : Fragment() {
             hiddenPackageList.adapter = MyHiddenPackageAdapter().apply {
                 onActivePackageListener = object : OnActivePackageListener {
                     override fun onActive(item: SPPackage) {
-                        _viewModel.onActivePackage(item)
+//                        _viewModel.onActivePackage(item)
                     }
                 }
             }
@@ -44,7 +44,7 @@ class SPMyHiddenPackageListFragment : Fragment() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     Log.d(this::class.simpleName, "hiddenPackageList onScrolled")
-                    _viewModel.onLoadMyHiddenPackageList()
+//                    _viewModel.onLoadMyHiddenPackageList()
                 }
             })
         }
@@ -53,7 +53,7 @@ class SPMyHiddenPackageListFragment : Fragment() {
             _viewModel.myHiddenPackageList.observe(it) { value ->
                 Log.d(this::class.simpleName, "hiddenPackageList.size -> ${value.size}")
                 with(_binding.hiddenPackageList.adapter as? MyHiddenPackageAdapter) {
-                    this?.setItemList(value)
+//                    this?.setItemList(value)
                 }
             }
 

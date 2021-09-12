@@ -14,7 +14,7 @@ import io.stipop.Stipop
 import io.stipop.refactor.present.ui.adapters.StoreDetailPackageAdapter
 import io.stipop.databinding.ActivityDetailBinding
 import io.stipop.refactor.present.ui.components.core.item_decoration.ItemPaddingDecoration
-import io.stipop.refactor.present.ui.view_models.DetailViewModel
+import io.stipop.refactor.present.ui.view_models.DetailViewModelV1
 import javax.inject.Inject
 
 
@@ -29,7 +29,7 @@ class SPDetailActivity : AppCompatActivity() {
     private lateinit var _binding: ActivityDetailBinding
 
     @Inject
-    internal lateinit var _viewModel: DetailViewModel
+    internal lateinit var _viewModel: DetailViewModelV1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

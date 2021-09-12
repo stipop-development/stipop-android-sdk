@@ -17,7 +17,7 @@ import io.stipop.refactor.present.ui.view_models.StorePageViewModel
 import javax.inject.Inject
 
 
-class StoreSearchPackageListFragment : Fragment() {
+class SPStoreSearchPackageFragment : Fragment() {
     private lateinit var _binding: FragmentStoreSearchPackageListBinding
 
     @Inject
@@ -70,10 +70,6 @@ class StoreSearchPackageListFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
 
         _viewModel.onLoadStoreSearchPackageList("", -1)
     }

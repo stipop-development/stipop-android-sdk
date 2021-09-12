@@ -8,10 +8,10 @@ import io.stipop.databinding.ItemStickerBinding
 import io.stipop.refactor.domain.entities.SPStickerItem
 
 class SearchStickerAdapter :
-    ViewBindingAdapter<SPStickerItem, ItemStickerBinding>() {
+    ViewBindingAdapter<SPStickerItem>() {
 
-    class SearchStickerViewHolder(binding: ItemStickerBinding) :
-        ViewBindingHolder<SPStickerItem, ItemStickerBinding>(binding) {
+    class SearchStickerViewHolder(override val binding: ItemStickerBinding) :
+        ViewBindingHolder<SPStickerItem>(binding) {
 
         override fun onBind(item: SPStickerItem) {
 
@@ -26,8 +26,7 @@ class SearchStickerAdapter :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ViewBindingHolder<SPStickerItem, ItemStickerBinding> {
-        binding = ItemStickerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return SearchStickerViewHolder(binding)
+    ): ViewBindingHolder<SPStickerItem> {
+        return SearchStickerViewHolder(ItemStickerBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 }

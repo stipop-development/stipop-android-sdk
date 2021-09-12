@@ -6,7 +6,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.domain.entities.SPStickerItem
-import io.stipop.refactor.domain.repositories.MyActiveStickersRepository
+import io.stipop.refactor.domain.repositories.MyActivePackageRepository
 import io.stipop.refactor.domain.repositories.UserRepository
 import io.stipop.refactor.domain.repositories.StickerPackInfoRepository
 import io.stipop.refactor.domain.repositories.RecentlySentStickersRepository
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class StickerKeyboardViewModelV1
 @Inject constructor(
     private val _userRepository: UserRepository,
-    private val _myActiveStickersRepository: MyActiveStickersRepository,
+    private val _myActiveStickersRepository: MyActivePackageRepository,
     private val _stickerPackInfoRepository: StickerPackInfoRepository,
     private val _recentlySentStickersRepository: RecentlySentStickersRepository,
 ) : StickerKeyboardViewModel {

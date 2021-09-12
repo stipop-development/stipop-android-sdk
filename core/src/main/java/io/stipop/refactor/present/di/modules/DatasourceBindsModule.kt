@@ -10,18 +10,14 @@ import io.stipop.refactor.domain.datasources.SearchDatasource
 import io.stipop.refactor.domain.datasources.StickerStoreDatasource
 import javax.inject.Singleton
 
-@Module(includes = [ServiceModule::class])
-interface DatasourceModule {
-
-    @Singleton
+@Module(includes = [ServiceProvidesModule::class])
+interface DatasourceBindsModule {
     @Binds
-    fun provideMyStickersDatasource(datasource: MyStickersRestDatasource): MyStickersDatasource
+    fun bindMyStickersDatasource(datasource: MyStickersRestDatasource): MyStickersDatasource
 
-    @Singleton
     @Binds
-    fun provideSearchDatasource(datasource: SearchRestDatasource): SearchDatasource
+    fun bindSearchDatasource(datasource: SearchRestDatasource): SearchDatasource
 
-    @Singleton
     @Binds
-    fun provideStickerStoreDatasource(datasource: StickerStoreRestDatasource): StickerStoreDatasource
+    fun bindStickerStoreDatasource(datasource: StickerStoreRestDatasource): StickerStoreDatasource
 }
