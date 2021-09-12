@@ -23,7 +23,6 @@ import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.present.ui.adapters.KeyboardPackageAdapter
 import io.stipop.refactor.present.ui.adapters.KeyboardStickerAdapter
-import io.stipop.refactor.present.ui.contracts.StipopContract
 import io.stipop.refactor.present.ui.pages.store.SPStoreActivity
 import io.stipop.refactor.present.ui.view_models.StickerKeyboardViewModel
 import io.stipop.refactor.present.ui.view_models.StoreMode
@@ -31,7 +30,10 @@ import javax.inject.Inject
 
 class SPStickerKeyboardPopupWindow(
     val _targetView: View,
-) : PopupWindow(SPStickerKeyboard(_targetView.context)), StipopContract.View {
+    val itemClick: ((SPStickerItem) -> Unit)?
+) : PopupWindow(SPStickerKeyboard(_targetView.context).also {
+    it.itemClick = itemClick
+}) {
 
     init {
         _targetView.let {
@@ -46,7 +48,7 @@ class SPStickerKeyboardPopupWindow(
                 _isShowKeyboard = _activityHeight - it.height > 0
 
                 if (_isShowKeyboard) {
-                    update(0, 0, _keyboardWidth, _keyboardHeight)
+                    update(it, _keyboardWidth, _keyboardHeight)
                 } else {
                     onDismiss()
                 }
@@ -69,30 +71,27 @@ class SPStickerKeyboardPopupWindow(
     private var _keyboardHeight: Int = -1
     private val _keyboardWidth: Int get() = _activityWidth
 
-    override val isShow: Boolean
+    val isShow: Boolean
         get() = isShowing
 
-    private var _presenter: StipopContract.Presenter? = null
-    override val presenter: StipopContract.Presenter?
-        get() = _presenter
 
-    override fun onShow() {
+    fun onShow() {
         Log.d(this::class.simpleName, "onShow")
         _targetView.let {
-            showAtLocation(it, Gravity.BOTTOM, 0, 0)
+            showAsDropDown(it, 0, _activityHeight)
 
             if (!_isShowKeyboard) {
                 _inputMethodManager?.run {
-                    showSoftInput(_targetView.rootView, InputMethodManager.SHOW_FORCED).run {
-                        update(0, 0, _keyboardWidth, _keyboardHeight)
-                    }
+                    showSoftInput(_targetView.rootView, InputMethodManager.SHOW_FORCED)
                 }
             }
+
+            update(it, _keyboardWidth, _keyboardHeight)
         }
 
     }
 
-    override fun onDismiss() {
+    fun onDismiss() {
         Log.d(this::class.simpleName, "onDismiss")
         dismiss()
     }
@@ -105,6 +104,8 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
     @Inject
     lateinit var _viewModel: StickerKeyboardViewModel
 
+    var itemClick: ((SPStickerItem) -> Unit)? = null
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
@@ -112,32 +113,32 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
 
         (context as? AppCompatActivity)?.let {
 
-            _viewModel.selectedPackage.observe(it) {
+            _viewModel.packageItemChanges.observe(it) {
                 it.let {
                     onChangePackage(it)
                 }
             }
 
-            _viewModel.packageList.observe(it) {
+            _viewModel.packageItemList.observe(it) {
                 it?.let {
-                    onChangePackageList(it)
+                    onChangePackageItemList(it)
                 }
             }
-            _viewModel.stickerList.observe(it) {
+            _viewModel.stickerItemList.observe(it) {
                 it?.let {
                     onChangeStickerList(it)
                 }
             }
 
-            _viewModel.onSelectPackage(null)
-            _viewModel.onLoadMorePackageList(-1)
+            _viewModel.onSelectPackageItem(null)
+            _viewModel.onLoadMorePackageItemList(-1)
         }
 
         _binding = LayoutKeyboardBinding.inflate(LayoutInflater.from(context), this, true).apply {
 
             recentButton.apply {
                 setOnClickListener {
-                    onSelectPackage(null)
+                    onSelectPackageItem(null)
                 }
             }
 
@@ -148,7 +149,7 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
                             super.onScrollStateChanged(recyclerView, newState)
                             when (newState) {
                                 RecyclerView.SCROLL_STATE_DRAGGING -> {
-                                    _viewModel.onLoadMorePackageList(it.findLastCompletelyVisibleItemPosition())
+                                    _viewModel.onLoadMorePackageItemList(it.findLastCompletelyVisibleItemPosition())
                                 }
                             }
                         }
@@ -157,7 +158,7 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
                 }
                 adapter = KeyboardPackageAdapter().let {
                     it.itemClick = {
-                        onSelectPackage(it)
+                        onSelectPackageItem(it)
                     }
                     it
                 }
@@ -170,7 +171,7 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
                             super.onScrollStateChanged(recyclerView, newState)
                             when (newState) {
                                 RecyclerView.SCROLL_STATE_DRAGGING -> {
-                                    _viewModel.onLoadMorePackageList(it.findLastCompletelyVisibleItemPosition())
+                                    _viewModel.onLoadMorePackageItemList(it.findLastCompletelyVisibleItemPosition())
                                 }
                             }
                         }
@@ -179,7 +180,7 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
                 }
                 adapter = KeyboardStickerAdapter().apply {
                     itemClick = {
-                        onSelectSticker(it)
+                        onSelectStickerItem(it)
                     }
                 }
             }
@@ -210,25 +211,25 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
         }
     }
 
-    private fun onSelectPackage(item: SPPackageItem?) {
+    private fun onSelectPackageItem(item: SPPackageItem?) {
         Log.d(
-            this::class.simpleName, "onSelectPackage : \n" +
+            this::class.simpleName, "onSelectPackageItem : \n" +
                     "item -> $item"
         )
-        _viewModel.onSelectPackage(item)
+        _viewModel.onSelectPackageItem(item)
     }
 
-    private fun onSelectSticker(item: SPStickerItem) {
+    private fun onSelectStickerItem(item: SPStickerItem) {
         Log.d(
-            this::class.simpleName, "onSelectSticker : \n" +
+            this::class.simpleName, "onSelectStickerItem : \n" +
                     "item -> $item"
         )
-        _viewModel.onSelectSticker(item)
+        itemClick?.invoke(item)
     }
 
-    private fun onChangePackageList(itemList: List<SPPackageItem>) {
+    private fun onChangePackageItemList(itemList: List<SPPackageItem>) {
         Log.d(
-            this::class.simpleName, "onChangePackageList : \n" +
+            this::class.simpleName, "onChangePackageItemList : \n" +
                     "itemList.size -> ${itemList.size}"
         )
         (_binding.packageList.adapter as? KeyboardPackageAdapter)?.submitList(itemList)

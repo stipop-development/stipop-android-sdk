@@ -13,6 +13,9 @@ import io.stipop.refactor.present.ui.view_models.*
 interface ViewModelBindsModule {
 
     @Binds
+    fun bindStipopViewModel(viewModel: StipopViewModelV1): StipopViewModel
+
+    @Binds
     fun bindDetailViewModel(viewModel: DetailViewModelV1): DetailViewModel
 
     @Binds

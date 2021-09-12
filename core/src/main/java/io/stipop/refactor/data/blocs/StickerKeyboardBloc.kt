@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import io.stipop.refactor.domain.blocs.StickerKeyboardBloc
 import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.domain.entities.SPStickerItem
+import io.stipop.refactor.domain.repositories.MyActivePackageRepository
 import io.stipop.refactor.domain.repositories.RecentlySentStickersRepository
 import io.stipop.refactor.domain.repositories.UserRepository
 import io.stipop.refactor.domain.services.StickerStoreService
@@ -18,13 +19,16 @@ class StickerKeyboardBlocV1
 @Inject
 constructor(
     private val _userRepository: UserRepository,
+    private val _myActiveStickersRepository: MyActivePackageRepository,
     private val _recentlySentStickersRepository: RecentlySentStickersRepository,
     private val _stickerStoreService: StickerStoreService,
 ) : StickerKeyboardBloc() {
 
-    private var _stickerListChanged : MutableLiveData<List<SPStickerItem>> = MutableLiveData()
+    override val packageItemListChanges: LiveData<List<SPPackageItem>>
+        get() = _myActiveStickersRepository.listChanges
 
-    override val listChanges: LiveData<List<SPStickerItem>> = MediatorLiveData<List<SPStickerItem>>().apply {
+    private var _stickerListChanged : MutableLiveData<List<SPStickerItem>> = MutableLiveData()
+    override val stickerItemListChanges: LiveData<List<SPStickerItem>> = MediatorLiveData<List<SPStickerItem>>().apply {
         addSource(_recentlySentStickersRepository.listChanges) {
             postValue(it)
         }
@@ -33,7 +37,7 @@ constructor(
         }
     }
 
-    override fun getStickerList(packageItem: SPPackageItem?, index: Int) {
+    override fun onLoadMoreStickerItemList(packageItem: SPPackageItem?, index: Int) {
         _userRepository.currentUser?.let { user ->
             if (packageItem == null) {
                 _recentlySentStickersRepository.onLoadMoreList(user, "", index)
@@ -54,5 +58,14 @@ constructor(
 
         }
 
+    }
+
+    override fun onLoadMorePackageItemList(index: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            _userRepository.currentUser?.let {
+                user ->
+                _myActiveStickersRepository.onLoadMoreList(user, "", index)
+            }
+        }
     }
 }

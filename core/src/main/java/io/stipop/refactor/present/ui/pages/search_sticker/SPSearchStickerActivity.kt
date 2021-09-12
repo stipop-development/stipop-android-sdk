@@ -19,6 +19,7 @@ import io.stipop.refactor.present.ui.adapters.SearchKeywordAdapter
 import io.stipop.refactor.present.ui.adapters.SearchStickerAdapter
 import io.stipop.refactor.present.ui.listeners.OnItemSelectListener
 import io.stipop.refactor.present.ui.view_models.SearchStickerViewModel
+import org.json.JSONObject
 import javax.inject.Inject
 
 class SPSearchStickerActivity : AppCompatActivity() {
@@ -34,7 +35,7 @@ class SPSearchStickerActivity : AppCompatActivity() {
             }
 
             companion object {
-                val TAG = "stickerId"
+                val TAG = "stickerJsonString"
             }
         }
     }
@@ -140,7 +141,11 @@ class SPSearchStickerActivity : AppCompatActivity() {
         setResult(
             Request.OK.rawValue,
             Intent().apply {
-                putExtra(Request.TAG, item.stickerId)
+                putExtra(Request.TAG, JSONObject().apply {
+                    put("stickerImg", item.stickerImg)
+                    put("keyword", item.keyword)
+                    put("stickerId", item.stickerId)
+                }.toString())
             }
         ).run {
             finish()

@@ -3,27 +3,31 @@ package io.stipop.refactor.present.ui.components.common
 import android.app.Activity
 import android.os.Build
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import com.bumptech.glide.Glide
 import io.stipop.*
+import io.stipop.databinding.LayoutPreviewBinding
 import io.stipop.extend.StipopImageView
-import io.stipop.refactor.data.models.SPSticker
+import io.stipop.refactor.domain.entities.SPStickerItem
 
-class SPStickerPreviewPopupWindow(val activity: Activity) : PopupWindow() {
+class SPStickerPreviewPopupWindow(val _targetView: View) : PopupWindow() {
 
+    private lateinit var _binding: LayoutPreviewBinding
     private lateinit var rootView: View
 
     private lateinit var stickerIV: StipopImageView
     private lateinit var favoriteIV: StipopImageView
 
-    var sticker = SPSticker()
+    var sticker = SPStickerItem()
 
     lateinit var popupWindow: PopupWindow
 
     fun show() {
 
-        val view = View.inflate(this.activity, R.layout.activity_preview,null)
+        _binding = LayoutPreviewBinding.inflate(LayoutInflater.from(_targetView.context))
+        val view = _binding.root
 
         popupWindow = PopupWindow(
             view,
@@ -40,25 +44,19 @@ class SPStickerPreviewPopupWindow(val activity: Activity) : PopupWindow() {
         }
 
 
-        view.findViewById<ImageView>(R.id.closeIV).setImageResource(Config.getPreviewCloseResourceId(activity))
+        view.findViewById<ImageView>(R.id.closeIV).setImageResource(Config.getPreviewCloseResourceId(_targetView.context))
 
         favoriteIV = view.findViewById(R.id.favoriteIV)
         stickerIV = view.findViewById(R.id.stickerIV)
 
-        favoriteIV.setOnClickListener {
-            setFavorite()
-        }
-
         setStickerView()
 
-        // show
-        this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
-//        popupWindow.showAtLocation(
-//            this.rootView,
-//            Gravity.BOTTOM,
-//            0,
-//            Stipop.keyboardHeight + Config.previewPadding + Utils.getNavigationBarSize(this.activity).y
-//        )
+        popupWindow.showAtLocation(
+            _targetView,
+            Gravity.BOTTOM,
+            0,
+            1000 + Config.previewPadding + Utils.getNavigationBarSize(_targetView.context).y
+        )
     }
 
     fun windowIsShowing() : Boolean {
@@ -74,52 +72,8 @@ class SPStickerPreviewPopupWindow(val activity: Activity) : PopupWindow() {
     }
 
     fun setStickerView() {
-        Glide.with(this.activity).load(sticker.stickerImg).into(stickerIV)
+        Glide.with(_targetView.context).load(sticker.stickerImg).into(stickerIV)
 
-        setFavoriteImage()
-    }
-
-    fun setFavorite() {
-
-        /*
-
-        // TODO refactor
-
-        val params = JSONObject()
-        params.put("stickerId", sticker.stickerId)
-
-        APIClient.put(this.activity, APIClient.APIPath.MY_STICKER_FAVORITE.rawValue + "/${Stipop.userId}", params) { response: JSONObject?, e: IOException? ->
-            // println(response)
-
-            if (null != response) {
-
-                val header = response.getJSONObject("header")
-
-                if (Utils.getString(header, "status") == "success") {
-                    if (sticker.favoriteYN != "Y") {
-                        sticker.favoriteYN = "Y"
-                    } else {
-                        sticker.favoriteYN = "N"
-                    }
-
-                    setFavoriteImage()
-
-                    keyboardFragment.changeFavorite(sticker.stickerId, sticker.favoriteYN, sticker.packageId)
-
-                } else {
-                    // println("ERROR!")
-                }
-
-            } else {
-
-            }
-        }
-        */
-
-    }
-
-    fun setFavoriteImage() {
-        Config.getPreviewFavoriteResourceId(activity, sticker.favoriteYN == "Y")
     }
 
 }

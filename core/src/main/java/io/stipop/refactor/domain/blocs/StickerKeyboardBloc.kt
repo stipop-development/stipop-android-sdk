@@ -6,7 +6,16 @@ import io.stipop.refactor.domain.entities.SPStickerItem
 
 abstract class StickerKeyboardBloc {
 
-    abstract val listChanges: LiveData<List<SPStickerItem>>
+    abstract val packageItemListChanges: LiveData<List<SPPackageItem>>
+    abstract val stickerItemListChanges: LiveData<List<SPStickerItem>>
 
-    abstract fun getStickerList(packageItem: SPPackageItem?, index: Int)
+    abstract fun onLoadMoreStickerItemList(packageItem: SPPackageItem?, index: Int)
+    abstract fun onLoadMorePackageItemList(index: Int)
+}
+
+abstract class StickerSendBloc {
+
+    abstract val stickerChanges: LiveData<SPStickerItem>
+
+    abstract fun onSelectStickerItem(id: Int)
 }
