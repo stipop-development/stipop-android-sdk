@@ -24,7 +24,6 @@ import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.present.ui.adapters.KeyboardPackageAdapter
 import io.stipop.refactor.present.ui.adapters.KeyboardStickerAdapter
 import io.stipop.refactor.present.ui.contracts.StipopContract
-import io.stipop.refactor.present.ui.listeners.OnItemSelectListener
 import io.stipop.refactor.present.ui.pages.store.SPStoreActivity
 import io.stipop.refactor.present.ui.view_models.StickerKeyboardViewModel
 import io.stipop.refactor.present.ui.view_models.StoreMode
@@ -156,10 +155,8 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
                     it
                 }
                 adapter = KeyboardPackageAdapter().let {
-                    it.onItemSelectListener = object : OnItemSelectListener<SPPackageItem> {
-                        override fun onSelect(item: SPPackageItem) {
-                            onSelectPackage(item)
-                        }
+                    it.itemClick = {
+                        onSelectPackage(it)
                     }
                     it
                 }
@@ -179,13 +176,10 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
                     })
                     it
                 }
-                adapter = KeyboardStickerAdapter().let {
-                    it.onItemSelectListener = object : OnItemSelectListener<SPStickerItem> {
-                        override fun onSelect(item: SPStickerItem) {
-                            onSelectSticker(item)
-                        }
+                adapter = KeyboardStickerAdapter().apply {
+                    itemClick = {
+                        onSelectSticker(it)
                     }
-                    it
                 }
             }
 
@@ -236,10 +230,7 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
             this::class.simpleName, "onChangePackageList : \n" +
                     "itemList.size -> ${itemList.size}"
         )
-        (_binding.packageList.adapter as? KeyboardPackageAdapter)?.let {
-            it.itemList = itemList
-            it.notifyDataSetChanged()
-        }
+        (_binding.packageList.adapter as? KeyboardPackageAdapter)?.submitList(itemList)
     }
 
     private fun onChangeStickerList(itemList: List<SPStickerItem>) {
@@ -247,10 +238,7 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
             this::class.simpleName, "onChangeStickerList : \n" +
                     "itemList.size -> ${itemList.size}"
         )
-        (_binding.stickerList.adapter as? KeyboardStickerAdapter)?.let {
-            it.itemList = itemList
-            it.notifyDataSetChanged()
-        }
+        (_binding.stickerList.adapter as? KeyboardStickerAdapter)?.submitList(itemList)
     }
 
     private fun onShowStorePage() {

@@ -2,14 +2,18 @@ package io.stipop.refactor.present.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.databinding.ItemKeyboardPackageBinding
 import io.stipop.refactor.domain.entities.SPPackageItem
 
-class KeyboardPackageAdapter :
-    ViewBindingAdapter<SPPackageItem>() {
-
+class KeyboardPackageAdapter : ListAdapter<SPPackageItem, KeyboardPackageAdapter.KeyboardPackageViewHolder>(object :
+    DiffUtil.ItemCallback<SPPackageItem>() {
+    override fun areItemsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem == newItem
+    override fun areContentsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem == newItem
+}) {
     companion object {
         enum class Type(val rawValue: Int) {
             UNSELECTED_ITEM(0X00),
@@ -23,8 +27,6 @@ class KeyboardPackageAdapter :
         }
     }
 
-    var selectedItem: SPPackageItem? = null
-
     class KeyboardPackageViewHolder(override val binding: ItemKeyboardPackageBinding) :
         ViewBindingAdapter.ViewBindingHolder<SPPackageItem>(
             binding
@@ -36,32 +38,40 @@ class KeyboardPackageAdapter :
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when (selectedItem == itemList[position]) {
-            true -> Type.SELECTED_ITEM
-            false -> Type.UNSELECTED_ITEM
-        }.rawValue
-    }
+    var itemClick: ((SPPackageItem) -> Unit)? = null
+    internal var selectedItem: SPPackageItem? = null
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ViewBindingHolder<SPPackageItem> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KeyboardPackageViewHolder {
         return KeyboardPackageViewHolder(
             ItemKeyboardPackageBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ).apply {
+            )
+        )
+            .apply {
                 when (Type.fromRawValue(viewType)) {
                     Type.UNSELECTED_ITEM -> {
-                        root.isSelected = false
+                        binding.root.isSelected = false
                     }
                     Type.SELECTED_ITEM -> {
-                        root.isSelected = true
+                        binding.root.isSelected = true
                     }
                 }
+                binding.root.setOnClickListener {
+                    itemClick?.invoke(getItem(absoluteAdapterPosition))
+                }
             }
-        )
+    }
+
+    override fun onBindViewHolder(holder: KeyboardPackageViewHolder, position: Int) {
+        holder.onBind(getItem(position))
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (selectedItem == getItem(position)) {
+            true -> Type.SELECTED_ITEM
+            false -> Type.UNSELECTED_ITEM
+        }.rawValue
     }
 }
