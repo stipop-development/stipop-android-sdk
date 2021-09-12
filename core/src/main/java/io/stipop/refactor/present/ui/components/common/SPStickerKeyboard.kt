@@ -129,6 +129,7 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
                 }
             }
 
+            _viewModel.onSelectPackage(null)
             _viewModel.onLoadMorePackageList(-1)
         }
 

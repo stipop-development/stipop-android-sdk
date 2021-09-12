@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import io.stipop.refactor.domain.blocs.StickerKeyboardBloc
 import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.domain.repositories.MyActivePackageRepository
@@ -16,6 +17,7 @@ import javax.inject.Inject
 
 class StickerKeyboardViewModelV1
 @Inject constructor(
+    private val _stickerKeyboardBloc: StickerKeyboardBloc,
     private val _userRepository: UserRepository,
     private val _myActiveStickersRepository: MyActivePackageRepository,
     private val _stickerPackInfoRepository: StickerPackInfoRepository,
@@ -34,15 +36,7 @@ class StickerKeyboardViewModelV1
     override val packageList: LiveData<List<SPPackageItem>>
         get() = _myActiveStickersRepository.listChanges
 
-    private val _stickerList: MutableLiveData<List<SPStickerItem>> = MutableLiveData()
-    override val stickerList: LiveData<List<SPStickerItem>> = MediatorLiveData<List<SPStickerItem>>().apply {
-        addSource(_recentlySentStickersRepository.listChanges) {
-            postValue(it)
-        }
-        addSource(_stickerPackInfoRepository.packageItemChanges) {
-            postValue(it.stickers)
-        }
-    }
+    override val stickerList: LiveData<List<SPStickerItem>> = _stickerKeyboardBloc.listChanges
 
     override fun onSelectPackage(item: SPPackageItem?) {
         Log.d(
@@ -50,25 +44,7 @@ class StickerKeyboardViewModelV1
                     "item -> $item"
         )
         _selectedPackage.postValue(item)
-        runBlocking(Dispatchers.IO) {
-            _userRepository.currentUser?.let { user ->
-                if (item == null) {
-                    _recentlySentStickersRepository.onLoadMoreList(user, "", -1)
-
-                } else {
-                    _stickerPackInfoRepository.onLoad(user, item.packageId)
-                }
-
-                if (item == null) {
-                    _stickerList.postValue(_recentlySentStickersRepository.list)
-                } else {
-                    _stickerList.postValue(
-                        _stickerPackInfoRepository.packageItem?.stickers
-                    )
-                }
-            }
-        }
-
+        _stickerKeyboardBloc.getStickerList(item, -1)
     }
 
     override fun onLoadMorePackageList(index: Int) {

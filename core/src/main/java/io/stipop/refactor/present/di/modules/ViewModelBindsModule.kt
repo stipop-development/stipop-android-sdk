@@ -6,7 +6,8 @@ import io.stipop.refactor.present.ui.view_models.*
 
 @Module(
     includes = [
-        RepositoryBindsModule::class
+        RepositoryBindsModule::class,
+        BlocBindsModule::class
     ]
 )
 interface ViewModelBindsModule {
