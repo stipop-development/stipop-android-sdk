@@ -3,12 +3,14 @@ package io.stipop.refactor.present.ui.components.common
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.Color
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.PopupWindow
@@ -30,10 +32,14 @@ import javax.inject.Inject
 
 class SPStickerKeyboardPopupWindow(
     val _targetView: View,
-    val itemClick: ((SPStickerItem) -> Unit)?
-) : PopupWindow(SPStickerKeyboard(_targetView.context).also {
-    it.itemClick = itemClick
-}) {
+    val _itemClick: ((SPStickerItem) -> Unit)?
+) : PopupWindow(
+    SPStickerKeyboard(_targetView.context).also {
+    it.itemClick = _itemClick
+},
+    MATCH_PARENT,
+    WRAP_CONTENT
+) {
 
     init {
         _targetView.let {
@@ -45,11 +51,11 @@ class SPStickerKeyboardPopupWindow(
                     _keyboardHeight
                 }
 
+                Log.e(Stipop.TAG, "_keyboardHeight 2 -> $_keyboardHeight")
+
                 _isShowKeyboard = _activityHeight - it.height > 0
 
-                if (_isShowKeyboard) {
-                    update(it, _keyboardWidth, _keyboardHeight)
-                } else {
+                if (!_isShowKeyboard) {
                     onDismiss()
                 }
             }
@@ -74,11 +80,11 @@ class SPStickerKeyboardPopupWindow(
     val isShow: Boolean
         get() = isShowing
 
-
     fun onShow() {
         Log.d(this::class.simpleName, "onShow")
         _targetView.let {
-            showAsDropDown(it, 0, _activityHeight)
+
+            showAsDropDown(it.rootView)
 
             if (!_isShowKeyboard) {
                 _inputMethodManager?.run {
@@ -86,7 +92,8 @@ class SPStickerKeyboardPopupWindow(
                 }
             }
 
-            update(it, _keyboardWidth, _keyboardHeight)
+            contentView.minimumHeight = _keyboardHeight
+
         }
 
     }
@@ -165,6 +172,7 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
             }
 
             stickerList.apply {
+                setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
                 layoutManager = GridLayoutManager(context, Config.detailNumOfColumns).let {
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
                         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {

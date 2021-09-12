@@ -2,6 +2,8 @@ package io.stipop
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
@@ -32,8 +34,13 @@ interface StipopDelegate {
 
 class Stipop {
 
-    private var _activityHeight: Int = -1
-    private var _activityWidth: Int = -1
+    private val _metrics: DisplayMetrics
+        get() {
+            return Resources.getSystem().displayMetrics ?: DisplayMetrics()
+        }
+
+    private var _activityHeight: Int = _metrics.heightPixels
+    private var _activityWidth: Int = _metrics.widthPixels
     private var _keyboardHeight: Int = -1
     private var _keyboardWidth: Int = -1
     private var _isShowKeyboard: Boolean = false
@@ -93,22 +100,28 @@ class Stipop {
         activity.lifecycle.addObserver(object : LifecycleObserver {
             @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
             fun onCreate() {
-                activity.window.decorView.findViewById<View>(android.R.id.content)?.apply {
-                    viewTreeObserver.addOnGlobalLayoutListener {
-                        _keyboardHeight = if (_activityHeight > height) {
-                            _activityHeight - height
+                activity.window.decorView.findViewById<View>(android.R.id.content)?.let {
+                    it.viewTreeObserver.addOnGlobalLayoutListener {
+                        _keyboardHeight = if (_activityHeight > it.height) {
+                            _activityHeight - it.height
                         } else {
                             _keyboardHeight
                         }
 
-                        _isShowKeyboard = _activityHeight - height > 0
+                        Log.e(TAG, "_keyboardHeight -> $_keyboardHeight")
+
+
+
+                        _isShowKeyboard = _activityHeight - it.height > 0
                     }
 
                     _stickerKeyboardPopupWindow =
-                        SPStickerKeyboardPopupWindow(this) {
+                        SPStickerKeyboardPopupWindow(it) {
                             _viewModel.onSelectStickerItem(it)
                         }
-                    _stickerPreviewPopupWindow = SPStickerPreviewPopupWindow(this)
+
+                    _stickerPreviewPopupWindow = SPStickerPreviewPopupWindow(it)
+
                 }
             }
 
