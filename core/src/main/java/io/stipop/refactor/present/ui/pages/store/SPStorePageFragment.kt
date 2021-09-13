@@ -54,7 +54,7 @@ class SPStorePageFragment : Fragment() {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
                 override fun afterTextChanged(p0: Editable?) {
-                    _viewModel.onChangeSearchKeyword("$p0")
+                    _viewModel.onChangeKeyword("$p0")
                 }
 
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}

@@ -2,14 +2,20 @@ package io.stipop.refactor.present.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.databinding.ItemSearchPackageBinding
 import io.stipop.refactor.data.models.SPPackage
+import io.stipop.refactor.domain.entities.SPPackageItem
 
-class SearchPackageAdapter : RecyclerView.Adapter<SearchPackageViewHolder>() {
-
-    private val _itemList: ArrayList<SPPackage> = arrayListOf()
+class SearchPackageAdapter : ListAdapter<SPPackageItem, SearchPackageViewHolder>(
+    object: DiffUtil.ItemCallback<SPPackageItem>() {
+        override fun areItemsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean  = oldItem == newItem
+        override fun areContentsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem == newItem
+    }
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchPackageViewHolder {
         return SearchPackageViewHolder(
@@ -22,23 +28,13 @@ class SearchPackageAdapter : RecyclerView.Adapter<SearchPackageViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: SearchPackageViewHolder, position: Int) {
-        holder.setItem(_itemList[position])
-    }
-
-    override fun getItemCount(): Int {
-        return _itemList.size
-    }
-
-    fun setItemList(itemList: List<SPPackage>) {
-        _itemList.clear()
-        _itemList.addAll(itemList)
-        notifyDataSetChanged()
+        holder.setItem(getItem(position))
     }
 }
 
 class SearchPackageViewHolder(private val _binding: ItemSearchPackageBinding) : RecyclerView.ViewHolder(_binding.root) {
 
-    fun setItem(item: SPPackage) {
+    fun setItem(item: SPPackageItem) {
         _binding.packageName.text = item.packageName
         _binding.artistName.text = item.artistName
 

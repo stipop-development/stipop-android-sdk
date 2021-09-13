@@ -2,10 +2,7 @@ package io.stipop.refactor.present.di.modules
 
 import dagger.Binds
 import dagger.Module
-import io.stipop.refactor.data.blocs.PackageItemDetailBloc
-import io.stipop.refactor.data.blocs.PackageItemDetailBlocV1
-import io.stipop.refactor.data.blocs.StickerKeyboardBlocV1
-import io.stipop.refactor.data.blocs.StickerSendBlocV1
+import io.stipop.refactor.data.blocs.*
 import io.stipop.refactor.domain.blocs.StickerKeyboardBloc
 import io.stipop.refactor.domain.blocs.StickerSendBloc
 
@@ -24,4 +21,7 @@ interface BlocBindsModule {
 
     @Binds
     fun bindStickerSendBloc(bloc: StickerSendBlocV1): StickerSendBloc
+
+    @Binds
+    fun bindSearchStorePackageBloc(bloc: SearchStorePackageBlocV1): SearchStorePackageBloc
 }

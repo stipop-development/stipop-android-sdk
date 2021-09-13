@@ -14,6 +14,7 @@ import io.stipop.Stipop
 import io.stipop.databinding.FragmentStoreSearchPackageListBinding
 import io.stipop.refactor.present.ui.adapters.SearchPackageAdapter
 import io.stipop.refactor.present.ui.view_models.StorePageViewModel
+import io.stipop.refactor.present.ui.view_models.StoreSearchPackageViewModel
 import javax.inject.Inject
 
 
@@ -21,7 +22,9 @@ class SPStoreSearchPackageFragment : Fragment() {
     private lateinit var _binding: FragmentStoreSearchPackageListBinding
 
     @Inject
-    internal lateinit var _viewModel: StorePageViewModel
+    internal lateinit var _viewModel: StoreSearchPackageViewModel
+
+    private lateinit var _searchPackageAdapter: SearchPackageAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,38 +42,39 @@ class SPStoreSearchPackageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(this::class.simpleName, "onViewCreated")
+        _searchPackageAdapter = SearchPackageAdapter()
 
         _binding.storeSearchPackageList.apply {
-            this.layoutManager = LinearLayoutManager(context)
-            this.adapter = SearchPackageAdapter()
-            this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                        val inputMethodManager =
-                            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+            layoutManager = LinearLayoutManager(context).apply {
+                addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+                        if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                            val inputMethodManager =
+                                context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                            inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+                        }
                     }
-                }
 
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (recyclerView.layoutManager is LinearLayoutManager) {
-                        _viewModel.onLoadStoreSearchPackageList(lastIndex = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition())
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        super.onScrolled(recyclerView, dx, dy)
+                        if (recyclerView.layoutManager is LinearLayoutManager) {
+                            _viewModel.onLoadMore(index = findLastVisibleItemPosition())
+                        }
                     }
-                }
-            })
+                })
+            }
+            adapter = _searchPackageAdapter
+
         }
 
         activity?.let {
-            _viewModel.storeSearchPackageList.observe(it) { value ->
-                Log.d(this::class.simpleName, "storeSearchPackageList.size -> ${value.size}")
-                with(_binding.storeSearchPackageList.adapter as? SearchPackageAdapter) {
-                    this?.setItemList(value)
-                }
+            _viewModel.listChanges.observe(it) {
+                Log.d(this::class.simpleName, "storeSearchPackageList.size -> ${it.size}")
+                _searchPackageAdapter.submitList(it)
             }
         }
 
-        _viewModel.onLoadStoreSearchPackageList("", -1)
+        _viewModel.onLoadMore("", -1)
     }
 }
