@@ -9,8 +9,6 @@ import io.stipop.refactor.domain.entities.SPUser
 import io.stipop.refactor.domain.repositories.SearchKeywordRepository
 import io.stipop.refactor.domain.repositories.SearchStickerRepository
 import io.stipop.refactor.domain.repositories.UserRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class SearchStickerViewModelV1 @Inject constructor(
@@ -53,10 +51,8 @@ class SearchStickerViewModelV1 @Inject constructor(
         Log.d(
             this::class.simpleName, "onLoadSearchKeywordList : \n"
         )
-        runBlocking(Dispatchers.IO) {
-            _userRepository.currentUser?.let { user ->
-                _searchKeywordRepository.onLoadMoreList(user, "", index)
-            }
+        _userRepository.currentUser?.let { user ->
+            _searchKeywordRepository.onLoadMoreList(user, "", index)
         }
     }
 
@@ -66,10 +62,8 @@ class SearchStickerViewModelV1 @Inject constructor(
                     "keyword -> $_keyword \n" +
                     "index -> $index \n"
         )
-        runBlocking(Dispatchers.IO) {
-            _userRepository.currentUser?.let { user ->
-                _searchStickerRepository.onLoadMoreList(user, _keyword, index)
-            }
+        _userRepository.currentUser?.let { user ->
+            _searchStickerRepository.onLoadMoreList(user, _keyword, index)
         }
 
     }

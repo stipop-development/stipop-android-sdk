@@ -24,20 +24,21 @@ class RecentlySentStickersDataRepository @Inject constructor(
         launch {
             try {
                 hasLoading = coroutineContext.isActive
-                stickerSendService.recentlySentStickers(
+                val _response = stickerSendService.recentlySentStickers(
                     user.apikey,
                     user.userId,
                     limit,
                     getPageNumber(offset, pageMap) + 1
                 )
-                    .run {
-                        body.stickerList?.let {
-                            pageMap = body.pageMap
-                            _listChanged.postValue(it)
-                        }
-                    }
+
+                _response.body.let {
+                    pageMap = it.pageMap
+                    _listChanged.postValue(it.stickerList ?: listOf())
+                }
+
             } catch (e: Exception) {
                 _listChanged.postValue(listOf())
+                Log.e(this@RecentlySentStickersDataRepository::class.simpleName, e.message, e)
             } finally {
                 cancel()
                 hasLoading = coroutineContext.isActive

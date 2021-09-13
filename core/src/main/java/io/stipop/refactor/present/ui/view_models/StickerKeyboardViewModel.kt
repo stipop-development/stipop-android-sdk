@@ -6,9 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import io.stipop.refactor.domain.blocs.StickerKeyboardBloc
 import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.domain.entities.SPStickerItem
-import io.stipop.refactor.domain.repositories.UserRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class StickerKeyboardViewModelV1
