@@ -1,13 +1,17 @@
 package io.stipop.refactor.present.ui.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import io.stipop.databinding.ItemPackageBinding
 import io.stipop.databinding.ItemStoreAllPackageBinding
+import io.stipop.databinding.ItemStoreTrendingPackageBinding
+import io.stipop.databinding.LayoutTrendingPackageBinding
 import io.stipop.refactor.domain.entities.SPPackageItem
 
 class StorePackageAdapter :
@@ -65,14 +69,57 @@ class StorePackageAdapter :
 
 
 // 트랜딩을 위한
-class StoreTrendingPackageAdapter :
-    ListAdapter<SPPackageItem, StoreTrendingPackageAdapter.StoreTrendingPackageHolder>(object :
+class StoreTrendingPackageItemListAdapter :
+    ListAdapter<List<SPPackageItem>, StoreTrendingPackageItemListAdapter.StoreTrendingPackageHolder>(object :
+        DiffUtil.ItemCallback<List<SPPackageItem>>() {
+        override fun areItemsTheSame(oldItem: List<SPPackageItem>, newItem: List<SPPackageItem>): Boolean =
+            oldItem == newItem
+
+        override fun areContentsTheSame(oldItem: List<SPPackageItem>, newItem: List<SPPackageItem>): Boolean =
+            oldItem == newItem
+    }) {
+
+    class StoreTrendingPackageHolder(override val binding: LayoutTrendingPackageBinding) :
+        ViewBindingAdapter.ViewBindingHolder<List<SPPackageItem>>(binding) {
+
+        var itemClick: ((SPPackageItem) -> Unit)? = null
+
+        override fun onBind(item: List<SPPackageItem>) {
+            binding.apply {
+                trendingPackageList.apply {
+                    layoutManager = LinearLayoutManager(itemView.context, RecyclerView.HORIZONTAL, false)
+                    adapter = StoreTrendingPackageItemAdapter(itemClick).apply {
+                        submitList(item)
+                    }
+                }
+            }
+        }
+    }
+
+    var itemClick: ((SPPackageItem) -> Unit)? = null
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoreTrendingPackageHolder {
+        return StoreTrendingPackageHolder(LayoutTrendingPackageBinding.inflate(LayoutInflater.from(parent.context)))
+    }
+
+    override fun onBindViewHolder(holder: StoreTrendingPackageHolder, position: Int) {
+        holder.itemClick = itemClick
+        holder.onBind(getItem(position))
+    }
+}
+
+// 트랜딩 아이템을 위한
+class StoreTrendingPackageItemAdapter
+constructor(
+    var itemClick: ((SPPackageItem) -> Unit)?
+) :
+    ListAdapter<SPPackageItem, StoreTrendingPackageItemAdapter.StoreTrendingPackageItemHolder>(object :
         DiffUtil.ItemCallback<SPPackageItem>() {
         override fun areItemsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem == newItem
         override fun areContentsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem == newItem
     }) {
 
-    class StoreTrendingPackageHolder(override val binding: ItemPackageBinding) :
+    class StoreTrendingPackageItemHolder(override val binding: ItemStoreTrendingPackageBinding) :
         ViewBindingAdapter.ViewBindingHolder<SPPackageItem>(binding) {
         override fun onBind(item: SPPackageItem) {
             Glide.with(itemView)
@@ -83,17 +130,15 @@ class StoreTrendingPackageAdapter :
         }
     }
 
-    var itemClick: ((SPPackageItem) -> Unit)? = null
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoreTrendingPackageHolder {
-        return StoreTrendingPackageHolder(ItemPackageBinding.inflate(LayoutInflater.from(parent.context))).apply {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoreTrendingPackageItemHolder {
+        return StoreTrendingPackageItemHolder(ItemStoreTrendingPackageBinding.inflate(LayoutInflater.from(parent.context))).apply {
             binding.root.setOnClickListener {
-                itemClick?.invoke(getItem(absoluteAdapterPosition))
+                itemClick?.invoke(getItem(bindingAdapterPosition))
             }
         }
     }
 
-    override fun onBindViewHolder(holder: StoreTrendingPackageHolder, position: Int) {
+    override fun onBindViewHolder(holder: StoreTrendingPackageItemHolder, position: Int) {
         holder.onBind(getItem(position))
     }
 }

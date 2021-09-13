@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/package_image"
-    android:layout_width="90dp"
-    android:scaleType="fitCenter"
-    android:layout_height="110dp"
-    android:padding="8dp">
-</ImageView>
+<io.stipop.refactor.present.ui.components.core.SPLinearLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+android:layout_height="wrap_content">
+
+    <io.stipop.refactor.present.ui.components.core.SPImageView
+               android:id="@+id/package_image"
+               android:layout_width="90dp"
+               android:scaleType="fitCenter"
+               android:layout_height="110dp"
+               android:padding="8dp">
+    </io.stipop.refactor.present.ui.components.core.SPImageView>
+
+</io.stipop.refactor.present.ui.components.core.SPLinearLayout>
+

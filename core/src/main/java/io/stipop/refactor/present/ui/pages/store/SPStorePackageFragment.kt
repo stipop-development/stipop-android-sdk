@@ -13,14 +13,14 @@ import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.databinding.FragmentStoreAllPackageListBinding
 import io.stipop.refactor.present.ui.adapters.StorePackageAdapter
-import io.stipop.refactor.present.ui.adapters.StoreTrendingPackageAdapter
+import io.stipop.refactor.present.ui.adapters.StoreTrendingPackageItemListAdapter
 import io.stipop.refactor.present.ui.pages.store.SPDetailActivity.Companion.PACKAGE_ID
 import io.stipop.refactor.present.ui.view_models.StorePackageViewModel
 import javax.inject.Inject
 
 
 class SPStorePackageFragment : Fragment() {
-    private lateinit var storeTrendingPackageAdapter: StoreTrendingPackageAdapter
+    private lateinit var storeTrendingPackageAdapter: StoreTrendingPackageItemListAdapter
     private lateinit var storeAllPackageAdapter: StorePackageAdapter
     private lateinit var _binding: FragmentStoreAllPackageListBinding
 
@@ -47,7 +47,7 @@ class SPStorePackageFragment : Fragment() {
                     })
                 }
 
-                storeTrendingPackageAdapter = StoreTrendingPackageAdapter().apply {
+                storeTrendingPackageAdapter = StoreTrendingPackageItemListAdapter().apply {
                     itemClick = {
                         startActivity(Intent(activity, SPDetailActivity::class.java).apply {
                             putExtra(PACKAGE_ID, it.packageId)
@@ -72,12 +72,11 @@ class SPStorePackageFragment : Fragment() {
             }
         }
 
-
         activity?.let {
             _viewModel.listChanges.observe(it) {
                 Log.d(this::class.simpleName, "storeAllPackageList.size -> ${it.size}")
-                storeTrendingPackageAdapter.submitList(it.filterIndexed({ index, item -> index < 12}))
-                storeAllPackageAdapter.submitList(it.filterIndexed({ index, item -> index >= 12}))
+                storeTrendingPackageAdapter.submitList(listOf(it.filterIndexed { index, item -> index < 12 }))
+                storeAllPackageAdapter.submitList(it.filterIndexed { index, item -> index >= 12 })
             }
         }
 
