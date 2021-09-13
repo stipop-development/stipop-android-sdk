@@ -15,6 +15,7 @@ abstract class PackageItemDetailBloc {
     abstract val packageItemChanges: LiveData<SPPackageItem>
 
     abstract fun onLoadPackageItem(id: Int)
+    abstract fun onDownloadPackageItem(id: Int)
 }
 
 class PackageItemDetailBlocV1
@@ -33,12 +34,22 @@ constructor(
         userRepository.currentUser?.let { user ->
             CoroutineScope(Dispatchers.IO).launch {
                 try {
+                    Log.d(
+                        this@PackageItemDetailBlocV1::class.simpleName, "[REQ] onDownloadPackageItem : \n" +
+                                "id -> $id"
+                    )
+
+                    val response = service.stickerPackInfo(
+                        user.apikey,
+                        id,
+                        user.userId
+                    )
+                    Log.d(
+                        this@PackageItemDetailBlocV1::class.simpleName, "[SUCCEED] onDownloadPackageItem : \n" +
+                                "id -> $id"
+                    )
                     _packageItemChanges.postValue(
-                        service.stickerPackInfo(
-                            user.apikey,
-                            id,
-                            user.userId
-                        ).body.packageItem
+                        response.body.packageItem
                     )
                 } catch (e: Exception) {
                     Log.e(this@PackageItemDetailBlocV1::class.simpleName, e.message, e)
@@ -46,6 +57,44 @@ constructor(
             }
 
         }
+    }
+
+    override fun onDownloadPackageItem(id: Int) {
+        userRepository.currentUser?.let { user ->
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    Log.d(
+                        this@PackageItemDetailBlocV1::class.simpleName, "[REQ] onDownloadPackageItem : \n" +
+                                "id -> $id"
+                    )
+
+                    service.downloadPurchaseSticker(
+                        user.apikey,
+                        id,
+                        user.userId,
+                        "N",
+                        user.language,
+                        user.country,
+                        null
+                    )?.let {
+
+                        Log.d(
+                            this@PackageItemDetailBlocV1::class.simpleName, "[SUCCEED] onDownloadPackageItem : \n" +
+                                    "id -> $id"
+                        )
+                        Log.d(
+                            this@PackageItemDetailBlocV1::class.simpleName, "[RELOAD] onDownloadPackageItem : \n" +
+                                    "id -> $id"
+                        )
+                        onLoadPackageItem(id)
+                    }
+                } catch (e: Exception) {
+                    Log.e(this@PackageItemDetailBlocV1::class.simpleName, e.message, e)
+                }
+            }
+
+        }
+
     }
 
 

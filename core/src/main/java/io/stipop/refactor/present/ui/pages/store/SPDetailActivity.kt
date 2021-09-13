@@ -14,7 +14,7 @@ import io.stipop.Stipop
 import io.stipop.databinding.ActivityDetailBinding
 import io.stipop.refactor.present.ui.adapters.StoreDetailPackageAdapter
 import io.stipop.refactor.present.ui.components.core.item_decoration.ItemPaddingDecoration
-import io.stipop.refactor.present.ui.view_models.DetailViewModelV1
+import io.stipop.refactor.present.ui.view_models.DetailViewModel
 import javax.inject.Inject
 
 
@@ -29,7 +29,7 @@ class SPDetailActivity : AppCompatActivity() {
     private lateinit var _binding: ActivityDetailBinding
 
     @Inject
-    internal lateinit var _viewModel: DetailViewModelV1
+    internal lateinit var _viewModel: DetailViewModel
 
     private lateinit var storeDetailPackageAdapter: StoreDetailPackageAdapter
 
@@ -37,6 +37,9 @@ class SPDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         Stipop._appComponent.inject(this)
+
+        intent?.getIntExtra(PACKAGE_ID, -1)?.let {
+            packageId ->
 
         storeDetailPackageAdapter = StoreDetailPackageAdapter()
 
@@ -70,12 +73,13 @@ class SPDetailActivity : AppCompatActivity() {
         _binding.closeButton.setOnClickListener { finish() }
 
         _binding.downloadButton.setOnClickListener {
-            _viewModel.packageItemChanges.value?.let {
-                val _intent = Intent().apply {
-                    putExtra(PACKAGE_ID, it.packageId)
-                }
-                setResult(REQ_DOWNLOAD_PACKAGE, _intent)
-            }
+            _viewModel.onDownloadPackageItem(packageId)
+//            _viewModel.packageItemChanges.value?.let {
+//                val _intent = Intent().apply {
+//                    putExtra(PACKAGE_ID, it.packageId)
+//                }
+//                setResult(REQ_DOWNLOAD_PACKAGE, _intent)
+//            }
         }
 
         _viewModel.packageItemChanges.observe(this) {
@@ -99,8 +103,7 @@ class SPDetailActivity : AppCompatActivity() {
             }
         }
 
-        intent?.getIntExtra(PACKAGE_ID, -1)?.run {
-            _viewModel.loadPackage(this)
+            _viewModel.onLoadPackage(packageId)
         }
     }
 }
