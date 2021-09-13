@@ -4,6 +4,7 @@ import android.util.Log
 import io.stipop.refactor.data.datasources.StickerStoreRestDatasource
 import io.stipop.refactor.domain.entities.SPUser
 import io.stipop.refactor.domain.repositories.StoreSearchPackageRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ class StoreSearchPackageDataRepository @Inject constructor(
                     "pageNumber -> ${getPageNumber(offset, pageMap)} \n" +
                     ""
         )
-        launch {
+        launch(Dispatchers.IO) {
             hasLoading = coroutineContext.isActive
             _remoteDatasource.trendingStickerPacks(
                 user.apikey,
@@ -43,7 +44,7 @@ class StoreSearchPackageDataRepository @Inject constructor(
                         }
                     }
                 }
-            cancel()
+            coroutineContext.cancel()
             hasLoading = coroutineContext.isActive
         }
     }

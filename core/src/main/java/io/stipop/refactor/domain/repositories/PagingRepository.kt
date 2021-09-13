@@ -10,6 +10,9 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 abstract class PagingRepository<T> : CoroutineScope {
+
+    val TAG: String? = this::class.simpleName
+
     var list: List<T>? = null
     var pageMap: SPPageMap? = null
     var hasLoading: Boolean = false
@@ -56,27 +59,38 @@ abstract class PagingRepository<T> : CoroutineScope {
         offset: Int,
         limit: Int? = 20,
     ) {
-        val _offset = if (offset < 0) {
-            list = null
-            pageMap = null
-            0
-        } else {
-            offset
+
+        if (!hasLoading) {
+            val _offset = if (offset < 0) {
+                list = null
+                pageMap = null
+                0
+            } else {
+                offset
+            }
+
+            if (
+                getValidLoadPosition(list, pageMap, _offset)
+            ) {
+
+                Log.d(
+                    this::class.simpleName, "onLoadMoreList : \n" +
+                            "user -> $user \n" +
+                            "keyword -> $keyword \n" +
+                            "offset -> $offset \n" +
+                            "limit -> $limit \n"
+                )
+                launch(Dispatchers.IO) {
+                    Log.e(TAG, "has loading -> ${hasLoading}")
+                    hasLoading = true
+
+                    onLoadList(user, keyword, _offset, limit)
+
+                    Log.e(TAG, "has loading -> ${hasLoading}")
+                }
+            }
         }
 
-        if (
-            getValidLoadPosition(list, pageMap, _offset)
-            && !hasLoading
-        ) {
-
-            Log.d(this::class.simpleName, "onLoadMoreList : \n" +
-                    "user -> $user \n" +
-                    "keyword -> $keyword \n" +
-                    "offset -> $offset \n" +
-                    "limit -> $limit \n"
-            )
-            onLoadList(user, keyword, _offset, limit)
-        }
     }
 
     fun getValidLoadPosition(list: List<T>?, pageMap: SPPageMap?, offset: Int): Boolean {

@@ -42,7 +42,11 @@ class SPStoreSearchPackageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(this::class.simpleName, "onViewCreated")
-        _searchPackageAdapter = SearchPackageAdapter()
+        _searchPackageAdapter = SearchPackageAdapter().apply {
+            downloadClick = {
+                _viewModel.onDownloadPackageItem(it)
+            }
+        }
 
         _binding.storeSearchPackageList.apply {
             layoutManager = LinearLayoutManager(context).apply {

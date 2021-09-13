@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.stipop.refactor.domain.entities.SPPackageItem
-import io.stipop.refactor.domain.entities.SPStickerItem
 import io.stipop.refactor.domain.repositories.StoreSearchPackageRepository
 import io.stipop.refactor.domain.repositories.UserRepository
 import io.stipop.refactor.domain.services.StickerStoreService
@@ -13,11 +12,28 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+abstract class SearchStorePackageBloc {
+
+    companion object {
+        val TAG: String? = this::class.simpleName
+    }
+
+    abstract val keywordChanges: LiveData<String>
+    abstract val packageItemListChanges: LiveData<List<SPPackageItem>>
+
+    abstract fun onChangeKeyword(keyword: String)
+    abstract fun onSearchStorePackageItemList(keyword: String?, index: Int)
+    abstract fun onDownloadPackageItem(item: SPPackageItem)
+}
+
+
 class SearchStorePackageBlocV1
 @Inject
 constructor(
     private val userRepository: UserRepository,
-    private val storeSearchPackageRepository: StoreSearchPackageRepository
+    private val storeSearchPackageRepository: StoreSearchPackageRepository,
+    private val stickerStoreService: StickerStoreService
 ) : SearchStorePackageBloc() {
 
     private val _keywordChanged: MutableLiveData<String> = MutableLiveData()
@@ -39,7 +55,7 @@ constructor(
                                 "keyword -> $keyword"
                     )
                     _keywordChanged.postValue(keyword)
-                    onSearchStorePackageList(keyword, -1)
+                    onSearchStorePackageItemList(keyword, -1)
 
                     Log.d(
                         TAG, "[SUCCEED] onChangeKeyword : \n" +
@@ -54,12 +70,10 @@ constructor(
         }
     }
 
-    override fun onSearchStorePackageList(keyword: String, index: Int) {
+    override fun onSearchStorePackageItemList(keyword: String?, index: Int) {
         userRepository.currentUser?.let { user ->
 
             CoroutineScope(Dispatchers.IO).launch {
-
-
                 try {
                     Log.d(
                         TAG, "[REG] onSearchStorePackageList : \n" +
@@ -67,7 +81,7 @@ constructor(
                                 "index -> $index\n"
                     )
 
-                    storeSearchPackageRepository.onLoadMoreList(user, keyword, index)
+                    storeSearchPackageRepository.onLoadMoreList(user, keyword ?: _keywordChanged.value ?: "", index)
 
                     Log.d(
                         TAG, "[SUCCEED] onSearchStorePackageList : \n" +
@@ -82,17 +96,30 @@ constructor(
         }
     }
 
-}
+    override fun onDownloadPackageItem(item: SPPackageItem) {
+        userRepository.currentUser?.let {
+            user ->
 
-abstract class SearchStorePackageBloc {
+            CoroutineScope(Dispatchers.IO).launch {
 
-    companion object {
-        val TAG: String? = this::class.simpleName
+                Log.d(
+                    TAG, "[REQ] onDownloadPackageItem : \n" +
+                            "item -> $item\n"
+                )
+
+                stickerStoreService.downloadPurchaseSticker(user.apikey, item.packageId, user.userId, "N", user.language, user.country, null)
+
+                stickerStoreService.stickerPackInfo(user.apikey, item.packageId, user.userId).run {
+                    Log.d(
+                        TAG, "[SUCCEED] onDownloadPackageItem : \n" +
+                                "item -> $item\n"
+                    )
+                    packageItemListChanges.value?.indexOf(item)?.let {
+                        onSearchStorePackageItemList(null, it)
+                    }
+                }
+            }
+        }
     }
 
-    abstract val keywordChanges: LiveData<String>
-    abstract val packageItemListChanges: LiveData<List<SPPackageItem>>
-
-    abstract fun onChangeKeyword(keyword: String)
-    abstract fun onSearchStorePackageList(keyword: String, index: Int)
 }

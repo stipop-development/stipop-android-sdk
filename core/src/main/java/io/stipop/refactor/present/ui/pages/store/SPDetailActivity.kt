@@ -90,7 +90,7 @@ class SPDetailActivity : AppCompatActivity() {
                 Glide.with(_binding.root.context).load(this.packageImg).into(_binding.packageImage)
                 _binding.packageName.text = this.packageName
                 _binding.artistName.text = this.artistName
-                _binding.downloadButton.isEnabled = !(this.isDownload == "Y")
+                _binding.downloadButton.isEnabled = this.isDownload == "N"
 
                 if (_binding.downloadButton.isEnabled) {
                     _binding.downloadButton.text = getString(R.string.download)
