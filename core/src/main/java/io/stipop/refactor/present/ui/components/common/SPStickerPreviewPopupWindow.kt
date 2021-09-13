@@ -3,6 +3,7 @@ package io.stipop.refactor.present.ui.components.common
 import android.content.res.Resources
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -34,8 +35,6 @@ class SPStickerPreviewPopupWindow(
                     _keyboardHeight
                 }
 
-                Log.e(Stipop.TAG, "_keyboardHeight 2 -> $_keyboardHeight")
-
                 _isShowKeyboard = _activityHeight - it.height > 0
 
             }
@@ -60,12 +59,14 @@ class SPStickerPreviewPopupWindow(
     var sticker = SPStickerItem()
 
     fun show() {
+
+        Log.e("HELLO", "SHOW")
+
         val view = _binding.root
 
         view.findViewById<ImageView>(R.id.closeIV).setOnClickListener {
             dismiss()
         }
-
 
         view.findViewById<ImageView>(R.id.closeIV)
             .setImageResource(Config.getPreviewCloseResourceId(_targetView.context))
@@ -84,9 +85,18 @@ class SPStickerPreviewPopupWindow(
 
         _binding.root.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 
+        val dip = Config.previewPadding.toFloat()
+        val r: Resources = _targetView.context.resources
+        val px: Float = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dip,
+            r.displayMetrics
+        )
         showAsDropDown(
             _targetView, 0,
-            -(_binding.root.measuredHeight + Config.previewPadding + Utils.getNavigationBarSize(_targetView.context).y)
+            -(_binding.root.measuredHeight + Config.previewPadding + px.toInt()
+//                    + Utils.getNavigationBarSize(_targetView.context).y
+                    )
         )
 
     }

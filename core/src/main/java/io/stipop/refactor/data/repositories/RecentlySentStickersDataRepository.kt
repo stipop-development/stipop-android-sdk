@@ -22,41 +22,25 @@ class RecentlySentStickersDataRepository @Inject constructor(
                     ""
         )
         launch {
-            hasLoading = coroutineContext.isActive
-            stickerSendService.recentlySentStickers(
-                user.apikey,
-                user.userId,
-                limit,
-                getPageNumber(offset, pageMap) + 1
-            )
-                .run {
-                    body.stickerList?.let {
-                        if (it.isNotEmpty()) {
+            try {
+                hasLoading = coroutineContext.isActive
+                stickerSendService.recentlySentStickers(
+                    user.apikey,
+                    user.userId,
+                    limit,
+                    getPageNumber(offset, pageMap) + 1
+                )
+                    .run {
+                        body.stickerList?.let {
                             pageMap = body.pageMap
                             _listChanged.postValue(it)
                         }
                     }
-                }
-            cancel()
-            hasLoading = coroutineContext.isActive
-        }
-
-
-        runBlocking(Dispatchers.IO) {
-            stickerSendService.recentlySentStickers(
-                user.apikey,
-                user.userId,
-                limit,
-                getPageNumber(offset, pageMap) + 1
-            )
-        }.let {
-            it.body.let {
-                if (it.stickerList == null || it.stickerList.isEmpty()) {
-                    _listChanged.postValue(listOf())
-                } else {
-                    _listChanged.postValue(it.stickerList)
-                    pageMap = it.pageMap
-                }
+            } catch (e: Exception) {
+                _listChanged.postValue(listOf())
+            } finally {
+                cancel()
+                hasLoading = coroutineContext.isActive
             }
         }
     }

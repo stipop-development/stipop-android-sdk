@@ -32,11 +32,12 @@ import javax.inject.Inject
 
 class SPStickerKeyboardPopupWindow(
     val _targetView: View,
-    val _itemClick: ((SPStickerItem) -> Unit)?
-) : PopupWindow(
+    val _itemClick: ((SPStickerItem) -> Unit)?,
+
+    ) : PopupWindow(
     SPStickerKeyboard(_targetView.context).also {
-    it.itemClick = _itemClick
-},
+        it.itemClick = _itemClick
+    },
     MATCH_PARENT,
     WRAP_CONTENT
 ) {
@@ -50,8 +51,6 @@ class SPStickerKeyboardPopupWindow(
                 } else {
                     _keyboardHeight
                 }
-
-                Log.e(Stipop.TAG, "_keyboardHeight 2 -> $_keyboardHeight")
 
                 _isShowKeyboard = _activityHeight - it.height > 0
 
@@ -84,18 +83,16 @@ class SPStickerKeyboardPopupWindow(
         Log.d(this::class.simpleName, "onShow")
         _targetView.let {
 
-            showAsDropDown(it.rootView)
+            it.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+
+            showAsDropDown(it, 0, 0)
 
             if (!_isShowKeyboard) {
                 _inputMethodManager?.run {
                     showSoftInput(_targetView.rootView, InputMethodManager.SHOW_FORCED)
                 }
             }
-
-            contentView.minimumHeight = _keyboardHeight
-
         }
-
     }
 
     fun onDismiss() {

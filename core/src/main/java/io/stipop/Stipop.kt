@@ -33,30 +33,6 @@ interface StipopDelegate {
 }
 
 class Stipop {
-
-    private val _metrics: DisplayMetrics
-        get() {
-            return Resources.getSystem().displayMetrics ?: DisplayMetrics()
-        }
-
-    private var _activityHeight: Int = _metrics.heightPixels
-    private var _activityWidth: Int = _metrics.widthPixels
-    private var _keyboardHeight: Int = -1
-    private var _keyboardWidth: Int = -1
-    private var _isShowKeyboard: Boolean = false
-    private var _isShowPreview: Boolean = false
-
-    private var _searchStickerIntent: Intent? = null
-    private var _searchStickerLauncher: ActivityResultLauncher<Intent>? = null
-    private var _stickerKeyboardPopupWindow: SPStickerKeyboardPopupWindow? = null
-    private var _stickerPreviewPopupWindow: SPStickerPreviewPopupWindow? = null
-
-    @Inject
-    internal lateinit var _userRepository: UserRepository
-
-    @Inject
-    internal lateinit var _viewModel: StipopViewModel
-
     companion object {
 
         val TAG: String? = this::class.simpleName
@@ -91,30 +67,45 @@ class Stipop {
 
     }
 
+    private val _metrics: DisplayMetrics
+        get() {
+            return Resources.getSystem().displayMetrics ?: DisplayMetrics()
+        }
+
+    private var _searchStickerIntent: Intent? = null
+    private var _searchStickerLauncher: ActivityResultLauncher<Intent>? = null
+    private var _stickerKeyboardPopupWindow: SPStickerKeyboardPopupWindow? = null
+    private var _stickerPreviewPopupWindow: SPStickerPreviewPopupWindow? = null
+
+    @Inject
+    internal lateinit var _userRepository: UserRepository
+
+    @Inject
+    internal lateinit var _viewModel: StipopViewModel
+
+    private var _delegate: StipopDelegate? = null
+
     fun connect(activity: AppCompatActivity, stipopButton: StipopImageView, userId: String, lang: String, countryCode: String, delegate: StipopDelegate) {
         Log.d(this::class.simpleName, "connect")
 
         _appComponent.inject(this)
+
         _userRepository.setUser(SPUser(userId, countryCode, lang, Config.apikey))
+
+        _delegate = delegate
 
         activity.lifecycle.addObserver(object : LifecycleObserver {
             @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
             fun onCreate() {
-                activity.window.decorView.findViewById<View>(android.R.id.content)?.let {
-                    it.viewTreeObserver.addOnGlobalLayoutListener {
-                        _keyboardHeight = if (_activityHeight > it.height) {
-                            _activityHeight - it.height
-                        } else {
-                            _keyboardHeight
-                        }
 
-                        Log.e(TAG, "_keyboardHeight -> $_keyboardHeight")
-
-
-
-                        _isShowKeyboard = _activityHeight - it.height > 0
+                _viewModel.run {
+                    selectStickerChanges.observe(activity) {
+                        Log.d(TAG, "it -> $it")
+                        onChangeStickerItem(it)
                     }
+                }
 
+                activity.window.decorView.findViewById<View>(android.R.id.content)?.let {
                     _stickerKeyboardPopupWindow =
                         SPStickerKeyboardPopupWindow(it) {
                             _viewModel.onSelectStickerItem(it)
@@ -163,15 +154,23 @@ class Stipop {
                     }
                 }
             }
+        }
+    }
 
-            _viewModel.run {
-                selectStickerChanges.observe(activity) {
+    private fun onChangeStickerItem(it: SPStickerItem?) {
 
-                    Log.d(TAG, "it -> $it")
-                    showStickerItemPreview(it)
-                }
+        it?.let {
+            if (Config.showPreview) {
+                showStickerItemPreview(it)
+            } else {
+                _delegate?.onStickerSelected(SPSticker(JSONObject().apply {
+                    put("stickerId", it.stickerId)
+                    put("stickerImg", it.stickerImg)
+                    put("keyword", it.keyword)
+                }))
             }
         }
+
     }
 
     private fun showSearch() {
@@ -193,6 +192,8 @@ class Stipop {
     }
 
     private fun showStickerItemPreview(item: SPStickerItem?) {
+        Log.d(TAG, "showStickerItemPreview : \n" +
+                "item -> $item")
 
         if (item == null) {
             _stickerPreviewPopupWindow?.dismiss()

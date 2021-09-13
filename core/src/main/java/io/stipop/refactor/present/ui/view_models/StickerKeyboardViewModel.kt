@@ -14,7 +14,6 @@ import javax.inject.Inject
 class StickerKeyboardViewModelV1
 @Inject constructor(
     private val _stickerKeyboardBloc: StickerKeyboardBloc,
-    private val _userRepository: UserRepository,
 ) : StickerKeyboardViewModel {
 
     private val _packageItemChanged: MutableLiveData<SPPackageItem?> =
