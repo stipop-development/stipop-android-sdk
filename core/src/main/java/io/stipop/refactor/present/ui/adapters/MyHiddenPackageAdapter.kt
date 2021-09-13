@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.extend.dragdrop.ItemTouchHelperAdapter
 import io.stipop.databinding.ItemMyHiddenPackageBinding
 import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
@@ -106,7 +107,12 @@ class MyHiddenPackageViewHolder(
         when (_binding) {
             is ItemMyHiddenPackageBinding -> {
                 _binding.run {
-                    Glide.with(packageImage).load(item.packageImg).into(packageImage)
+                    Glide.with(packageImage)
+                        .load(item.packageImg)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(packageImage)
+                        .clearOnDetach()
+
                     packageName.text = item.packageName
                     artistName.text = item.artistName
 

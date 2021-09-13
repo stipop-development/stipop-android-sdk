@@ -11,6 +11,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.PopupWindow
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.Config
 import io.stipop.R
 import io.stipop.Stipop
@@ -102,59 +103,11 @@ class SPStickerPreviewPopupWindow(
     }
 
     fun setStickerView() {
-        Glide.with(_targetView.context).load(sticker.stickerImg).into(stickerIV)
+        Glide.with(_targetView.context)
+            .load(sticker.stickerImg)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(stickerIV)
+            .clearOnDetach()
     }
 
 }
-
-
-//package io.stipop.refactor.present.ui.components.common
-//
-//import android.app.Activity
-//import android.os.Build
-//import android.view.Gravity
-//import android.view.LayoutInflater
-//import android.view.View
-//import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-//import android.widget.*
-//import com.bumptech.glide.Glide
-//import io.stipop.*
-//import io.stipop.databinding.LayoutPreviewBinding
-//import io.stipop.extend.StipopImageView
-//import io.stipop.refactor.domain.entities.SPStickerItem
-//
-//class SPStickerPreviewPopupWindow(val _targetView: View) : PopupWindow() {
-//
-//    private lateinit var _binding: LayoutPreviewBinding
-//
-//    private lateinit var stickerIV: StipopImageView
-//    private lateinit var favoriteIV: StipopImageView
-//
-//    var sticker = SPStickerItem()
-//
-//    fun show() {
-//
-//        _binding = LayoutPreviewBinding.inflate(LayoutInflater.from(_targetView.context))
-//        val view = _binding.root
-//
-//        view.findViewById<ImageView>(R.id.closeIV).setImageResource(Config.getPreviewCloseResourceId(_targetView.context))
-//
-//        favoriteIV = view.findViewById(R.id.favoriteIV)
-//        stickerIV = view.findViewById(R.id.stickerIV)
-//
-//        setStickerView()
-//
-//        showAtLocation(
-//            _targetView,
-//            Gravity.BOTTOM,
-//            0,
-//            0 + Config.previewPadding + Utils.getNavigationBarSize(_targetView.context).y
-//        )
-//        update(_targetView, MATCH_PARENT, 200)
-//    }
-//
-//    fun setStickerView() {
-//        Glide.with(_targetView.context).load(sticker.stickerImg).into(stickerIV).clearOnDetach()
-//    }
-//
-//}

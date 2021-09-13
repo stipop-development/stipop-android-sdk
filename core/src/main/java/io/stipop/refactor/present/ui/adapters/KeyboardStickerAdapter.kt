@@ -22,9 +22,11 @@ class KeyboardStickerAdapter :
             binding
         ) {
         override fun onBind(item: SPStickerItem) {
-            Glide.with(itemView).load(item.stickerImg)
+            Glide.with(itemView)
+                .load(item.stickerImg)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.stickerImage)
+                .clearOnDetach()
         }
     }
 

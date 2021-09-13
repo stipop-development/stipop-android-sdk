@@ -8,6 +8,7 @@ import android.view.Display
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.Config
 import io.stipop.R
 import io.stipop.Stipop
@@ -87,7 +88,12 @@ class SPDetailActivity : AppCompatActivity() {
             Log.d(this::class.simpleName, "selectedPackage -> $it")
 
             it?.run {
-                Glide.with(_binding.root.context).load(this.packageImg).into(_binding.packageImage)
+                Glide.with(this@SPDetailActivity)
+                    .load(this.packageImg)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(_binding.packageImage)
+                    .clearOnDetach()
+
                 _binding.packageName.text = this.packageName
                 _binding.artistName.text = this.artistName
                 _binding.downloadButton.isEnabled = this.isDownload == "N"

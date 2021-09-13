@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.databinding.ItemMyActivePackageBinding
 import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.present.ui.listeners.OnHiddenPackageListener
@@ -80,7 +81,12 @@ class MyActivePackageViewHolder(
         when (_binding) {
             is ItemMyActivePackageBinding -> {
                 _binding.let {
-                    Glide.with(it.packageImage).load(item.packageImg).into(it.packageImage)
+                    Glide.with(it.packageImage)
+                        .load(item.packageImg)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(it.packageImage)
+                        .clearOnDetach()
+
                     it.packageName.text = item.packageName
                     it.artistName.text = item.artistName
                     it.hiddenButton.setOnClickListener {

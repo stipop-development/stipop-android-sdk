@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import io.stipop.databinding.ItemSearchPackageBinding
 import io.stipop.refactor.domain.entities.SPPackageItem
 
@@ -27,10 +28,29 @@ class SearchPackageAdapter : ListAdapter<SPPackageItem, SearchPackageAdapter.Sea
             item.stickers.let {
                 it.forEachIndexed { index, sticker ->
                     when (index) {
-                        0 -> Glide.with(itemView).load(sticker.stickerImg).into(_binding.image1IV).clearOnDetach()
-                        1 -> Glide.with(itemView).load(sticker.stickerImg).into(_binding.image2IV).clearOnDetach()
-                        2 -> Glide.with(itemView).load(sticker.stickerImg).into(_binding.image3IV).clearOnDetach()
-                        3 -> Glide.with(itemView).load(sticker.stickerImg).into(_binding.image4IV).clearOnDetach()
+                        0 -> Glide.with(itemView)
+                            .load(sticker.stickerImg)
+                            .transition(withCrossFade())
+                            .into(_binding.image1IV)
+                            .clearOnDetach()
+
+                        1 -> Glide.with(itemView)
+                            .load(sticker.stickerImg)
+                            .transition(withCrossFade())
+                            .into(_binding.image2IV)
+                            .clearOnDetach()
+
+                        2 -> Glide.with(itemView)
+                            .load(sticker.stickerImg)
+                            .transition(withCrossFade())
+                            .into(_binding.image3IV)
+                            .clearOnDetach()
+
+                        3 -> Glide.with(itemView)
+                            .load(sticker.stickerImg)
+                            .transition(withCrossFade())
+                            .into(_binding.image4IV)
+                            .clearOnDetach()
                         else -> return
                     }
                 }

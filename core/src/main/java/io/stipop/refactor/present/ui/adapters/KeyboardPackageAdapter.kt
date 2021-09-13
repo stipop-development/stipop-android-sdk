@@ -32,9 +32,11 @@ class KeyboardPackageAdapter : ListAdapter<SPPackageItem, KeyboardPackageAdapter
             binding
         ) {
         override fun onBind(item: SPPackageItem) {
-            Glide.with(itemView).load(item.packageImg)
+            Glide.with(itemView)
+                .load(item.packageImg)
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .into(binding.packageImageButton).clearOnDetach()
+                .into(binding.packageImageButton)
+                .clearOnDetach()
         }
     }
 

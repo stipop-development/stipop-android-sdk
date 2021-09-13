@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.databinding.ItemPackageBinding
 import io.stipop.databinding.ItemStoreAllPackageBinding
 import io.stipop.refactor.domain.entities.SPPackageItem
@@ -26,6 +27,7 @@ class StorePackageAdapter :
         override fun onBind(item: SPPackageItem) {
             Glide.with(itemView)
                 .load(item.packageImg)
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.packageImage)
                 .clearOnDetach()
 
@@ -71,7 +73,11 @@ class StoreTrendingPackageAdapter :
     class StoreTrendingPackageHolder(override val binding: ItemPackageBinding) :
         ViewBindingAdapter.ViewBindingHolder<SPPackageItem>(binding) {
         override fun onBind(item: SPPackageItem) {
-            Glide.with(itemView).load(item.packageImg).into(binding.packageImage).clearOnDetach()
+            Glide.with(itemView)
+                .load(item.packageImg)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(binding.packageImage)
+                .clearOnDetach()
         }
     }
 
