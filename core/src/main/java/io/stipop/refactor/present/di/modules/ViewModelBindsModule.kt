@@ -34,7 +34,7 @@ interface ViewModelBindsModule {
     fun bindStoreViewModel(viewModel: StoreViewModelV1): StoreViewModel
 
     @Binds
-    fun bindStoreAllPackageViewModel(viewModel: StoreAllPackageViewModelV1): StoreAllPackageViewModel
+    fun bindStorePackageViewModel(viewModel: StorePackageViewModelV1): StorePackageViewModel
 
     @Binds
     fun bindStoreSearchPackageViewModel(viewModel: StoreSearchPackageViewModelV1): StoreSearchPackageViewModel

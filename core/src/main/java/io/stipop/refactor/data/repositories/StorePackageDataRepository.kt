@@ -3,15 +3,15 @@ package io.stipop.refactor.data.repositories
 import android.util.Log
 import io.stipop.refactor.data.datasources.StickerStoreRestDatasource
 import io.stipop.refactor.domain.entities.SPUser
-import io.stipop.refactor.domain.repositories.StoreAllPackageRepository
+import io.stipop.refactor.domain.repositories.StorePackageRepository
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class StoreAllPackageDataRepository @Inject constructor(
+class StorePackageDataRepository @Inject constructor(
     private val _remoteDatasource: StickerStoreRestDatasource
-) : StoreAllPackageRepository() {
+) : StorePackageRepository() {
     override fun onLoadList(user: SPUser, keyword: String, offset: Int?, limit: Int?) {
         Log.d(
             this::class.simpleName, "onLoadList : \n " +

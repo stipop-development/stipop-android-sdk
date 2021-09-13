@@ -15,17 +15,17 @@ import io.stipop.databinding.FragmentStoreAllPackageListBinding
 import io.stipop.refactor.present.ui.adapters.StorePackageAdapter
 import io.stipop.refactor.present.ui.adapters.StoreTrendingPackageAdapter
 import io.stipop.refactor.present.ui.pages.store.SPDetailActivity.Companion.PACKAGE_ID
-import io.stipop.refactor.present.ui.view_models.StoreAllPackageViewModel
+import io.stipop.refactor.present.ui.view_models.StorePackageViewModel
 import javax.inject.Inject
 
 
-class SPStoreAllPackageFragment : Fragment() {
+class SPStorePackageFragment : Fragment() {
     private lateinit var storeTrendingPackageAdapter: StoreTrendingPackageAdapter
     private lateinit var storeAllPackageAdapter: StorePackageAdapter
     private lateinit var _binding: FragmentStoreAllPackageListBinding
 
     @Inject
-    internal lateinit var _viewModel: StoreAllPackageViewModel
+    internal lateinit var _viewModel: StorePackageViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,6 +59,9 @@ class SPStoreAllPackageFragment : Fragment() {
                         startActivity(Intent(activity, SPDetailActivity::class.java).apply {
                             putExtra(PACKAGE_ID, it.packageId)
                         })
+                    }
+                    downloadClick = {
+                        _viewModel.onDownloadPackageItem(it)
                     }
                 }
 

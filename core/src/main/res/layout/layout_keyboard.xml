@@ -5,7 +5,13 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
+<!--    <Space-->
+<!--        android:id="@+id/top_space"-->
+<!--        android:layout_width="match_parent" android:layout_height="0dp"-->
+<!--    android:layout_weight="1"/>-->
+
     <io.stipop.refactor.present.ui.components.core.SPLinearLayout
+        android:id="@+id/sticker_keyboard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#eaebee"
@@ -42,7 +48,7 @@
     <io.stipop.refactor.present.ui.components.core.SPRecyclerView
         android:id="@+id/sticker_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:overScrollMode="never"
         android:layout_weight="1"/>
 

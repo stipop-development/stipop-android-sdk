@@ -1,7 +1,7 @@
 package io.stipop.refactor.present.ui.view_models
 
 import androidx.lifecycle.LiveData
-import io.stipop.refactor.data.blocs.SearchStorePackageBloc
+import io.stipop.refactor.data.blocs.StoreSearchPackageBloc
 import io.stipop.refactor.domain.entities.SPPackageItem
 import javax.inject.Inject
 
@@ -14,7 +14,7 @@ interface StoreSearchPackageViewModel {
 
 class StoreSearchPackageViewModelV1
 @Inject constructor(
-    private val searchStorePackageBloc: SearchStorePackageBloc
+    private val searchStorePackageBloc: StoreSearchPackageBloc
 ) : StoreSearchPackageViewModel {
 
     var _keyword: String? = null

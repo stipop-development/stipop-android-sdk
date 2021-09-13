@@ -1,5 +1,6 @@
 package io.stipop.refactor.present.ui.adapters
 
+import android.graphics.drawable.AnimationDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -7,13 +8,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import io.stipop.R
 import io.stipop.databinding.ItemSearchPackageBinding
 import io.stipop.refactor.domain.entities.SPPackageItem
 
 class SearchPackageAdapter : ListAdapter<SPPackageItem, SearchPackageAdapter.SearchPackageViewHolder>(
     object : DiffUtil.ItemCallback<SPPackageItem>() {
-        override fun areItemsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem == newItem
-        override fun areContentsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem == newItem
+        override fun areItemsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem.hashCode() == newItem.hashCode()
+        override fun areContentsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem.hashCode() == newItem.hashCode()
     }
 ) {
 
@@ -26,6 +28,7 @@ class SearchPackageAdapter : ListAdapter<SPPackageItem, SearchPackageAdapter.Sea
             _binding.downloadButton.isEnabled = item.isDownload == "N"
 
             item.stickers.let {
+
                 it.forEachIndexed { index, sticker ->
                     when (index) {
                         0 -> Glide.with(itemView)

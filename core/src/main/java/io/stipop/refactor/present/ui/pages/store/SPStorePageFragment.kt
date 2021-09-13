@@ -22,7 +22,7 @@ class SPStorePageFragment : Fragment() {
     internal lateinit var _viewModel: StorePageViewModel
 
     private val _searchPackageListFragment: SPStoreSearchPackageFragment = SPStoreSearchPackageFragment()
-    private val _allPackageListFragment: SPStoreAllPackageFragment = SPStoreAllPackageFragment()
+    private val _allPackageListFragment: SPStorePackageFragment = SPStorePackageFragment()
 
     override fun onCreateView(
         inflater: LayoutInflater,

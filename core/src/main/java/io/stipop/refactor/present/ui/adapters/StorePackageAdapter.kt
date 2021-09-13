@@ -12,8 +12,8 @@ import io.stipop.refactor.domain.entities.SPPackageItem
 
 class StorePackageAdapter :
     ListAdapter<SPPackageItem, StorePackageAdapter.StorePackageHolder>(object : DiffUtil.ItemCallback<SPPackageItem>() {
-        override fun areItemsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem == newItem
-        override fun areContentsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem == newItem
+        override fun areItemsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem.hashCode() == newItem.hashCode()
+        override fun areContentsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean = oldItem.hashCode() == newItem.hashCode()
     }) {
 
     companion object {
@@ -33,6 +33,8 @@ class StorePackageAdapter :
 
             binding.packageName.text = item.packageName
             binding.artistName.text = item.artistName
+
+            binding.downloadButton.isEnabled = item.isDownload == "N"
         }
     }
 
@@ -48,10 +50,10 @@ class StorePackageAdapter :
             ),
         ).apply {
             binding.root.setOnClickListener {
-                itemClick?.invoke(getItem(absoluteAdapterPosition))
+                itemClick?.invoke(getItem(bindingAdapterPosition))
             }
             binding.downloadButton.setOnClickListener {
-                itemClick?.invoke(getItem(absoluteAdapterPosition))
+                downloadClick?.invoke(getItem(bindingAdapterPosition))
             }
         }
     }

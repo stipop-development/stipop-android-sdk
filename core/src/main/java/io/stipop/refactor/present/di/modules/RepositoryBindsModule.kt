@@ -55,7 +55,7 @@ interface RepositoryBindsModule {
 
     @Singleton
     @Binds
-    fun bindAllPackageRepository(repository: StoreAllPackageDataRepository): StoreAllPackageRepository
+    fun bindAllPackageRepository(repository: StorePackageDataRepository): StorePackageRepository
 
     @Singleton
     @Binds

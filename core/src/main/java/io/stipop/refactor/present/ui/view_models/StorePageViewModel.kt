@@ -3,12 +3,8 @@ package io.stipop.refactor.present.ui.view_models
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.stipop.refactor.data.blocs.SearchStorePackageBloc
+import io.stipop.refactor.data.blocs.StoreSearchPackageBloc
 import io.stipop.refactor.data.models.SPPackage
-import io.stipop.refactor.domain.entities.SPUser
-import io.stipop.refactor.domain.repositories.StoreAllPackageRepository
-import io.stipop.refactor.domain.repositories.StoreSearchPackageRepository
-import io.stipop.refactor.domain.repositories.UserRepository
 import javax.inject.Inject
 
 
@@ -27,7 +23,7 @@ enum class StorePageMode {
 }
 
 class StorePageViewModelV1 @Inject constructor(
-    private val searchStorePackageBloc: SearchStorePackageBloc,
+    private val searchStorePackageBloc: StoreSearchPackageBloc,
 ) : StorePageViewModel {
 
     private val _storePageMode: MutableLiveData<StorePageMode> = MutableLiveData<StorePageMode>().apply {

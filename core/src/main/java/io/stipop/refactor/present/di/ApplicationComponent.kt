@@ -18,7 +18,7 @@ interface ApplicationComponent {
     fun inject(activity: SPStoreActivity)
     fun inject(fragment: SPStorePageFragment)
     fun inject(fragment: SPStoreSearchPackageFragment)
-    fun inject(fragment: SPStoreAllPackageFragment)
+    fun inject(fragment: SPStorePackageFragment)
     fun inject(fragment: SPMyPageFragment)
     fun inject(fragment: SPMyActivePackageFragment)
     fun inject(fragment: SPMyHiddenPackageFragment)

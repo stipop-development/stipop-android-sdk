@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.PopupWindow
@@ -45,13 +46,17 @@ class SPStickerKeyboardPopupWindow(
     init {
         _targetView.let {
 
-            it.viewTreeObserver.addOnGlobalLayoutListener {
+            it.viewTreeObserver.addOnPreDrawListener {
                 _keyboardHeight = if (_activityHeight > it.height) {
                     _activityHeight - it.height
                 } else {
                     _keyboardHeight
                 }
 
+                true
+            }
+
+            it.viewTreeObserver.addOnGlobalLayoutListener {
                 _isShowKeyboard = _activityHeight - it.height > 0
 
                 if (!_isShowKeyboard) {
@@ -85,13 +90,15 @@ class SPStickerKeyboardPopupWindow(
 
             it.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 
-            showAsDropDown(it, 0, 0)
+            showAsDropDown(it.rootView, 0, 0)
 
             if (!_isShowKeyboard) {
                 _inputMethodManager?.run {
                     showSoftInput(_targetView.rootView, InputMethodManager.SHOW_FORCED)
                 }
             }
+
+
         }
     }
 

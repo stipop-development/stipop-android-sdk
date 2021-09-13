@@ -22,8 +22,7 @@ abstract class PagingRepository<T> : CoroutineScope {
     protected val _listChanged: MutableLiveData<List<T>> = MutableLiveData<List<T>>()
     val listChanges: LiveData<List<T>> = MediatorLiveData<List<T>>().apply {
         addSource(_listChanged) {
-            arrayListOf<T>().apply {
-                addAll(list ?: listOf())
+            ArrayList<T>(list ?: listOf()).apply {
                 it?.let {
                     it.forEach {
                         if (contains(it)) {

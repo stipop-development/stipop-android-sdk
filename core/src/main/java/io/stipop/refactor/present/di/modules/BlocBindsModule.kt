@@ -23,5 +23,8 @@ interface BlocBindsModule {
     fun bindStickerSendBloc(bloc: StickerSendBlocV1): StickerSendBloc
 
     @Binds
-    fun bindSearchStorePackageBloc(bloc: SearchStorePackageBlocV1): SearchStorePackageBloc
+    fun bindSearchStorePackageBloc(bloc: StoreSearchPackageBlocV1): StoreSearchPackageBloc
+
+    @Binds
+    fun bindStorePackageBloc(bloc: StorePackageBlocV1): StorePackageBloc
 }

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.stipop.refactor.domain.entities.SPPackageItem
-import io.stipop.refactor.domain.repositories.StoreSearchPackageRepository
+import io.stipop.refactor.domain.repositories.StorePackageRepository
 import io.stipop.refactor.domain.repositories.UserRepository
 import io.stipop.refactor.domain.services.StickerStoreService
 import kotlinx.coroutines.CoroutineScope
@@ -14,83 +14,50 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-abstract class SearchStorePackageBloc {
+abstract class StorePackageBloc {
 
     companion object {
         val TAG: String? = this::class.simpleName
     }
 
-    abstract val keywordChanges: LiveData<String>
     abstract val packageItemListChanges: LiveData<List<SPPackageItem>>
     abstract val downloadPackageItemChanges: LiveData<SPPackageItem>
 
-    abstract fun onChangeKeyword(keyword: String)
-    abstract fun onSearchStorePackageItemList(keyword: String?, index: Int)
+    abstract fun onLoadStorePackageItemList(index: Int)
     abstract fun onDownloadPackageItem(item: SPPackageItem)
 }
 
 
-class SearchStorePackageBlocV1
+class StorePackageBlocV1
 @Inject
 constructor(
     private val userRepository: UserRepository,
-    private val storeSearchPackageRepository: StoreSearchPackageRepository,
+    private val storePackageRepository: StorePackageRepository,
     private val stickerStoreService: StickerStoreService
-) : SearchStorePackageBloc() {
+) : StorePackageBloc() {
 
-    private val _keywordChanged: MutableLiveData<String> = MutableLiveData()
-    override val keywordChanges: LiveData<String>
-        get() = _keywordChanged
     override val packageItemListChanges: LiveData<List<SPPackageItem>>
-        get() = storeSearchPackageRepository.listChanges
+        get() = storePackageRepository.listChanges
 
     private val _downloadPackageItemChanged: MutableLiveData<SPPackageItem> = MutableLiveData()
     override val downloadPackageItemChanges: LiveData<SPPackageItem>
         get() = _downloadPackageItemChanged
 
-    override fun onChangeKeyword(keyword: String) {
-        userRepository.currentUser?.let { user ->
-
-            CoroutineScope(Dispatchers.IO).launch {
-
-
-                try {
-                    Log.d(
-                        TAG, "[REG] onChangeKeyword : \n" +
-                                "keyword -> $keyword"
-                    )
-                    _keywordChanged.postValue(keyword)
-                    onSearchStorePackageItemList(keyword, -1)
-
-                    Log.d(
-                        TAG, "[SUCCEED] onChangeKeyword : \n" +
-                                "keyword -> $keyword"
-                    )
-
-
-                } catch (e: Exception) {
-                    Log.e(TAG, e.message, e)
-                }
-            }
-        }
-    }
-
-    override fun onSearchStorePackageItemList(keyword: String?, index: Int) {
+    override fun onLoadStorePackageItemList(index: Int) {
         userRepository.currentUser?.let { user ->
 
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     Log.d(
-                        TAG, "[REG] onSearchStorePackageList : \n" +
-                                "keyword -> $keyword \n" +
+                        TAG, "[REG] onLoadStorePackageItemList : \n" +
                                 "index -> $index\n"
                     )
 
-                    storeSearchPackageRepository.onLoadMoreList(user, keyword ?: _keywordChanged.value ?: "", index)
+
+                    storePackageRepository.onLoadMoreList(user, "", index)
 
                     Log.d(
-                        TAG, "[SUCCEED] onSearchStorePackageList : \n" +
-                                "keyword -> ${keyword ?: _keywordChanged.value ?: "공백"} \n" +
+                        TAG, "[SUCCEED] onLoadStorePackageItemList : \n" +
                                 "index -> $index\n"
                     )
 
@@ -116,10 +83,11 @@ constructor(
 
                 delay(500)
                 stickerStoreService.stickerPackInfo(user.apikey, item.packageId, user.userId).let {
-
-                    Log.d(TAG, "it.body.packageItem -> ${it.body.packageItem}")
-
-                    storeSearchPackageRepository.onReplaceItem(it.body.packageItem)
+                    Log.d(
+                        TAG, "[RELOAD] onDownloadPackageItem : \n" +
+                                "item -> $item\n"
+                    )
+                    storePackageRepository.onReplaceItem(it.body.packageItem)
                 }
 
             }
