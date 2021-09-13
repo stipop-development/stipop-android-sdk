@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.stipop.refactor.present.ui.components.core.SPConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <io.stipop.refactor.present.ui.components.core.SPRecyclerView
-        android:paddingTop="308dp"
-        android:paddingBottom="64dp"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:id="@+id/sticker_grid"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+<io.stipop.refactor.present.ui.components.core.SPLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                              android:layout_width="match_parent"
+                                                              android:layout_height="match_parent"
+                                                              android:orientation="vertical"
+                                                              xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <io.stipop.refactor.present.ui.components.core.SPLinearLayout
         android:id="@+id/top_container"
@@ -95,7 +87,13 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             />
 
+        <io.stipop.refactor.present.ui.components.core.SPRecyclerView
+            android:padding="12dp"
+            android:id="@+id/sticker_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
     </io.stipop.refactor.present.ui.components.core.SPLinearLayout>
 
 
-</io.stipop.refactor.present.ui.components.core.SPConstraintLayout>
+</io.stipop.refactor.present.ui.components.core.SPLinearLayout>

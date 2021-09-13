@@ -2,17 +2,30 @@ package io.stipop.refactor.present.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import io.stipop.databinding.ItemStickerBinding
 import io.stipop.refactor.data.models.SPSticker
+import io.stipop.refactor.domain.entities.SPStickerItem
 
-class StoreDetailPackageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class StoreDetailPackageAdapter : ListAdapter<SPStickerItem, StoreDetailPackageAdapter.StoreDetailPackageViewHolder>(
+    object : DiffUtil.ItemCallback<SPStickerItem>() {
+        override fun areItemsTheSame(oldItem: SPStickerItem, newItem: SPStickerItem): Boolean = oldItem == newItem
+        override fun areContentsTheSame(oldItem: SPStickerItem, newItem: SPStickerItem): Boolean = oldItem == newItem
+    }
+) {
 
-    private val _itemList: ArrayList<SPSticker> = arrayListOf()
+    class StoreDetailPackageViewHolder(private val _binding: ItemStickerBinding) :
+        RecyclerView.ViewHolder(_binding.root) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        fun onBind(item: SPStickerItem) {
+            Glide.with(itemView).load(item.stickerImg).into(_binding.stickerImage).clearOnDetach()
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoreDetailPackageViewHolder {
         return StoreDetailPackageViewHolder(
             ItemStickerBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -22,37 +35,8 @@ class StoreDetailPackageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(
         )
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val _item = _itemList[position]
-
-        when (holder) {
-            is StoreDetailPackageViewHolder -> {
-                holder.setItem(_item)
-            }
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return _itemList.size
-    }
-
-    fun setItemList(itemList: List<SPSticker>) {
-        _itemList.clear()
-        _itemList.addAll(itemList)
-        notifyDataSetChanged()
+    override fun onBindViewHolder(holder: StoreDetailPackageViewHolder, position: Int) {
+        holder.onBind(getItem(position))
     }
 }
 
-class StoreDetailPackageViewHolder(private val _binding: ViewBinding) : RecyclerView.ViewHolder(_binding.root) {
-
-    fun setItem(item: SPSticker) {
-        when (_binding) {
-            is ItemStickerBinding -> {
-                _binding.stickerImage.apply {
-                    Glide.with(this).load(item.stickerImg).into(this)
-                }
-            }
-        }
-    }
-
-}

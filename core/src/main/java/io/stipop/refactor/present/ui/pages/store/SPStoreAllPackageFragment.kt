@@ -7,19 +7,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.databinding.FragmentStoreAllPackageListBinding
-import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.present.ui.adapters.StorePackageAdapter
-import io.stipop.refactor.present.ui.listeners.OnClickPackageListener
-import io.stipop.refactor.present.ui.listeners.OnDownloadPackageListener
+import io.stipop.refactor.present.ui.adapters.StoreTrendingPackageAdapter
+import io.stipop.refactor.present.ui.pages.store.SPDetailActivity.Companion.PACKAGE_ID
 import io.stipop.refactor.present.ui.view_models.StoreAllPackageViewModel
 import javax.inject.Inject
 
 
 class SPStoreAllPackageFragment : Fragment() {
+    private lateinit var storeTrendingPackageAdapter: StoreTrendingPackageAdapter
+    private lateinit var storeAllPackageAdapter: StorePackageAdapter
     private lateinit var _binding: FragmentStoreAllPackageListBinding
 
     @Inject
@@ -44,9 +46,26 @@ class SPStoreAllPackageFragment : Fragment() {
                         }
                     })
                 }
-                adapter = StorePackageAdapter().apply {
 
+                storeTrendingPackageAdapter = StoreTrendingPackageAdapter().apply {
+                    itemClick = {
+                        startActivity(Intent(activity, SPDetailActivity::class.java).apply {
+                            putExtra(PACKAGE_ID, it.packageId)
+                        })
+                    }
                 }
+                storeAllPackageAdapter = StorePackageAdapter().apply {
+                    itemClick = {
+                        startActivity(Intent(activity, SPDetailActivity::class.java).apply {
+                            putExtra(PACKAGE_ID, it.packageId)
+                        })
+                    }
+                }
+
+                adapter = ConcatAdapter(
+                    storeTrendingPackageAdapter,
+                    storeAllPackageAdapter
+                )
             }
         }
 
@@ -54,10 +73,8 @@ class SPStoreAllPackageFragment : Fragment() {
         activity?.let {
             _viewModel.listChanges.observe(it) {
                 Log.d(this::class.simpleName, "storeAllPackageList.size -> ${it.size}")
-                (_binding.storeAllPackageList.adapter as? StorePackageAdapter)?.run {
-                    itemList = it
-                    notifyDataSetChanged()
-                }
+                storeTrendingPackageAdapter.submitList(it.filterIndexed({ index, item -> index < 12}))
+                storeAllPackageAdapter.submitList(it.filterIndexed({ index, item -> index >= 12}))
             }
         }
 

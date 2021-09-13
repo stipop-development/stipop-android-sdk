@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
 
         chatText = findViewById(R.id.chatET)
 
-        Stipop.connect(this, stipopIV, "0000", "en", "US", this)
+        Stipop.connect(this, stipopIV, "a0000", "en", "US", this)
 
 //        val keyboardView = Keyboard(this)
 //        supportFragmentManager.beginTransaction()

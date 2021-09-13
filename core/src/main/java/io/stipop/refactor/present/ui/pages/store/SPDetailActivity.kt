@@ -11,8 +11,8 @@ import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
 import io.stipop.Stipop
-import io.stipop.refactor.present.ui.adapters.StoreDetailPackageAdapter
 import io.stipop.databinding.ActivityDetailBinding
+import io.stipop.refactor.present.ui.adapters.StoreDetailPackageAdapter
 import io.stipop.refactor.present.ui.components.core.item_decoration.ItemPaddingDecoration
 import io.stipop.refactor.present.ui.view_models.DetailViewModelV1
 import javax.inject.Inject
@@ -31,10 +31,14 @@ class SPDetailActivity : AppCompatActivity() {
     @Inject
     internal lateinit var _viewModel: DetailViewModelV1
 
+    private lateinit var storeDetailPackageAdapter: StoreDetailPackageAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         Stipop._appComponent.inject(this)
+
+        storeDetailPackageAdapter = StoreDetailPackageAdapter()
 
         _binding = ActivityDetailBinding.inflate(layoutInflater)
 
@@ -42,7 +46,7 @@ class SPDetailActivity : AppCompatActivity() {
 
         _binding.stickerGrid.apply {
             this.layoutManager = GridLayoutManager(context, Config.detailNumOfColumns)
-            this.adapter = StoreDetailPackageAdapter()
+            this.adapter = storeDetailPackageAdapter
 
             val outMetrics = DisplayMetrics()
             val display: Display?
@@ -66,7 +70,7 @@ class SPDetailActivity : AppCompatActivity() {
         _binding.closeButton.setOnClickListener { finish() }
 
         _binding.downloadButton.setOnClickListener {
-            _viewModel.selectedPackage.value?.let {
+            _viewModel.packageItemChanges.value?.let {
                 val _intent = Intent().apply {
                     putExtra(PACKAGE_ID, it.packageId)
                 }
@@ -74,7 +78,7 @@ class SPDetailActivity : AppCompatActivity() {
             }
         }
 
-        _viewModel.selectedPackage.observe(this) {
+        _viewModel.packageItemChanges.observe(this) {
 
             Log.d(this::class.simpleName, "selectedPackage -> $it")
 
@@ -82,19 +86,15 @@ class SPDetailActivity : AppCompatActivity() {
                 Glide.with(_binding.root.context).load(this.packageImg).into(_binding.packageImage)
                 _binding.packageName.text = this.packageName
                 _binding.artistName.text = this.artistName
-                _binding.stickerGrid.adapter.apply {
-                    when (this) {
-                        is StoreDetailPackageAdapter -> {
-                            this.setItemList(it.stickers)
-                        }
-                    }
-                }
-                if (this.isDownload) {
-                    _binding.downloadButton.text = getString(R.string.downloaded)
-                } else {
+                _binding.downloadButton.isEnabled = !(this.isDownload == "Y")
+
+                if (_binding.downloadButton.isEnabled) {
                     _binding.downloadButton.text = getString(R.string.download)
+                } else {
+                    _binding.downloadButton.text = getString(R.string.downloaded)
                 }
-                _binding.downloadButton.isEnabled = !isDownload
+
+                storeDetailPackageAdapter.submitList(it.stickers)
 
             }
         }
