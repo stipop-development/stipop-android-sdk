@@ -13,11 +13,12 @@ import io.stipop.*
 import io.stipop.databinding.FragmentMyActivePackageListBinding
 import io.stipop.refactor.present.ui.adapters.MyActivePackageAdapter
 import io.stipop.refactor.data.models.SPPackage
+import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.present.ui.components.common.SPBottomSheetDialog
 import io.stipop.refactor.present.ui.listeners.OnHiddenPackageListener
 import io.stipop.refactor.present.ui.listeners.OnMovePackageListener
 import io.stipop.refactor.present.ui.listeners.OnStartDragListener
-import io.stipop.refactor.present.ui.view_models.MyPageViewModelV1
+import io.stipop.refactor.present.ui.view_models.MyPageViewModel
 import javax.inject.Inject
 
 class SPMyActivePackageFragment : Fragment() {
@@ -25,10 +26,11 @@ class SPMyActivePackageFragment : Fragment() {
     private lateinit var _binding: FragmentMyActivePackageListBinding
 
     @Inject
-    internal lateinit var _viewModel: MyPageViewModelV1
+    internal lateinit var _viewModel: MyPageViewModel
 
     private lateinit var itemTouchHelper: ItemTouchHelper
 
+    private lateinit var myActivePackageAdapter: MyActivePackageAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,21 +39,23 @@ class SPMyActivePackageFragment : Fragment() {
         Log.d(this::class.simpleName, "onCreateView")
         Stipop._appComponent.inject(this)
 
+        myActivePackageAdapter = MyActivePackageAdapter()
+
         _binding = FragmentMyActivePackageListBinding.inflate(layoutInflater, container, false).apply {
             activePackageList.layoutManager = LinearLayoutManager(context)
-            activePackageList.adapter = MyActivePackageAdapter().apply {
+            activePackageList.adapter = myActivePackageAdapter.apply {
 
                 itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
 
                 onHiddenPackageListener = object : OnHiddenPackageListener {
-                    override fun onHidden(item: SPPackage) {
+                    override fun onHidden(item: SPPackageItem) {
                         val dialog =
                             SPBottomSheetDialog(requireContext())
                         dialog.setOnClickCancelListener {
                             dialog.dismiss()
                         }
                         dialog.setOnClickConfirmLListener {
-//                            _viewModel.onHiddenPackage(item)
+                            _viewModel.onHiddenPackageItem(item)
                             dialog.dismiss()
                         }
                         dialog.show()
@@ -85,11 +89,9 @@ class SPMyActivePackageFragment : Fragment() {
         }
 
         activity?.let {
-            _viewModel.myActivePackageList.observe(it) { value ->
-                Log.d(this::class.simpleName, "activePackageList.size -> ${value.size}")
-                with(_binding.activePackageList.adapter as? MyActivePackageAdapter) {
-//                    this?.setItemList(value)
-                }
+            _viewModel.myActivePackageListChanges.observe(it) {
+                Log.d(this::class.simpleName, "activePackageList.size -> ${it.size}")
+                myActivePackageAdapter.submitList(it)
             }
         }
         return _binding.root

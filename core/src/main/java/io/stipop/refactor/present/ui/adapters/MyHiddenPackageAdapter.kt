@@ -2,20 +2,29 @@ package io.stipop.refactor.present.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import io.stipop.extend.dragdrop.ItemTouchHelperAdapter
 import io.stipop.databinding.ItemMyHiddenPackageBinding
+import io.stipop.extend.dragdrop.ItemTouchHelperAdapter
 import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
 import io.stipop.refactor.data.models.SPPackage
-import io.stipop.refactor.present.ui.listeners.OnActivePackageListener
+import io.stipop.refactor.domain.entities.SPPackageItem
+import io.stipop.refactor.present.ui.listeners.OnActivePackageItemListener
 
 class MyHiddenPackageAdapter :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>(), ItemTouchHelperAdapter {
+    ListAdapter<SPPackageItem, MyHiddenPackageViewHolder>(
+        object : DiffUtil.ItemCallback<SPPackageItem>() {
+            override fun areItemsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean =
+                oldItem.hashCode() == newItem.hashCode()
 
-    private val _dataList: ArrayList<SPPackage> = arrayListOf()
+            override fun areContentsTheSame(oldItem: SPPackageItem, newItem: SPPackageItem): Boolean =
+                oldItem.hashCode() == newItem.hashCode()
+        }
+    ), ItemTouchHelperAdapter {
 
     var fromPosition = -1
     var toPosition = -1
@@ -26,9 +35,9 @@ class MyHiddenPackageAdapter :
         onEventListener = l
     }
 
-    var onActivePackageListener: OnActivePackageListener? = null
+    var onActivePackageListener: OnActivePackageItemListener? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHiddenPackageViewHolder {
         return MyHiddenPackageViewHolder(
             ItemMyHiddenPackageBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -39,19 +48,10 @@ class MyHiddenPackageAdapter :
         )
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = _dataList[position]
+    override fun onBindViewHolder(holder: MyHiddenPackageViewHolder, position: Int) {
+        holder.onBind(getItem(position))
 
-        when (holder) {
-            is MyHiddenPackageViewHolder -> {
-                holder.setItem(item)
-            }
-        }
 
-    }
-
-    override fun getItemCount(): Int {
-        return _dataList.size
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
@@ -60,8 +60,7 @@ class MyHiddenPackageAdapter :
     }
 
     override fun onItemRemove(position: Int) {
-        _dataList.removeAt(position)
-        notifyDataSetChanged()
+        notifyItemRemoved(position)
     }
 
     private fun swap(from: Int, to: Int) {
@@ -84,26 +83,17 @@ class MyHiddenPackageAdapter :
             return
         }
 
-//         myPackageFragment.myStickerOrder(this.fromPosition, this.toPosition)
-
         this.fromPosition = -1
         this.toPosition = -1
     }
-
-    fun setItemList(itemList: List<SPPackage>) {
-        _dataList.clear()
-        _dataList.addAll(itemList)
-        notifyDataSetChanged()
-    }
-
 }
 
 class MyHiddenPackageViewHolder(
     private val _binding: ViewBinding,
-    private val _onActivePackageListener: OnActivePackageListener?
+    private val _onActivePackageListener: OnActivePackageItemListener?
 ) : RecyclerView.ViewHolder(_binding.root) {
 
-    fun setItem(item: SPPackage) {
+    fun onBind(item: SPPackageItem) {
         when (_binding) {
             is ItemMyHiddenPackageBinding -> {
                 _binding.run {

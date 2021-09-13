@@ -11,9 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.databinding.FragmentMyHiddenPackageListBinding
 import io.stipop.refactor.data.models.SPPackage
+import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.present.ui.adapters.MyHiddenPackageAdapter
-import io.stipop.refactor.present.ui.listeners.OnActivePackageListener
-import io.stipop.refactor.present.ui.view_models.MyPageViewModelV1
+import io.stipop.refactor.present.ui.listeners.OnActivePackageItemListener
+import io.stipop.refactor.present.ui.view_models.MyPageViewModel
 import javax.inject.Inject
 
 class SPMyHiddenPackageFragment : Fragment() {
@@ -21,7 +22,7 @@ class SPMyHiddenPackageFragment : Fragment() {
     private lateinit var _binding: FragmentMyHiddenPackageListBinding
 
     @Inject
-    internal lateinit var _viewModel: MyPageViewModelV1
+    internal lateinit var _viewModel: MyPageViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,9 +35,9 @@ class SPMyHiddenPackageFragment : Fragment() {
         _binding = FragmentMyHiddenPackageListBinding.inflate(layoutInflater, container, false).apply {
             hiddenPackageList.layoutManager = LinearLayoutManager(context)
             hiddenPackageList.adapter = MyHiddenPackageAdapter().apply {
-                onActivePackageListener = object : OnActivePackageListener {
-                    override fun onActive(item: SPPackage) {
-//                        _viewModel.onActivePackage(item)
+                onActivePackageListener = object : OnActivePackageItemListener {
+                    override fun onActive(item: SPPackageItem) {
+                        _viewModel.onActivePackageItem(item)
                     }
                 }
             }
@@ -50,7 +51,7 @@ class SPMyHiddenPackageFragment : Fragment() {
         }
 
         activity?.let {
-            _viewModel.myHiddenPackageList.observe(it) { value ->
+            _viewModel.myHiddenPackageListChanges.observe(it) { value ->
                 Log.d(this::class.simpleName, "hiddenPackageList.size -> ${value.size}")
                 with(_binding.hiddenPackageList.adapter as? MyHiddenPackageAdapter) {
 //                    this?.setItemList(value)

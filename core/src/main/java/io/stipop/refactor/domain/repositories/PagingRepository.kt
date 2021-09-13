@@ -51,6 +51,29 @@ abstract class PagingRepository<T> : CoroutineScope {
         _listChanged.postValue(listOf(item))
     }
 
+    fun onDeleteItem(item: T) {
+        list?.filter { it != item }?.run {
+            _listChanged.postValue(this)
+        }
+    }
+
+    fun onSwapItem(sourceItem: T, destItem: T) {
+        list?.run {
+            ArrayList(this).run {
+
+                val sourceIndex = this.indexOf(sourceItem)
+                val destIndex = this.indexOf(destItem)
+
+                if (sourceIndex >= 0 && destIndex >= 0) {
+                    this.removeAt(sourceIndex)
+                    this.add(destIndex, sourceItem)
+                }
+
+                _listChanged.postValue(this)
+            }
+        }
+    }
+
     protected abstract fun onLoadList(
         user: SPUser,
         keyword: String,

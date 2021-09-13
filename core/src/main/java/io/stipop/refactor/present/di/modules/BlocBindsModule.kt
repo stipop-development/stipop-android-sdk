@@ -27,4 +27,10 @@ interface BlocBindsModule {
 
     @Binds
     fun bindStorePackageBloc(bloc: StorePackageBlocV1): StorePackageBloc
+
+    @Binds
+    fun bindMyActivePackageBloc(bloc: MyActivePackageBlocV1): MyActivePackageBloc
+
+    @Binds
+    fun bindMyHiddenPackageBloc(bloc: MyHiddenPackageBlocV1): MyHiddenPackageBloc
 }
