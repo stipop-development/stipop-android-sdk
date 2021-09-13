@@ -103,6 +103,14 @@ class Stipop {
                         Log.d(TAG, "it -> $it")
                         onChangeStickerItem(it)
                     }
+
+                    sendStickerChanges.observe(activity) {
+                        _delegate?.onStickerSelected(SPSticker(JSONObject().apply {
+                            put("stickerId", it.stickerId)
+                            put("stickerImg", it.stickerImg)
+                            put("keyword", it.keyword)
+                        }))
+                    }
                 }
 
                 activity.window.decorView.findViewById<View>(android.R.id.content)?.let {
@@ -157,20 +165,19 @@ class Stipop {
         }
     }
 
-    private fun onChangeStickerItem(it: SPStickerItem?) {
+    private fun onChangeStickerItem(item: SPStickerItem?) {
 
-        it?.let {
+        item?.let {
             if (Config.showPreview) {
                 showStickerItemPreview(it)
             } else {
-                _delegate?.onStickerSelected(SPSticker(JSONObject().apply {
-                    put("stickerId", it.stickerId)
-                    put("stickerImg", it.stickerImg)
-                    put("keyword", it.keyword)
-                }))
+                onSendStickerItem(it)
             }
         }
+    }
 
+    private fun onSendStickerItem(item: SPStickerItem) {
+        _viewModel.onSendStickerItem(item)
     }
 
     private fun showSearch() {

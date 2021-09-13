@@ -17,5 +17,9 @@ abstract class StickerSendBloc {
 
     abstract val stickerChanges: LiveData<SPStickerItem>
 
-    abstract fun onSelectStickerItem(id: Int)
+    abstract fun onSendStickerItem(id: SPStickerItem)
+
+    companion object {
+        val TAG: String? = this::class.simpleName
+    }
 }

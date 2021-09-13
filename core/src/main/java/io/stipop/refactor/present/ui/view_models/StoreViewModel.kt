@@ -7,24 +7,6 @@ import io.stipop.refactor.domain.repositories.StickerStoreRepository
 import io.stipop.refactor.domain.repositories.UserRepository
 import javax.inject.Inject
 
-class StoreViewModelV1 @Inject constructor(
-    val userRepository: UserRepository,
-    val stickerStoreRepository: StickerStoreRepository,
-    val myStickersRepository: MyStickersRepository,
-    ) : StoreViewModel {
-    private val _storeMode: MutableLiveData<StoreMode> = MutableLiveData()
-    override val storeMode: LiveData<StoreMode>
-        get() = _storeMode
-
-    override fun onChangeStoreMode(mode: StoreMode) {
-        _storeMode.value.let {
-            if (it == null || it != mode) {
-                _storeMode.postValue(mode)
-            }
-        }
-    }
-}
-
 interface StoreViewModel {
 
     val storeMode: LiveData<StoreMode>
@@ -43,3 +25,25 @@ enum class StoreMode {
         const val TAG: String = "StoreMode"
     }
 }
+
+
+class StoreViewModelV1 @Inject constructor(
+    val userRepository: UserRepository,
+    val stickerStoreRepository: StickerStoreRepository,
+    val myStickersRepository: MyStickersRepository,
+) : StoreViewModel {
+    private val _storeMode: MutableLiveData<StoreMode> = MutableLiveData()
+    override val storeMode: LiveData<StoreMode>
+        get() = _storeMode
+
+    override fun onChangeStoreMode(mode: StoreMode) {
+        _storeMode.value.let {
+            if (it == null || it != mode) {
+                _storeMode.postValue(mode)
+            }
+        }
+    }
+}
+
+
+
