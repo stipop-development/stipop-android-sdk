@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.stipop.refactor.domain.entities.SPPackageItem
+import io.stipop.refactor.domain.repositories.StorePackageRepository
 import io.stipop.refactor.domain.repositories.UserRepository
 import io.stipop.refactor.domain.services.StickerStoreService
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +23,8 @@ class PackageItemDetailBlocV1
 @Inject
 constructor(
     private val userRepository: UserRepository,
-    private val service: StickerStoreService
+    private val service: StickerStoreService,
+    private val storePackageRepository: StorePackageRepository
 ) : PackageItemDetailBloc() {
 
 
@@ -51,6 +53,8 @@ constructor(
                     _packageItemChanges.postValue(
                         response.body.packageItem
                     )
+
+                    storePackageRepository.onReplaceItem(response.body.packageItem)
                 } catch (e: Exception) {
                     Log.e(this@PackageItemDetailBlocV1::class.simpleName, e.message, e)
                 }
