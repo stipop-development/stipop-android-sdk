@@ -9,6 +9,7 @@ import io.stipop.refactor.domain.repositories.UserRepository
 import io.stipop.refactor.domain.services.StickerStoreService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,6 +22,7 @@ abstract class SearchStorePackageBloc {
 
     abstract val keywordChanges: LiveData<String>
     abstract val packageItemListChanges: LiveData<List<SPPackageItem>>
+    abstract val downloadPackageItemChanges: LiveData<SPPackageItem>
 
     abstract fun onChangeKeyword(keyword: String)
     abstract fun onSearchStorePackageItemList(keyword: String?, index: Int)
@@ -39,9 +41,12 @@ constructor(
     private val _keywordChanged: MutableLiveData<String> = MutableLiveData()
     override val keywordChanges: LiveData<String>
         get() = _keywordChanged
-
     override val packageItemListChanges: LiveData<List<SPPackageItem>>
         get() = storeSearchPackageRepository.listChanges
+
+    private val _downloadPackageItemChanged: MutableLiveData<SPPackageItem> = MutableLiveData()
+    override val downloadPackageItemChanges: LiveData<SPPackageItem>
+        get() = _downloadPackageItemChanged
 
     override fun onChangeKeyword(keyword: String) {
         userRepository.currentUser?.let { user ->
@@ -85,7 +90,7 @@ constructor(
 
                     Log.d(
                         TAG, "[SUCCEED] onSearchStorePackageList : \n" +
-                                "keyword -> $keyword \n" +
+                                "keyword -> ${keyword ?: _keywordChanged.value ?: "공백"} \n" +
                                 "index -> $index\n"
                     )
 
@@ -109,15 +114,14 @@ constructor(
 
                 stickerStoreService.downloadPurchaseSticker(user.apikey, item.packageId, user.userId, "N", user.language, user.country, null)
 
-                stickerStoreService.stickerPackInfo(user.apikey, item.packageId, user.userId).run {
-                    Log.d(
-                        TAG, "[SUCCEED] onDownloadPackageItem : \n" +
-                                "item -> $item\n"
-                    )
-                    packageItemListChanges.value?.indexOf(item)?.let {
-                        onSearchStorePackageItemList(null, it)
-                    }
+                delay(500)
+                stickerStoreService.stickerPackInfo(user.apikey, item.packageId, user.userId).let {
+
+                    Log.d(TAG, "it.body.packageItem -> ${it.body.packageItem}")
+
+                    storeSearchPackageRepository.onReplaceItem(it.body.packageItem)
                 }
+
             }
         }
     }

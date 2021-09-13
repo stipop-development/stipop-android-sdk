@@ -6,6 +6,7 @@ import io.stipop.refactor.domain.entities.SPPackageItem
 import javax.inject.Inject
 
 interface StoreSearchPackageViewModel {
+    val downloadPackageItemChanges: LiveData<SPPackageItem>
     val listChanges: LiveData<List<SPPackageItem>>
     fun onLoadMore(keyword: String? = null, index: Int)
     fun onDownloadPackageItem(it: SPPackageItem)
@@ -17,6 +18,9 @@ class StoreSearchPackageViewModelV1
 ) : StoreSearchPackageViewModel {
 
     var _keyword: String? = null
+
+    override val downloadPackageItemChanges: LiveData<SPPackageItem>
+        get() = searchStorePackageBloc.downloadPackageItemChanges
 
     override val listChanges: LiveData<List<SPPackageItem>>
         get() = searchStorePackageBloc.packageItemListChanges

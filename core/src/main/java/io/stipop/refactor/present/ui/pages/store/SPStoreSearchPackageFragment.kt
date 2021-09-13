@@ -2,6 +2,7 @@ package io.stipop.refactor.present.ui.pages.store
 
 import android.content.Context
 import android.os.Bundle
+import android.text.TextUtils.indexOf
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.databinding.FragmentStoreSearchPackageListBinding
+import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.present.ui.adapters.SearchPackageAdapter
 import io.stipop.refactor.present.ui.view_models.StorePageViewModel
 import io.stipop.refactor.present.ui.view_models.StoreSearchPackageViewModel

@@ -29,4 +29,12 @@ data class SPPackageItem(@SerializedName("packageCategory")
                          @SerializedName("order")
                            val order: Int = 0,
                          @SerializedName("stickers")
-                           val stickers: List<SPStickerItem> = listOf())
+                           val stickers: List<SPStickerItem> = listOf()) {
+
+    override fun equals(other: Any?): Boolean {
+        return when (other) {
+            is SPPackageItem -> packageId == other.packageId
+            else -> false
+        }
+    }
+}
