@@ -43,14 +43,19 @@ abstract class PagingRepository<T> : CoroutineScope {
     }
 
     protected fun getPageNumber(offset: Int?, pageMap: SPPageMap?): Int {
-
-        val pageNumber: Float = pageMap?.let { pageMap ->
-
+        val pageNumber: Int = pageMap?.let { pageMap ->
             offset?.let { offset ->
-                (offset.toFloat() / pageMap.onePageCountRow.toFloat()) + 1f
-            } ?: pageMap.pageNumber.toFloat()
-        } ?: 1f
-        return ceil(pageNumber).toInt()
+                val value = ceil((offset.toFloat() / pageMap.onePageCountRow.toFloat()) + 1f).toInt()
+
+                if (value < pageMap.pageNumber) {
+                    value
+                } else {
+                    value + 1
+                }
+            } ?: pageMap.pageNumber
+        } ?: 1
+
+        return pageNumber
     }
 
     protected fun getLimit(pageMap: SPPageMap?): Int {
