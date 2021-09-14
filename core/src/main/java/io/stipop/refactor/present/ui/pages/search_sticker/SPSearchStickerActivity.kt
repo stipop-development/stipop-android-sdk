@@ -88,7 +88,7 @@ class SPSearchStickerActivity : AppCompatActivity() {
                                 super.onScrollStateChanged(recyclerView, newState)
                                 when (newState) {
                                     RecyclerView.SCROLL_STATE_IDLE -> {
-                                        _viewModel.onLoadKeywordList(findFirstVisibleItemPosition())
+                                        _viewModel.onLoadKeywordList(findLastVisibleItemPosition())
                                     }
                                 }
                             }

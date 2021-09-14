@@ -156,13 +156,9 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
             packageList.apply {
                 layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false).let {
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                            super.onScrollStateChanged(recyclerView, newState)
-                            when (newState) {
-                                RecyclerView.SCROLL_STATE_DRAGGING -> {
-                                    _viewModel.onLoadMorePackageItemList(it.findLastCompletelyVisibleItemPosition())
-                                }
-                            }
+                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                            super.onScrolled(recyclerView, dx, dy)
+                            _viewModel.onLoadMorePackageItemList(it.findLastVisibleItemPosition())
                         }
                     })
                     it
@@ -183,7 +179,7 @@ class SPStickerKeyboard(context: Context, attrs: AttributeSet? = null) : FrameLa
                             super.onScrollStateChanged(recyclerView, newState)
                             when (newState) {
                                 RecyclerView.SCROLL_STATE_DRAGGING -> {
-                                    _viewModel.onLoadMorePackageItemList(it.findLastCompletelyVisibleItemPosition())
+                                    _viewModel.onLoadMorePackageItemList(it.findLastVisibleItemPosition())
                                 }
                             }
                         }
