@@ -48,6 +48,7 @@ interface MyStickersRestService : MyStickersService {
         pageNumber: Int?
     ): SPPackageListResponse
 
+    @FormUrlEncoded
     @PUT("mysticker/order/{userId}")
     override suspend fun myStickerOrder(
         @Header("apikey")
@@ -56,10 +57,10 @@ interface MyStickersRestService : MyStickersService {
         @Path("userId")
         userId: String,
 
-        @Query("currentOrder")
+        @Field("currentOrder")
         currentOrder: Int,
 
-        @Query("newOrder")
+        @Field("newOrder")
         newOrder: Int
     ): SPVoidResponse
 }

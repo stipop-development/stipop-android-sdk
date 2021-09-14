@@ -9,6 +9,18 @@ import io.stipop.refactor.data.models.SPMyPageMode
 import io.stipop.refactor.domain.entities.SPPackageItem
 import javax.inject.Inject
 
+interface MyPageViewModel {
+    val myPageMode: LiveData<SPMyPageMode>
+    val myActivePackageListChanges: LiveData<List<SPPackageItem>>
+    val myHiddenPackageListChanges: LiveData<List<SPPackageItem>>
+    fun onLoadMyActivePackageList(index: Int)
+    fun onLoadMyHiddenPackageList(index: Int)
+    fun onActivePackageItem(value: SPPackageItem)
+    fun onHiddenPackageItem(value: SPPackageItem)
+    fun onChangeMyPackageMode(hidden: SPMyPageMode)
+    fun onMoveMyPackageItem(sourceIndex: Int, targetIndex: Int)
+}
+
 class MyPageViewModelV1 @Inject constructor(
     private val myActivePackageBloc: MyActivePackageBloc,
     private val myHiddenPackageBloc: MyHiddenPackageBloc,
@@ -60,15 +72,22 @@ class MyPageViewModelV1 @Inject constructor(
         )
         _myPageMode.postValue(mode)
     }
-}
 
-interface MyPageViewModel {
-    val myPageMode: LiveData<SPMyPageMode>
-    val myActivePackageListChanges: LiveData<List<SPPackageItem>>
-    val myHiddenPackageListChanges: LiveData<List<SPPackageItem>>
-    fun onLoadMyActivePackageList(index: Int)
-    fun onLoadMyHiddenPackageList(index: Int)
-    fun onActivePackageItem(value: SPPackageItem)
-    fun onHiddenPackageItem(value: SPPackageItem)
-    fun onChangeMyPackageMode(hidden: SPMyPageMode)
+    override fun onMoveMyPackageItem(sourceIndex: Int, targetIndex: Int) {
+        if (
+            sourceIndex >= 0
+            && targetIndex >= 0
+            && sourceIndex != targetIndex
+        ) {
+            myActivePackageListChanges.value?.let {
+                Log.d(
+                    this::class.simpleName, "onMoveMyPackageItem : " +
+                            "sourceIndex -> $sourceIndex \n" +
+                            "targetIndex -> $targetIndex \n" +
+                            ""
+                )
+                myActivePackageBloc.onMovePackageItem(it[sourceIndex], it[targetIndex])
+            }
+        }
+    }
 }

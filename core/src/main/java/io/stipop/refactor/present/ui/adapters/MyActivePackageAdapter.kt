@@ -1,5 +1,6 @@
 package io.stipop.refactor.present.ui.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -42,25 +43,6 @@ class MyActivePackageAdapter :
     }
 
     var hiddenClick: ((SPPackageItem) -> Unit)? = null
-    var moveDrag: ((SPPackageItem) -> Unit)? = null
-
-    var onMovePackageListener: OnMovePackageListener? = null
-    var onStartDragListener: OnStartDragListener? = null
-
-    val itemTouchHelperCallback: ItemTouchHelper.Callback = object :
-        ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
-        override fun onMove(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            target: RecyclerView.ViewHolder
-        ): Boolean {
-            return true
-        }
-
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            TODO("Not yet implemented")
-        }
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyActivePackageViewHolder {
         return MyActivePackageViewHolder(
@@ -77,12 +59,7 @@ class MyActivePackageAdapter :
                     }
                 }
                 moveButton.setOnDragListener { v, event ->
-                    if (bindingAdapterPosition >= 0) {
-                        moveDrag?.invoke(getItem(bindingAdapterPosition))
-                        false
-                    } else {
-                        true
-                    }
+                    bindingAdapterPosition < 0
                 }
             }
         }

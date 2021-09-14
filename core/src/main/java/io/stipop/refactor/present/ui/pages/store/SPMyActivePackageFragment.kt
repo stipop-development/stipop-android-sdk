@@ -7,15 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_DRAG
+import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_IDLE
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.databinding.FragmentMyActivePackageListBinding
-import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.present.ui.adapters.MyActivePackageAdapter
-import io.stipop.refactor.present.ui.components.common.SPBottomSheetDialog
-import io.stipop.refactor.present.ui.listeners.OnMovePackageListener
-import io.stipop.refactor.present.ui.listeners.OnStartDragListener
 import io.stipop.refactor.present.ui.view_models.MyPageViewModel
 import javax.inject.Inject
 
@@ -27,6 +25,55 @@ class SPMyActivePackageFragment : Fragment() {
     internal lateinit var _viewModel: MyPageViewModel
 
     private lateinit var itemTouchHelper: ItemTouchHelper
+
+    private var _oldPosition: Int? = null
+    private val oldPosition: Int get() = _oldPosition ?: -1
+
+    private var _newPosition: Int? = null
+    private val newPosition: Int get() = _newPosition ?: -1
+
+    private val itemTouchHelperCallback: ItemTouchHelper.Callback = object :
+        ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+
+        override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+            super.onSelectedChanged(viewHolder, actionState)
+
+            when (actionState) {
+                ACTION_STATE_DRAG -> {
+                    _oldPosition = viewHolder?.bindingAdapterPosition
+                }
+                ACTION_STATE_IDLE -> {
+                    _viewModel.onMoveMyPackageItem(oldPosition, newPosition)
+                }
+            }
+        }
+
+        override fun onMoved(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            fromPos: Int,
+            target: RecyclerView.ViewHolder,
+            toPos: Int,
+            x: Int,
+            y: Int
+        ) {
+            super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
+            _newPosition = toPos
+        }
+
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            recyclerView.adapter?.notifyItemMoved(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            TODO("Not yet implemented")
+        }
+    }
 
     private lateinit var myActivePackageAdapter: MyActivePackageAdapter
     override fun onCreateView(
@@ -46,7 +93,6 @@ class SPMyActivePackageFragment : Fragment() {
                         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                             super.onScrolled(recyclerView, dx, dy)
                             Log.d(this::class.simpleName, "activePackageList onScrolled")
-                            _viewModel.onLoadMyActivePackageList(findLastVisibleItemPosition())
                         }
                     })
                 }
@@ -66,25 +112,6 @@ class SPMyActivePackageFragment : Fragment() {
 //                            dialog.dismiss()
 //                        }
 //                        dialog.show()
-                    }
-
-                    onMovePackageListener = object : OnMovePackageListener {
-                        override fun onStartMove(item: SPPackage) {
-                            Log.d(
-                                this@SPMyActivePackageFragment::class.simpleName, "onStartMove : \n" +
-                                        "item.id -> ${item.packageId}\n"
-                            )
-                        }
-                    }
-                    onStartDragListener = object : OnStartDragListener {
-                        override fun onStartDrag(viewHolder: RecyclerView.ViewHolder?) {
-
-                            Log.d(this@SPMyActivePackageFragment::class.simpleName, "onStartDrag")
-
-                            viewHolder?.let {
-                                itemTouchHelper.startDrag(it)
-                            }
-                        }
                     }
                 }
 
