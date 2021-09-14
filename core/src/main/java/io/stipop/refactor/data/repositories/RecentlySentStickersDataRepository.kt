@@ -28,7 +28,7 @@ class RecentlySentStickersDataRepository @Inject constructor(
                     user.apikey,
                     user.userId,
                     limit,
-                    getPageNumber(offset, pageMap) + 1
+                    getPageNumber(offset, pageMap)
                 )
 
                 _response.body.let {

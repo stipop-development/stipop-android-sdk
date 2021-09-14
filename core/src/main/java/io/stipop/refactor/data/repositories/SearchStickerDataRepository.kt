@@ -32,7 +32,7 @@ class SearchStickerDataRepository @Inject constructor(
                 user.language,
                 user.country,
                 limit,
-                getPageNumber(offset, pageMap) + 1
+                getPageNumber(offset, pageMap)
             )
                 .run {
                     body.stickerList?.let {

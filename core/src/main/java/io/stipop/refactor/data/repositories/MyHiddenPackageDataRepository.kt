@@ -36,7 +36,7 @@ class MyHiddenPackageDataRepository
                 user.apikey,
                 user.userId,
                 limit,
-                getPageNumber(offset, pageMap) + 1
+                getPageNumber(offset, pageMap)
             )
                 .run {
                     body.packageList?.let {
