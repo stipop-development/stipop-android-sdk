@@ -10,10 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.databinding.FragmentMyHiddenPackageListBinding
-import io.stipop.refactor.data.models.SPPackage
-import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.present.ui.adapters.MyHiddenPackageAdapter
-import io.stipop.refactor.present.ui.listeners.OnActivePackageItemListener
 import io.stipop.refactor.present.ui.view_models.MyPageViewModel
 import javax.inject.Inject
 
@@ -24,6 +21,8 @@ class SPMyHiddenPackageFragment : Fragment() {
     @Inject
     internal lateinit var _viewModel: MyPageViewModel
 
+    lateinit var myHiddenPackageAdapter: MyHiddenPackageAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,33 +31,43 @@ class SPMyHiddenPackageFragment : Fragment() {
         Log.d(this::class.simpleName, "onCreateView")
         Stipop._appComponent.inject(this)
 
+        myHiddenPackageAdapter = MyHiddenPackageAdapter()
+
         _binding = FragmentMyHiddenPackageListBinding.inflate(layoutInflater, container, false).apply {
-            hiddenPackageList.layoutManager = LinearLayoutManager(context)
-            hiddenPackageList.adapter = MyHiddenPackageAdapter().apply {
-                onActivePackageListener = object : OnActivePackageItemListener {
-                    override fun onActive(item: SPPackageItem) {
+            hiddenPackageList.apply {
+                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false).apply {
+                    addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                            super.onScrolled(recyclerView, dx, dy)
+                            Log.d(this::class.simpleName, "hiddenPackageList onScrolled")
+                            _viewModel.onLoadMyHiddenPackageList(findLastVisibleItemPosition())
+                        }
+                    })
+                }
+                adapter = myHiddenPackageAdapter.apply {
+                    activeClick = { item ->
                         _viewModel.onActivePackageItem(item)
                     }
+                    registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+
+                    })
                 }
             }
-            hiddenPackageList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    Log.d(this::class.simpleName, "hiddenPackageList onScrolled")
-//                    _viewModel.onLoadMyHiddenPackageList()
-                }
-            })
+
         }
 
         activity?.let {
-            _viewModel.myHiddenPackageListChanges.observe(it) { value ->
-                Log.d(this::class.simpleName, "hiddenPackageList.size -> ${value.size}")
-                with(_binding.hiddenPackageList.adapter as? MyHiddenPackageAdapter) {
-//                    this?.setItemList(value)
-                }
+            _viewModel.myHiddenPackageListChanges.observe(it) {
+                Log.d(this::class.simpleName, "hiddenPackageList.size -> ${it.size}")
+                myHiddenPackageAdapter.submitList(it)
             }
-
         }
+
         return _binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        _viewModel.onLoadMyHiddenPackageList(-1)
     }
 }

@@ -29,7 +29,7 @@ class MyActivePackageDataRepository
                     "pageNumber -> ${getPageNumber(offset, pageMap)} \n" +
                     ""
         )
-        launch {
+        launch(Dispatchers.IO) {
             hasLoading = coroutineContext.isActive
             _remoteDatasource.myStickerPacks(
                 user.apikey,

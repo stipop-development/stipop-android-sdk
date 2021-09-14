@@ -53,7 +53,6 @@ constructor(
                                 "index -> $index\n"
                     )
 
-
                     storePackageRepository.onLoadMoreList(user, "", index)
 
                     Log.d(
@@ -80,8 +79,6 @@ constructor(
                 )
 
                 stickerStoreService.downloadPurchaseSticker(user.apikey, item.packageId, user.userId, "N", user.language, user.country, null)
-
-                delay(500)
                 stickerStoreService.stickerPackInfo(user.apikey, item.packageId, user.userId).let {
                     Log.d(
                         TAG, "[RELOAD] onDownloadPackageItem : \n" +

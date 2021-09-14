@@ -8,16 +8,19 @@ import io.stipop.refactor.domain.entities.SPPageMap
 import io.stipop.refactor.domain.entities.SPUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
+import kotlin.math.ceil
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 abstract class PagingRepository<T> : CoroutineScope {
+    override val coroutineContext: CoroutineContext = Dispatchers.IO
 
     val TAG: String? = this::class.simpleName
 
-    var list: List<T>? = null
-    var pageMap: SPPageMap? = null
-    var hasLoading: Boolean = false
+    protected var list: List<T>? = null
+    protected var pageMap: SPPageMap? = null
+    protected var hasLoading: Boolean = false
 
     protected val _listChanged: MutableLiveData<List<T>> = MutableLiveData<List<T>>()
     val listChanges: LiveData<List<T>> = MediatorLiveData<List<T>>().apply {
@@ -39,39 +42,80 @@ abstract class PagingRepository<T> : CoroutineScope {
         }
     }
 
-    fun getPageNumber(offset: Int?, pageMap: SPPageMap?): Int {
-        return (pageMap?.pageNumber ?: 0)
+    protected fun getPageNumber(offset: Int?, pageMap: SPPageMap?): Int {
+
+        val pageNumber: Float = pageMap?.let { pageMap ->
+
+            offset?.let { offset ->
+                (offset.toFloat() / pageMap.onePageCountRow.toFloat()) + 1f
+            } ?: pageMap.pageNumber.toFloat()
+        } ?: 1f
+
+
+        Log.e(
+            "$TAG [PAGE]", "\n" +
+                    "offset -> $offset \n" +
+                    "pageNumberFloat -> $pageNumber \n" +
+                    "pageNumber -> ${ceil(pageNumber).toInt()}"
+        )
+
+        return ceil(pageNumber).toInt()
     }
 
-    fun getLimit(pageMap: SPPageMap?): Int {
+    protected fun getLimit(pageMap: SPPageMap?): Int {
         return pageMap?.onePageCountRow ?: 20
     }
 
     fun onReplaceItem(item: T) {
+        Log.d(
+            TAG, "onReplaceItem : \n" +
+                    "item -> $item"
+        )
         _listChanged.postValue(listOf(item))
     }
 
     fun onDeleteItem(item: T) {
-        list?.filter { it != item }?.run {
-            _listChanged.postValue(this)
+        Log.d(
+            TAG, "onDeleteItem : \n" +
+                    "item -> $item"
+        )
+
+        list?.let {
+            ArrayList(it)
+                .run {
+                    val index = indexOf(item)
+                    if (index >= 0) {
+                        removeAt(index)
+                        list = this
+                        _listChanged.postValue(list)
+                    }
+                }
         }
     }
 
     fun onSwapItem(sourceItem: T, destItem: T) {
-        list?.run {
-            ArrayList(this).run {
+        list?.let {
+            ArrayList(it).run {
 
-                val sourceIndex = this.indexOf(sourceItem)
-                val destIndex = this.indexOf(destItem)
+                val sourceIndex = indexOf(sourceItem)
+                val destIndex = indexOf(destItem)
 
                 if (sourceIndex >= 0 && destIndex >= 0) {
-                    this.removeAt(sourceIndex)
-                    this.add(destIndex, sourceItem)
+                    removeAt(sourceIndex)
+                    add(destIndex, sourceItem)
                 }
-
-                _listChanged.postValue(this)
+                list = this
+                _listChanged.postValue(list)
             }
         }
+    }
+
+    protected fun getValidLoadPosition(list: List<T>?, pageMap: SPPageMap?, offset: Int): Boolean {
+        return list?.let { list ->
+            pageMap?.let { pageMap ->
+                list.size - pageMap.onePageCountRow * 2 < offset
+            } ?: false
+        } ?: true
     }
 
     protected abstract fun onLoadList(
@@ -108,24 +152,8 @@ abstract class PagingRepository<T> : CoroutineScope {
                         "offset -> $offset \n" +
                         "limit -> $limit \n"
             )
-            launch(Dispatchers.IO) {
-                Log.e(TAG, "has loading -> ${hasLoading}")
-                hasLoading = true
-
                 onLoadList(user, keyword, _offset, limit)
-
-                Log.e(TAG, "has loading -> ${hasLoading}")
-            }
         }
     }
 
-    private fun getValidLoadPosition(list: List<T>?, pageMap: SPPageMap?, offset: Int): Boolean {
-        return list?.let { list ->
-            pageMap?.let { pageMap ->
-                list.size - pageMap.onePageCountRow * 2 < offset
-            } ?: false
-        } ?: true
-    }
-
-    override val coroutineContext: CoroutineContext = Dispatchers.IO
 }

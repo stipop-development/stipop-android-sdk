@@ -24,6 +24,8 @@ class SPStorePackageFragment : Fragment() {
     private lateinit var storeAllPackageAdapter: StorePackageAdapter
     private lateinit var _binding: FragmentStoreAllPackageListBinding
 
+    private val trendingCount = 12
+
     @Inject
     internal lateinit var _viewModel: StorePackageViewModel
 
@@ -42,7 +44,7 @@ class SPStorePackageFragment : Fragment() {
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
                         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                             super.onScrolled(recyclerView, dx, dy)
-                            _viewModel.onLoadMore(findLastVisibleItemPosition())
+                            _viewModel.onLoadMore(findLastVisibleItemPosition() + trendingCount)
                         }
                     })
                 }
@@ -75,8 +77,8 @@ class SPStorePackageFragment : Fragment() {
         activity?.let {
             _viewModel.listChanges.observe(it) {
                 Log.d(this::class.simpleName, "storeAllPackageList.size -> ${it.size}")
-                storeTrendingPackageAdapter.submitList(listOf(it.filterIndexed { index, item -> index < 12 }))
-                storeAllPackageAdapter.submitList(it.filterIndexed { index, item -> index >= 12 })
+                storeTrendingPackageAdapter.submitList(listOf(it.filterIndexed { index, item -> index < trendingCount }))
+                storeAllPackageAdapter.submitList(it.filterIndexed { index, item -> index >= trendingCount })
             }
         }
 

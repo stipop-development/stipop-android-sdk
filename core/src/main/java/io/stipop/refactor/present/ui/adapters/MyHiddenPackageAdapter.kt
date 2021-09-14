@@ -29,13 +29,13 @@ class MyHiddenPackageAdapter :
     var fromPosition = -1
     var toPosition = -1
 
+    var activeClick: ((SPPackageItem) -> Unit)? = null
+
     private var onEventListener: OnRecyclerAdapterEventListener? = null
 
     fun setOnRecyclerAdapterEventListener(l: OnRecyclerAdapterEventListener) {
         onEventListener = l
     }
-
-    var onActivePackageListener: OnActivePackageItemListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHiddenPackageViewHolder {
         return MyHiddenPackageViewHolder(
@@ -43,15 +43,18 @@ class MyHiddenPackageAdapter :
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ),
-            onActivePackageListener
-        )
+            )
+        ).apply {
+            _binding.activeButton.setOnClickListener {
+                if (bindingAdapterPosition >= 0) {
+                    activeClick?.invoke(getItem(bindingAdapterPosition))
+                }
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: MyHiddenPackageViewHolder, position: Int) {
         holder.onBind(getItem(position))
-
-
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
@@ -89,28 +92,19 @@ class MyHiddenPackageAdapter :
 }
 
 class MyHiddenPackageViewHolder(
-    private val _binding: ViewBinding,
-    private val _onActivePackageListener: OnActivePackageItemListener?
+    val _binding: ItemMyHiddenPackageBinding,
 ) : RecyclerView.ViewHolder(_binding.root) {
 
     fun onBind(item: SPPackageItem) {
-        when (_binding) {
-            is ItemMyHiddenPackageBinding -> {
-                _binding.run {
-                    Glide.with(packageImage)
-                        .load(item.packageImg)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(packageImage)
-                        .clearOnDetach()
+        _binding.run {
+            Glide.with(packageImage)
+                .load(item.packageImg)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(packageImage)
+                .clearOnDetach()
 
-                    packageName.text = item.packageName
-                    artistName.text = item.artistName
-
-                    activeButton.setOnClickListener {
-                        _onActivePackageListener?.onActive(item)
-                    }
-                }
-            }
+            packageName.text = item.packageName
+            artistName.text = item.artistName
         }
     }
 }

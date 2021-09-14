@@ -1,6 +1,5 @@
 package io.stipop.refactor.present.ui.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,9 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.databinding.ItemMyActivePackageBinding
-import io.stipop.refactor.data.models.SPPackage
 import io.stipop.refactor.domain.entities.SPPackageItem
-import io.stipop.refactor.present.ui.listeners.OnHiddenPackageListener
 import io.stipop.refactor.present.ui.listeners.OnMovePackageListener
 import io.stipop.refactor.present.ui.listeners.OnStartDragListener
 
@@ -27,9 +24,7 @@ class MyActivePackageAdapter :
     ) {
 
     class MyActivePackageViewHolder(
-        private val _binding: ItemMyActivePackageBinding,
-        private val _onHiddenPackageListener: OnHiddenPackageListener?,
-        private val _onStartDragListener: OnStartDragListener?,
+        val _binding: ItemMyActivePackageBinding,
     ) : RecyclerView.ViewHolder(_binding.root) {
 
         fun onBind(item: SPPackageItem) {
@@ -42,18 +37,13 @@ class MyActivePackageAdapter :
 
                 it.packageName.text = item.packageName
                 it.artistName.text = item.artistName
-                it.hiddenButton.setOnClickListener {
-                }
-                it.moveButton.setOnDragListener { v, event ->
-                    Log.d(this::class.simpleName, "setOnDragListener")
-                    _onStartDragListener?.onStartDrag(this)
-                    false
-                }
             }
         }
     }
 
-    var onHiddenPackageListener: OnHiddenPackageListener? = null
+    var hiddenClick: ((SPPackageItem) -> Unit)? = null
+    var moveDrag: ((SPPackageItem) -> Unit)? = null
+
     var onMovePackageListener: OnMovePackageListener? = null
     var onStartDragListener: OnStartDragListener? = null
 
@@ -78,10 +68,24 @@ class MyActivePackageAdapter :
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ),
-            onHiddenPackageListener,
-            onStartDragListener,
-        )
+            )
+        ).apply {
+            _binding.apply {
+                hiddenButton.setOnClickListener {
+                    if (bindingAdapterPosition >= 0) {
+                        hiddenClick?.invoke(getItem(bindingAdapterPosition))
+                    }
+                }
+                moveButton.setOnDragListener { v, event ->
+                    if (bindingAdapterPosition >= 0) {
+                        moveDrag?.invoke(getItem(bindingAdapterPosition))
+                        false
+                    } else {
+                        true
+                    }
+                }
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: MyActivePackageViewHolder, position: Int) {

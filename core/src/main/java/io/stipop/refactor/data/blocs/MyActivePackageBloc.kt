@@ -109,6 +109,12 @@ constructor(
                                     "item -> $item"
                         )
                         myActivePackageRepository.onDeleteItem(item)
+
+                        listChanges.value?.indexOf(item)?.let {
+                            if (it >= 0) {
+                                myActivePackageRepository.onLoadMoreList(user, "", it)
+                            }
+                        }
                     }
                 } catch (e: Exception) {
                     Log.e(this@MyActivePackageBlocV1::class.simpleName, e.message, e)

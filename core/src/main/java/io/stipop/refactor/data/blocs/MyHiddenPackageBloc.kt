@@ -69,6 +69,12 @@ constructor(
                                     "item -> $item"
                         )
                         myHiddenPackageRepository.onDeleteItem(item)
+
+                        listChanges.value?.indexOf(item)?.let {
+                            if (it >= 0) {
+                                myHiddenPackageRepository.onLoadMoreList(user, "", it)
+                            }
+                        }
                     }
                 } catch (e: Exception) {
                     Log.e(this@MyHiddenPackageBlocV1::class.simpleName, e.message, e)

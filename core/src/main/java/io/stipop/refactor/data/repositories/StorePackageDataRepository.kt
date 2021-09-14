@@ -32,7 +32,7 @@ class StorePackageDataRepository @Inject constructor(
                 user.country,
                 null,
                 limit,
-                getPageNumber(offset, pageMap) + 1,
+                getPageNumber(offset, pageMap),
                 null
             )
                 .run {
