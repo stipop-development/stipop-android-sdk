@@ -2,13 +2,14 @@ package io.stipop.refactor.data.blocs
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.MediatorLiveData
 import io.stipop.refactor.domain.entities.SPPackageItem
 import io.stipop.refactor.domain.repositories.MyActivePackageRepository
 import io.stipop.refactor.domain.repositories.UserRepository
 import io.stipop.refactor.domain.services.MyStickersService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,8 +32,11 @@ constructor(
     private val myActivePackageRepository: MyActivePackageRepository
 ) : MyActivePackageBloc() {
 
-    override val listChanges: LiveData<List<SPPackageItem>>
-        get() = myActivePackageRepository.listChanges
+    override val listChanges: LiveData<List<SPPackageItem>> = MediatorLiveData<List<SPPackageItem>>().apply {
+        addSource(myActivePackageRepository.listChanges) {
+            postValue(it.sortedByDescending { it.order })
+        }
+    }
 
     override fun onLoadMoreList(index: Int) {
         userRepository.currentUser?.let { user ->
@@ -79,9 +83,20 @@ constructor(
                                     "sourceItem -> $sourceItem \n" +
                                     "destItem -> $destItem "
                         )
-
-                        myActivePackageRepository.onSwapItem(sourceItem, destItem)
                     }
+
+                    listChanges.value?.let {
+
+                        val a = it.indexOf(sourceItem)
+                        val b = it.indexOf(destItem)
+
+                        Log.e("TAG", "a = $a")
+                        Log.e("TAG", "b = $b")
+
+                        delay(500)
+                        myActivePackageRepository.onReloadList(user, "", a)
+                    }
+
                 } catch (e: Exception) {
                     Log.e(this@MyActivePackageBlocV1::class.simpleName, e.message, e)
                 }

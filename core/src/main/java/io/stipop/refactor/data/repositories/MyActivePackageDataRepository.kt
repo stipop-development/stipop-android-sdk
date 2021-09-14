@@ -17,16 +17,15 @@ class MyActivePackageDataRepository
     override fun onLoadList(
         user: SPUser,
         keyword: String,
-        offset: Int?,
+        pageNumber: Int,
         limit: Int?
     ) {
-        Log.d(
+        Log.e(
             this::class.simpleName, "onLoadList : \n " +
                     "user -> $user \n" +
                     "keyword -> $keyword \n" +
-                    "offset -> $offset \n" +
+                    "pageNumber -> $pageNumber \n" +
                     "limit -> $limit \n" +
-                    "pageNumber -> ${getPageNumber(offset, pageMap)} \n" +
                     ""
         )
         launch(Dispatchers.IO) {
@@ -35,7 +34,7 @@ class MyActivePackageDataRepository
                 user.apikey,
                 user.userId,
                 limit,
-                getPageNumber(offset, pageMap)
+                pageNumber,
             )
                 .run {
                     body.packageList?.let {

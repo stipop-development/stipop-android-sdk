@@ -93,6 +93,7 @@ class SPMyActivePackageFragment : Fragment() {
                         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                             super.onScrolled(recyclerView, dx, dy)
                             Log.d(this::class.simpleName, "activePackageList onScrolled")
+                            _viewModel.onLoadMyActivePackageList(findLastVisibleItemPosition())
                         }
                     })
                 }

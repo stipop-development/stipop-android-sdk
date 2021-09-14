@@ -12,14 +12,18 @@ import javax.inject.Inject
 class StorePackageDataRepository @Inject constructor(
     private val _remoteDatasource: StickerStoreRestDatasource
 ) : StorePackageRepository() {
-    override fun onLoadList(user: SPUser, keyword: String, offset: Int?, limit: Int?) {
+    override fun onLoadList(
+        user: SPUser,
+        keyword: String,
+        pageNumber: Int,
+        limit: Int?
+    ) {
         Log.d(
             this::class.simpleName, "onLoadList : \n " +
                     "user -> $user \n" +
                     "keyword -> $keyword \n" +
-                    "offset -> $offset \n" +
+                    "pageNumber -> $pageNumber \n" +
                     "limit -> $limit \n" +
-                    "pageNumber -> ${getPageNumber(offset, pageMap)} \n" +
                     ""
         )
         launch {
@@ -32,7 +36,7 @@ class StorePackageDataRepository @Inject constructor(
                 user.country,
                 null,
                 limit,
-                getPageNumber(offset, pageMap),
+                pageNumber,
                 null
             )
                 .run {

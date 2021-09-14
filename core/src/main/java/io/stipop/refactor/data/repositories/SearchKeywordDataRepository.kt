@@ -16,14 +16,13 @@ class SearchKeywordDataRepository @Inject constructor(
     private val _remoteDatasource: SearchRestDatasource
 ) : SearchKeywordRepository() {
 
-    override fun onLoadList(user: SPUser, keyword: String, offset: Int?, limit: Int?) {
+    override fun onLoadList(user: SPUser, keyword: String, pageNumber: Int, limit: Int?) {
         Log.d(
             this::class.simpleName, "onLoadList : \n " +
                     "user -> $user \n" +
                     "keyword -> $keyword \n" +
-                    "offset -> $offset \n" +
+                    "pageNumber -> $pageNumber \n" +
                     "limit -> $limit \n" +
-                    "pageNumber -> ${getPageNumber(offset, pageMap)} \n" +
                     ""
         )
         launch {

@@ -3,9 +3,7 @@ package io.stipop.refactor.present.di.modules
 import dagger.Binds
 import dagger.Module
 import io.stipop.refactor.data.repositories.*
-import io.stipop.refactor.data.repositories.StickerPackInfoDataRepository
 import io.stipop.refactor.domain.repositories.*
-import io.stipop.refactor.domain.repositories.StickerPackInfoRepository
 import io.stipop.refactor.domain.repositories.RecentlySentStickersRepository
 import javax.inject.Singleton
 
@@ -31,19 +29,11 @@ interface RepositoryBindsModule {
 
     @Singleton
     @Binds
-    fun bindStickerStoreRepository(repository: StickerStoreDataRepository): StickerStoreRepository
-
-    @Singleton
-    @Binds
     fun bindMyActivePackageRepository(repository: MyActivePackageDataRepository): MyActivePackageRepository
 
     @Singleton
     @Binds
     fun bindMyHiddenPackageRepository(repository: MyHiddenPackageDataRepository): MyHiddenPackageRepository
-
-    @Singleton
-    @Binds
-    fun bindStickerPackInfoRepository(repository: StickerPackInfoDataRepository): StickerPackInfoRepository
 
     @Singleton
     @Binds

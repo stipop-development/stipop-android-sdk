@@ -10,8 +10,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.ceil
-import kotlin.math.round
-import kotlin.math.roundToInt
 
 abstract class PagingRepository<T> : CoroutineScope {
     override val coroutineContext: CoroutineContext = Dispatchers.IO
@@ -45,13 +43,8 @@ abstract class PagingRepository<T> : CoroutineScope {
     protected fun getPageNumber(offset: Int?, pageMap: SPPageMap?): Int {
         val pageNumber: Int = pageMap?.let { pageMap ->
             offset?.let { offset ->
-                val value = ceil((offset.toFloat() / pageMap.onePageCountRow.toFloat()) + 1f).toInt()
-
-                if (value < pageMap.pageNumber) {
-                    value
-                } else {
-                    value + 1
-                }
+                val value = ((offset.toFloat() / pageMap.onePageCountRow.toFloat() + 1f)).toInt()
+                value
             } ?: pageMap.pageNumber
         } ?: 1
 
@@ -75,7 +68,6 @@ abstract class PagingRepository<T> : CoroutineScope {
             TAG, "onDeleteItem : \n" +
                     "item -> $item"
         )
-
         list?.let {
             ArrayList(it)
                 .run {
@@ -89,35 +81,10 @@ abstract class PagingRepository<T> : CoroutineScope {
         }
     }
 
-    fun onSwapItem(sourceItem: T, destItem: T) {
-        list?.let {
-            ArrayList(it).run {
-
-                val sourceIndex = indexOf(sourceItem)
-                val destIndex = indexOf(destItem)
-
-                if (sourceIndex >= 0 && destIndex >= 0) {
-                    removeAt(sourceIndex)
-                    add(destIndex, sourceItem)
-                }
-                list = this
-                _listChanged.postValue(list)
-            }
-        }
-    }
-
-    protected fun getValidLoadPosition(list: List<T>?, pageMap: SPPageMap?, offset: Int): Boolean {
-        return list?.let { list ->
-            pageMap?.let { pageMap ->
-                list.size - pageMap.onePageCountRow * 2 < offset
-            } ?: false
-        } ?: true
-    }
-
     protected abstract fun onLoadList(
         user: SPUser,
         keyword: String,
-        offset: Int?,
+        pageNumber: Int,
         limit: Int? = 20,
     )
 
@@ -128,19 +95,16 @@ abstract class PagingRepository<T> : CoroutineScope {
         limit: Int? = 20,
     ) {
 
-        val _offset = if (offset < 0) {
+        val pageNumber = if (offset < 0) {
             list = null
             pageMap = null
             0
         } else {
-            offset
+            ceil(offset.toFloat() / (pageMap?.onePageCountRow ?: 1).toFloat()).toInt() + 1
         }
 
-        if (
-            !hasLoading
-            && getValidLoadPosition(list, pageMap, _offset)
-        ) {
-
+        Log.e(TAG, "hasLoading -> $hasLoading")
+        if (!hasLoading) {
             Log.d(
                 this::class.simpleName, "onLoadMoreList : \n" +
                         "user -> $user \n" +
@@ -148,7 +112,35 @@ abstract class PagingRepository<T> : CoroutineScope {
                         "offset -> $offset \n" +
                         "limit -> $limit \n"
             )
-                onLoadList(user, keyword, _offset, limit)
+            onLoadList(user, keyword, pageNumber, limit)
+        }
+    }
+
+    fun onReloadList(
+        user: SPUser,
+        keyword: String,
+        offset: Int,
+        limit: Int? = 20,
+    ) {
+
+        val pageNumber = if (offset < 0) {
+            list = null
+            pageMap = null
+            0
+        } else {
+            offset / (pageMap?.onePageCountRow ?: 1) + 1
+        }
+
+        Log.e(TAG, "hasLoading -> $hasLoading")
+        if (!hasLoading) {
+            Log.e(
+                this::class.simpleName, "onReloadList : \n" +
+                        "user -> $user \n" +
+                        "keyword -> $keyword \n" +
+                        "offset -> $offset \n" +
+                        "limit -> $limit \n"
+            )
+            onLoadList(user, keyword, pageNumber, limit)
         }
     }
 
