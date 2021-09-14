@@ -1,18 +1,14 @@
 package io.stipop.refactor.present.ui.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.databinding.ItemMyActivePackageBinding
 import io.stipop.refactor.domain.entities.SPPackageItem
-import io.stipop.refactor.present.ui.listeners.OnMovePackageListener
-import io.stipop.refactor.present.ui.listeners.OnStartDragListener
 
 class MyActivePackageAdapter :
     ListAdapter<SPPackageItem, MyActivePackageAdapter.MyActivePackageViewHolder>(

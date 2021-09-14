@@ -15,4 +15,11 @@ data class SPStickerItem(@SerializedName("stickerImg")
             else -> false
         }
     }
+
+    override fun hashCode(): Int {
+        var result = stickerImg.hashCode()
+        result = 31 * result + keyword.hashCode()
+        result = 31 * result + stickerId
+        return result
+    }
 }

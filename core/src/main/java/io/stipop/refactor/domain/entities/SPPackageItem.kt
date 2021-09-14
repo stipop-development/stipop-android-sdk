@@ -37,4 +37,22 @@ data class SPPackageItem(@SerializedName("packageCategory")
             else -> false
         }
     }
+
+    override fun hashCode(): Int {
+        var result = packageCategory.hashCode()
+        result = 31 * result + packageKeywords.hashCode()
+        result = 31 * result + isDownload.hashCode()
+        result = 31 * result + packageImg.hashCode()
+        result = 31 * result + isView.hashCode()
+        result = 31 * result + packageId
+        result = 31 * result + language.hashCode()
+        result = 31 * result + isNew.hashCode()
+        result = 31 * result + packageAnimated.hashCode()
+        result = 31 * result + artistName.hashCode()
+        result = 31 * result + packageName.hashCode()
+        result = 31 * result + isWish.hashCode()
+        result = 31 * result + order
+        result = 31 * result + stickers.hashCode()
+        return result
+    }
 }
