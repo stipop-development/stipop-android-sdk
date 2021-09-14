@@ -10,46 +10,39 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.ceil
+import kotlin.math.round
 
 abstract class PagingRepository<T> : CoroutineScope {
     override val coroutineContext: CoroutineContext = Dispatchers.IO
 
     val TAG: String? = this::class.simpleName
 
-    protected var list: List<T>? = null
+    protected var list: ArrayList<T>? = null
     protected var pageMap: SPPageMap? = null
     protected var hasLoading: Boolean = false
 
     protected val _listChanged: MutableLiveData<List<T>> = MutableLiveData<List<T>>()
     val listChanges: LiveData<List<T>> = MediatorLiveData<List<T>>().apply {
         addSource(_listChanged) {
+            newList ->
 
-            ArrayList<T>(list ?: listOf()).apply {
-                it?.let {
-                    it.forEach {
-                        if (contains(it)) {
-                            this[this.indexOf(it)] = it
-                        } else {
-                            this.add(it)
-                        }
+            (list ?: arrayListOf()).let {
+                oldList ->
+
+                newList.forEach {
+                        item ->
+                    if (oldList.contains(item)) {
+                        oldList[oldList.indexOf(item)] = item
+                    } else {
+                        oldList.add(item)
                     }
-                    list = this
                 }
-            }.run {
-                postValue(this)
+
+                list = oldList
+                postValue(oldList)
             }
+
         }
-    }
-
-    protected fun getPageNumber(offset: Int?, pageMap: SPPageMap?): Int {
-        val pageNumber: Int = pageMap?.let { pageMap ->
-            offset?.let { offset ->
-                val value = ((offset.toFloat() / pageMap.onePageCountRow.toFloat() + 1f)).toInt()
-                value
-            } ?: pageMap.pageNumber
-        } ?: 1
-
-        return pageNumber
     }
 
     protected fun getLimit(pageMap: SPPageMap?): Int {
@@ -96,13 +89,13 @@ abstract class PagingRepository<T> : CoroutineScope {
         limit: Int? = 20,
     ) {
 
-        val pageNumber = if (offset < 0) {
+        val pageNumber: Int = if (offset < 0) {
             list = null
             pageMap = null
             1
         } else {
             pageMap?.let {
-                ceil(offset.toFloat() / (it.onePageCountRow).toFloat()).toInt() + 1
+                ceil(offset.toFloat() / (it.onePageCountRow).toFloat()).toInt() + round((offset % it.onePageCountRow).toFloat() / it.onePageCountRow.toFloat()).toInt() + 1
             }?: 1
         }
 
