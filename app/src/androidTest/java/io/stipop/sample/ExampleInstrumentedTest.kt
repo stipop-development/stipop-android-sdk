@@ -1,4 +1,4 @@
-package io.stipop.stipopsample
+package io.stipop.sample
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

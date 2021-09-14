@@ -1,57 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
     android:orientation="vertical">
 
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chat_recyclerview"
+        android:id="@+id/chatRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="2"
-        >
-    </androidx.recyclerview.widget.RecyclerView>
-
-<!--    <LinearLayout-->
-<!--        android:id="@+id/topLL"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_weight="1"-->
-<!--        android:background="@android:color/holo_green_dark"-->
-<!--        android:orientation="vertical">-->
-
-
-<!--        <FrameLayout-->
-<!--            android:id="@+id/container"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="300dp"-->
-<!--            android:background="@android:color/holo_blue_dark">-->
-<!--        </FrameLayout>-->
-
-<!--    </LinearLayout>-->
+        android:background="@color/chat_background" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal"
         android:layout_margin="10dp"
-        android:gravity="center_vertical">
-        <EditText
-            android:id="@+id/chatET"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/chatInputEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="" />
+            android:imeOptions="actionDone"
+            android:inputType="text" />
+
         <io.stipop.extend.StipopImageView
-            android:id="@+id/stipopIV"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@mipmap/ic_sticker_border_3"/>
+            android:id="@+id/stickerPickerImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            app:srcCompat="@drawable/ic_sticker_normal" />
+
+        <io.stipop.extend.StipopImageView
+            android:id="@+id/stickerSearchImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            app:srcCompat="@drawable/ic_sticker_add" />
     </LinearLayout>
-
-
 </LinearLayout>
