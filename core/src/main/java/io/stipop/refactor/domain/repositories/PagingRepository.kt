@@ -50,15 +50,6 @@ abstract class PagingRepository<T> : CoroutineScope {
                 (offset.toFloat() / pageMap.onePageCountRow.toFloat()) + 1f
             } ?: pageMap.pageNumber.toFloat()
         } ?: 1f
-
-
-        Log.e(
-            "$TAG [PAGE]", "\n" +
-                    "offset -> $offset \n" +
-                    "pageNumberFloat -> $pageNumber \n" +
-                    "pageNumber -> ${ceil(pageNumber).toInt()}"
-        )
-
         return ceil(pageNumber).toInt()
     }
 
