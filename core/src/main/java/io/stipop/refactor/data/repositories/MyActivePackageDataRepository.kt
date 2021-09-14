@@ -20,7 +20,7 @@ class MyActivePackageDataRepository
         pageNumber: Int,
         limit: Int?
     ) {
-        Log.e(
+        Log.d(
             this::class.simpleName, "onLoadList : \n " +
                     "user -> $user \n" +
                     "keyword -> $keyword \n" +

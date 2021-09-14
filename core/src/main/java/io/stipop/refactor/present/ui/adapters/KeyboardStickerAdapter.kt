@@ -39,7 +39,9 @@ class KeyboardStickerAdapter :
         return KeyboardStickerViewHolder(ItemStickerBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             .apply {
                 binding.root.setOnClickListener {
-                    itemClick?.invoke(getItem(absoluteAdapterPosition))
+                    if (bindingAdapterPosition >= 0) {
+                        itemClick?.invoke(getItem(bindingAdapterPosition))
+                    }
                 }
             }
     }

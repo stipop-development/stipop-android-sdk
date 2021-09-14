@@ -10,13 +10,6 @@ import io.stipop.refactor.present.ui.components.core.SPImageButton
 open class SPIconImageButton(context: Context, attrs: AttributeSet? = null) : SPImageButton(context, attrs) {
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
-        when (isEnabled) {
-            true -> {
-                setColorFilter(Color.parseColor(Config.themeIconTintColor))
-            }
-            false -> {
-                setColorFilter(Color.parseColor(Config.themeIconNormalColor))
-            }
-        }
+        setColorFilter(Color.parseColor(Config.themeIconNormalColor))
     }
 }

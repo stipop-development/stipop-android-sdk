@@ -34,7 +34,9 @@ constructor(
 
     override val listChanges: LiveData<List<SPPackageItem>> = MediatorLiveData<List<SPPackageItem>>().apply {
         addSource(myActivePackageRepository.listChanges) {
+            // TODO 보완
             postValue(it.sortedByDescending { it.order })
+//            postValue(it)
         }
     }
 

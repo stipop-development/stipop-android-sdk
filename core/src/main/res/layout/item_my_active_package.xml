@@ -50,13 +50,13 @@
         android:layout_width="4dp"
         android:layout_height="wrap_content" />
 
-    <io.stipop.refactor.present.ui.components.core.SPImageButton
+    <io.stipop.refactor.present.ui.components.common.SPIconImageButton
         android:id="@+id/hidden_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:src="@mipmap/ic_hide" />
 
-    <io.stipop.refactor.present.ui.components.core.SPImageButton
+    <io.stipop.refactor.present.ui.components.common.SPIconImageButton
         android:id="@+id/move_button"
         android:layout_width="48dp"
         android:layout_height="48dp"

@@ -23,6 +23,7 @@ abstract class PagingRepository<T> : CoroutineScope {
     protected val _listChanged: MutableLiveData<List<T>> = MutableLiveData<List<T>>()
     val listChanges: LiveData<List<T>> = MediatorLiveData<List<T>>().apply {
         addSource(_listChanged) {
+
             ArrayList<T>(list ?: listOf()).apply {
                 it?.let {
                     it.forEach {
@@ -98,13 +99,16 @@ abstract class PagingRepository<T> : CoroutineScope {
         val pageNumber = if (offset < 0) {
             list = null
             pageMap = null
-            0
+            1
         } else {
-            ceil(offset.toFloat() / (pageMap?.onePageCountRow ?: 1).toFloat()).toInt() + 1
+            pageMap?.let {
+                ceil(offset.toFloat() / (it.onePageCountRow).toFloat()).toInt() + 1
+            }?: 1
         }
 
-        Log.e(TAG, "hasLoading -> $hasLoading")
         if (!hasLoading) {
+            Log.e(TAG, "offset -> $offset")
+            Log.e(TAG, "pageNumber -> $pageNumber")
             Log.d(
                 this::class.simpleName, "onLoadMoreList : \n" +
                         "user -> $user \n" +
@@ -126,13 +130,17 @@ abstract class PagingRepository<T> : CoroutineScope {
         val pageNumber = if (offset < 0) {
             list = null
             pageMap = null
-            0
+            1
         } else {
-            offset / (pageMap?.onePageCountRow ?: 1) + 1
+            pageMap?.let {
+                (offset.toFloat() / (it.onePageCountRow).toFloat()).toInt() + 1
+            }?: 1
         }
 
-        Log.e(TAG, "hasLoading -> $hasLoading")
+
         if (!hasLoading) {
+            Log.e(TAG, "offset -> $offset")
+            Log.e(TAG, "pageNumber -> $pageNumber")
             Log.e(
                 this::class.simpleName, "onReloadList : \n" +
                         "user -> $user \n" +

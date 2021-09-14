@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.databinding.FragmentStoreAllPackageListBinding
 import io.stipop.refactor.present.ui.adapters.StorePackageAdapter
+import io.stipop.refactor.present.ui.adapters.StorePackageHeaderAdapter
 import io.stipop.refactor.present.ui.adapters.StoreTrendingPackageItemListAdapter
 import io.stipop.refactor.present.ui.pages.store.SPDetailActivity.Companion.PACKAGE_ID
 import io.stipop.refactor.present.ui.view_models.StorePackageViewModel
@@ -25,6 +26,7 @@ class SPStorePackageFragment : Fragment() {
     private lateinit var _binding: FragmentStoreAllPackageListBinding
 
     private val trendingCount = 12
+    private val headerCount = 2
 
     @Inject
     internal lateinit var _viewModel: StorePackageViewModel
@@ -44,7 +46,8 @@ class SPStorePackageFragment : Fragment() {
                     addOnScrollListener(object : RecyclerView.OnScrollListener() {
                         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                             super.onScrolled(recyclerView, dx, dy)
-                            _viewModel.onLoadMore(findLastVisibleItemPosition() + trendingCount)
+                            Log.e("POSITION", "${findLastVisibleItemPosition()}")
+                            _viewModel.onLoadMore(findLastVisibleItemPosition())
                         }
                     })
                 }
@@ -68,7 +71,9 @@ class SPStorePackageFragment : Fragment() {
                 }
 
                 adapter = ConcatAdapter(
+                    StorePackageHeaderAdapter("Trending"),
                     storeTrendingPackageAdapter,
+                    StorePackageHeaderAdapter("Stickers"),
                     storeAllPackageAdapter
                 )
             }

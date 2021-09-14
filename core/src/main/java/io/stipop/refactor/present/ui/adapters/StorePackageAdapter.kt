@@ -1,6 +1,5 @@
 package io.stipop.refactor.present.ui.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -11,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.databinding.ItemStoreAllPackageBinding
 import io.stipop.databinding.ItemStoreTrendingPackageBinding
+import io.stipop.databinding.LayoutStorePackageHeaderBinding
 import io.stipop.databinding.LayoutTrendingPackageBinding
 import io.stipop.refactor.domain.entities.SPPackageItem
 
@@ -133,7 +133,9 @@ constructor(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoreTrendingPackageItemHolder {
         return StoreTrendingPackageItemHolder(ItemStoreTrendingPackageBinding.inflate(LayoutInflater.from(parent.context))).apply {
             binding.root.setOnClickListener {
-                itemClick?.invoke(getItem(bindingAdapterPosition))
+                if (bindingAdapterPosition >= 0) {
+                    itemClick?.invoke(getItem(bindingAdapterPosition))
+                }
             }
         }
     }
@@ -141,4 +143,28 @@ constructor(
     override fun onBindViewHolder(holder: StoreTrendingPackageItemHolder, position: Int) {
         holder.onBind(getItem(position))
     }
+}
+
+class StorePackageHeaderAdapter(
+    private val header: String
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    class ViewHolder(
+        val binding: LayoutStorePackageHeaderBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return ViewHolder(LayoutStorePackageHeaderBinding.inflate(LayoutInflater.from(parent.context)))
+            .apply {
+                binding.header.text = header
+            }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    }
+
+    override fun getItemCount(): Int = 1
+
 }
