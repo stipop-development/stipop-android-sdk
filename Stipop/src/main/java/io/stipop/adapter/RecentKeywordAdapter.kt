@@ -1,20 +1,13 @@
 package io.stipop.adapter
 
 import android.content.Context
-import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.marginRight
-import com.bumptech.glide.Glide
-import io.stipop.Config
 import io.stipop.R
-import io.stipop.Utils
-import io.stipop.fragment.AllStickerFragment
-import io.stipop.model.SPPackage
+import io.stipop.view.AllStickerFragment
 
 class RecentKeywordAdapter(var myContext: Context, var view: Int, var data: ArrayList<String>, var fragment: AllStickerFragment): ArrayAdapter<String>(myContext, view, data) {
 

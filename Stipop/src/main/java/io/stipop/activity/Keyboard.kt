@@ -23,6 +23,7 @@ import io.stipop.adapter.*
 import io.stipop.extend.StipopImageView
 import io.stipop.model.SPPackage
 import io.stipop.model.SPSticker
+import io.stipop.view.StoreActivity
 import org.json.JSONObject
 import java.io.IOException
 

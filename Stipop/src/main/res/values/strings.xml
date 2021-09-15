@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Stipop</string>
     <string name="bottom_alert_title">Hide this sticker pack?</string>
     <string name="bottom_alert_contents">Do you want to hide the sticker pack? You can always re-download hidden stickers later.</string>
     <string name="cancel">Cancel</string>
@@ -8,7 +7,7 @@
     <string name="download">DOWNLOAD</string>
     <string name="search">Search..</string>
     <string name="all_stickers">All Stickers</string>
-    <string name="my_sticker">My Sticker</string>
+    <string name="my_stickers">My Sticker</string>
     <string name="popular_stickers">Popular Stickers</string>
     <string name="recommended_tag">Recommended tag</string>
     <string name="view_hidden_stickers">View Hidden Stickers</string>

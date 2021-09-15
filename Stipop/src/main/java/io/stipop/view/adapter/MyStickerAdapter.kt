@@ -1,9 +1,11 @@
-package io.stipop.adapter
+package io.stipop.view.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,30 +15,41 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.extend.StipopImageView
-import io.stipop.extend.dragdrop.OnRecyclerAdapterEventListener
-import io.stipop.fragment.MyStickerFragment
+import io.stipop.extend.dragdrop.OnItemHolderEventListener
+import io.stipop.view.MyStickerFragment
 import io.stipop.model.SPPackage
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class MyStickerAdapter(private val context: Context, private val dataList: ArrayList<SPPackage>, var myStickerFragment: MyStickerFragment):
+class MyStickerAdapter(var myStickerFragment: MyStickerFragment) :
     RecyclerView.Adapter<MyStickerAdapter.ViewHolder>(), ItemTouchHelperAdapter {
 
+    private val dataList: ArrayList<SPPackage> = ArrayList()
     var fromPosition = -1
     var toPosition = -1
 
-    private var onEventListener: OnRecyclerAdapterEventListener? = null
 
-    fun setOnRecyclerAdapterEventListener(l: OnRecyclerAdapterEventListener) {
+    private var onEventListener: OnItemHolderEventListener? = null
+
+    fun getData(): ArrayList<SPPackage> = dataList
+
+    fun setOnRecyclerAdapterEventListener(l: OnItemHolderEventListener) {
         onEventListener = l
     }
 
-    interface OnItemClickListener {
-        fun onItemClick(position: Int)
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(dataSet: ArrayList<SPPackage>) {
+        dataList.clear()
+        dataList.addAll(dataSet)
+        notifyDataSetChanged()
     }
 
-    private var mListener: OnItemClickListener? = null
+    @SuppressLint("NotifyDataSetChanged")
+    fun clearData() {
+        dataList.clear()
+        notifyDataSetChanged()
+    }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -72,8 +85,8 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
         holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
-        holder.hideIV.setImageResource(Config.getHideIconResourceId(context))
-        holder.moveIV.setImageResource(Config.getOrderIconResourceId(context))
+        holder.hideIV.setImageResource(Config.getHideIconResourceId(holder.itemView.context))
+        holder.moveIV.setImageResource(Config.getOrderIconResourceId(holder.itemView.context))
 
         holder.addIV.setImageResource(Config.getAddIconResourceId())
 
@@ -83,7 +96,7 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
         holder.addIV.setIconDefaultsColor()
 
 
-        Glide.with(context).load(spPackage.packageImg).into(holder.packageIV)
+        Glide.with(holder.itemView.context).load(spPackage.packageImg).into(holder.packageIV)
 
         holder.artistNameTV.text = spPackage.artistName
         holder.packageNameTV.text = spPackage.packageName
@@ -94,8 +107,8 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
         val matrix = ColorMatrix()
 
         if (spPackage.isView) {
-            holder.packageNameTV.setTextColor(Config.getAllStickerPackageNameTextColor(context))
-            holder.artistNameTV.setTextColor(Config.getTitleTextColor(context))
+            holder.packageNameTV.setTextColor(Config.getAllStickerPackageNameTextColor(holder.itemView.context))
+            holder.artistNameTV.setTextColor(Config.getTitleTextColor(holder.itemView.context))
 
             holder.isViewLL.visibility = View.VISIBLE
 
@@ -105,8 +118,8 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
             matrix.setSaturation(1.0f)
         } else {
-            holder.artistNameTV.setTextColor(Config.getMyStickerHiddenArtistNameTextColor(context))
-            holder.packageNameTV.setTextColor(Config.getMyStickerHiddenPackageNameTextColor(context))
+            holder.artistNameTV.setTextColor(Config.getMyStickerHiddenArtistNameTextColor(holder.itemView.context))
+            holder.packageNameTV.setTextColor(Config.getMyStickerHiddenPackageNameTextColor(holder.itemView.context))
 
             holder.addLL.visibility = View.VISIBLE
 
@@ -119,66 +132,34 @@ class MyStickerAdapter(private val context: Context, private val dataList: Array
 
         holder.packageIV.colorFilter = ColorMatrixColorFilter(matrix)
 
-//        holder.moveLL.setOnTouchListener { _, event ->
-//            holder.containerLL.setBackgroundColor(ContextCompat.getColor(context, R.color.c_f7f8f9))
-//            if (event.action == MotionEvent.ACTION_DOWN) {
-//                onEventListener?.onDragStarted(holder)
-//            }
-//            return@setOnTouchListener false
-//        }
-
+        holder.moveLL.setOnClickListener {
+            holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
+            onEventListener?.onDragStarted(holder)
+        }
         holder.moveLL.setOnLongClickListener {
             holder.containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-
             onEventListener?.onDragStarted(holder)
-
             return@setOnLongClickListener true
         }
-
     }
 
-    override fun getItemCount(): Int {
-        return dataList.size
-    }
-
-    fun setOnItemClickListener(listener: OnItemClickListener?) {
-        mListener = listener
-    }
+    override fun getItemCount(): Int = dataList.size
 
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
-        swap(fromPosition, toPosition)
+        this.fromPosition = fromPosition
+        this.toPosition = toPosition
+        Collections.swap(dataList, fromPosition, toPosition)
+        notifyItemMoved(fromPosition, toPosition)
         return true
     }
 
     override fun onItemRemove(position: Int) {
         dataList.removeAt(position)
-        notifyDataSetChanged()
+        notifyItemRemoved(position)
     }
 
-    private fun swap(from: Int, to: Int) {
-        if (this.fromPosition == -1) {
-            this.fromPosition = from
-        }
-
-        this.toPosition = to
-
-        // Collections.swap(dataList, from, to)
-        notifyItemMoved(from, to)
-
-    }
-
-    override fun finishedDragAndDrop() {
-
-        if (this.fromPosition < 0 || this.toPosition < 0 && this.fromPosition == this.toPosition) {
-            this.fromPosition = -1
-            this.toPosition = -1
-            return
-        }
-
-         myStickerFragment.myStickerOrder(this.fromPosition, this.toPosition)
-
-        this.fromPosition = -1
-        this.toPosition = -1
+    override fun onItemMoveCompleted() {
+        myStickerFragment.myStickerOrder(dataList[toPosition], dataList[fromPosition])
     }
 
 }
