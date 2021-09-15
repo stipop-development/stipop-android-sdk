@@ -4,14 +4,16 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import io.stipop.*
+import io.stipop.base.BaseFragmentActivity
 import io.stipop.databinding.ActivityStoreBinding
 import io.stipop.view.adapter.StorePagerAdapter
 import kotlinx.android.synthetic.main.activity_store.*
 
-class StoreActivity : FragmentActivity() {
+class StoreActivity : BaseFragmentActivity() {
 
     private lateinit var binding: ActivityStoreBinding
     private val storeAdapter: StorePagerAdapter by lazy { StorePagerAdapter(this) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,9 +31,10 @@ class StoreActivity : FragmentActivity() {
                 }
             }
         }.attach()
-
         storeViewPager.currentItem = intent.getIntExtra("tab", StorePagerAdapter.POSITION_MY_STICKERS)
+    }
 
+    override fun refreshTheme() {
         container.setStipopBackgroundColor()
         dividingLine.setStipopUnderlineColor()
         storeTabLayout.setTabLayoutStyle()
