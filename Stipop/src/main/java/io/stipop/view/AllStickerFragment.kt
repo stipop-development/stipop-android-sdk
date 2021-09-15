@@ -106,7 +106,7 @@ class AllStickerFragment : Fragment() {
 
         val headerV = View.inflate(myContext, R.layout.header_all_sticker, null)
 
-        headerV.findViewById<View>(R.id.underLineV).setBackgroundColor(Config.getUnderLineColor(myContext))
+        headerV.findViewById<View>(R.id.underLineV).setStipopUnderlineColor()
         headerV.findViewById<TextView>(R.id.trendingTV).setTextColor(Config.getTitleTextColor(myContext))
         headerV.findViewById<TextView>(R.id.stickersTV).setTextColor(Config.getTitleTextColor(myContext))
 
