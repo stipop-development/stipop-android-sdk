@@ -1,94 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000">
+    tools:context=".view.StoreActivity">
 
-    <LinearLayout
-        android:id="@+id/containerLL"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/search_background"
-        android:orientation="vertical">
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/storeTabLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/design_default_color_primary_dark" />
 
-        <LinearLayout
-            android:id="@+id/navigationBarLL"
-            android:layout_width="match_parent"
-            android:layout_height="43dp"
-            android:layout_marginTop="15dp"
-            android:paddingHorizontal="12dp"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:id="@+id/allTabLL"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <io.stipop.extend.StipopTextView
-                    android:id="@+id/allTV"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="@string/all_stickers"
-                    android:textColor="#374553"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:id="@+id/allV"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="#292929"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/myTabLL"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <io.stipop.extend.StipopTextView
-                    android:id="@+id/myTV"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:textColor="#c6c8cf"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:text="@string/my_sticker"/>
-
-                <View
-                    android:id="@+id/myV"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="#292929"
-                    android:visibility="invisible"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <View
-            android:id="@+id/underLineV"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#d6d6d8"/>
-
-        <FrameLayout
-            android:id="@+id/fragmentFL"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-
-    </LinearLayout>
-
-</LinearLayout>
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/storeViewPager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/storeTabLayout"
+        tools:background="@color/design_default_color_primary" />
+</androidx.constraintlayout.widget.ConstraintLayout>

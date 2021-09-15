@@ -1,4 +1,4 @@
-package io.stipop.fragment
+package io.stipop.view
 
 import android.app.Activity
 import android.content.Context
@@ -25,7 +25,12 @@ import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import org.json.JSONObject
 import java.io.IOException
 
-class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
+class MyStickerFragment : Fragment(), OnRecyclerAdapterEventListener {
+
+    companion object {
+        fun newInstance() = Bundle().apply {
+        }.let { MyStickerFragment().apply { arguments = it } }
+    }
 
     lateinit var myContext: Context
 
@@ -42,7 +47,7 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         savedInstanceState: Bundle?
     ): View? {
 
-        this.myContext = container!!.context
+        this.myContext = requireContext()
 
         return inflater.inflate(R.layout.fragment_my_sticker, container, false)
     }
@@ -62,7 +67,8 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+                val lastVisibleItemPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 val itemTotalCount = data.size
 
                 if (lastVisibleItemPosition + 1 == itemTotalCount && totalPage > page) {
@@ -84,7 +90,11 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
         itemTouchHelper.attachToRecyclerView(listRV)
 
         stickerTypeTV.setOnClickListener {
-            stickerTypeTV.tag = if (stickerTypeTV.tag == 2) { 1 } else { 2 }
+            stickerTypeTV.tag = if (stickerTypeTV.tag == 2) {
+                1
+            } else {
+                2
+            }
 
             reloadData()
         }
@@ -154,7 +164,7 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
     }
 
     fun setNoResultView() {
-        if(data.count() > 0) {
+        if (data.count() > 0) {
             listLL.visibility = View.VISIBLE
             noneTV.visibility = View.GONE
         } else {
@@ -301,15 +311,19 @@ class MyStickerFragment: Fragment(), OnRecyclerAdapterEventListener {
     }
 
     fun showConfirmAlert(packageId: Int, position: Int) {
-        val customSelectProfilePicBottomSheetDialog = BottomSheetDialog(myContext, R.style.CustomBottomSheetDialogTheme)
+        val customSelectProfilePicBottomSheetDialog =
+            BottomSheetDialog(myContext, R.style.CustomBottomSheetDialogTheme)
 
-        val layoutBottomSheetView  = this.layoutInflater.inflate(R.layout.bottom_alert, null)
+        val layoutBottomSheetView = this.layoutInflater.inflate(R.layout.bottom_alert, null)
 
-        val drawable = layoutBottomSheetView.findViewById<LinearLayout>(R.id.containerLL).background as GradientDrawable
+        val drawable =
+            layoutBottomSheetView.findViewById<LinearLayout>(R.id.containerLL).background as GradientDrawable
         drawable.setColor(Config.getAlertBackgroundColor(myContext)) // solid  color
 
-        layoutBottomSheetView.findViewById<TextView>(R.id.titleTV).setTextColor(Config.getAlertTitleTextColor(myContext))
-        layoutBottomSheetView.findViewById<TextView>(R.id.contentsTV).setTextColor(Config.getAlertContentsTextColor(myContext))
+        layoutBottomSheetView.findViewById<TextView>(R.id.titleTV)
+            .setTextColor(Config.getAlertTitleTextColor(myContext))
+        layoutBottomSheetView.findViewById<TextView>(R.id.contentsTV)
+            .setTextColor(Config.getAlertContentsTextColor(myContext))
 
         val cancelTV = layoutBottomSheetView.findViewById<TextView>(R.id.cancelTV)
         val hideTV = layoutBottomSheetView.findViewById<TextView>(R.id.hideTV)

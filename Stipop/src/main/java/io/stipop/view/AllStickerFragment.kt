@@ -1,10 +1,11 @@
-package io.stipop.fragment
+package io.stipop.view
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -41,6 +42,11 @@ import java.net.URLEncoder
 
 class AllStickerFragment : Fragment() {
 
+    companion object {
+        fun newInstance() = Bundle().apply {
+        }.let { AllStickerFragment().apply { arguments = it } }
+    }
+
     lateinit var myContext: Context
 
     var packagePage = 2 // 1 Page -> Trending List
@@ -76,7 +82,7 @@ class AllStickerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        this.myContext = container!!.context
+        this.myContext = requireContext()
 
         return inflater.inflate(R.layout.fragment_all_sticker, container, false)
     }
@@ -588,7 +594,9 @@ class AllStickerFragment : Fragment() {
 
                                 // haptics
                                 val vibrator = this.myContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                                vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                                }
 
                                 changeView(false)
                                 inputKeyword = keyword
