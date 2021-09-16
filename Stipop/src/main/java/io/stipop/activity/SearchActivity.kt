@@ -7,15 +7,15 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.AbsListView
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.stipop.*
 import io.stipop.adapter.KeywordAdapter
 import io.stipop.adapter.StickerAdapter
+import io.stipop.api.APIClient
 import io.stipop.extend.RecyclerDecoration
-import io.stipop.model.SPSticker
+import io.stipop.models.SPSticker
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_search.clearTextLL
 import kotlinx.android.synthetic.main.activity_search.eraseIV

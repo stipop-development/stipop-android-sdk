@@ -20,9 +20,10 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.adapter.*
+import io.stipop.api.APIClient
 import io.stipop.extend.StipopImageView
-import io.stipop.model.SPPackage
-import io.stipop.model.SPSticker
+import io.stipop.models.SPPackage
+import io.stipop.models.SPSticker
 import io.stipop.view.StoreActivity
 import org.json.JSONObject
 import java.io.IOException

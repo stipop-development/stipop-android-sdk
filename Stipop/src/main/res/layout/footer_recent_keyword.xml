@@ -9,7 +9,7 @@
         android:orientation="vertical">
 
         <io.stipop.extend.StipopTextView
-            android:id="@+id/noneTV"
+            android:id="@+id/emptyTextView"
             android:layout_width="match_parent"
             android:layout_height="177dp"
             android:gravity="center"

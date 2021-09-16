@@ -5,15 +5,14 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
-import android.util.DisplayMetrics
 import android.view.*
-import android.widget.*
 import io.stipop.activity.DetailActivity
 import io.stipop.activity.Keyboard
 import io.stipop.activity.SearchActivity
+import io.stipop.api.APIClient
 import io.stipop.extend.StipopImageView
-import io.stipop.model.SPPackage
-import io.stipop.model.SPSticker
+import io.stipop.models.SPPackage
+import io.stipop.models.SPSticker
 import org.json.JSONObject
 import java.io.IOException
 

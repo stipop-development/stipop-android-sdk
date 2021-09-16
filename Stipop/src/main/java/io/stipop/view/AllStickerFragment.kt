@@ -30,9 +30,10 @@ import io.stipop.adapter.AllStickerAdapter
 import io.stipop.adapter.PackageAdapter
 import io.stipop.adapter.PopularStickerAdapter
 import io.stipop.adapter.RecentKeywordAdapter
+import io.stipop.api.APIClient
 import io.stipop.extend.RecyclerDecoration
 import io.stipop.extend.TagLayout
-import io.stipop.model.SPPackage
+import io.stipop.models.SPPackage
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import org.json.JSONObject
@@ -235,7 +236,7 @@ class AllStickerFragment : Fragment() {
         val recentFooterV = View.inflate(myContext, R.layout.footer_recent_keyword, null)
         val popularStickerLL = recentFooterV.findViewById<LinearLayout>(R.id.popularStickerLL)
         val recommendedTagLL = recentFooterV.findViewById<LinearLayout>(R.id.recommendedTagLL)
-        noneTV = recentFooterV.findViewById<TextView>(R.id.noneTV)
+        noneTV = recentFooterV.findViewById<TextView>(R.id.emptyTextView)
 
         recommendedTagsTL = recentFooterV.findViewById(R.id.recommendedTagsTL)
         popularStickerRV = recentFooterV.findViewById(R.id.popularStickerRV)

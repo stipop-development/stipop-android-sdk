@@ -1,4 +1,4 @@
-package io.stipop.model
+package io.stipop.models
 
 import io.stipop.Utils
 import org.json.JSONObject
