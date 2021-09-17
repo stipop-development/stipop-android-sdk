@@ -11,9 +11,18 @@ import java.io.IOException
 
 private const val STARTING_PAGE_INDEX = 1
 
-class MyStickerPagingSource(private val apiService: StipopApi, private val wantVisibleSticker: Boolean) : PagingSource<Int, StickerPackage>() {
+class MyStickerPagingSource(
+    private val apiService: StipopApi,
+    private val wantVisibleSticker: Boolean
+) : PagingSource<Int, StickerPackage>() {
+
+    private var currentVisibleSetting = true
 
     override fun getRefreshKey(state: PagingState<Int, StickerPackage>): Int? {
+        if (wantVisibleSticker != currentVisibleSetting) {
+            currentVisibleSetting = wantVisibleSticker
+            return null
+        }
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
@@ -26,7 +35,7 @@ class MyStickerPagingSource(private val apiService: StipopApi, private val wantV
         val userId = Stipop.userId
         val limit = 20
         return try {
-            val response = if(wantVisibleSticker) apiService.getMyStickers(
+            val response = if (wantVisibleSticker) apiService.getMyStickers(
                 apiKey = apiKey,
                 userId = userId,
                 limit = limit,
@@ -37,8 +46,8 @@ class MyStickerPagingSource(private val apiService: StipopApi, private val wantV
                 limit = limit,
                 pageNumber = pageNumber
             )
-            val myStickers = response.body.packageList
-            val nextKey = if (myStickers.isEmpty()) {
+            val myStickers = response.body.packageList ?: emptyList()
+            val nextKey = if (myStickers.isNullOrEmpty()) {
                 null
             } else {
                 pageNumber + (params.loadSize / 20)

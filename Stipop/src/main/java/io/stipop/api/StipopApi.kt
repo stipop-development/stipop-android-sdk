@@ -19,6 +19,7 @@ package io.stipop.api
 import io.stipop.models.OrderChangeBody
 import io.stipop.models.response.MyStickerOrderResponse
 import io.stipop.models.response.MyStickerResponse
+import io.stipop.models.response.StipopResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
@@ -53,6 +54,14 @@ interface StipopApi {
         @Body orderChangeBody: OrderChangeBody,
         @Query("platform") platform: String = "android-sdk",
     ): MyStickerOrderResponse
+
+    @PUT("mysticker/hide/{userId}/{packageId}")
+    suspend fun putMyStickerVisibility(
+        @Header("apiKey") apiKey: String,
+        @Path("userId") userId: String,
+        @Path("packageId") packageId: Int,
+        @Query("platform") platform: String = "android-sdk",
+    ): StipopResponse
 
     companion object {
         private const val BASE_URL = "https://messenger.stipop.io/v1/"

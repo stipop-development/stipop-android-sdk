@@ -1,24 +1,22 @@
 package io.stipop.view
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.api.APIClient
 import io.stipop.api.Injection
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.FragmentMyStickerBinding
-import io.stipop.extend.dragdrop.OnViewHolderEventListener
+import io.stipop.view.viewholder.MyStickerItemHolderDelegate
 import io.stipop.extend.dragdrop.SimpleItemTouchHelperCallback
 import io.stipop.models.StickerPackage
 import io.stipop.view.adapter.MyStickerAdapter
@@ -26,13 +24,10 @@ import io.stipop.view.adapter.MyStickerLoadStateAdapter
 import io.stipop.viewmodel.MyStickerRepositoryViewModel
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
-class MyStickerFragment : BaseFragment(), OnViewHolderEventListener {
+class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
 
     companion object {
         fun newInstance() = Bundle().let { MyStickerFragment().apply { arguments = it } }
@@ -75,7 +70,16 @@ class MyStickerFragment : BaseFragment(), OnViewHolderEventListener {
         toggleMyStickers(wantVisibleSticker)
         initRequest(wantVisibleSticker)
 
-        itemTouchHelper = ItemTouchHelper(SimpleItemTouchHelperCallback(myStickerAdapter)).apply { attachToRecyclerView(myStickersRecyclerView) }
+        itemTouchHelper = ItemTouchHelper(SimpleItemTouchHelperCallback(myStickerAdapter)).apply {
+            attachToRecyclerView(myStickersRecyclerView)
+        }
+
+        viewModel.packageVisibilityChanged.observeForever {
+            myStickerAdapter.refresh()
+            requireActivity().sendBroadcast(Intent().apply {
+                action = "${requireContext().packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION"
+            })
+        }
     }
 
     override fun applyTheme() {
@@ -94,7 +98,7 @@ class MyStickerFragment : BaseFragment(), OnViewHolderEventListener {
     private fun toggleMyStickers(wantVisibleSticker: Boolean) {
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
-            viewModel.loadStickers(wantVisibleSticker).collectLatest {
+            viewModel.loadsPackages(wantVisibleSticker).collectLatest {
                 myStickerAdapter.submitData(it)
             }
         }
@@ -108,13 +112,16 @@ class MyStickerFragment : BaseFragment(), OnViewHolderEventListener {
 
     }
 
+    override fun onVisibilityClicked(wantToVisible: Boolean, packageId: Int, position: Int) {
+        viewModel.hideOrRecoverPackage(packageId, position)
+    }
+
     override fun onDragStarted(viewHolder: RecyclerView.ViewHolder) {
         itemTouchHelper.startDrag(viewHolder)
     }
 
     override fun onDragCompleted(fromData: Any, toData: Any) {
-        Log.d("onDragCompleted", "FROM : ${(fromData as StickerPackage).packageName},, TO : ${(toData as StickerPackage).packageName}")
-        viewModel.updateOrder(fromData as StickerPackage, toData as StickerPackage)
+        viewModel.changePackageOrder(fromData as StickerPackage, toData as StickerPackage)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -148,16 +155,15 @@ class MyStickerFragment : BaseFragment(), OnViewHolderEventListener {
                     )
                 }
             }
-            myStickersRecyclerView.scrollToPosition(0)
             toggleMyStickers(stickerVisibleToggleTextView.isSelected)
         }
 
-        lifecycleScope.launch {
-            myStickerAdapter.loadStateFlow
-                .distinctUntilChangedBy { it.refresh }
-                .filter { it.refresh is LoadState.NotLoading }
-                .collect { binding?.myStickersRecyclerView?.scrollToPosition(0) }
-        }
+//        lifecycleScope.launch {
+//            myStickerAdapter.loadStateFlow
+//                .distinctUntilChangedBy { it.refresh }
+//                .filter { it.refresh is LoadState.NotLoading }
+//                .collect { binding?.myStickersRecyclerView?.scrollToPosition(0) }
+//        }
     }
 
     private fun showEmptyList(show: Boolean) {
@@ -174,51 +180,17 @@ class MyStickerFragment : BaseFragment(), OnViewHolderEventListener {
             emptyTextView.visibility = View.VISIBLE
         }
     }
-
-//
-//    fun hidePackage(packageId: Int, position: Int) {
-//        val params = JSONObject()
-//        APIClient.put(
-//            activity as Activity,
-//            APIClient.APIPath.MY_STICKER_HIDE.rawValue + "/${Stipop.userId}/$packageId",
-//            params
-//        ) { response: JSONObject?, e: IOException? ->
-//            if (null != response) {
-//                val header = response.getJSONObject("header")
-//                val status = Utils.getString(header, "status")
-//
-//                if (status == "success") {
-//                    myStickerAdapter.onItemRemove(position)
-//                    setNoResultView()
-//                } else {
-//                    Toast.makeText(requireContext(), "ERROR!!", Toast.LENGTH_LONG).show()
-//                }
-//            }
-//
-//
-//            // update keyboard package
-//            val broadcastIntent = Intent()
-//            broadcastIntent.action =
-//                "${requireContext().packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION"
-//            requireContext().sendBroadcast(broadcastIntent)
-//        }
-//
-//    }
 //
 //    fun showConfirmAlert(packageId: Int, position: Int) {
-//        val customSelectProfilePicBottomSheetDialog =
-//            BottomSheetDialog(requireContext(), R.style.CustomBottomSheetDialogTheme)
+//        val customSelectProfilePicBottomSheetDialog = BottomSheetDialog(requireContext(), R.style.CustomBottomSheetDialogTheme)
 //
 //        val layoutBottomSheetView = this.layoutInflater.inflate(R.layout.bottom_alert, null)
 //
-//        val drawable =
-//            layoutBottomSheetView.findViewById<LinearLayout>(R.id.containerLL).background as GradientDrawable
+//        val drawable = layoutBottomSheetView.findViewById<LinearLayout>(R.id.containerLL).background as GradientDrawable
 //        drawable.setColor(Config.getAlertBackgroundColor(requireContext())) // solid  color
 //
-//        layoutBottomSheetView.findViewById<TextView>(R.id.titleTV)
-//            .setTextColor(Config.getAlertTitleTextColor(requireContext()))
-//        layoutBottomSheetView.findViewById<TextView>(R.id.contentsTV)
-//            .setTextColor(Config.getAlertContentsTextColor(requireContext()))
+//        layoutBottomSheetView.findViewById<TextView>(R.id.titleTV).setTextColor(Config.getAlertTitleTextColor(requireContext()))
+//        layoutBottomSheetView.findViewById<TextView>(R.id.contentsTV).setTextColor(Config.getAlertContentsTextColor(requireContext()))
 //
 //        val cancelTV = layoutBottomSheetView.findViewById<TextView>(R.id.cancelTV)
 //        val hideTV = layoutBottomSheetView.findViewById<TextView>(R.id.hideTV)
@@ -232,7 +204,6 @@ class MyStickerFragment : BaseFragment(), OnViewHolderEventListener {
 //
 //        hideTV.setOnClickListener {
 //            hidePackage(packageId, position)
-//
 //            customSelectProfilePicBottomSheetDialog.dismiss()
 //        }
 //

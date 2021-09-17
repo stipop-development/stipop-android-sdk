@@ -4,10 +4,11 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import io.stipop.ItemTouchHelperAdapter
-import io.stipop.extend.dragdrop.OnViewHolderEventListener
 import io.stipop.models.StickerPackage
+import io.stipop.view.viewholder.MyStickerItemHolderDelegate
+import io.stipop.view.viewholder.MyStickerPackageViewHolder
 
-class MyStickerAdapter(private val delegate: OnViewHolderEventListener) :
+class MyStickerAdapter(private val delegate: MyStickerItemHolderDelegate) :
     PagingDataAdapter<StickerPackage, MyStickerPackageViewHolder>(REPO_COMPARATOR),
     ItemTouchHelperAdapter {
 
@@ -51,7 +52,6 @@ class MyStickerAdapter(private val delegate: OnViewHolderEventListener) :
     }
 
     override fun onItemRemove(position: Int) {
-//        dataList.removeAt(position)
         notifyItemRemoved(position)
     }
 

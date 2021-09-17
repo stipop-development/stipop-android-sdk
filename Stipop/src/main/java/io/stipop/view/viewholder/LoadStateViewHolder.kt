@@ -1,4 +1,4 @@
-package io.stipop.view.adapter
+package io.stipop.view.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

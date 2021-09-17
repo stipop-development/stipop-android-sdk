@@ -3,6 +3,7 @@ package io.stipop.view.adapter
 import android.view.ViewGroup
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
+import io.stipop.view.viewholder.LoadStateViewHolder
 
 class MyStickerLoadStateAdapter(private val retry: () -> Unit) : LoadStateAdapter<LoadStateViewHolder>() {
     override fun onBindViewHolder(holder: LoadStateViewHolder, loadState: LoadState) {

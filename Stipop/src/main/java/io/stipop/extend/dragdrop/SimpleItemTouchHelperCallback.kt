@@ -29,11 +29,11 @@ class SimpleItemTouchHelperCallback(val adapter: ItemTouchHelperAdapter) : ItemT
     }
 
     override fun onMove(recyclerView: RecyclerView, source: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-        return adapter.onItemMove(source.adapterPosition, target.adapterPosition)
+        return adapter.onItemMove(source.bindingAdapterPosition, target.bindingAdapterPosition)
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        adapter.onItemRemove(viewHolder.adapterPosition)
+        adapter.onItemRemove(viewHolder.bindingAdapterPosition)
     }
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
