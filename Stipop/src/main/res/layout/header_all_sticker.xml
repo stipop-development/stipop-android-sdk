@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <io.stipop.extend.StipopTextView
+        <io.stipop.custom.StipopTextView
             android:id="@+id/trendingTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
 
     </LinearLayout>
 
-    <io.stipop.extend.StipopTextView
+    <io.stipop.custom.StipopTextView
         android:id="@+id/stickersTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

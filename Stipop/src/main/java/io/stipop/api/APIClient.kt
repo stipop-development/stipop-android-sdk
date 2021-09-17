@@ -1,6 +1,8 @@
-package io.stipop
+package io.stipop.api
 
 import android.app.Activity
+import io.stipop.Config
+import io.stipop.Utils
 import org.json.JSONObject
 import java.io.*
 import java.net.HttpURLConnection

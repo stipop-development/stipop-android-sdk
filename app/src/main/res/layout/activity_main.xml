@@ -28,7 +28,7 @@
             android:imeOptions="actionDone"
             android:inputType="text" />
 
-        <io.stipop.extend.StipopImageView
+        <io.stipop.custom.StipopImageView
             android:id="@+id/stickerPickerImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
             android:layout_marginRight="4dp"
             app:srcCompat="@drawable/ic_sticker_normal" />
 
-        <io.stipop.extend.StipopImageView
+        <io.stipop.custom.StipopImageView
             android:id="@+id/stickerSearchImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

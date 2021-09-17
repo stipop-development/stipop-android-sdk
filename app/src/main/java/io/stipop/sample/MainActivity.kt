@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
 import io.stipop.StipopDelegate
-import io.stipop.extend.StipopImageView
-import io.stipop.model.SPPackage
-import io.stipop.model.SPSticker
+import io.stipop.custom.StipopImageView
+import io.stipop.models.SPPackage
+import io.stipop.models.SPSticker
 import io.stipop.sample.adapter.ChatAdapter
 import io.stipop.sample.models.ChatItem
 

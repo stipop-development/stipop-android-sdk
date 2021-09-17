@@ -3,8 +3,8 @@ package io.stipop
 import android.app.Activity
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
-import io.stipop.model.SPPackage
-import io.stipop.model.SPSticker
+import io.stipop.models.SPPackage
+import io.stipop.models.SPSticker
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream

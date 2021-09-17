@@ -7,8 +7,9 @@ import android.view.View
 import android.widget.*
 import com.bumptech.glide.Glide
 import io.stipop.*
-import io.stipop.extend.StipopImageView
-import io.stipop.model.SPSticker
+import io.stipop.api.APIClient
+import io.stipop.custom.StipopImageView
+import io.stipop.models.SPSticker
 import org.json.JSONObject
 import java.io.IOException
 

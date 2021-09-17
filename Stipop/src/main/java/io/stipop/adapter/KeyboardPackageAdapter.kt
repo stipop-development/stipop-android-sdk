@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +13,8 @@ import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
 import io.stipop.activity.Keyboard
-import io.stipop.extend.StipopImageView
-import io.stipop.model.SPPackage
+import io.stipop.custom.StipopImageView
+import io.stipop.models.SPPackage
 
 
 class KeyboardPackageAdapter(private val dataList: ArrayList<SPPackage>, var context: Context, var keyboard: Keyboard):

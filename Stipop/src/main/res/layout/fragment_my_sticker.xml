@@ -4,8 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <io.stipop.extend.StipopTextView
-        android:id="@+id/stickerTypeTV"
+    <io.stipop.custom.StipopTextView
+        android:id="@+id/stickerVisibleToggleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="7dp"
@@ -32,8 +32,8 @@
 
     </LinearLayout>
 
-    <io.stipop.extend.StipopTextView
-        android:id="@+id/noneTV"
+    <io.stipop.custom.StipopTextView
+        android:id="@+id/emptyTextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"

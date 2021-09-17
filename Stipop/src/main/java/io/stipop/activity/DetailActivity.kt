@@ -10,8 +10,9 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.adapter.StickerAdapter
-import io.stipop.model.SPPackage
-import io.stipop.model.SPSticker
+import io.stipop.api.APIClient
+import io.stipop.models.SPPackage
+import io.stipop.models.SPSticker
 import kotlinx.android.synthetic.main.activity_detail.*
 import org.json.JSONObject
 import java.io.IOException

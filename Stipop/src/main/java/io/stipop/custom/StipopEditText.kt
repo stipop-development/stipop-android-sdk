@@ -1,12 +1,9 @@
-package io.stipop.extend
+package io.stipop.custom
 
 import android.content.Context
-import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
-import androidx.appcompat.widget.AppCompatTextView
 import io.stipop.Config
-import java.lang.Exception
 
 class StipopEditText : AppCompatEditText {
     constructor(context: Context) : super(context) {

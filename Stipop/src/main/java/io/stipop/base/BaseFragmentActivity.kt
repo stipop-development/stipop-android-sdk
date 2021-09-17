@@ -7,8 +7,8 @@ abstract class BaseFragmentActivity : FragmentActivity() {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        refreshTheme()
+        applyTheme()
     }
 
-    abstract fun refreshTheme()
+    abstract fun applyTheme()
 }

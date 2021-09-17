@@ -1,24 +1,17 @@
 package io.stipop.adapter
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.Utils
-import io.stipop.extend.StipopImageView
-import io.stipop.model.SPPackage
-import kotlinx.android.synthetic.main.activity_store.*
-import org.json.JSONObject
+import io.stipop.custom.StipopImageView
+import io.stipop.models.SPPackage
 
 
 class PackageAdapter(private val dataList: ArrayList<SPPackage>, val context: Context):

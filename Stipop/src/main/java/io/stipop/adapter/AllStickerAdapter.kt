@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
 import io.stipop.*
-import io.stipop.extend.StipopImageView
+import io.stipop.custom.StipopImageView
 import io.stipop.view.AllStickerFragment
-import io.stipop.model.SPPackage
+import io.stipop.models.SPPackage
 
 class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayList<SPPackage>, var allStickerFragment: AllStickerFragment): ArrayAdapter<SPPackage>(myContext, view, data) {
 
