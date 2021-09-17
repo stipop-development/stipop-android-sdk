@@ -16,7 +16,7 @@
 
 package io.stipop.api
 
-import io.stipop.models.OrderChangeBody
+import io.stipop.models.body.OrderChangeBody
 import io.stipop.models.response.MyStickerOrderResponse
 import io.stipop.models.response.MyStickerResponse
 import io.stipop.models.response.StipopResponse

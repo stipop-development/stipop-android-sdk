@@ -11,7 +11,7 @@
         android:paddingBottom="13dp"
         android:background="#FFFFFF">
 
-        <io.stipop.extend.StipopImageView
+        <io.stipop.custom.StipopImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_alignParentRight="true"
@@ -25,12 +25,12 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <io.stipop.extend.StipopImageView
+            <io.stipop.custom.StipopImageView
                 android:id="@+id/packageIV"
                 android:layout_width="100dp"
                 android:layout_height="100dp"/>
 
-            <io.stipop.extend.StipopTextView
+            <io.stipop.custom.StipopTextView
                 android:id="@+id/packageNameTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
                 android:textStyle="bold"
                 android:text="" />
 
-            <io.stipop.extend.StipopTextView
+            <io.stipop.custom.StipopTextView
                 android:id="@+id/artistNameTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
                 android:textStyle="bold"
                 android:text="" />
 
-            <io.stipop.extend.StipopTextView
+            <io.stipop.custom.StipopTextView
                 android:id="@+id/downloadTV"
                 android:layout_width="match_parent"
                 android:layout_height="44dp"

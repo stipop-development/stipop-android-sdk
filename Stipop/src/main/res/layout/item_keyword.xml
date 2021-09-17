@@ -3,7 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <io.stipop.extend.StipopTextView
+    <io.stipop.custom.StipopTextView
         android:id="@+id/keywordTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

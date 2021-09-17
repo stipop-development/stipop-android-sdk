@@ -1,12 +1,10 @@
-package io.stipop.extend
+package io.stipop.custom
 
 import android.content.Context
-import android.graphics.Typeface
 import android.os.Build
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import io.stipop.Config
-import java.lang.Exception
 
 class StipopTextView : AppCompatTextView {
     constructor(context: Context) : super(context, null)

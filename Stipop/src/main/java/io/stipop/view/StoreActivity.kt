@@ -2,12 +2,9 @@ package io.stipop.view
 
 import android.os.Bundle
 import com.google.android.material.tabs.TabLayoutMediator
-import io.stipop.R
+import io.stipop.*
 import io.stipop.base.BaseFragmentActivity
 import io.stipop.databinding.ActivityStoreBinding
-import io.stipop.setStipopBackgroundColor
-import io.stipop.setStipopUnderlineColor
-import io.stipop.setTabLayoutStyle
 import io.stipop.view.adapter.StorePagerAdapter
 import kotlinx.android.synthetic.main.activity_store.*
 
@@ -34,7 +31,7 @@ class StoreActivity : BaseFragmentActivity() {
             }
         }.attach()
 
-        storeViewPager.currentItem = intent.getIntExtra("tab", StorePagerAdapter.POSITION_MY_STICKERS)
+        storeViewPager.setCurrentItem(intent.getIntExtra(Constants.IntentKey.STARTING_TAB_POSITION, StorePagerAdapter.POSITION_MY_STICKERS), false)
     }
 
     override fun applyTheme() {

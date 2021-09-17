@@ -12,10 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.extend.StipopImageView
+import io.stipop.custom.StipopImageView
 import io.stipop.models.StickerPackage
 
-class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItemHolderDelegate?) : RecyclerView.ViewHolder(view) {
+class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItemHolderDelegate?) :
+    RecyclerView.ViewHolder(view) {
 
     val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
     val packageIV: StipopImageView = view.findViewById(R.id.packageIV)
@@ -34,7 +35,7 @@ class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItem
     fun bind(stickerPackage: StickerPackage?) {
         this.stickerPackage = stickerPackage
 
-        stickerPackage?.let{ stickerPkg ->
+        stickerPackage?.let { stickerPkg ->
             containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
             hideIV.setImageResource(Config.getHideIconResourceId(itemView.context))
@@ -59,7 +60,11 @@ class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItem
                 artistNameTV.setTextColor(Config.getTitleTextColor(itemView.context))
                 isViewLL.visibility = View.VISIBLE
                 hideLL.setOnClickListener {
-                    delegate?.onVisibilityClicked(false, stickerPkg.packageId, bindingAdapterPosition)
+                    delegate?.onVisibilityClicked(
+                        false,
+                        stickerPkg.packageId,
+                        bindingAdapterPosition
+                    )
                 }
                 matrix.setSaturation(1.0f)
             } else {
@@ -67,7 +72,11 @@ class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItem
                 packageNameTV.setTextColor(Config.getMyStickerHiddenPackageNameTextColor(itemView.context))
                 addLL.visibility = View.VISIBLE
                 addLL.setOnClickListener {
-                    delegate?.onVisibilityClicked(true, stickerPkg.packageId, bindingAdapterPosition)
+                    delegate?.onVisibilityClicked(
+                        true,
+                        stickerPkg.packageId,
+                        bindingAdapterPosition
+                    )
                 }
                 matrix.setSaturation(0.0f)
             }
@@ -75,7 +84,6 @@ class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItem
             packageIV.colorFilter = ColorMatrixColorFilter(matrix)
 
             moveLL.setOnLongClickListener {
-                containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
                 delegate?.onDragStarted(this)
                 return@setOnLongClickListener true
             }
@@ -84,8 +92,12 @@ class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItem
     }
 
     companion object {
-        fun create(parent: ViewGroup, delegate: MyStickerItemHolderDelegate?): MyStickerPackageViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_my_sticker, parent, false)
+        fun create(
+            parent: ViewGroup,
+            delegate: MyStickerItemHolderDelegate?
+        ): MyStickerPackageViewHolder {
+            val view =
+                LayoutInflater.from(parent.context).inflate(R.layout.item_my_sticker, parent, false)
             return MyStickerPackageViewHolder(view, delegate)
         }
     }

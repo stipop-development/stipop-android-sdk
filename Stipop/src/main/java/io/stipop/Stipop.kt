@@ -10,7 +10,7 @@ import io.stipop.activity.DetailActivity
 import io.stipop.activity.Keyboard
 import io.stipop.activity.SearchActivity
 import io.stipop.api.APIClient
-import io.stipop.extend.StipopImageView
+import io.stipop.custom.StipopImageView
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import org.json.JSONObject

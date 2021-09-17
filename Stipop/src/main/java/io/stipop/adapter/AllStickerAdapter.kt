@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
 import io.stipop.*
-import io.stipop.extend.StipopImageView
+import io.stipop.custom.StipopImageView
 import io.stipop.view.AllStickerFragment
 import io.stipop.models.SPPackage
 

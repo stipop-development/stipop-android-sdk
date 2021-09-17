@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
 import io.stipop.Utils
-import io.stipop.extend.StipopImageView
+import io.stipop.custom.StipopImageView
 import io.stipop.models.SPPackage
 
 

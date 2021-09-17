@@ -14,7 +14,7 @@ import io.stipop.*
 import io.stipop.adapter.KeywordAdapter
 import io.stipop.adapter.StickerAdapter
 import io.stipop.api.APIClient
-import io.stipop.extend.RecyclerDecoration
+import io.stipop.custom.RecyclerDecoration
 import io.stipop.models.SPSticker
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_search.clearTextLL

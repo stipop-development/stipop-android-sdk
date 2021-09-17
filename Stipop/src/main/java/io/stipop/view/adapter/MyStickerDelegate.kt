@@ -3,14 +3,14 @@ package io.stipop.view.adapter
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import io.stipop.ItemTouchHelperAdapter
+import io.stipop.ItemTouchHelperDelegate
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewholder.MyStickerItemHolderDelegate
 import io.stipop.view.viewholder.MyStickerPackageViewHolder
 
-class MyStickerAdapter(private val delegate: MyStickerItemHolderDelegate) :
+class MyStickerDelegate(private val delegate: MyStickerItemHolderDelegate) :
     PagingDataAdapter<StickerPackage, MyStickerPackageViewHolder>(REPO_COMPARATOR),
-    ItemTouchHelperAdapter {
+    ItemTouchHelperDelegate {
 
     var fromData: StickerPackage? = null
     var toData: StickerPackage? = null

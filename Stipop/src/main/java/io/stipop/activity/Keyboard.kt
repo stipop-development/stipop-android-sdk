@@ -21,7 +21,7 @@ import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.adapter.*
 import io.stipop.api.APIClient
-import io.stipop.extend.StipopImageView
+import io.stipop.custom.StipopImageView
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.view.StoreActivity
@@ -51,7 +51,7 @@ class Keyboard(val activity: Activity) : Fragment() {
     var packageData = ArrayList<SPPackage>()
     var stickerData = ArrayList<SPSticker>()
 
-    var selectedPackage:SPPackage? = null
+    var selectedPackage: SPPackage? = null
     var selectedPackageId = -1
     var page = 1
     var totalPage = 1
@@ -62,7 +62,7 @@ class Keyboard(val activity: Activity) : Fragment() {
 
     lateinit var preview: Preview
 
-    lateinit var popupWindow:PopupWindow
+    lateinit var popupWindow: PopupWindow
     internal var canShow = true
 
 
@@ -70,7 +70,11 @@ class Keyboard(val activity: Activity) : Fragment() {
         this.initPopup(null)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.keyboard, container, false)
     }
 
@@ -90,7 +94,7 @@ class Keyboard(val activity: Activity) : Fragment() {
 
     private fun initPopup(v: View?) {
 
-        var view = View.inflate(this.activity, R.layout.keyboard,null)
+        var view = View.inflate(this.activity, R.layout.keyboard, null)
         if (v != null) {
             view = v
         }
@@ -121,8 +125,10 @@ class Keyboard(val activity: Activity) : Fragment() {
 
         preview = Preview(this.activity, this)
 
-        view.findViewById<LinearLayout>(R.id.containerLL).setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
-        view.findViewById<LinearLayout>(R.id.packageListLL).setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
+        view.findViewById<LinearLayout>(R.id.containerLL)
+            .setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
+        view.findViewById<LinearLayout>(R.id.packageListLL)
+            .setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
 
         favoriteRL = view.findViewById(R.id.favoriteRL)
         recentlyIV = view.findViewById(R.id.recentlyIV)
@@ -187,7 +193,8 @@ class Keyboard(val activity: Activity) : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+                val lastVisibleItemPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 val itemTotalCount = packageData.size
 
                 if (lastVisibleItemPosition + 1 == itemTotalCount && totalPage > page) {
@@ -210,7 +217,7 @@ class Keyboard(val activity: Activity) : Fragment() {
                 val pack = packageData[position]
 
                 if (pack.packageId == -999) {
-                    showStore(2)
+                    showStore(1)
                 } else {
                     selectedPackageId = pack.packageId
 
@@ -233,8 +240,14 @@ class Keyboard(val activity: Activity) : Fragment() {
                 }
             }
 
-            override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
-                lastItemVisibleFlag = (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount)
+            override fun onScroll(
+                view: AbsListView?,
+                firstVisibleItem: Int,
+                visibleItemCount: Int,
+                totalItemCount: Int
+            ) {
+                lastItemVisibleFlag =
+                    (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount)
             }
 
         })
@@ -264,7 +277,7 @@ class Keyboard(val activity: Activity) : Fragment() {
         }
 
         view.findViewById<LinearLayout>(R.id.storeLL).setOnClickListener {
-            showStore(1)
+            showStore(0)
         }
 
         favoriteRL.setOnClickListener {
@@ -298,13 +311,13 @@ class Keyboard(val activity: Activity) : Fragment() {
 
         reloadPackages()
 
-        val broadcastIntentFilter = IntentFilter("${this.activity.packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION")
+        val broadcastIntentFilter =
+            IntentFilter("${this.activity.packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION")
         this.activity.registerReceiver(reloadPackageReciver, broadcastIntentFilter)
 
         ///////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////
-
 
 
         // show
@@ -339,7 +352,7 @@ class Keyboard(val activity: Activity) : Fragment() {
         this.hide()
 
         val intent = Intent(this.activity, StoreActivity::class.java)
-        intent.putExtra("tab", tab)
+        intent.putExtra(Constants.IntentKey.STARTING_TAB_POSITION, tab)
         this.activity.startActivity(intent)
     }
 
@@ -641,5 +654,5 @@ class Keyboard(val activity: Activity) : Fragment() {
 
         super.onDestroy()
     }
-    
+
 }

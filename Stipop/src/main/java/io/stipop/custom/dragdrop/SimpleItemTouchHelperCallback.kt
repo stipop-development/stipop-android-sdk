@@ -1,11 +1,11 @@
-package io.stipop.extend.dragdrop
+package io.stipop.custom.dragdrop
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.stipop.ItemTouchHelperAdapter
+import io.stipop.ItemTouchHelperDelegate
 
-class SimpleItemTouchHelperCallback(val adapter: ItemTouchHelperAdapter) : ItemTouchHelper.Callback() {
+class SimpleItemTouchHelperCallback(val delegate: ItemTouchHelperDelegate) : ItemTouchHelper.Callback() {
 
     override fun isItemViewSwipeEnabled(): Boolean {
         return false
@@ -29,16 +29,16 @@ class SimpleItemTouchHelperCallback(val adapter: ItemTouchHelperAdapter) : ItemT
     }
 
     override fun onMove(recyclerView: RecyclerView, source: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-        return adapter.onItemMove(source.bindingAdapterPosition, target.bindingAdapterPosition)
+        return delegate.onItemMove(source.bindingAdapterPosition, target.bindingAdapterPosition)
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        adapter.onItemRemove(viewHolder.bindingAdapterPosition)
+        delegate.onItemRemove(viewHolder.bindingAdapterPosition)
     }
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
-            adapter.onItemMoveCompleted()
+            delegate.onItemMoveCompleted()
         }
         super.onSelectedChanged(viewHolder, actionState)
     }

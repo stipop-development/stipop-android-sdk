@@ -23,7 +23,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <io.stipop.extend.StipopImageView
+                <io.stipop.custom.StipopImageView
                     android:id="@+id/searchIconIV"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -31,7 +31,7 @@
 
             </LinearLayout>
 
-            <io.stipop.extend.StipopEditText
+            <io.stipop.custom.StipopEditText
                 android:id="@+id/keywordET"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -49,7 +49,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <io.stipop.extend.StipopImageView
+                <io.stipop.custom.StipopImageView
                     android:id="@+id/eraseIV"
                     android:layout_width="24dp"
                     android:layout_height="24dp"

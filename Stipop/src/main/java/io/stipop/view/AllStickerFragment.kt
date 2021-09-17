@@ -31,8 +31,8 @@ import io.stipop.adapter.PackageAdapter
 import io.stipop.adapter.PopularStickerAdapter
 import io.stipop.adapter.RecentKeywordAdapter
 import io.stipop.api.APIClient
-import io.stipop.extend.RecyclerDecoration
-import io.stipop.extend.TagLayout
+import io.stipop.custom.RecyclerDecoration
+import io.stipop.custom.TagLayout
 import io.stipop.models.SPPackage
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.fragment_all_sticker.*

@@ -17,9 +17,9 @@ import io.stipop.api.Injection
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.FragmentMyStickerBinding
 import io.stipop.view.viewholder.MyStickerItemHolderDelegate
-import io.stipop.extend.dragdrop.SimpleItemTouchHelperCallback
+import io.stipop.custom.dragdrop.SimpleItemTouchHelperCallback
 import io.stipop.models.StickerPackage
-import io.stipop.view.adapter.MyStickerAdapter
+import io.stipop.view.adapter.MyStickerDelegate
 import io.stipop.view.adapter.MyStickerLoadStateAdapter
 import io.stipop.viewmodel.MyStickerRepositoryViewModel
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
@@ -38,7 +38,7 @@ class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
     private var binding: FragmentMyStickerBinding? = null
     private lateinit var viewModel: MyStickerRepositoryViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
-    private val myStickerAdapter: MyStickerAdapter by lazy { MyStickerAdapter(this) }
+    private val myStickerAdapter: MyStickerDelegate by lazy { MyStickerDelegate(this) }
     private var searchJob: Job? = null
 
     override fun onCreateView(
