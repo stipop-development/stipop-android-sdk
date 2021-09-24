@@ -353,7 +353,7 @@ class AllStickerFragment : Fragment() {
         params.put("q", Utils.getString(keywordET))
 
         APIClient.get(
-            activity as Activity,
+            requireActivity(),
             APIClient.APIPath.PACKAGE.rawValue,
             params
         ) { response: JSONObject?, e: IOException? ->
@@ -369,7 +369,7 @@ class AllStickerFragment : Fragment() {
                     allStickerAdapter.notifyDataSetChanged()
                 }
             } else {
-                trendingLL.visibility = View.VISIBLE
+                trendingLL?.visibility = View.VISIBLE
                 if (page == 1) {
                     packageData.clear()
                     packageAdapter.notifyDataSetChanged()
@@ -410,7 +410,7 @@ class AllStickerFragment : Fragment() {
                         }
 
                         if (page == 1) {
-                            stickerLV.smoothScrollToPosition(0)
+                            stickerLV?.smoothScrollToPosition(0)
                         }
                     }
 
@@ -457,7 +457,7 @@ class AllStickerFragment : Fragment() {
         params.put("userId", Stipop.userId)
 
         APIClient.get(
-            activity as Activity,
+            requireActivity(),
             APIClient.APIPath.PACKAGE.rawValue + "/${packageId}",
             params
         ) { response: JSONObject?, e: IOException? ->
@@ -503,7 +503,7 @@ class AllStickerFragment : Fragment() {
         }
 
         APIClient.post(
-            activity as Activity,
+            requireActivity(),
             APIClient.APIPath.DOWNLOAD.rawValue + "/${spPackage.packageId}",
             params
         ) { response: JSONObject?, e: IOException? ->
@@ -515,7 +515,7 @@ class AllStickerFragment : Fragment() {
                 if (Utils.getString(header, "status") == "success") {
 
                     // download
-                    PackUtils.downloadAndSaveLocal(activity as Activity, spPackage) {
+                    PackUtils.downloadAndSaveLocal(requireActivity(), spPackage) {
                         allStickerAdapter.setDownload(idx)
                         Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
                         allStickerAdapter.notifyDataSetChanged()
@@ -537,7 +537,7 @@ class AllStickerFragment : Fragment() {
         params.put("userId", Stipop.userId)
 
         APIClient.get(
-            activity as Activity,
+            requireActivity(),
             APIClient.APIPath.SEARCH_RECENT.rawValue,
             params
         ) { response: JSONObject?, e: IOException? ->
@@ -571,7 +571,7 @@ class AllStickerFragment : Fragment() {
         recommendedTagsTL.removeAllViews()
 
         APIClient.get(
-            activity as Activity,
+            requireActivity(),
             APIClient.APIPath.SEARCH_KEYWORD.rawValue,
             null
         ) { response: JSONObject?, e: IOException? ->
@@ -645,7 +645,7 @@ class AllStickerFragment : Fragment() {
         params.put("limit", 4)
 
         APIClient.get(
-            activity as Activity,
+            requireActivity(),
             APIClient.APIPath.PACKAGE.rawValue,
             params
         ) { response: JSONObject?, e: IOException? ->
@@ -683,7 +683,7 @@ class AllStickerFragment : Fragment() {
         }
 
         APIClient.delete(
-            activity as Activity,
+            requireActivity(),
             path,
             null
         ) { response: JSONObject?, e: IOException? ->
@@ -717,13 +717,13 @@ class AllStickerFragment : Fragment() {
         }
     }
 
-    fun changeView(search: Boolean) {
+    private fun changeView(search: Boolean) {
         if (search) {
-            recentLV.visibility = View.VISIBLE
-            stickerLV.visibility = View.GONE
+            recentLV?.visibility = View.VISIBLE
+            stickerLV?.visibility = View.GONE
         } else {
-            recentLV.visibility = View.GONE
-            stickerLV.visibility = View.VISIBLE
+            recentLV?.visibility = View.GONE
+            stickerLV?.visibility = View.VISIBLE
         }
     }
 }
