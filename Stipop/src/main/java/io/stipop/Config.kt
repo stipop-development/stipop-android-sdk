@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.util.Log
 import androidx.core.content.ContextCompat
 import org.json.JSONException
 import org.json.JSONObject
@@ -101,8 +102,7 @@ class Config {
         private fun getJsonDataFromAsset(context: Context): String? {
             val jsonString: String
             try {
-                jsonString =
-                    context.assets.open("Stipop.json").bufferedReader().use { it.readText() }
+                jsonString = context.assets.open("Stipop.json").bufferedReader().use { it.readText() }
             } catch (ioException: IOException) {
                 ioException.printStackTrace()
                 return null
@@ -250,6 +250,8 @@ class Config {
                 previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, DARK_KEY, "ic_favorites_off")
                 previewCloseIconName = Utils.getString(previewCloseIcon, DARK_KEY, "ic_cancel")
             }
+
+            Log.d("Configuration", "UseLightMode : $useLightMode")
         }
 
         fun getStickerIconResourceId(context: Context): Int {
@@ -368,14 +370,6 @@ class Config {
                 imageId = R.mipmap.error_dark
             }
             return imageId
-        }
-
-        fun getUnderLineColor(context: Context): Int {
-            var color = ContextCompat.getColor(context, R.color.c_f7f8f9)
-            if (!useLightMode) {
-                color = ContextCompat.getColor(context, R.color.c_2e363a)
-            }
-            return color
         }
 
         fun getStoreNavigationTextColor(context: Context, selected: Boolean): Int {

@@ -11,7 +11,7 @@
         android:paddingHorizontal="19dp"
         android:gravity="center">
 
-        <io.stipop.extend.StipopImageView
+        <io.stipop.custom.StipopImageView
             android:id="@+id/packageIV"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -25,7 +25,7 @@
             android:layout_marginRight="10dp"
             android:orientation="vertical">
 
-            <io.stipop.extend.StipopTextView
+            <io.stipop.custom.StipopTextView
                 android:id="@+id/packageNameTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                 android:lineHeight="22sp"
                 android:text=""/>
 
-            <io.stipop.extend.StipopTextView
+            <io.stipop.custom.StipopTextView
                 android:id="@+id/artistNameTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                 android:padding="5dp"
                 android:gravity="center">
 
-                <io.stipop.extend.StipopImageView
+                <io.stipop.custom.StipopImageView
                     android:id="@+id/hideIV"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -80,7 +80,7 @@
                 android:padding="5dp"
                 android:gravity="center">
 
-                <io.stipop.extend.StipopImageView
+                <io.stipop.custom.StipopImageView
                     android:id="@+id/moveIV"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -101,7 +101,7 @@
             android:gravity="center"
             android:visibility="gone">
 
-            <io.stipop.extend.StipopImageView
+            <io.stipop.custom.StipopImageView
                 android:id="@+id/addIV"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
