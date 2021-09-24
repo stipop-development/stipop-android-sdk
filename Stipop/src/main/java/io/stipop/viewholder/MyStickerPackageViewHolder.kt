@@ -1,4 +1,4 @@
-package io.stipop.view.viewholder
+package io.stipop.viewholder
 
 import android.graphics.Color
 import android.graphics.ColorMatrix

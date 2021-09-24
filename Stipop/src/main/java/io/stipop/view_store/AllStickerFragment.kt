@@ -1,4 +1,4 @@
-package io.stipop.view
+package io.stipop.view_store
 
 import android.app.Activity
 import android.content.Context
@@ -25,7 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
-import io.stipop.activity.DetailActivity
+import io.stipop.view_common.StickerPackageActivity
 import io.stipop.adapter.AllStickerAdapter
 import io.stipop.adapter.PackageAdapter
 import io.stipop.adapter.PopularStickerAdapter
@@ -34,7 +34,6 @@ import io.stipop.api.APIClient
 import io.stipop.custom.RecyclerDecoration
 import io.stipop.custom.TagLayout
 import io.stipop.models.SPPackage
-import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import org.json.JSONObject
 import java.io.IOException
@@ -108,11 +107,13 @@ class AllStickerFragment : Fragment() {
         val headerV = View.inflate(myContext, R.layout.header_all_sticker, null)
 
         headerV.findViewById<View>(R.id.underLineV).setStipopUnderlineColor()
-        headerV.findViewById<TextView>(R.id.trendingTV).setTextColor(Config.getTitleTextColor(myContext))
-        headerV.findViewById<TextView>(R.id.stickersTV).setTextColor(Config.getTitleTextColor(myContext))
+        headerV.findViewById<TextView>(R.id.trendingTV)
+            .setTextColor(Config.getTitleTextColor(myContext))
+        headerV.findViewById<TextView>(R.id.stickersTV)
+            .setTextColor(Config.getTitleTextColor(myContext))
 
 
-        packageRV = headerV.findViewById(R.id.packageRV)
+        packageRV = headerV.findViewById(R.id.packageThumbRecyclerView)
         trendingLL = headerV.findViewById(R.id.trendingLL)
 
         stickerLV.addHeaderView(headerV)
@@ -185,10 +186,12 @@ class AllStickerFragment : Fragment() {
 
         if (Config.storeListType == "singular") {
             // B Type
-            allStickerAdapter = AllStickerAdapter(myContext, R.layout.item_all_sticker_type_b, allStickerData, this)
+            allStickerAdapter =
+                AllStickerAdapter(myContext, R.layout.item_all_sticker_type_b, allStickerData, this)
         } else {
             // A Type
-            allStickerAdapter = AllStickerAdapter(myContext, R.layout.item_all_sticker_type_a, allStickerData, this)
+            allStickerAdapter =
+                AllStickerAdapter(myContext, R.layout.item_all_sticker_type_a, allStickerData, this)
         }
 
         stickerLV.adapter = allStickerAdapter
@@ -250,7 +253,8 @@ class AllStickerFragment : Fragment() {
         popularStickerRV.addItemDecoration(RecyclerDecoration(Utils.dpToPx(7F).toInt()))
         popularStickerRV.adapter = popularStickerAdapter
 
-        popularStickerAdapter.setOnItemClickListener(object : PopularStickerAdapter.OnItemClickListener {
+        popularStickerAdapter.setOnItemClickListener(object :
+            PopularStickerAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 if (position > popularStickers.size) {
                     return
@@ -264,7 +268,8 @@ class AllStickerFragment : Fragment() {
 
         recentLV.addFooterView(recentFooterV)
 
-        recentKeywordAdapter = RecentKeywordAdapter(myContext, R.layout.item_recent_keyword, recentKeywords, this)
+        recentKeywordAdapter =
+            RecentKeywordAdapter(myContext, R.layout.item_recent_keyword, recentKeywords, this)
         recentLV.adapter = recentKeywordAdapter
         recentLV.setOnItemClickListener { adapterView, view, i, l ->
             // position - 1 : addHeaderView 해줬기 때문!
@@ -318,7 +323,7 @@ class AllStickerFragment : Fragment() {
         }
 
     fun goDetail(packageId: Int) {
-        val intent = Intent(myContext, DetailActivity::class.java)
+        val intent = Intent(myContext, StickerPackageActivity::class.java)
         intent.putExtra("packageId", packageId)
         // startActivity(intent)
         startForResult.launch(intent)
@@ -415,7 +420,7 @@ class AllStickerFragment : Fragment() {
 
             if (search) {
                 if (page == 1) {
-                    if(allStickerData.count() > 0) {
+                    if (allStickerData.count() > 0) {
                         noneTV.visibility = View.GONE
                         changeView(false)
                         Utils.hideKeyboard(myContext)
@@ -426,7 +431,7 @@ class AllStickerFragment : Fragment() {
             } else {
                 trendingLL.visibility = View.VISIBLE
                 if (page == 1) {
-                    if(packageData.count() > 0) {
+                    if (packageData.count() > 0) {
                         noneTV.visibility = View.GONE
                         changeView(false)
                         Utils.hideKeyboard(myContext)
@@ -434,7 +439,7 @@ class AllStickerFragment : Fragment() {
                         noneTV.visibility = View.VISIBLE
                     }
                 } else if (page == 2) {
-                    if(allStickerData.count() > 0) {
+                    if (allStickerData.count() > 0) {
                         noneTV.visibility = View.GONE
                         changeView(false)
                         Utils.hideKeyboard(myContext)
@@ -451,7 +456,11 @@ class AllStickerFragment : Fragment() {
         val params = JSONObject()
         params.put("userId", Stipop.userId)
 
-        APIClient.get(activity as Activity, APIClient.APIPath.PACKAGE.rawValue + "/${packageId}", params) { response: JSONObject?, e: IOException? ->
+        APIClient.get(
+            activity as Activity,
+            APIClient.APIPath.PACKAGE.rawValue + "/${packageId}",
+            params
+        ) { response: JSONObject?, e: IOException? ->
             // println(response)
 
             if (null != response) {
@@ -493,7 +502,11 @@ class AllStickerFragment : Fragment() {
             params.put("price", price)
         }
 
-        APIClient.post(activity as Activity, APIClient.APIPath.DOWNLOAD.rawValue + "/${spPackage.packageId}", params) { response: JSONObject?, e: IOException? ->
+        APIClient.post(
+            activity as Activity,
+            APIClient.APIPath.DOWNLOAD.rawValue + "/${spPackage.packageId}",
+            params
+        ) { response: JSONObject?, e: IOException? ->
 
             if (null != response) {
 
@@ -594,9 +607,15 @@ class AllStickerFragment : Fragment() {
                             tagTV.setOnClickListener {
 
                                 // haptics
-                                val vibrator = this.myContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                                val vibrator =
+                                    this.myContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                                    vibrator.vibrate(
+                                        VibrationEffect.createOneShot(
+                                            100,
+                                            VibrationEffect.DEFAULT_AMPLITUDE
+                                        )
+                                    )
                                 }
 
                                 changeView(false)

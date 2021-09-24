@@ -1,4 +1,4 @@
-package io.stipop.activity
+package io.stipop.view_common
 
 import android.app.Activity
 import android.content.Context
@@ -13,11 +13,11 @@ import io.stipop.adapter.StickerAdapter
 import io.stipop.api.APIClient
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
-import kotlinx.android.synthetic.main.activity_detail.*
+import kotlinx.android.synthetic.main.activity_sticker_package.*
 import org.json.JSONObject
 import java.io.IOException
 
-class DetailActivity: Activity() {
+class StickerPackageActivity: Activity() {
 
     lateinit var context: Context
 
@@ -33,7 +33,7 @@ class DetailActivity: Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
+        setContentView(R.layout.activity_sticker_package)
 
         this.context = this
 

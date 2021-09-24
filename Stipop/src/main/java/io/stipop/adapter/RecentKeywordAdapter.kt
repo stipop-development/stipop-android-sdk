@@ -7,7 +7,7 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.stipop.R
-import io.stipop.view.AllStickerFragment
+import io.stipop.view_store.AllStickerFragment
 
 class RecentKeywordAdapter(var myContext: Context, var view: Int, var data: ArrayList<String>, var fragment: AllStickerFragment): ArrayAdapter<String>(myContext, view, data) {
 

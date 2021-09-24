@@ -1,4 +1,4 @@
-package io.stipop.activity
+package io.stipop.view_search
 
 import android.app.Activity
 import android.content.Context
