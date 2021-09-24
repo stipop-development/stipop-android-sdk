@@ -48,7 +48,7 @@
         </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/packageRV"
+            android:id="@+id/packageThumbRecyclerView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />

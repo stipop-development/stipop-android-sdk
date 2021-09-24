@@ -1,4 +1,4 @@
-package io.stipop.activity
+package io.stipop.view_keyboard
 
 import android.app.Activity
 import android.os.Build
@@ -13,7 +13,7 @@ import io.stipop.models.SPSticker
 import org.json.JSONObject
 import java.io.IOException
 
-class Preview(val activity: Activity, val keyboard: Keyboard) : PopupWindow() {
+class PreviewPopup(val activity: Activity, val keyboard: KeyboardPopup) : PopupWindow() {
 
     private lateinit var rootView: View
 

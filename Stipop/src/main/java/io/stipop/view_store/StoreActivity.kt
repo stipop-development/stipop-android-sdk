@@ -1,11 +1,11 @@
-package io.stipop.view
+package io.stipop.view_store
 
 import android.os.Bundle
 import com.google.android.material.tabs.TabLayoutMediator
 import io.stipop.*
 import io.stipop.base.BaseFragmentActivity
 import io.stipop.databinding.ActivityStoreBinding
-import io.stipop.view.adapter.StorePagerAdapter
+import io.stipop.adapter.StorePagerAdapter
 import kotlinx.android.synthetic.main.activity_store.*
 
 class StoreActivity : BaseFragmentActivity() {

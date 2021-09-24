@@ -5,10 +5,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
-import android.view.*
-import io.stipop.activity.DetailActivity
-import io.stipop.activity.Keyboard
-import io.stipop.activity.SearchActivity
+import android.view.View
+import io.stipop.view_common.StickerPackageActivity
+import io.stipop.view_keyboard.KeyboardPopup
+import io.stipop.view_search.SearchActivity
 import io.stipop.api.APIClient
 import io.stipop.custom.StipopImageView
 import io.stipop.models.SPPackage
@@ -100,7 +100,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
 
     private var maxTop = 0
     private var maxBottom = 0
-    private var keyboard: Keyboard? = null
+    private var keyboard: KeyboardPopup? = null
     private lateinit var rootView: View
 
 
@@ -137,7 +137,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
             return
         }
 
-        val intent = Intent(this.activity, DetailActivity::class.java)
+        val intent = Intent(this.activity, StickerPackageActivity::class.java)
         intent.putExtra("packageId", packageId)
         this.activity.startActivity(intent)
     }
@@ -214,10 +214,10 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         this.enableStickerIcon()
 
         if(keyboard == null) {
-            keyboard = Keyboard(this.activity)
+            keyboard = KeyboardPopup(activity)
         }
 
-        if (keyboard!!.popupWindow.isShowing) {
+        if (keyboard!!.isShowing) {
             this.keyboard!!.canShow = false
             keyboard!!.hide()
             this.disableStickerIcon()
@@ -262,10 +262,10 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
                 keyboardHeight = heightDifference
 
                 if(this.keyboard != null) {
-                    val preHeight = this.keyboard!!.popupWindow.height
-                    this.keyboard!!.popupWindow.height = keyboardHeight
+                    val preHeight = this.keyboard!!.height
+                    this.keyboard!!.height = keyboardHeight
 
-                    if (preHeight == 0 || !this.keyboard!!.popupWindow.isShowing) {
+                    if (preHeight == 0 || !this.keyboard!!.isShowing) {
                         this.keyboard!!.show()
                         if(this.keyboard!!.canShow) {
                             this.enableStickerIcon()
@@ -275,7 +275,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
             } else {
                 keyboardHeight = 0
                 if(this.keyboard != null) {
-                    this.keyboard!!.popupWindow.height = 0
+                    this.keyboard!!.height = 0
                     this.keyboard!!.hide()
                     this.disableStickerIcon()
                 }
