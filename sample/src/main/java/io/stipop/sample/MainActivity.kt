@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // IMPORTANT :: This must be called to use the Stipop SDK.
+        // IMPORTANT :: This must be called to use the sdk SDK.
         Stipop.connect(this, stipopPickerImageView, testUserId, "en", "US", this)
 
         chatRecyclerview.apply {
