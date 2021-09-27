@@ -1,10 +1,13 @@
 package io.stipop.api
 
+import io.stipop.Config
+import io.stipop.Constants
 import io.stipop.models.body.OrderChangeBody
 import io.stipop.models.response.MyStickerOrderResponse
 import io.stipop.models.response.MyStickerResponse
 import io.stipop.models.response.StipopResponse
-import okhttp3.OkHttpClient
+import okhttp3.*
+import okhttp3.Headers
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
 import retrofit2.Retrofit
@@ -15,44 +18,50 @@ interface StipopApi {
 
     @GET("mysticker/{userId}")
     suspend fun getMyStickers(
-        @Header("apiKey") apiKey: String,
         @Path("userId") userId: String,
         @Query("pageNumber") pageNumber: Int,
-        @Query("limit") limit: Int,
-        @Query("platform") platform: String = "android-sdk",
+        @Query("limit") limit: Int
     ): MyStickerResponse
 
     @GET("mysticker/hide/{userId}")
     suspend fun getMyHiddenStickers(
-        @Header("apiKey") apiKey: String,
         @Path("userId") userId: String,
         @Query("pageNumber") pageNumber: Int,
-        @Query("limit") limit: Int,
-        @Query("platform") platform: String = "android-sdk",
+        @Query("limit") limit: Int
     ): MyStickerResponse
 
     @PUT("mysticker/order/{userId}")
     suspend fun putMyStickerOrders(
-        @Header("apiKey") apiKey: String,
         @Path("userId") userId: String,
-        @Body orderChangeBody: OrderChangeBody,
-        @Query("platform") platform: String = "android-sdk",
+        @Body orderChangeBody: OrderChangeBody
     ): MyStickerOrderResponse
 
     @PUT("mysticker/hide/{userId}/{packageId}")
     suspend fun putMyStickerVisibility(
-        @Header("apiKey") apiKey: String,
         @Path("userId") userId: String,
-        @Path("packageId") packageId: Int,
-        @Query("platform") platform: String = "android-sdk",
+        @Path("packageId") packageId: Int
     ): StipopResponse
 
     companion object {
         private const val BASE_URL = "https://messenger.stipop.io/v1/"
         fun create(): StipopApi {
-            val logger = HttpLoggingInterceptor().apply { level = Level.BASIC }
+            val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BASIC }
+            val requestInterceptor = Interceptor { chain ->
+                val original = chain.request()
+                val modifiedUrl = chain.request().url.newBuilder().addQueryParameter(Constants.ApiParams.Platform, "android-sdk").build()
+                chain.proceed(original.newBuilder().url(modifiedUrl).build())
+            }
+            val headers = Headers.Builder().add(Constants.ApiParams.ApiKey, Config.apikey).build()
+            val authenticator = Authenticator { _, response ->
+                response.request
+                    .newBuilder()
+                    .headers(headers)
+                    .build()
+            }
             val client = OkHttpClient.Builder()
-                .addInterceptor(logger)
+                .authenticator(authenticator)
+                .addInterceptor(loggingInterceptor)
+                .addInterceptor(requestInterceptor)
                 .build()
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)

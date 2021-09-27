@@ -27,18 +27,16 @@ class MyStickerRepository(private val apiService: StipopApi) {
     }
 
     suspend fun request(fromStickerPackage: StickerPackage, toStickerPackage: StickerPackage) {
-        val apiKey = Config.apikey
         val userId = Stipop.userId
         val fromOrder = fromStickerPackage.order
         val toOrder = toStickerPackage.order
-        val response = apiService.putMyStickerOrders(apiKey, userId, OrderChangeBody(fromOrder, toOrder))
+        val response = apiService.putMyStickerOrders(userId, OrderChangeBody(fromOrder, toOrder))
         packageOrderChangedResult.emit(response)
     }
 
     suspend fun updatePackageVisibility(packageId: Int, position: Int) {
-        val apiKey = Config.apikey
         val userId = Stipop.userId
-        val response = apiService.putMyStickerVisibility(apiKey, userId, packageId)
+        val response = apiService.putMyStickerVisibility(userId, packageId)
         packageVisibilityUpdateResult.emit(Triple(response, packageId, position))
     }
 

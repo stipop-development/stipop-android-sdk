@@ -31,17 +31,14 @@ class MyStickerPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, StickerPackage> {
         val pageNumber = params.key ?: STARTING_PAGE_INDEX
-        val apiKey = Config.apikey
         val userId = Stipop.userId
         val limit = 20
         return try {
             val response = if (wantVisibleSticker) apiService.getMyStickers(
-                apiKey = apiKey,
                 userId = userId,
                 limit = limit,
                 pageNumber = pageNumber
             ) else apiService.getMyHiddenStickers(
-                apiKey = apiKey,
                 userId = userId,
                 limit = limit,
                 pageNumber = pageNumber
