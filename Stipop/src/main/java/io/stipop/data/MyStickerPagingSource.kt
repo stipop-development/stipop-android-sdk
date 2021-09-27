@@ -50,7 +50,7 @@ class MyStickerPagingSource(
             val nextKey = if (myStickers.isNullOrEmpty()) {
                 null
             } else {
-                pageNumber + (params.loadSize / 20)
+                pageNumber + 1
             }
             LoadResult.Page(
                 data = myStickers,
