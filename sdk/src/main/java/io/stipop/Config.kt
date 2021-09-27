@@ -92,7 +92,7 @@ class Config {
                 println("")
                 println("")
                 println("==========================================")
-                println("Stipop configuration check-out failed.")
+                println("sdk configuration check-out failed.")
                 println("==========================================")
                 println("")
                 println("")
@@ -102,7 +102,7 @@ class Config {
         private fun getJsonDataFromAsset(context: Context): String? {
             val jsonString: String
             try {
-                jsonString = context.assets.open("Stipop.json").bufferedReader().use { it.readText() }
+                jsonString = context.assets.open(Constants.KEY.ASSET_NAME).bufferedReader().use { it.readText() }
             } catch (ioException: IOException) {
                 ioException.printStackTrace()
                 return null
