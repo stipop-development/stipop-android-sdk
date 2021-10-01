@@ -18,7 +18,7 @@ class APIClient {
         SEARCH_KEYWORD("/search/keyword"),
         SEARCH_RECENT("/search/recent"),
         PACKAGE("/package"),
-        PACKAGE_SEND("/package/send"),
+        PACKAGE_RECENT("/package/send"),
         MY_STICKER("/mysticker"),
         MY_STICKER_ORDER("/mysticker/order"),
         MY_STICKER_HIDE("/mysticker/hide"),

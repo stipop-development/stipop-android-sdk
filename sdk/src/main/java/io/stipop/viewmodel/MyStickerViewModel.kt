@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class MyStickerRepositoryViewModel(private val repository: MyStickerRepository) : ViewModel() {
+class MyStickerViewModel(private val repository: MyStickerRepository) : ViewModel() {
 
     private var isWantVisibleStickers: Boolean = true
     var packageVisibilityChanged: MutableLiveData<Triple<StipopResponse, Int, Int>> =

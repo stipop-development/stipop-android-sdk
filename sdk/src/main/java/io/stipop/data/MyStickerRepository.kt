@@ -3,19 +3,18 @@ package io.stipop.data
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import io.stipop.Config
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.body.OrderChangeBody
 import io.stipop.models.StickerPackage
-import io.stipop.models.response.MyStickerOrderResponse
+import io.stipop.models.response.MyStickerOrderChangedResponse
 import io.stipop.models.response.StipopResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 class MyStickerRepository(private val apiService: StipopApi) {
 
-    private val packageOrderChangedResult = MutableSharedFlow<MyStickerOrderResponse>()
+    private val packageOrderChangedResult = MutableSharedFlow<MyStickerOrderChangedResponse>()
     val packageVisibilityUpdateResult = MutableSharedFlow<Triple<StipopResponse, Int, Int>>()
 
     fun getMyStickerStream(wantVisibleSticker: Boolean): Flow<PagingData<StickerPackage>> {

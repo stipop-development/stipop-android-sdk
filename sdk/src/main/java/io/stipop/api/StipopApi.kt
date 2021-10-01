@@ -2,19 +2,26 @@ package io.stipop.api
 
 import io.stipop.Config
 import io.stipop.Constants
+import io.stipop.models.body.InitSdkBody
 import io.stipop.models.body.OrderChangeBody
-import io.stipop.models.response.MyStickerOrderResponse
+import io.stipop.models.response.MyStickerOrderChangedResponse
 import io.stipop.models.response.MyStickerResponse
 import io.stipop.models.response.StipopResponse
 import okhttp3.*
 import okhttp3.Headers
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 
 interface StipopApi {
+
+    @POST("init")
+    suspend fun initSdk(
+        @Body initSdkBody: InitSdkBody
+    ): Response<StipopResponse>
 
     @GET("mysticker/{userId}")
     suspend fun getMyStickers(
@@ -34,7 +41,7 @@ interface StipopApi {
     suspend fun putMyStickerOrders(
         @Path("userId") userId: String,
         @Body orderChangeBody: OrderChangeBody
-    ): MyStickerOrderResponse
+    ): MyStickerOrderChangedResponse
 
     @PUT("mysticker/hide/{userId}/{packageId}")
     suspend fun putMyStickerVisibility(
@@ -48,7 +55,8 @@ interface StipopApi {
             val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BASIC }
             val requestInterceptor = Interceptor { chain ->
                 val original = chain.request()
-                val modifiedUrl = chain.request().url.newBuilder().addQueryParameter(Constants.ApiParams.Platform, "android-sdk").build()
+                val modifiedUrl = chain.request().url.newBuilder()
+                    .addQueryParameter(Constants.ApiParams.Platform, "android-sdk").build()
                 chain.proceed(original.newBuilder().url(modifiedUrl).build())
             }
             val headers = Headers.Builder().add(Constants.ApiParams.ApiKey, Config.apikey).build()
