@@ -21,7 +21,7 @@ import io.stipop.custom.dragdrop.SimpleItemTouchHelperCallback
 import io.stipop.models.StickerPackage
 import io.stipop.adapter.MyStickerPackageAdapter
 import io.stipop.adapter.MyStickerPackageLoadStateAdapter
-import io.stipop.viewmodel.MyStickerRepositoryViewModel
+import io.stipop.viewmodel.MyStickerViewModel
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -36,7 +36,7 @@ class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
     }
 
     private var binding: FragmentMyStickerBinding? = null
-    private lateinit var viewModel: MyStickerRepositoryViewModel
+    private lateinit var viewModel: MyStickerViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
     private val myStickerPackageAdapter: MyStickerPackageAdapter by lazy { MyStickerPackageAdapter(this) }
     private var searchJob: Job? = null
@@ -58,7 +58,7 @@ class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
-            MyStickerRepositoryViewModel::class.java
+            MyStickerViewModel::class.java
         )
 
         myStickersRecyclerView.apply {

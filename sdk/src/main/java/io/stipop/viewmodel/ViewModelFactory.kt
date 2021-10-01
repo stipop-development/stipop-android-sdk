@@ -16,9 +16,9 @@ class ViewModelFactory(
         modelClass: Class<T>,
         handle: SavedStateHandle
     ): T {
-        if (modelClass.isAssignableFrom(MyStickerRepositoryViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(MyStickerViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return MyStickerRepositoryViewModel(repository) as T
+            return MyStickerViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

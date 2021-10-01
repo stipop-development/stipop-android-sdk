@@ -476,7 +476,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
 
         APIClient.get(
             activity,
-            APIClient.APIPath.PACKAGE_SEND.rawValue + "/${Stipop.userId}",
+            APIClient.APIPath.PACKAGE_RECENT.rawValue + "/${Stipop.userId}",
             null
         ) { response: JSONObject?, e: IOException? ->
 

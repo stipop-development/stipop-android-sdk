@@ -5,28 +5,42 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import io.stipop.view_common.StickerPackageActivity
 import io.stipop.view_keyboard.KeyboardPopup
 import io.stipop.view_search.SearchActivity
 import io.stipop.api.APIClient
+import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
+import io.stipop.data.BaseRepository
+import io.stipop.data.ConfigRepository
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
+import io.stipop.models.body.InitSdkBody
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.subscribe
 import org.json.JSONObject
 import java.io.IOException
 
 interface StipopDelegate {
     fun onStickerSelected(sticker: SPSticker): Boolean
-    fun canDownload(spPackage:SPPackage): Boolean
+    fun canDownload(spPackage: SPPackage): Boolean
 }
 
-class Stipop(private val activity: Activity, private val stipopButton: StipopImageView, val delegate: StipopDelegate) {
+class Stipop(
+    private val activity: Activity,
+    private val stipopButton: StipopImageView,
+    val delegate: StipopDelegate
+) {
 
     companion object {
 
         @SuppressLint("StaticFieldLeak")
-        var instance:Stipop? = null
+        var instance: Stipop? = null
 
         var userId = "-1"
             private set
@@ -40,20 +54,35 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         var keyboardHeight = 0
             private set
 
-        fun configure(context:Context) {
+        fun configure(context: Context) {
             Config.configure(context)
         }
 
-        fun connect(activity: Activity, stipopButton: StipopImageView, userId: String, lang: String, countryCode: String, delegate: StipopDelegate) {
-
+        fun connect(
+            activity: Activity,
+            stipopButton: StipopImageView,
+            userId: String,
+            lang: String,
+            countryCode: String,
+            delegate: StipopDelegate
+        ) {
             Stipop.userId = userId
             Stipop.lang = lang
             Stipop.countryCode = countryCode
 
-            instance = Stipop(activity, stipopButton, delegate)
-
-            instance!!.connect()
+            val requestBody = InitSdkBody(userId = Stipop.userId, language = Stipop.countryCode)
+            val configRepo = ConfigRepository(StipopApi.create())
+            scope.launch {
+                configRepo.postInitSdk(requestBody, onSuccess = {
+                    Stipop(activity, stipopButton, delegate).apply {
+                        connect()
+                        instance = this
+                    }
+                })
+            }
         }
+
+        val scope = CoroutineScope(Job() + Dispatchers.Main)
 
         fun showSearch() {
             if (instance == null) {
@@ -89,7 +118,11 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
         }
         */
 
-        internal fun send(stickerId: Int, keyword: String, completionHandler: (result: Boolean) -> Unit) {
+        internal fun send(
+            stickerId: Int,
+            keyword: String,
+            completionHandler: (result: Boolean) -> Unit
+        ) {
             if (instance == null) {
                 return
             }
@@ -168,7 +201,12 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
 
                     val header = response.getJSONObject("header")
 
-                    if (Utils.getString(header, "status") != "success" || Utils.getInt(header, "code", -1) == -1) {
+                    if (Utils.getString(header, "status") != "success" || Utils.getInt(
+                            header,
+                            "code",
+                            -1
+                        ) == -1
+                    ) {
                         success = false
                     }
 
@@ -213,7 +251,7 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
 
         this.enableStickerIcon()
 
-        if(keyboard == null) {
+        if (keyboard == null) {
             keyboard = KeyboardPopup(activity)
         }
 
@@ -261,20 +299,20 @@ class Stipop(private val activity: Activity, private val stipopButton: StipopIma
             if (heightDifference > 100) {
                 keyboardHeight = heightDifference
 
-                if(this.keyboard != null) {
+                if (this.keyboard != null) {
                     val preHeight = this.keyboard!!.height
                     this.keyboard!!.height = keyboardHeight
 
                     if (preHeight == 0 || !this.keyboard!!.isShowing) {
                         this.keyboard!!.show()
-                        if(this.keyboard!!.canShow) {
+                        if (this.keyboard!!.canShow) {
                             this.enableStickerIcon()
                         }
                     }
                 }
             } else {
                 keyboardHeight = 0
-                if(this.keyboard != null) {
+                if (this.keyboard != null) {
                     this.keyboard!!.height = 0
                     this.keyboard!!.hide()
                     this.disableStickerIcon()
