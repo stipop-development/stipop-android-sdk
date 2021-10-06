@@ -12,7 +12,7 @@ import io.stipop.models.response.StipopResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
-class MyStickerRepository(private val apiService: StipopApi) {
+class MyStickerRepository(private val apiService: StipopApi): BaseRepository() {
 
     private val packageOrderChangedResult = MutableSharedFlow<MyStickerOrderChangedResponse>()
     val packageVisibilityUpdateResult = MutableSharedFlow<Triple<StipopResponse, Int, Int>>()

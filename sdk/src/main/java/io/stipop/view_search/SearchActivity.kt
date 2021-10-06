@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_search.clearTextLL
 import kotlinx.android.synthetic.main.activity_search.eraseIV
 import kotlinx.android.synthetic.main.activity_search.keywordET
-import kotlinx.android.synthetic.main.activity_search.searchbarLL
+import kotlinx.android.synthetic.main.activity_search.searchBarContainer
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import org.json.JSONObject
 import java.io.IOException
@@ -50,7 +50,7 @@ class SearchActivity: Activity() {
         val drawable = containerLL.background as GradientDrawable
         drawable.setColor(Color.parseColor(Config.themeBackgroundColor))
 
-        val drawable2 = searchbarLL.background as GradientDrawable
+        val drawable2 = searchBarContainer.background as GradientDrawable
         drawable2.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
         drawable2.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
 

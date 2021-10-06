@@ -1,109 +1,80 @@
 package io.stipop.adapter
 
-import android.content.Context
-import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import com.bumptech.glide.Glide
-import io.stipop.*
-import io.stipop.custom.StipopImageView
-import io.stipop.view_store.AllStickerFragment
-import io.stipop.models.SPPackage
+import androidx.recyclerview.widget.RecyclerView
+import io.stipop.models.AllStickerDataSource
+import io.stipop.models.StickerPackage
+import io.stipop.viewholder.HeaderViewHolder
+import io.stipop.viewholder.HorizontalStickerThumbContainerViewHolder
+import io.stipop.viewholder.VerticalStickerThumbViewHolder
 
-class AllStickerAdapter(var myContext: Context, var view: Int, var data: ArrayList<SPPackage>, var allStickerFragment: AllStickerFragment): ArrayAdapter<SPPackage>(myContext, view, data) {
+class AllStickerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private lateinit var item: ViewHolder
+    private val dataSet = AllStickerDataSource()
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        lateinit var retView: View
-
-        if (convertView == null) {
-            retView = View.inflate(myContext, view, null)
-            item = ViewHolder(retView)
-            retView.tag = item
-        } else {
-            retView = convertView
-            item = convertView.tag as ViewHolder
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when(viewType){
+            TYPE_TRENDING-> {
+                HorizontalStickerThumbContainerViewHolder.create(parent)
+            }
+            TYPE_LIST_HEADER ->{
+                HeaderViewHolder.create(parent)
+            }
+            else ->{
+                VerticalStickerThumbViewHolder.create(parent)
+            }
         }
+    }
 
-        val packageObj = data[position]
-
-        item.packageNameTV.setTextColor(Config.getAllStickerPackageNameTextColor(myContext))
-        item.artistNameTV.setTextColor(Config.getTitleTextColor(myContext))
-
-
-        item.packageNameTV.text = packageObj.packageName
-        item.artistNameTV.text = packageObj.artistName
-
-        if (packageObj.isDownload) {
-            item.downloadIV.setImageResource(Config.getCompleteIconResourceId(myContext))
-
-            item.downloadIV.setIconDefaultsColor()
-        } else {
-            item.downloadIV.setImageResource(Config.getDownloadIconResourceId(myContext))
-
-            item.downloadIV.setTint()
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when(position){
+            0->{
+                (holder as HorizontalStickerThumbContainerViewHolder).bind("Trending", dataSet.trendingList)
+            }
+            1->{
+                (holder as HeaderViewHolder).bind("Result")
+            }
+            else->{
+                val alignedPosition = position - 2
+                (holder as VerticalStickerThumbViewHolder).bind(dataSet.defaultList[alignedPosition])
+            }
         }
+    }
 
-
-        item.downloadIV.setOnClickListener {
-            if (!packageObj.isDownload) {
-
-                if (Stipop.instance!!.delegate.canDownload(packageObj)) {
-                    allStickerFragment.getPackInfo(position, packageObj.packageId)
-                } else {
-                    Utils.alert(context, "Can not download!!!")
+    fun updateData(stickerPackages: List<StickerPackage>){
+        val prevItemCount = itemCount
+        dataSet.apply {
+            if(trendingList.isEmpty()){
+                run loop@{
+                    stickerPackages.forEachIndexed { _, stickerPackage ->
+                        if(trendingList.size > 7) return@loop
+                        trendingList.add(stickerPackage)
+                    }
                 }
+                defaultList.addAll(stickerPackages.subList(8, stickerPackages.size-1))
+                notifyItemRangeInserted(0, itemCount - 1)
+            } else {
+                defaultList.addAll(stickerPackages)
+                notifyItemRangeInserted(prevItemCount, itemCount - 1)
             }
         }
+    }
 
+    override fun getItemCount(): Int {
+        return dataSet.defaultList.size
+    }
 
-        if (Config.storeListType == "singular") {
-            Glide.with(myContext).load(packageObj.packageImg).into(item.packageIV!!)
-        } else {
-            item.stickersLL?.removeAllViews()
-
-            for (i in 0 until packageObj.stickers.size) {
-                val stickerObj = packageObj.stickers[i]
-
-                val layoutParams = ViewGroup.MarginLayoutParams(Utils.dpToPx(55f).toInt(), Utils.dpToPx(55f).toInt())
-                layoutParams.rightMargin = Utils.dpToPx(8f).toInt()
-
-                val iv = ImageView(myContext)
-                iv.layoutParams = layoutParams
-
-                Glide.with(myContext).load(stickerObj.stickerImg).into(iv)
-
-                item.stickersLL?.addView(iv)
-            }
+    override fun getItemViewType(position: Int): Int {
+        return when(position){
+            0 -> TYPE_TRENDING
+            1 -> TYPE_LIST_HEADER
+            else -> TYPE_LIST_ITEM
         }
-
-        return retView
     }
 
-    override fun getItem(position: Int): SPPackage {
-        return data[position]
+    companion object {
+        private const val TYPE_TRENDING = 1000
+        private const val TYPE_LIST_HEADER = 1001
+        private const val TYPE_LIST_ITEM = 1002
     }
-
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
-
-    override fun getCount(): Int {
-        return data.count()
-    }
-
-    fun setDownload(position: Int) {
-        data[position].download = "Y"
-    }
-
-    class ViewHolder(v: View) {
-        val packageIV: StipopImageView? = v.findViewById(R.id.packageIV) as StipopImageView?
-        val packageNameTV: TextView = v.findViewById(R.id.packageNameTV) as TextView
-        val artistNameTV: TextView = v.findViewById(R.id.artistNameTV) as TextView
-        val downloadIV: StipopImageView = v.findViewById(R.id.downloadIV) as StipopImageView
-
-        val stickersLL: LinearLayout? = v.findViewById(R.id.stickersLL) as LinearLayout?
-    }
-
 }

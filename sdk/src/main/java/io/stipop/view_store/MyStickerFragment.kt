@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.api.Injection
+import io.stipop.base.Injection
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.FragmentMyStickerBinding
 import io.stipop.viewholder.MyStickerItemHolderDelegate
@@ -57,9 +57,7 @@ class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
-            MyStickerViewModel::class.java
-        )
+        viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(MyStickerViewModel::class.java)
 
         myStickersRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)

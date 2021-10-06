@@ -9,52 +9,52 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.text.Editable
-import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.AbsListView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
-import io.stipop.view_common.StickerPackageActivity
-import io.stipop.adapter.AllStickerAdapter
-import io.stipop.adapter.PackageAdapter
-import io.stipop.adapter.PopularStickerAdapter
-import io.stipop.adapter.RecentKeywordAdapter
+import io.stipop.adapter.*
 import io.stipop.api.APIClient
-import io.stipop.custom.RecyclerDecoration
+import io.stipop.base.BaseFragment
+import io.stipop.base.Injection
 import io.stipop.custom.TagLayout
+import io.stipop.databinding.FragmentAllStickerBinding
+import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.SPPackage
+import io.stipop.view_common.StickerPackageActivity
+import io.stipop.viewmodel.AllStickerViewModel
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import org.json.JSONObject
 import java.io.IOException
 import java.net.URLEncoder
 
 
-class AllStickerFragment : Fragment() {
+class AllStickerFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = Bundle().apply {
         }.let { AllStickerFragment().apply { arguments = it } }
     }
 
-    lateinit var myContext: Context
+    private var binding: FragmentAllStickerBinding? = null
+    private lateinit var viewModel: AllStickerViewModel
+    private val allStickerAdapter: AllStickerAdapter by lazy { AllStickerAdapter() }
 
+    ////////////////////////////////////////////////////////////
     var packagePage = 2 // 1 Page -> Trending List
     var totalPage = 2
     lateinit var packageAdapter: PackageAdapter
     var packageData = ArrayList<SPPackage>()
 
-    lateinit var allStickerAdapter: AllStickerAdapter
+    lateinit var allStickerAdapterOld: AllStickerAdapterOld
     var allStickerData = ArrayList<SPPackage>()
 
     private var lastItemVisibleFlag = false
@@ -80,221 +80,215 @@ class AllStickerFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        binding = FragmentAllStickerBinding.inflate(inflater, container, false)
+        return binding!!.root
+    }
 
-        this.myContext = requireContext()
-
-        return inflater.inflate(R.layout.fragment_all_sticker, container, false)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(AllStickerViewModel::class.java)
 
-        val drawable = searchbarLL.background as GradientDrawable
+        binding?.allStickerRecyclerView?.adapter = allStickerAdapter
+        viewModel.getPackages()
+        viewModel.stickerPackages.observeForever { stickers ->
+            allStickerAdapter.updateData(stickers)
+        }
+
+        PackageDownloadEvent.liveData.observe(viewLifecycleOwner){
+            Log.d("STIPOP-DEBUG", "PACKAGE DOWNLOAD EVENT ID : $it")
+            // todo DOWNLOAD EVENT
+        }
+
+//        clearTextLL.setOnClickListener {
+//            keywordET.setText("")
+//            inputKeyword = ""
+//            Utils.hideKeyboard(requireContext())
+//            reloadData(true)
+//        }
+//
+//        keywordET.setOnClickListener {
+//            changeView(true)
+////            getRecentKeyword()
+//        }
+//
+//        keywordET.setOnFocusChangeListener { view, hasFocus ->
+//            if (hasFocus) {
+//                changeView(true)
+////                getRecentKeyword()
+//            }
+//        }
+//
+//        keywordET.addTextChangedListener(object : TextWatcher {
+//            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//
+//            }
+//
+//            override fun afterTextChanged(p0: Editable?) {
+//
+//            }
+//
+//            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//                inputKeyword = Utils.getString(keywordET)
+//            }
+//        })
+//
+//        keywordET.setOnEditorActionListener { v, actionId, event ->
+//            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+//                reloadData(inputKeyword.isEmpty())
+//            }
+//            false
+//        }
+//
+//
+//        packageAdapter = PackageAdapter(packageData, requireContext())
+//
+//        val mLayoutManager = LinearLayoutManager(requireContext())
+//        mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+//
+//        packageRV.layoutManager = mLayoutManager
+//        packageRV.addItemDecoration(RecyclerDecoration(Utils.dpToPx(6F).toInt()))
+//        packageRV.adapter = packageAdapter
+//
+//        packageAdapter.setOnItemClickListener(object : PackageAdapter.OnItemClickListener {
+//            override fun onItemClick(position: Int) {
+//                if (position > packageData.size) {
+//                    return
+//                }
+//
+//                val packageObj = packageData[position]
+//
+//                goDetail(packageObj.packageId)
+//            }
+//        })
+//
+//        if (Config.storeListType == "singular") {
+//            // B Type
+//            allStickerAdapterOld =
+//                AllStickerAdapterOld(requireContext(), R.layout.item_all_sticker_type_b, allStickerData, this)
+//        } else {
+//            // A Type
+//            allStickerAdapterOld =
+//                AllStickerAdapterOld(requireContext(), R.layout.item_all_sticker_type_a, allStickerData, this)
+//        }
+//
+//        stickerLV.adapter = allStickerAdapterOld
+//        stickerLV.setOnScrollListener(object : AbsListView.OnScrollListener {
+//            override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
+//                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > packagePage) {
+//                    packagePage += 1
+//                    val keyword = Utils.getString(keywordET)
+//                    loadPackageData(packagePage, keyword.isNotEmpty())
+//                }
+//            }
+//
+//            override fun onScroll(
+//                view: AbsListView?,
+//                firstVisibleItem: Int,
+//                visibleItemCount: Int,
+//                totalItemCount: Int
+//            ) {
+//                lastItemVisibleFlag =
+//                    (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount);
+//            }
+//
+//        })
+//        stickerLV.setOnItemClickListener { adapterView, view, i, l ->
+//            // position - 1 : addHeaderView 해줬기 때문!
+//            val position = i - 1
+//            if (position < 0 && position > allStickerData.size) {
+//                return@setOnItemClickListener
+//            }
+//
+//            val packageObj = allStickerData[position]
+//            goDetail(packageObj.packageId)
+//        }
+//
+//        allStickerAdapterOld.notifyDataSetChanged()
+//
+//
+//        val recentHeaderV = View.inflate(requireContext(), R.layout.header_recent_keyword, null)
+//        recentHeaderV.findViewById<TextView>(R.id.keywordClearTV).setOnClickListener {
+//            deleteKeyword(null)
+//        }
+//
+////        recentLV.addHeaderView(recentHeaderV)
+//
+//        val recentFooterV = View.inflate(requireContext(), R.layout.footer_recent_keyword, null)
+//        val popularStickerLL = recentFooterV.findViewById<LinearLayout>(R.id.popularStickerLL)
+//        val recommendedTagLL = recentFooterV.findViewById<LinearLayout>(R.id.recommendedTagLL)
+//        noneTV = recentFooterV.findViewById<TextView>(R.id.emptyTextView)
+//
+//        recommendedTagsTL = recentFooterV.findViewById(R.id.recommendedTagsTL)
+//        popularStickerRV = recentFooterV.findViewById(R.id.popularStickerRV)
+//
+//        popularStickerAdapter = PopularStickerAdapter(popularStickers, requireContext())
+//
+//        val mLayoutManager2 = LinearLayoutManager(requireContext())
+//        mLayoutManager2.orientation = LinearLayoutManager.HORIZONTAL
+//
+//        popularStickerRV.layoutManager = mLayoutManager2
+//        popularStickerRV.addItemDecoration(RecyclerDecoration(Utils.dpToPx(7F).toInt()))
+//        popularStickerRV.adapter = popularStickerAdapter
+//
+//        popularStickerAdapter.setOnItemClickListener(object :
+//            PopularStickerAdapter.OnItemClickListener {
+//            override fun onItemClick(position: Int) {
+//                if (position > popularStickers.size) {
+//                    return
+//                }
+//
+//                val packageObj = popularStickers[position]
+//
+//                goDetail(packageObj.packageId)
+//            }
+//        })
+//
+//        recentLV.addFooterView(recentFooterV)
+//
+//        recentKeywordAdapter =
+//            RecentKeywordAdapter(requireContext(), R.layout.item_recent_keyword, recentKeywords, this)
+//        recentLV.adapter = recentKeywordAdapter
+//        recentLV.setOnItemClickListener { adapterView, view, i, l ->
+//            // position - 1 : addHeaderView 해줬기 때문!
+//            val position = i - 1
+//            if (position < 0 && position > allStickerData.size) {
+//                return@setOnItemClickListener
+//            }
+//        }
+//
+//        loadPackageData(1, false)
+//
+//        loadPackageData(packagePage, false)
+//
+//        if (Config.storeRecommendedTagShow) {
+//            recommendedTagLL.visibility = View.VISIBLE
+//            popularStickerLL.visibility = View.GONE
+//
+//            getKeyword()
+//        } else {
+//            recommendedTagLL.visibility = View.GONE
+//            popularStickerLL.visibility = View.VISIBLE
+//
+//            getPopularStickers()
+//        }
+
+    }
+
+    override fun applyTheme() {
+        val drawable = searchBarContainer.background as GradientDrawable
         drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
         drawable.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
-
-        keywordET.setTextColor(Config.getSearchTitleTextColor(myContext))
-
-        searchIconIV.setImageResource(Config.getSearchbarResourceId(myContext))
-        eraseIV.setImageResource(Config.getEraseResourceId(myContext))
-
-
+        keywordET.setTextColor(Config.getSearchTitleTextColor(requireContext()))
+        searchIconIV.setImageResource(Config.getSearchbarResourceId(requireContext()))
+        eraseIV.setImageResource(Config.getEraseResourceId(requireContext()))
         searchIconIV.setIconDefaultsColor()
         eraseIV.setIconDefaultsColor()
-
-
-        val headerV = View.inflate(myContext, R.layout.header_all_sticker, null)
-
-        headerV.findViewById<View>(R.id.underLineV).setStipopUnderlineColor()
-        headerV.findViewById<TextView>(R.id.trendingTV)
-            .setTextColor(Config.getTitleTextColor(myContext))
-        headerV.findViewById<TextView>(R.id.stickersTV)
-            .setTextColor(Config.getTitleTextColor(myContext))
-
-
-        packageRV = headerV.findViewById(R.id.packageThumbRecyclerView)
-        trendingLL = headerV.findViewById(R.id.trendingLL)
-
-        stickerLV.addHeaderView(headerV)
-
-        clearTextLL.setOnClickListener {
-            keywordET.setText("")
-            inputKeyword = ""
-
-            Utils.hideKeyboard(myContext)
-
-            reloadData(true)
-        }
-
-        keywordET.setOnClickListener {
-            changeView(true)
-
-//            getRecentKeyword()
-        }
-
-        keywordET.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus) {
-                changeView(true)
-
-//                getRecentKeyword()
-            }
-        }
-
-        keywordET.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                inputKeyword = Utils.getString(keywordET)
-            }
-        })
-
-        keywordET.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                reloadData(inputKeyword.isEmpty())
-            }
-            false
-        }
-
-
-        packageAdapter = PackageAdapter(packageData, myContext)
-
-        val mLayoutManager = LinearLayoutManager(myContext)
-        mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-
-        packageRV.layoutManager = mLayoutManager
-        packageRV.addItemDecoration(RecyclerDecoration(Utils.dpToPx(6F).toInt()))
-        packageRV.adapter = packageAdapter
-
-        packageAdapter.setOnItemClickListener(object : PackageAdapter.OnItemClickListener {
-            override fun onItemClick(position: Int) {
-                if (position > packageData.size) {
-                    return
-                }
-
-                val packageObj = packageData[position]
-
-                goDetail(packageObj.packageId)
-            }
-        })
-
-        if (Config.storeListType == "singular") {
-            // B Type
-            allStickerAdapter =
-                AllStickerAdapter(myContext, R.layout.item_all_sticker_type_b, allStickerData, this)
-        } else {
-            // A Type
-            allStickerAdapter =
-                AllStickerAdapter(myContext, R.layout.item_all_sticker_type_a, allStickerData, this)
-        }
-
-        stickerLV.adapter = allStickerAdapter
-        stickerLV.setOnScrollListener(object : AbsListView.OnScrollListener {
-            override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
-                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > packagePage) {
-                    packagePage += 1
-                    val keyword = Utils.getString(keywordET)
-                    loadPackageData(packagePage, keyword.isNotEmpty())
-                }
-            }
-
-            override fun onScroll(
-                view: AbsListView?,
-                firstVisibleItem: Int,
-                visibleItemCount: Int,
-                totalItemCount: Int
-            ) {
-                lastItemVisibleFlag =
-                    (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount);
-            }
-
-        })
-        stickerLV.setOnItemClickListener { adapterView, view, i, l ->
-            // position - 1 : addHeaderView 해줬기 때문!
-            val position = i - 1
-            if (position < 0 && position > allStickerData.size) {
-                return@setOnItemClickListener
-            }
-
-            val packageObj = allStickerData[position]
-            goDetail(packageObj.packageId)
-        }
-
-        allStickerAdapter.notifyDataSetChanged()
-
-
-        val recentHeaderV = View.inflate(myContext, R.layout.header_recent_keyword, null)
-        recentHeaderV.findViewById<TextView>(R.id.keywordClearTV).setOnClickListener {
-            deleteKeyword(null)
-        }
-
-//        recentLV.addHeaderView(recentHeaderV)
-
-        val recentFooterV = View.inflate(myContext, R.layout.footer_recent_keyword, null)
-        val popularStickerLL = recentFooterV.findViewById<LinearLayout>(R.id.popularStickerLL)
-        val recommendedTagLL = recentFooterV.findViewById<LinearLayout>(R.id.recommendedTagLL)
-        noneTV = recentFooterV.findViewById<TextView>(R.id.emptyTextView)
-
-        recommendedTagsTL = recentFooterV.findViewById(R.id.recommendedTagsTL)
-        popularStickerRV = recentFooterV.findViewById(R.id.popularStickerRV)
-
-        popularStickerAdapter = PopularStickerAdapter(popularStickers, myContext)
-
-        val mLayoutManager2 = LinearLayoutManager(myContext)
-        mLayoutManager2.orientation = LinearLayoutManager.HORIZONTAL
-
-        popularStickerRV.layoutManager = mLayoutManager2
-        popularStickerRV.addItemDecoration(RecyclerDecoration(Utils.dpToPx(7F).toInt()))
-        popularStickerRV.adapter = popularStickerAdapter
-
-        popularStickerAdapter.setOnItemClickListener(object :
-            PopularStickerAdapter.OnItemClickListener {
-            override fun onItemClick(position: Int) {
-                if (position > popularStickers.size) {
-                    return
-                }
-
-                val packageObj = popularStickers[position]
-
-                goDetail(packageObj.packageId)
-            }
-        })
-
-        recentLV.addFooterView(recentFooterV)
-
-        recentKeywordAdapter =
-            RecentKeywordAdapter(myContext, R.layout.item_recent_keyword, recentKeywords, this)
-        recentLV.adapter = recentKeywordAdapter
-        recentLV.setOnItemClickListener { adapterView, view, i, l ->
-            // position - 1 : addHeaderView 해줬기 때문!
-            val position = i - 1
-            if (position < 0 && position > allStickerData.size) {
-                return@setOnItemClickListener
-            }
-        }
-
-        loadPackageData(1, false)
-
-        loadPackageData(packagePage, false)
-
-        if (Config.storeRecommendedTagShow) {
-            recommendedTagLL.visibility = View.VISIBLE
-            popularStickerLL.visibility = View.GONE
-
-            getKeyword()
-        } else {
-            recommendedTagLL.visibility = View.GONE
-            popularStickerLL.visibility = View.VISIBLE
-
-            getPopularStickers()
-        }
-
     }
 
 
@@ -316,14 +310,14 @@ class AllStickerFragment : Fragment() {
                         }
                     }
 
-                    allStickerAdapter.notifyDataSetChanged()
+                    allStickerAdapterOld.notifyDataSetChanged()
 
                 }
             }
         }
 
     fun goDetail(packageId: Int) {
-        val intent = Intent(myContext, StickerPackageActivity::class.java)
+        val intent = Intent(requireContext(), StickerPackageActivity::class.java)
         intent.putExtra("packageId", packageId)
         // startActivity(intent)
         startForResult.launch(intent)
@@ -366,7 +360,7 @@ class AllStickerFragment : Fragment() {
 
                 if (page == 1) {
                     allStickerData.clear()
-                    allStickerAdapter.notifyDataSetChanged()
+                    allStickerAdapterOld.notifyDataSetChanged()
                 }
             } else {
                 trendingLL?.visibility = View.VISIBLE
@@ -375,7 +369,7 @@ class AllStickerFragment : Fragment() {
                     packageAdapter.notifyDataSetChanged()
                 } else if (page == 2) {
                     allStickerData.clear()
-                    allStickerAdapter.notifyDataSetChanged()
+                    allStickerAdapterOld.notifyDataSetChanged()
                 }
             }
 
@@ -406,11 +400,11 @@ class AllStickerFragment : Fragment() {
                         if (page == 1 && !search) {
                             packageAdapter.notifyDataSetChanged()
                         } else {
-                            allStickerAdapter.notifyDataSetChanged()
+                            allStickerAdapterOld.notifyDataSetChanged()
                         }
 
                         if (page == 1) {
-                            stickerLV?.smoothScrollToPosition(0)
+//                            stickerLV?.smoothScrollToPosition(0)
                         }
                     }
 
@@ -423,7 +417,7 @@ class AllStickerFragment : Fragment() {
                     if (allStickerData.count() > 0) {
                         noneTV.visibility = View.GONE
                         changeView(false)
-                        Utils.hideKeyboard(myContext)
+                        Utils.hideKeyboard(requireContext())
                     } else {
                         noneTV.visibility = View.VISIBLE
                     }
@@ -434,7 +428,7 @@ class AllStickerFragment : Fragment() {
                     if (packageData.count() > 0) {
                         noneTV.visibility = View.GONE
                         changeView(false)
-                        Utils.hideKeyboard(myContext)
+                        Utils.hideKeyboard(requireContext())
                     } else {
                         noneTV.visibility = View.VISIBLE
                     }
@@ -442,7 +436,7 @@ class AllStickerFragment : Fragment() {
                     if (allStickerData.count() > 0) {
                         noneTV.visibility = View.GONE
                         changeView(false)
-                        Utils.hideKeyboard(myContext)
+                        Utils.hideKeyboard(requireContext())
                     } else {
                         noneTV.visibility = View.VISIBLE
                     }
@@ -516,9 +510,9 @@ class AllStickerFragment : Fragment() {
 
                     // download
                     PackUtils.downloadAndSaveLocal(requireActivity(), spPackage) {
-                        allStickerAdapter.setDownload(idx)
+                        allStickerAdapterOld.setDownload(idx)
                         Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
-                        allStickerAdapter.notifyDataSetChanged()
+                        allStickerAdapterOld.notifyDataSetChanged()
                     }
                 }
 
@@ -608,7 +602,7 @@ class AllStickerFragment : Fragment() {
 
                                 // haptics
                                 val vibrator =
-                                    this.myContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                                    this.requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                     vibrator.vibrate(
                                         VibrationEffect.createOneShot(
@@ -718,12 +712,12 @@ class AllStickerFragment : Fragment() {
     }
 
     private fun changeView(search: Boolean) {
-        if (search) {
-            recentLV?.visibility = View.VISIBLE
-            stickerLV?.visibility = View.GONE
-        } else {
-            recentLV?.visibility = View.GONE
-            stickerLV?.visibility = View.VISIBLE
-        }
+//        if (search) {
+//            recentLV?.visibility = View.VISIBLE
+//            stickerLV?.visibility = View.GONE
+//        } else {
+//            recentLV?.visibility = View.GONE
+//            stickerLV?.visibility = View.VISIBLE
+//        }
     }
 }

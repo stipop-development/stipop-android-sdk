@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.adapter.StickerAdapter
 import io.stipop.api.APIClient
+import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import kotlinx.android.synthetic.main.activity_sticker_package.*
@@ -182,4 +183,8 @@ class StickerPackageActivity: Activity() {
 
     }
 
+    override fun finish() {
+        PackageDownloadEvent.publishEvent(spPackage.packageId)
+        super.finish()
+    }
 }

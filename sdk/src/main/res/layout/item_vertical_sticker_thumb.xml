@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingHorizontal="7dp"
+    android:paddingVertical="10dp">
+
+    <io.stipop.custom.StipopImageView
+        android:id="@+id/stickerPackageThumb"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars"/>
+
+    <io.stipop.custom.StipopTextView
+        android:id="@+id/packageNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:lineHeight="22sp"
+        android:text=""
+        android:textColor="#374553"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/stickerPackageThumb"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Package Name"/>
+
+    <io.stipop.custom.StipopTextView
+        android:id="@+id/artistNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lineHeight="20sp"
+        android:text=""
+        android:textColor="#646f7c"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/stickerPackageThumb"
+        app:layout_constraintTop_toBottomOf="@+id/packageNameTextView"
+        tools:text="Artist Name"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

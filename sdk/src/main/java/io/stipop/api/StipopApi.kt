@@ -2,10 +2,13 @@ package io.stipop.api
 
 import io.stipop.Config
 import io.stipop.Constants
+import io.stipop.Stipop
+import io.stipop.Utils
 import io.stipop.models.body.InitSdkBody
 import io.stipop.models.body.OrderChangeBody
 import io.stipop.models.response.MyStickerOrderChangedResponse
 import io.stipop.models.response.MyStickerResponse
+import io.stipop.models.response.StickerPackageResponse
 import io.stipop.models.response.StipopResponse
 import okhttp3.*
 import okhttp3.Headers
@@ -48,6 +51,16 @@ interface StipopApi {
         @Path("userId") userId: String,
         @Path("packageId") packageId: Int
     ): StipopResponse
+
+    @GET("package")
+    suspend fun getTrendingStickerPackages(
+        @Query("userId") userId: String,
+        @Query("lang") lang: String,
+        @Query("countryCode") countryCode: String,
+        @Query("pageNumber") pageNumber: Int,
+        @Query("limit") limit: Int,
+        @Query("q") query: String? = null
+    ): Response<StickerPackageResponse>
 
     companion object {
         private const val BASE_URL = "https://messenger.stipop.io/v1/"
