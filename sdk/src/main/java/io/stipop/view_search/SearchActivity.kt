@@ -11,8 +11,8 @@ import android.view.View
 import android.widget.AbsListView
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.stipop.*
-import io.stipop.adapter.KeywordAdapter
-import io.stipop.adapter.StickerAdapter
+import io.stipop.adapter.legacy.KeywordAdapter
+import io.stipop.adapter.legacy.StickerAdapter
 import io.stipop.api.APIClient
 import io.stipop.custom.RecyclerDecoration
 import io.stipop.models.SPSticker

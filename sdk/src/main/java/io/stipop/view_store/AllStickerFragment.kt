@@ -1,27 +1,24 @@
 package io.stipop.view_store
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
 import io.stipop.adapter.*
+import io.stipop.adapter.legacy.PackageAdapter
+import io.stipop.adapter.legacy.RecentKeywordAdapter
 import io.stipop.api.APIClient
 import io.stipop.base.BaseFragment
 import io.stipop.base.Injection
@@ -30,7 +27,6 @@ import io.stipop.databinding.FragmentAllStickerBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.SPPackage
 import io.stipop.models.StickerPackage
-import io.stipop.view_common.StickerPackageActivity
 import io.stipop.viewholder.delegates.VerticalStickerThumbViewHolderDelegate
 import io.stipop.viewmodel.AllStickerViewModel
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
@@ -100,7 +96,7 @@ class AllStickerFragment : BaseFragment(), VerticalStickerThumbViewHolderDelegat
         }
 
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) { packageId ->
-            Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.download_done), Toast.LENGTH_SHORT).show()
             allStickerAdapter.updateDownloadState(packageId)
         }
 
@@ -110,7 +106,7 @@ class AllStickerFragment : BaseFragment(), VerticalStickerThumbViewHolderDelegat
 //            Utils.hideKeyboard(requireContext())
 //            reloadData(true)
 //        }
-
+//
 //        keywordET.setOnClickListener {
 //            changeView(true)
 ////            getRecentKeyword()

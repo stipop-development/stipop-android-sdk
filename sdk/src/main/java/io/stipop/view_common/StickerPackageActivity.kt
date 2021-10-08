@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import io.stipop.*
-import io.stipop.adapter.StickerAdapter
+import io.stipop.adapter.legacy.StickerAdapter
 import io.stipop.api.APIClient
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.SPPackage
@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_sticker_package.*
 import org.json.JSONObject
 import java.io.IOException
 
-class StickerPackageActivity: Activity() {
+class StickerPackageActivity : Activity() {
 
     lateinit var context: Context
 
@@ -30,7 +30,7 @@ class StickerPackageActivity: Activity() {
 
     var packageAnimated: String? = ""
 
-    lateinit var spPackage:SPPackage
+    lateinit var spPackage: SPPackage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +86,11 @@ class StickerPackageActivity: Activity() {
         val params = JSONObject()
         params.put("userId", Stipop.userId)
 
-        APIClient.get(this, APIClient.APIPath.PACKAGE.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
+        APIClient.get(
+            this,
+            APIClient.APIPath.PACKAGE.rawValue + "/$packageId",
+            params
+        ) { response: JSONObject?, e: IOException? ->
             // println(response)
 
             if (null != response) {
@@ -154,37 +158,26 @@ class StickerPackageActivity: Activity() {
             params.put("price", price)
         }
 
-        APIClient.post(this, APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
+        APIClient.post(
+            this,
+            APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId",
+            params
+        ) { response: JSONObject?, e: IOException? ->
             // println(response)
 
             if (null != response) {
-
                 val header = response.getJSONObject("header")
-
                 if (Utils.getString(header, "status") == "success") {
-
-                    val intent = Intent()
-                    intent.putExtra("packageId", packageId)
-                    setResult(RESULT_OK, intent)
-
-                    // download
                     PackUtils.downloadAndSaveLocal(this, this.spPackage) {
                         downloadTV.text = getString(R.string.downloaded)
                         downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
-
-                        Toast.makeText(context, getString(R.string.download_done), Toast.LENGTH_LONG).show()
+                        PackageDownloadEvent.publishEvent(packageId)
                     }
                 }
-
             } else {
                 e?.printStackTrace()
             }
         }
 
-    }
-
-    override fun finish() {
-        PackageDownloadEvent.publishEvent(spPackage.packageId)
-        super.finish()
     }
 }

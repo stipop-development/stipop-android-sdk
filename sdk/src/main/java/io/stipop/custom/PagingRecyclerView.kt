@@ -16,7 +16,7 @@ class PagingRecyclerView : RecyclerView {
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
     val paging = MutableSharedFlow<Int>()
-    private var page = 0
+    private var page = 1
 
     constructor(context: Context) : super(context)
 

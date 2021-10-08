@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
 import io.stipop.*
-import io.stipop.adapter.StickerPackageThumbnailAdapter
-import io.stipop.adapter.StickerAdapter
+import io.stipop.adapter.legacy.StickerPackageThumbnailAdapter
+import io.stipop.adapter.legacy.StickerAdapter
 import io.stipop.api.APIClient
 import io.stipop.databinding.ViewKeyboardPopupBinding
 import io.stipop.models.SPPackage

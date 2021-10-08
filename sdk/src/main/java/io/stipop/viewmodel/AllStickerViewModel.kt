@@ -18,9 +18,10 @@ class AllStickerViewModel(private val repository: AllStickerRepository) : ViewMo
     var stickerPackages: MutableLiveData<List<StickerPackage>> = MutableLiveData()
 
     fun registerRecyclerView(pagingRecyclerView: PagingRecyclerView?){
-        getPackages(0)
+        getPackages(1)
         viewModelScope.launch {
             pagingRecyclerView?.paging?.collectLatest {
+                Log.d("STIPOP-DEBUG", "PAGING : $it")
                 getPackages(it)
             }
         }

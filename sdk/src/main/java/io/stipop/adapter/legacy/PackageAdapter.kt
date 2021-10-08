@@ -1,7 +1,6 @@
-package io.stipop.adapter
+package io.stipop.adapter.legacy
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
@@ -11,13 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.Utils
 import io.stipop.custom.StipopImageView
 import io.stipop.models.SPPackage
 
 
-class PopularStickerAdapter(private val dataList: ArrayList<SPPackage>, val context: Context):
-    RecyclerView.Adapter<PopularStickerAdapter.ViewHolder>() {
+class PackageAdapter(private val dataList: ArrayList<SPPackage>, val context: Context):
+    RecyclerView.Adapter<PackageAdapter.ViewHolder>() {
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
@@ -33,11 +31,8 @@ class PopularStickerAdapter(private val dataList: ArrayList<SPPackage>, val cont
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
-        val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_popular_sticker, viewGroup, false)
-        val screenWidth = Utils.getScreenWidth(context)
-        val itemWidth = (screenWidth - Utils.dpToPx(48F) - (Utils.dpToPx(7F) * 3)) / 4
-        val itemHeight = (75 * itemWidth) / 73
-        view.layoutParams = ViewGroup.LayoutParams(itemWidth.toInt(), itemHeight.toInt())
+        val view = LayoutInflater.from(viewGroup.context)
+            .inflate(R.layout.item_package, viewGroup, false)
 
         return ViewHolder(view)
     }
@@ -50,8 +45,9 @@ class PopularStickerAdapter(private val dataList: ArrayList<SPPackage>, val cont
         Glide.with(context).load(packageImg).into(holder.imageIV)
 
         val drawable = holder.backgroundLL.background as GradientDrawable
-        val color = Color.parseColor(Config.themeGroupedContentBackgroundColor)
-        drawable.setColor(color)
+        Config.setStoreTrendingBackground(context, drawable)
+
+        // holder.backgroundLL.alpha = Config.storeTrendingOpacity.toFloat()
 
         holder.backgroundLL.setOnClickListener {
             if (mListener != null) {
