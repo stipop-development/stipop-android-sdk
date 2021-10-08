@@ -28,29 +28,10 @@ class AllStickerAdapterOld(var myContext: Context, var view: Int, var data: Arra
 
         val packageObj = data[position]
 
-        item.packageNameTV.setTextColor(Config.getAllStickerPackageNameTextColor(myContext))
-        item.artistNameTV.setTextColor(Config.getTitleTextColor(myContext))
-
-
-        item.packageNameTV.text = packageObj.packageName
-        item.artistNameTV.text = packageObj.artistName
-
-        if (packageObj.isDownload) {
-            item.downloadIV.setImageResource(Config.getCompleteIconResourceId(myContext))
-
-            item.downloadIV.setIconDefaultsColor()
-        } else {
-            item.downloadIV.setImageResource(Config.getDownloadIconResourceId(myContext))
-
-            item.downloadIV.setTint()
-        }
-
-
         item.downloadIV.setOnClickListener {
             if (!packageObj.isDownload) {
-
                 if (Stipop.instance!!.delegate.canDownload(packageObj)) {
-                    allStickerFragment.getPackInfo(position, packageObj.packageId)
+
                 } else {
                     Utils.alert(context, "Can not download!!!")
                 }

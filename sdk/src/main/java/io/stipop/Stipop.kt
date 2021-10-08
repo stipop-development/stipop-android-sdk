@@ -39,6 +39,8 @@ class Stipop(
 
     companion object {
 
+        lateinit var applicationContext: Context
+
         @SuppressLint("StaticFieldLeak")
         var instance: Stipop? = null
 
@@ -77,6 +79,7 @@ class Stipop(
                     Stipop(activity, stipopButton, delegate).apply {
                         connect()
                         instance = this
+                        applicationContext = activity.applicationContext
                     }
                 })
             }

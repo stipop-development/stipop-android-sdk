@@ -57,7 +57,7 @@
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <io.stipop.custom.PagingRecyclerView
             android:id="@+id/allStickerRecyclerView"
             android:layout_width="0dp"
             android:layout_height="0dp"

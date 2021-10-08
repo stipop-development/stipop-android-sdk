@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,15 +18,19 @@ import io.stipop.R
 import io.stipop.base.Injection
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.FragmentMyStickerBinding
-import io.stipop.viewholder.MyStickerItemHolderDelegate
+import io.stipop.viewholder.delegates.MyStickerItemHolderDelegate
 import io.stipop.custom.dragdrop.SimpleItemTouchHelperCallback
 import io.stipop.models.StickerPackage
 import io.stipop.adapter.MyStickerPackageAdapter
 import io.stipop.adapter.MyStickerPackageLoadStateAdapter
+import io.stipop.event.PackageDownloadEvent
 import io.stipop.viewmodel.MyStickerViewModel
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
@@ -38,7 +44,11 @@ class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
     private var binding: FragmentMyStickerBinding? = null
     private lateinit var viewModel: MyStickerViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
-    private val myStickerPackageAdapter: MyStickerPackageAdapter by lazy { MyStickerPackageAdapter(this) }
+    private val myStickerPackageAdapter: MyStickerPackageAdapter by lazy {
+        MyStickerPackageAdapter(
+            this
+        )
+    }
     private var searchJob: Job? = null
 
     override fun onCreateView(
@@ -57,26 +67,36 @@ class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(MyStickerViewModel::class.java)
+        viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
+            MyStickerViewModel::class.java
+        )
 
         myStickersRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = myStickerPackageAdapter.withLoadStateFooter(footer = MyStickerPackageLoadStateAdapter { myStickerPackageAdapter.retry() })
+            adapter =
+                myStickerPackageAdapter.withLoadStateFooter(footer = MyStickerPackageLoadStateAdapter { myStickerPackageAdapter.retry() })
         }
 
-        val wantVisibleSticker = savedInstanceState?.getBoolean(LAST_VISIBLE_SETTING) ?: DEFAULT_VISIBLE
+        val wantVisibleSticker =
+            savedInstanceState?.getBoolean(LAST_VISIBLE_SETTING) ?: DEFAULT_VISIBLE
         toggleMyStickers(wantVisibleSticker)
         initRequest(wantVisibleSticker)
 
-        itemTouchHelper = ItemTouchHelper(SimpleItemTouchHelperCallback(myStickerPackageAdapter)).apply {
-            attachToRecyclerView(myStickersRecyclerView)
-        }
+        itemTouchHelper =
+            ItemTouchHelper(SimpleItemTouchHelperCallback(myStickerPackageAdapter)).apply {
+                attachToRecyclerView(myStickersRecyclerView)
+            }
 
         viewModel.packageVisibilityChanged.observeForever {
             myStickerPackageAdapter.refresh()
             requireActivity().sendBroadcast(Intent().apply {
                 action = "${requireContext().packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION"
             })
+        }
+
+        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
+            myStickerPackageAdapter.refresh()
+            binding?.myStickersRecyclerView?.scrollToPosition(0)
         }
     }
 
@@ -155,13 +175,6 @@ class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
             }
             toggleMyStickers(stickerVisibleToggleTextView.isSelected)
         }
-
-//        lifecycleScope.launch {
-//            myStickerAdapter.loadStateFlow
-//                .distinctUntilChangedBy { it.refresh }
-//                .filter { it.refresh is LoadState.NotLoading }
-//                .collect { binding?.myStickersRecyclerView?.scrollToPosition(0) }
-//        }
     }
 
     private fun showEmptyList(show: Boolean) {

@@ -1,17 +1,19 @@
 package io.stipop.models
 
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import org.json.JSONObject
 
 data class StickerPackage(
     @SerializedName("packageId")
     var packageId: Int = -1,
     @SerializedName("artistName")
     var artistName: String? = null,
-    @SerializedName("download")
+    @SerializedName("isDownload")
     var download: String? = null,
     @SerializedName("language")
     var language: String? = null,
-    @SerializedName("new")
+    @SerializedName("isNew")
     var new: String? = null,
     @SerializedName("packageAnimated")
     var packageAnimated: String? = null,
@@ -23,7 +25,7 @@ data class StickerPackage(
     var packageKeywords: String? = null,
     @SerializedName("packageName")
     var packageName: String? = null,
-    @SerializedName("wish")
+    @SerializedName("isWish")
     var wish: String? = null,
     @SerializedName("isView")
     var view: String? = null,
@@ -36,7 +38,24 @@ data class StickerPackage(
         return this.view == "Y"
     }
 
-    fun getIsDownloaded(): Boolean{
+    fun isDownloaded(): Boolean{
         return this.download == "Y"
+    }
+
+    fun toSPPackage(): SPPackage{
+        return SPPackage(
+            artistName = artistName?:"",
+            download = download?:"",
+            language = language?:"",
+            new = new?:"",
+            packageAnimated = packageAnimated?:"",
+            packageCategory = packageCategory?:"",
+            packageId = packageId,
+            packageImg = packageImg?:"",
+            packageKeywords = packageKeywords?:"",
+            packageName = packageName?:"",
+            wish = wish?:"",
+            view = view?:""
+        )
     }
 }

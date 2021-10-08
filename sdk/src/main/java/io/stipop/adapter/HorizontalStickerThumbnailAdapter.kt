@@ -20,6 +20,12 @@ class HorizontalStickerThumbnailAdapter(private val dataSet: ArrayList<StickerPa
         return dataSet.size
     }
 
+    fun clearData() {
+        val prevCount = itemCount
+        dataSet.clear()
+        notifyItemRangeRemoved(0, prevCount-1)
+    }
+
     fun updateData(datas: List<StickerPackage>) {
         val prevCount = dataSet.size
         dataSet.addAll(datas)

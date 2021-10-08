@@ -33,14 +33,10 @@ class PopularStickerAdapter(private val dataList: ArrayList<SPPackage>, val cont
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.item_popular_sticker, viewGroup, false)
-
+        val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_popular_sticker, viewGroup, false)
         val screenWidth = Utils.getScreenWidth(context)
         val itemWidth = (screenWidth - Utils.dpToPx(48F) - (Utils.dpToPx(7F) * 3)) / 4
-
         val itemHeight = (75 * itemWidth) / 73
-
         view.layoutParams = ViewGroup.LayoutParams(itemWidth.toInt(), itemHeight.toInt())
 
         return ViewHolder(view)

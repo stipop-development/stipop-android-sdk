@@ -1,10 +1,12 @@
 package io.stipop
 
 import android.app.Activity
+import android.content.Context
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
+import io.stipop.models.StickerPackage
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
@@ -16,19 +18,50 @@ class PackUtils {
     companion object {
         fun downloadAndSaveLocal(activity:Activity, spPackage: SPPackage?, responseCallback: () -> Unit) {
             val stickers = spPackage!!.stickers
-
             // println(stickers)
-
             for (sticker in stickers) {
                 val packageId = sticker.packageId
                 val stickerImg = sticker.stickerImg
-
                 // val encodedString = URLEncoder.encode(stickerImg, "utf-8")
-
                 downloadImage(activity, packageId, stickerImg, sticker)
             }
-
             responseCallback()
+        }
+
+        fun downloadAndSaveLocalV2(stickerPackage: StickerPackage, responseCallback: () -> Unit) {
+            val stickers = stickerPackage.stickers
+            for (sticker in stickers) {
+                val packageId = sticker.packageId
+                val stickerImg = sticker.stickerImg
+                downloadImageV2(packageId, stickerImg, sticker)
+            }
+            responseCallback()
+        }
+
+        private fun downloadImageV2(packageId: Int, encodedString: String?, sticker: SPSticker){
+            if (encodedString == null) {
+                return
+            }
+            val fileName = encodedString.split(File.separator).last()
+            var filePath = File(Stipop.applicationContext.filesDir, "stipop/$packageId/$fileName")
+            if (filePath.isDirectory) {
+                filePath.delete()
+            }
+            filePath = File(Stipop.applicationContext.filesDir, "stipop/$packageId")
+            filePath.mkdirs()
+            filePath = File(Stipop.applicationContext.filesDir, "stipop/$packageId/$fileName")
+
+            // println("filePath : $filePath")
+
+            val policy = ThreadPolicy.Builder().permitAll().build()
+            StrictMode.setThreadPolicy(policy)
+
+            URL(encodedString).openStream().use { input ->
+                FileOutputStream(filePath).use { output ->
+                    input.copyTo(output)
+                }
+                saveStickerJsonData(Stipop.applicationContext, sticker, packageId)
+            }
         }
 
         private fun downloadImage(activity:Activity, packageId: Int, encodedString: String?, sticker: SPSticker) {
@@ -54,7 +87,6 @@ class PackUtils {
                 FileOutputStream(filePath).use { output ->
                     input.copyTo(output)
                 }
-
                 saveStickerJsonData(activity, sticker, packageId)
             }
         }
@@ -98,7 +130,7 @@ class PackUtils {
             return stickerList
         }
 
-        fun saveStickerJsonData(activity: Activity, sticker: SPSticker, packageId: Int) {
+        fun saveStickerJsonData(context: Context, sticker: SPSticker, packageId: Int) {
 
             val fileName = sticker.stickerImg!!.split(File.separator)!!.last()
 
@@ -109,7 +141,7 @@ class PackUtils {
                 jsonFileName = fileNames[0]
             }
 
-            val filePath = File(activity.filesDir, "stipop/$packageId/$jsonFileName.json")
+            val filePath = File(context.filesDir, "stipop/$packageId/$jsonFileName.json")
 
             val json = JSONObject()
             json.put("stickerId", sticker.stickerId)

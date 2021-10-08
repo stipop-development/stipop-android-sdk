@@ -62,6 +62,16 @@ interface StipopApi {
         @Query("q") query: String? = null
     ): Response<StickerPackageResponse>
 
+    @POST("download/{packageId}")
+    suspend fun postDownloadStickers(
+        @Path("packageId") packageId: Int,
+        @Query("userId") userId: String,
+        @Query("isPurchase") isPurchase: String,
+        @Query("countryCode") countryCode: String,
+        @Query("lang") lang: String,
+        @Query("price") price: Double? = null,
+    ): Response<StipopResponse>
+
     companion object {
         private const val BASE_URL = "https://messenger.stipop.io/v1/"
         fun create(): StipopApi {

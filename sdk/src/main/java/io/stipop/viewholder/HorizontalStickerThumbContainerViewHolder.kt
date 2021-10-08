@@ -1,12 +1,13 @@
 package io.stipop.viewholder
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.R
+import io.stipop.Utils
 import io.stipop.adapter.HorizontalStickerThumbnailAdapter
+import io.stipop.custom.RecyclerDecoration
 import io.stipop.databinding.ItemHorizontalStickerThumbContainerBinding
 import io.stipop.models.StickerPackage
 import io.stipop.setStipopUnderlineColor
@@ -15,19 +16,22 @@ class HorizontalStickerThumbContainerViewHolder(private val binding: ItemHorizon
     RecyclerView.ViewHolder(binding.root) {
 
     private val adapter: HorizontalStickerThumbnailAdapter by lazy { HorizontalStickerThumbnailAdapter() }
+    private val decoration = RecyclerDecoration(Utils.dpToPx(7F).toInt())
 
     init {
         with(binding) {
             underLine.setStipopUnderlineColor()
             titleTextView.setTextColor(Config.getTitleTextColor(itemView.context))
+            recyclerView.removeItemDecoration(decoration)
+            recyclerView.addItemDecoration(decoration)
         }
     }
 
     fun bind(title: String, stickerPackages: List<StickerPackage>) {
-        Log.d("STIPOP-DEBUG", "Trending 개수 : ${stickerPackages.size}")
         with(binding) {
             titleTextView.text = title
             recyclerView.adapter = adapter
+            adapter.clearData()
             adapter.updateData(stickerPackages)
         }
     }

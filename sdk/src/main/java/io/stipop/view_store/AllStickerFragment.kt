@@ -29,7 +29,9 @@ import io.stipop.custom.TagLayout
 import io.stipop.databinding.FragmentAllStickerBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.SPPackage
+import io.stipop.models.StickerPackage
 import io.stipop.view_common.StickerPackageActivity
+import io.stipop.viewholder.delegates.VerticalStickerThumbViewHolderDelegate
 import io.stipop.viewmodel.AllStickerViewModel
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import org.json.JSONObject
@@ -37,7 +39,7 @@ import java.io.IOException
 import java.net.URLEncoder
 
 
-class AllStickerFragment : BaseFragment() {
+class AllStickerFragment : BaseFragment(), VerticalStickerThumbViewHolderDelegate {
 
     companion object {
         fun newInstance() = Bundle().apply {
@@ -46,19 +48,12 @@ class AllStickerFragment : BaseFragment() {
 
     private var binding: FragmentAllStickerBinding? = null
     private lateinit var viewModel: AllStickerViewModel
-    private val allStickerAdapter: AllStickerAdapter by lazy { AllStickerAdapter() }
+    private val allStickerAdapter: AllStickerAdapter by lazy { AllStickerAdapter(this) }
 
     ////////////////////////////////////////////////////////////
-    var packagePage = 2 // 1 Page -> Trending List
-    var totalPage = 2
+
     lateinit var packageAdapter: PackageAdapter
     var packageData = ArrayList<SPPackage>()
-
-    lateinit var allStickerAdapterOld: AllStickerAdapterOld
-    var allStickerData = ArrayList<SPPackage>()
-
-    private var lastItemVisibleFlag = false
-
     lateinit var packageRV: RecyclerView
     lateinit var trendingLL: LinearLayout
 
@@ -66,7 +61,6 @@ class AllStickerFragment : BaseFragment() {
     var recentKeywords = ArrayList<String>()
 
     var popularStickers = ArrayList<SPPackage>()
-    lateinit var popularStickerAdapter: PopularStickerAdapter
 
     lateinit var recommendedTagsTL: TagLayout
     lateinit var popularStickerRV: RecyclerView
@@ -87,22 +81,27 @@ class AllStickerFragment : BaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        PackageDownloadEvent.onDestroy()
         binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(AllStickerViewModel::class.java)
+        viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
+            AllStickerViewModel::class.java
+        )
 
         binding?.allStickerRecyclerView?.adapter = allStickerAdapter
-        viewModel.getPackages()
+        binding?.allStickerRecyclerView?.setUpScrollListener()
+
+        viewModel.registerRecyclerView(binding?.allStickerRecyclerView)
         viewModel.stickerPackages.observeForever { stickers ->
             allStickerAdapter.updateData(stickers)
         }
 
-        PackageDownloadEvent.liveData.observe(viewLifecycleOwner){
-            Log.d("STIPOP-DEBUG", "PACKAGE DOWNLOAD EVENT ID : $it")
-            // todo DOWNLOAD EVENT
+        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) { packageId ->
+            Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_SHORT).show()
+            allStickerAdapter.updateDownloadState(packageId)
         }
 
 //        clearTextLL.setOnClickListener {
@@ -111,7 +110,7 @@ class AllStickerFragment : BaseFragment() {
 //            Utils.hideKeyboard(requireContext())
 //            reloadData(true)
 //        }
-//
+
 //        keywordET.setOnClickListener {
 //            changeView(true)
 ////            getRecentKeyword()
@@ -146,70 +145,13 @@ class AllStickerFragment : BaseFragment() {
 //        }
 //
 //
-//        packageAdapter = PackageAdapter(packageData, requireContext())
-//
-//        val mLayoutManager = LinearLayoutManager(requireContext())
-//        mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-//
-//        packageRV.layoutManager = mLayoutManager
-//        packageRV.addItemDecoration(RecyclerDecoration(Utils.dpToPx(6F).toInt()))
-//        packageRV.adapter = packageAdapter
-//
-//        packageAdapter.setOnItemClickListener(object : PackageAdapter.OnItemClickListener {
-//            override fun onItemClick(position: Int) {
-//                if (position > packageData.size) {
-//                    return
-//                }
-//
-//                val packageObj = packageData[position]
-//
-//                goDetail(packageObj.packageId)
-//            }
-//        })
-//
 //        if (Config.storeListType == "singular") {
 //            // B Type
-//            allStickerAdapterOld =
-//                AllStickerAdapterOld(requireContext(), R.layout.item_all_sticker_type_b, allStickerData, this)
+//            allStickerAdapterOld = AllStickerAdapterOld(requireContext(), R.layout.item_all_sticker_type_b, allStickerData, this)
 //        } else {
 //            // A Type
-//            allStickerAdapterOld =
-//                AllStickerAdapterOld(requireContext(), R.layout.item_all_sticker_type_a, allStickerData, this)
+//            allStickerAdapterOld = AllStickerAdapterOld(requireContext(), R.layout.item_all_sticker_type_a, allStickerData, this)
 //        }
-//
-//        stickerLV.adapter = allStickerAdapterOld
-//        stickerLV.setOnScrollListener(object : AbsListView.OnScrollListener {
-//            override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
-//                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > packagePage) {
-//                    packagePage += 1
-//                    val keyword = Utils.getString(keywordET)
-//                    loadPackageData(packagePage, keyword.isNotEmpty())
-//                }
-//            }
-//
-//            override fun onScroll(
-//                view: AbsListView?,
-//                firstVisibleItem: Int,
-//                visibleItemCount: Int,
-//                totalItemCount: Int
-//            ) {
-//                lastItemVisibleFlag =
-//                    (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount);
-//            }
-//
-//        })
-//        stickerLV.setOnItemClickListener { adapterView, view, i, l ->
-//            // position - 1 : addHeaderView 해줬기 때문!
-//            val position = i - 1
-//            if (position < 0 && position > allStickerData.size) {
-//                return@setOnItemClickListener
-//            }
-//
-//            val packageObj = allStickerData[position]
-//            goDetail(packageObj.packageId)
-//        }
-//
-//        allStickerAdapterOld.notifyDataSetChanged()
 //
 //
 //        val recentHeaderV = View.inflate(requireContext(), R.layout.header_recent_keyword, null)
@@ -223,36 +165,10 @@ class AllStickerFragment : BaseFragment() {
 //        val popularStickerLL = recentFooterV.findViewById<LinearLayout>(R.id.popularStickerLL)
 //        val recommendedTagLL = recentFooterV.findViewById<LinearLayout>(R.id.recommendedTagLL)
 //        noneTV = recentFooterV.findViewById<TextView>(R.id.emptyTextView)
-//
 //        recommendedTagsTL = recentFooterV.findViewById(R.id.recommendedTagsTL)
-//        popularStickerRV = recentFooterV.findViewById(R.id.popularStickerRV)
-//
-//        popularStickerAdapter = PopularStickerAdapter(popularStickers, requireContext())
-//
-//        val mLayoutManager2 = LinearLayoutManager(requireContext())
-//        mLayoutManager2.orientation = LinearLayoutManager.HORIZONTAL
-//
-//        popularStickerRV.layoutManager = mLayoutManager2
-//        popularStickerRV.addItemDecoration(RecyclerDecoration(Utils.dpToPx(7F).toInt()))
-//        popularStickerRV.adapter = popularStickerAdapter
-//
-//        popularStickerAdapter.setOnItemClickListener(object :
-//            PopularStickerAdapter.OnItemClickListener {
-//            override fun onItemClick(position: Int) {
-//                if (position > popularStickers.size) {
-//                    return
-//                }
-//
-//                val packageObj = popularStickers[position]
-//
-//                goDetail(packageObj.packageId)
-//            }
-//        })
 //
 //        recentLV.addFooterView(recentFooterV)
-//
-//        recentKeywordAdapter =
-//            RecentKeywordAdapter(requireContext(), R.layout.item_recent_keyword, recentKeywords, this)
+//        recentKeywordAdapter = RecentKeywordAdapter(requireContext(), R.layout.item_recent_keyword, recentKeywords, this)
 //        recentLV.adapter = recentKeywordAdapter
 //        recentLV.setOnItemClickListener { adapterView, view, i, l ->
 //            // position - 1 : addHeaderView 해줬기 때문!
@@ -261,10 +177,6 @@ class AllStickerFragment : BaseFragment() {
 //                return@setOnItemClickListener
 //            }
 //        }
-//
-//        loadPackageData(1, false)
-//
-//        loadPackageData(packagePage, false)
 //
 //        if (Config.storeRecommendedTagShow) {
 //            recommendedTagLL.visibility = View.VISIBLE
@@ -291,236 +203,113 @@ class AllStickerFragment : BaseFragment() {
         eraseIV.setIconDefaultsColor()
     }
 
-
-    val startForResult =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val intent = result.data // Handle the Intent //do stuff here
-                if (null != intent) {
-                    val packageId = intent.getIntExtra("packageId", -1)
-                    if (packageId < 0) {
-                        return@registerForActivityResult
-                    }
-
-                    for (i in 0 until allStickerData.size) {
-                        val item = allStickerData[i]
-                        if (item.packageId == packageId) {
-                            item.download = "Y"
-                            break
-                        }
-                    }
-
-                    allStickerAdapterOld.notifyDataSetChanged()
-
-                }
-            }
-        }
-
-    fun goDetail(packageId: Int) {
-        val intent = Intent(requireContext(), StickerPackageActivity::class.java)
-        intent.putExtra("packageId", packageId)
-        // startActivity(intent)
-        startForResult.launch(intent)
-    }
-
-    fun reloadData(all: Boolean) {
-        if (all) {
-            loadPackageData(1, false)
-
-            packagePage = 2
-        } else {
-            packagePage = 1
-        }
-
-        totalPage = packagePage
-        loadPackageData(packagePage, !all)
-    }
-
     fun loadPackageData(page: Int, search: Boolean) {
-
-        val params = JSONObject()
-        params.put("userId", Stipop.userId)
-        params.put("pageNumber", page)
-        params.put("lang", Stipop.lang)
-        params.put("countryCode", Stipop.countryCode)
-        params.put("limit", 12)
-        params.put("q", Utils.getString(keywordET))
-
-        APIClient.get(
-            requireActivity(),
-            APIClient.APIPath.PACKAGE.rawValue,
-            params
-        ) { response: JSONObject?, e: IOException? ->
-
-            if (search) {
-                trendingLL.visibility = View.GONE
-
-                packageData.clear()
-                packageAdapter.notifyDataSetChanged()
-
-                if (page == 1) {
-                    allStickerData.clear()
-                    allStickerAdapterOld.notifyDataSetChanged()
-                }
-            } else {
-                trendingLL?.visibility = View.VISIBLE
-                if (page == 1) {
-                    packageData.clear()
-                    packageAdapter.notifyDataSetChanged()
-                } else if (page == 2) {
-                    allStickerData.clear()
-                    allStickerAdapterOld.notifyDataSetChanged()
-                }
-            }
-
-            if (null != response) {
-
-                if (!response.isNull("body")) {
-                    val body = response.getJSONObject("body")
-
-                    if (!body.isNull("pageMap")) {
-                        val pageMap = body.getJSONObject("pageMap")
-                        totalPage = Utils.getInt(pageMap, "pageCount")
-                    }
-
-                    if (!body.isNull("packageList")) {
-                        val packageList = body.getJSONArray("packageList")
-
-                        for (i in 0 until packageList.length()) {
-                            val item = packageList.get(i) as JSONObject
-
-                            val spPackage = SPPackage(item)
-                            if (page == 1 && !search) {
-                                packageData.add(spPackage)
-                            } else {
-                                allStickerData.add(spPackage)
-                            }
-                        }
-
-                        if (page == 1 && !search) {
-                            packageAdapter.notifyDataSetChanged()
-                        } else {
-                            allStickerAdapterOld.notifyDataSetChanged()
-                        }
-
-                        if (page == 1) {
-//                            stickerLV?.smoothScrollToPosition(0)
-                        }
-                    }
-
-                }
-
-            }
-
-            if (search) {
-                if (page == 1) {
-                    if (allStickerData.count() > 0) {
-                        noneTV.visibility = View.GONE
-                        changeView(false)
-                        Utils.hideKeyboard(requireContext())
-                    } else {
-                        noneTV.visibility = View.VISIBLE
-                    }
-                }
-            } else {
-                trendingLL.visibility = View.VISIBLE
-                if (page == 1) {
-                    if (packageData.count() > 0) {
-                        noneTV.visibility = View.GONE
-                        changeView(false)
-                        Utils.hideKeyboard(requireContext())
-                    } else {
-                        noneTV.visibility = View.VISIBLE
-                    }
-                } else if (page == 2) {
-                    if (allStickerData.count() > 0) {
-                        noneTV.visibility = View.GONE
-                        changeView(false)
-                        Utils.hideKeyboard(requireContext())
-                    } else {
-                        noneTV.visibility = View.VISIBLE
-                    }
-                }
-            }
-        }
+//        val params = JSONObject()
+//        params.put("userId", Stipop.userId)
+//        params.put("pageNumber", page)
+//        params.put("lang", Stipop.lang)
+//        params.put("countryCode", Stipop.countryCode)
+//        params.put("limit", 12)
+//        params.put("q", Utils.getString(keywordET))
+//
+//        APIClient.get(
+//            requireActivity(),
+//            APIClient.APIPath.PACKAGE.rawValue,
+//            params
+//        ) { response: JSONObject?, e: IOException? ->
+//
+//            if (search) {
+//                trendingLL.visibility = View.GONE
+//
+//                packageData.clear()
+//                packageAdapter.notifyDataSetChanged()
+//
+//                if (page == 1) {
+//                    allStickerData.clear()
+//                    allStickerAdapterOld.notifyDataSetChanged()
+//                }
+//            } else {
+//                trendingLL?.visibility = View.VISIBLE
+//                if (page == 1) {
+//                    packageData.clear()
+//                    packageAdapter.notifyDataSetChanged()
+//                } else if (page == 2) {
+//                    allStickerData.clear()
+//                    allStickerAdapterOld.notifyDataSetChanged()
+//                }
+//            }
+//
+//            if (null != response) {
+//
+//                if (!response.isNull("body")) {
+//                    val body = response.getJSONObject("body")
+//
+//                    if (!body.isNull("pageMap")) {
+//                        val pageMap = body.getJSONObject("pageMap")
+//                    }
+//
+//                    if (!body.isNull("packageList")) {
+//                        val packageList = body.getJSONArray("packageList")
+//
+//                        for (i in 0 until packageList.length()) {
+//                            val item = packageList.get(i) as JSONObject
+//
+//                            val spPackage = SPPackage(item)
+//                            if (page == 1 && !search) {
+//                                packageData.add(spPackage)
+//                            } else {
+//                                allStickerData.add(spPackage)
+//                            }
+//                        }
+//
+//                        if (page == 1 && !search) {
+//                            packageAdapter.notifyDataSetChanged()
+//                        } else {
+//                            allStickerAdapterOld.notifyDataSetChanged()
+//                        }
+//
+//                        if (page == 1) {
+////                            stickerLV?.smoothScrollToPosition(0)
+//                        }
+//                    }
+//
+//                }
+//
+//            }
+//
+//            if (search) {
+//                if (page == 1) {
+//                    if (allStickerData.count() > 0) {
+//                        noneTV.visibility = View.GONE
+//                        changeView(false)
+//                        Utils.hideKeyboard(requireContext())
+//                    } else {
+//                        noneTV.visibility = View.VISIBLE
+//                    }
+//                }
+//            } else {
+//                trendingLL.visibility = View.VISIBLE
+//                if (page == 1) {
+//                    if (packageData.count() > 0) {
+//                        noneTV.visibility = View.GONE
+//                        changeView(false)
+//                        Utils.hideKeyboard(requireContext())
+//                    } else {
+//                        noneTV.visibility = View.VISIBLE
+//                    }
+//                } else if (page == 2) {
+//                    if (allStickerData.count() > 0) {
+//                        noneTV.visibility = View.GONE
+//                        changeView(false)
+//                        Utils.hideKeyboard(requireContext())
+//                    } else {
+//                        noneTV.visibility = View.VISIBLE
+//                    }
+//                }
+//            }
+//        }
     }
 
-    fun getPackInfo(idx: Int, packageId: Int) {
-
-        val params = JSONObject()
-        params.put("userId", Stipop.userId)
-
-        APIClient.get(
-            requireActivity(),
-            APIClient.APIPath.PACKAGE.rawValue + "/${packageId}",
-            params
-        ) { response: JSONObject?, e: IOException? ->
-            // println(response)
-
-            if (null != response) {
-
-                val header = response.getJSONObject("header")
-
-                if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
-                    val body = response.getJSONObject("body")
-                    val packageObj = body.getJSONObject("package")
-
-                    val spPackage = SPPackage(packageObj)
-
-                    downloadPackage(idx, spPackage)
-                }
-
-            } else {
-                e?.printStackTrace()
-            }
-        }
-
-    }
-
-    fun downloadPackage(idx: Int, spPackage: SPPackage) {
-
-        val params = JSONObject()
-        params.put("userId", Stipop.userId)
-        params.put("isPurchase", Config.allowPremium)
-        params.put("lang", Stipop.lang)
-        params.put("countryCode", Stipop.countryCode)
-
-        if (Config.allowPremium == "Y") {
-            // 움직이지 않는 스티커
-            var price = Config.pngPrice
-
-            if (spPackage.packageAnimated == "Y") {
-                // 움직이는 스티커
-                price = Config.gifPrice
-            }
-            params.put("price", price)
-        }
-
-        APIClient.post(
-            requireActivity(),
-            APIClient.APIPath.DOWNLOAD.rawValue + "/${spPackage.packageId}",
-            params
-        ) { response: JSONObject?, e: IOException? ->
-
-            if (null != response) {
-
-                val header = response.getJSONObject("header")
-
-                if (Utils.getString(header, "status") == "success") {
-
-                    // download
-                    PackUtils.downloadAndSaveLocal(requireActivity(), spPackage) {
-                        allStickerAdapterOld.setDownload(idx)
-                        Toast.makeText(context, "다운로드 완료!", Toast.LENGTH_LONG).show()
-                        allStickerAdapterOld.notifyDataSetChanged()
-                    }
-                }
-
-            } else {
-                e?.printStackTrace()
-            }
-        }
-    }
 
     fun getRecentKeyword() {
 
@@ -602,7 +391,8 @@ class AllStickerFragment : BaseFragment() {
 
                                 // haptics
                                 val vibrator =
-                                    this.requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                                    this.requireContext()
+                                        .getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                     vibrator.vibrate(
                                         VibrationEffect.createOneShot(
@@ -615,7 +405,7 @@ class AllStickerFragment : BaseFragment() {
                                 changeView(false)
                                 inputKeyword = keyword
                                 keywordET.setText(keyword)
-                                reloadData(false)
+//                                reloadData(false)
                             }
 
                             recommendedTagsTL.addView(tagView)
@@ -656,9 +446,6 @@ class AllStickerFragment : BaseFragment() {
                             val item = packageList.get(i) as JSONObject
                             popularStickers.add(SPPackage(item))
                         }
-
-                        popularStickerAdapter.notifyDataSetChanged()
-
                     }
 
                 }
@@ -719,5 +506,9 @@ class AllStickerFragment : BaseFragment() {
 //            recentLV?.visibility = View.GONE
 //            stickerLV?.visibility = View.VISIBLE
 //        }
+    }
+
+    override fun onDownloadClicked(position: Int, stickerPackage: StickerPackage) {
+        viewModel.requestDownloadPackage(stickerPackage)
     }
 }
