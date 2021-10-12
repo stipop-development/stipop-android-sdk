@@ -44,7 +44,9 @@ class AllStickerRepository(private val apiService: StipopApi): BaseRepository() 
                 userId = Stipop.userId,
                 lang = Stipop.lang,
                 countryCode = Stipop.countryCode,
-                price = price
+                price = price,
+                entrancePoint = Constants.Point.STORE,
+                eventPoint = Constants.Point.STORE
             )
         })
         if(result.header.isSuccess()){

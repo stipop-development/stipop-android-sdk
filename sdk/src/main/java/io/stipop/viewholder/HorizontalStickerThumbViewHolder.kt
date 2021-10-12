@@ -27,6 +27,7 @@ class HorizontalStickerThumbViewHolder(private val binding: ItemHorizontalSticke
             stickerPackage?.packageId?.let {
                 Intent(itemView.context, StickerPackageActivity::class.java).apply {
                     putExtra(Constants.IntentKey.PACKAGE_ID, it)
+                    putExtra(Constants.IntentKey.ENTRANCE_POINT, Constants.Point.TREND)
                 }.run {
                     itemView.context.startActivity(this)
                 }

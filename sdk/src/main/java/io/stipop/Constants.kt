@@ -7,6 +7,7 @@ object Constants {
     object IntentKey {
         const val STARTING_TAB_POSITION = "tab"
         const val PACKAGE_ID = "packageId"
+        const val ENTRANCE_POINT = "entrancePoint"
     }
     object ApiParams {
         const val ApiKey = "apikey"
@@ -20,5 +21,15 @@ object Constants {
 //        const val SANDBOX_URL = "https://messenger.stipop.io/v1/"
         const val BASE_URL = "https://messenger.stipop.io/v1/"
         const val PLATFORM = "android-sdk"
+    }
+    object Point {
+        const val DEFAULT = "default" // 스토어
+        const val STORE = "store"
+        const val SEARCH = "searching" // 검색결과
+        const val TREND = "trending" // 인기이모티콘
+        const val MY_STICKER = "mysticker"
+        const val PACKAGE_DETAIL = "detail"
+        const val PICKER_VIEW = "picker"
+        const val STORE_VIEW = "search"
     }
 }

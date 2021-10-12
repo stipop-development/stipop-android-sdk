@@ -1,20 +1,21 @@
 package io.stipop.api
 
 import android.os.Build
-import android.util.Log
 import com.google.gson.Gson
-import io.stipop.*
+import io.stipop.BuildConfig
+import io.stipop.Config
+import io.stipop.Constants
 import io.stipop.models.body.InitSdkBody
 import io.stipop.models.body.OrderChangeBody
 import io.stipop.models.body.StipopMetaHeader
+import io.stipop.models.body.UserIdBody
 import io.stipop.models.response.MyStickerOrderChangedResponse
 import io.stipop.models.response.MyStickerResponse
 import io.stipop.models.response.StickerPackageResponse
 import io.stipop.models.response.StipopResponse
-import io.stipop.BuildConfig
-import io.stipop.models.body.UserIdBody
-import okhttp3.*
+import okhttp3.Authenticator
 import okhttp3.Headers
+import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
 import retrofit2.Response
@@ -73,19 +74,34 @@ interface StipopApi {
         @Query("countryCode") countryCode: String,
         @Query("lang") lang: String,
         @Query("price") price: Double? = null,
+        @Query("entrance_point") entrancePoint: String? = null,
+        @Query("event_point") eventPoint: String? = null,
     ): Response<StipopResponse>
 
     @POST("sdk/track/config")
     suspend fun trackConfig(@Body userIdBody: UserIdBody): Response<StipopResponse>
 
+    @POST("sdk/track/view/picker")
+    suspend fun trackViewPicker(@Body userIdBody: UserIdBody): Response<StipopResponse>
+
+    @POST("sdk/track/view/search")
+    suspend fun trackViewSearch(@Body userIdBody: UserIdBody): Response<StipopResponse>
+
+    @POST("sdk/track/view/store")
+    suspend fun trackViewStore(@Body userIdBody: UserIdBody): Response<StipopResponse>
+
+    @POST("sdk/track/view/mysticker")
+    suspend fun trackViewMySticker(@Body userIdBody: UserIdBody): Response<StipopResponse>
+
+    @POST("sdk/track/view/package/{entrance_point}")
+    suspend fun trackViewPackage(@Body userIdBody: UserIdBody, @Path("entrance_point") entrancePoint: String?=Constants.Point.STORE): Response<StipopResponse>
+
+    @POST("analytics/send/{stickerId}")
+    suspend fun trackUsingSticker(@Query("event_point") eventPoint: String? = null): Response<StipopResponse>
+
     companion object {
         fun create(): StipopApi {
             val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BASIC }
-            val requestInterceptor = Interceptor { chain ->
-                val original = chain.request()
-                val modifiedUrl = chain.request().url.newBuilder().addQueryParameter(Constants.ApiParams.Platform, Constants.Value.PLATFORM).build()
-                chain.proceed(original.newBuilder().url(modifiedUrl).build())
-            }
             val headers = Headers.Builder()
                 .add(Constants.ApiParams.ApiKey, if(BuildConfig.DEBUG) Constants.Value.SANDBOX_APIKEY else Config.apikey)
                 .add(Constants.ApiParams.SMetadata, Gson().toJson(StipopMetaHeader(platform = Constants.Value.PLATFORM, sdk_version = BuildConfig.SDK_VERSION_NAME, os_version = Build.VERSION.SDK_INT.toString())))
@@ -99,10 +115,8 @@ interface StipopApi {
             val client = OkHttpClient.Builder()
                 .authenticator(authenticator)
                 .addInterceptor(loggingInterceptor)
-                .addInterceptor(requestInterceptor)
                 .followRedirects(false)
                 .followSslRedirects(false)
-                .retryOnConnectionFailure(false)
                 .build()
             return Retrofit.Builder()
                 .baseUrl(if(BuildConfig.DEBUG) Constants.Value.SANDBOX_URL else Constants.Value.BASE_URL)

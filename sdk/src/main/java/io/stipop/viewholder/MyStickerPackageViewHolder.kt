@@ -40,6 +40,7 @@ class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItem
         itemView.setOnClickListener {
             Intent(itemView.context, StickerPackageActivity::class.java).apply {
                 putExtra(Constants.IntentKey.PACKAGE_ID, stickerPackage?.packageId)
+                putExtra(Constants.IntentKey.ENTRANCE_POINT, Constants.Point.MY_STICKER)
             }.run {
                 itemView.context.startActivity(this)
             }

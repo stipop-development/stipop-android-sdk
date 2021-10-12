@@ -14,18 +14,23 @@ import io.stipop.*
 import io.stipop.adapter.legacy.KeywordAdapter
 import io.stipop.adapter.legacy.StickerAdapter
 import io.stipop.api.APIClient
+import io.stipop.api.StipopApi
 import io.stipop.custom.RecyclerDecoration
 import io.stipop.models.SPSticker
+import io.stipop.models.body.UserIdBody
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_search.clearTextLL
 import kotlinx.android.synthetic.main.activity_search.eraseIV
 import kotlinx.android.synthetic.main.activity_search.keywordET
 import kotlinx.android.synthetic.main.activity_search.searchBarContainer
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
+import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.io.IOException
 
 class SearchActivity: Activity() {
+
+    val scope = CoroutineScope(Job() + Dispatchers.IO)
 
     lateinit var context: Context
 
@@ -153,6 +158,10 @@ class SearchActivity: Activity() {
         }
 
         search("")
+
+        scope.launch {
+            StipopApi.create().trackViewSearch(UserIdBody(Stipop.userId))
+        }
     }
 
     private fun getKeyword() {

@@ -20,6 +20,7 @@ class VerticalStickerThumbViewHolder(private val binding: ItemVerticalStickerThu
             stickerPackage?.packageId?.let {
                 Intent(itemView.context, StickerPackageActivity::class.java).apply {
                     putExtra(Constants.IntentKey.PACKAGE_ID, it)
+                    putExtra(Constants.IntentKey.ENTRANCE_POINT, Constants.Point.STORE)
                 }.run {
                     itemView.context.startActivity(this)
                 }

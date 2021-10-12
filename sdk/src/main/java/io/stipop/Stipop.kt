@@ -172,14 +172,16 @@ class Stipop(
         }
     }
 
-    fun detail(packageId: Int) {
+    fun goPackageDetail(packageId: Int, entrancePoint: String) {
         if (!this.connected) {
             return
         }
-
-        val intent = Intent(this.activity, StickerPackageActivity::class.java)
-        intent.putExtra("packageId", packageId)
-        this.activity.startActivity(intent)
+        Intent(this.activity, StickerPackageActivity::class.java).apply {
+            putExtra("packageId", packageId)
+            putExtra(Constants.IntentKey.ENTRANCE_POINT, entrancePoint)
+        }.run {
+            activity.startActivity(this)
+        }
     }
 
     fun send(stickerId: Int, searchKeyword: String, completionHandler: (result: Boolean) -> Unit) {

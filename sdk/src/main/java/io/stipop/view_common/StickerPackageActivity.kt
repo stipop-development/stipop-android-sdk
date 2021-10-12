@@ -11,10 +11,16 @@ import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.adapter.legacy.StickerAdapter
 import io.stipop.api.APIClient
+import io.stipop.api.StipopApi
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
+import io.stipop.models.body.UserIdBody
 import kotlinx.android.synthetic.main.activity_sticker_package.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.IOException
 
@@ -27,8 +33,11 @@ class StickerPackageActivity : Activity() {
     var stickerData = ArrayList<SPSticker>()
 
     var packageId = -1
+    var entrancePoint: String? = null
 
     var packageAnimated: String? = ""
+
+    val scope = CoroutineScope(Job() + Dispatchers.IO)
 
     lateinit var spPackage: SPPackage
 
@@ -38,7 +47,8 @@ class StickerPackageActivity : Activity() {
 
         this.context = this
 
-        packageId = intent.getIntExtra("packageId", -1)
+        packageId = intent.getIntExtra(Constants.IntentKey.PACKAGE_ID, -1)
+        entrancePoint = intent.getStringExtra(Constants.IntentKey.ENTRANCE_POINT)
 
 
         val drawable = containerLL.background as GradientDrawable
@@ -79,6 +89,10 @@ class StickerPackageActivity : Activity() {
         stickerGV.adapter = stickerAdapter
 
         getPackInfo()
+
+        scope.launch {
+            StipopApi.create().trackViewPackage(UserIdBody(Stipop.userId), entrancePoint = entrancePoint)
+        }
     }
 
     private fun getPackInfo() {

@@ -20,16 +20,24 @@ import io.stipop.*
 import io.stipop.adapter.legacy.StickerPackageThumbnailAdapter
 import io.stipop.adapter.legacy.StickerAdapter
 import io.stipop.api.APIClient
+import io.stipop.api.StipopApi
 import io.stipop.databinding.ViewKeyboardPopupBinding
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
+import io.stipop.models.body.UserIdBody
 import io.stipop.view_store.StoreActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.IOException
 
 class KeyboardPopup(val activity: Activity) : PopupWindow(),
     StickerPackageThumbnailAdapter.OnPackageClickListener {
 
+
+    val scope = CoroutineScope(Job() + Dispatchers.IO)
     private var binding: ViewKeyboardPopupBinding = ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
     val packageThumbnailAdapter: StickerPackageThumbnailAdapter by lazy { StickerPackageThumbnailAdapter(this) }
     var stickerAdapter: StickerAdapter
@@ -220,14 +228,19 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
         }
     }
 
+    override fun showAtLocation(parent: View?, gravity: Int, x: Int, y: Int) {
+        super.showAtLocation(parent, gravity, x, y)
+        scope.launch {
+            StipopApi.create().trackViewPicker(UserIdBody(Stipop.userId))
+        }
+    }
+
     internal fun hide() {
         dismiss()
     }
 
     fun showStore(tab: Int) {
-
         this.hide()
-
         val intent = Intent(this.activity, StoreActivity::class.java)
         intent.putExtra(Constants.IntentKey.STARTING_TAB_POSITION, tab)
         this.activity.startActivity(intent)
