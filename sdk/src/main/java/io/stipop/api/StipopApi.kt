@@ -1,15 +1,18 @@
 package io.stipop.api
 
-import io.stipop.Config
-import io.stipop.Constants
-import io.stipop.Stipop
-import io.stipop.Utils
+import android.os.Build
+import android.util.Log
+import com.google.gson.Gson
+import io.stipop.*
 import io.stipop.models.body.InitSdkBody
 import io.stipop.models.body.OrderChangeBody
+import io.stipop.models.body.StipopMetaHeader
 import io.stipop.models.response.MyStickerOrderChangedResponse
 import io.stipop.models.response.MyStickerResponse
 import io.stipop.models.response.StickerPackageResponse
 import io.stipop.models.response.StipopResponse
+import io.stipop.BuildConfig
+import io.stipop.models.body.UserIdBody
 import okhttp3.*
 import okhttp3.Headers
 import okhttp3.logging.HttpLoggingInterceptor
@@ -72,17 +75,21 @@ interface StipopApi {
         @Query("price") price: Double? = null,
     ): Response<StipopResponse>
 
+    @POST("sdk/track/config")
+    suspend fun trackConfig(@Body userIdBody: UserIdBody): Response<StipopResponse>
+
     companion object {
-        private const val BASE_URL = "https://messenger.stipop.io/v1/"
         fun create(): StipopApi {
             val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BASIC }
             val requestInterceptor = Interceptor { chain ->
                 val original = chain.request()
-                val modifiedUrl = chain.request().url.newBuilder()
-                    .addQueryParameter(Constants.ApiParams.Platform, "android-sdk").build()
+                val modifiedUrl = chain.request().url.newBuilder().addQueryParameter(Constants.ApiParams.Platform, Constants.Value.PLATFORM).build()
                 chain.proceed(original.newBuilder().url(modifiedUrl).build())
             }
-            val headers = Headers.Builder().add(Constants.ApiParams.ApiKey, Config.apikey).build()
+            val headers = Headers.Builder()
+                .add(Constants.ApiParams.ApiKey, if(BuildConfig.DEBUG) Constants.Value.SANDBOX_APIKEY else Config.apikey)
+                .add(Constants.ApiParams.SMetadata, Gson().toJson(StipopMetaHeader(platform = Constants.Value.PLATFORM, sdk_version = BuildConfig.SDK_VERSION_NAME, os_version = Build.VERSION.SDK_INT.toString())))
+                .build()
             val authenticator = Authenticator { _, response ->
                 response.request
                     .newBuilder()
@@ -93,9 +100,12 @@ interface StipopApi {
                 .authenticator(authenticator)
                 .addInterceptor(loggingInterceptor)
                 .addInterceptor(requestInterceptor)
+                .followRedirects(false)
+                .followSslRedirects(false)
+                .retryOnConnectionFailure(false)
                 .build()
             return Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(if(BuildConfig.DEBUG) Constants.Value.SANDBOX_URL else Constants.Value.BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

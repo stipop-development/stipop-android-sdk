@@ -18,6 +18,7 @@ import io.stipop.data.ConfigRepository
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
+import io.stipop.models.body.UserIdBody
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -58,6 +59,9 @@ class Stipop(
 
         fun configure(context: Context) {
             Config.configure(context)
+            scope.launch {
+                StipopApi.create().trackConfig(UserIdBody())
+            }
         }
 
         fun connect(
