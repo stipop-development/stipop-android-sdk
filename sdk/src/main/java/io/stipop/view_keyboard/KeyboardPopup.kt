@@ -142,7 +142,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
             })
             stickerGV.setOnItemClickListener { adapterView, view, i, l ->
                 val sticker = stickerData[i]
-                Stipop.send(sticker.stickerId, sticker.keyword) { result ->
+                Stipop.send(sticker.stickerId, sticker.keyword, Constants.Point.PICKER_VIEW) { result ->
                     if (result) {
                         if (Config.showPreview) {
                             previewPopup.sticker = sticker

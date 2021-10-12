@@ -30,6 +30,6 @@ object Constants {
         const val MY_STICKER = "mysticker"
         const val PACKAGE_DETAIL = "detail"
         const val PICKER_VIEW = "picker"
-        const val STORE_VIEW = "search"
+        const val SEARCH_VIEW = "search"
     }
 }

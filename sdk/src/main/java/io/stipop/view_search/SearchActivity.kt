@@ -140,10 +140,9 @@ class SearchActivity: Activity() {
         stickerGV.setOnItemClickListener { adapterView, view, i, l ->
             val sticker = stickerData[i]
 
-            Stipop.send(sticker.stickerId, sticker.keyword) { result ->
+            Stipop.send(sticker.stickerId, sticker.keyword, Constants.Point.SEARCH_VIEW) { result ->
                 if (result) {
                     Stipop.instance!!.delegate.onStickerSelected(sticker)
-
                     finish()
                 }
             }

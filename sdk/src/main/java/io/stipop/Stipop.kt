@@ -40,6 +40,8 @@ class Stipop(
 
     companion object {
 
+        val configRepository: ConfigRepository by lazy { ConfigRepository(StipopApi.create()) }
+
         lateinit var applicationContext: Context
 
         @SuppressLint("StaticFieldLeak")
@@ -77,9 +79,8 @@ class Stipop(
             Stipop.countryCode = countryCode
 
             val requestBody = InitSdkBody(userId = Stipop.userId, language = Stipop.countryCode)
-            val configRepo = ConfigRepository(StipopApi.create())
             scope.launch {
-                configRepo.postInitSdk(requestBody, onSuccess = {
+                configRepository.postInitSdk(requestBody, onSuccess = {
                     Stipop(activity, stipopButton, delegate).apply {
                         connect()
                         instance = this
@@ -128,13 +129,28 @@ class Stipop(
         internal fun send(
             stickerId: Int,
             keyword: String,
+            entrancePoint: String,
             completionHandler: (result: Boolean) -> Unit
         ) {
-            if (instance == null) {
+            if (instance == null || instance?.connected == false) {
                 return
             }
-
-            instance!!.send(stickerId, keyword, completionHandler)
+            scope.launch {
+                configRepository.postTrackUsingSticker(
+                    stickerId = stickerId.toString(),
+                    userId = userId,
+                    query = keyword,
+                    countryCode = countryCode,
+                    lang = lang,
+                    eventPoint = entrancePoint,
+                    onSuccess = {
+                        if (it.header.isSuccess()) {
+                            completionHandler(true)
+                        } else {
+                            completionHandler(false)
+                        }
+                    })
+            }
         }
     }
 
@@ -185,9 +201,7 @@ class Stipop(
     }
 
     fun send(stickerId: Int, searchKeyword: String, completionHandler: (result: Boolean) -> Unit) {
-        if (!this.connected) {
-            return
-        }
+
 
         val params = JSONObject()
         params.put("userId", userId)

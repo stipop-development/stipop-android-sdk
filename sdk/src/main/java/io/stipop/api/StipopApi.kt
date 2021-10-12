@@ -97,7 +97,12 @@ interface StipopApi {
     suspend fun trackViewPackage(@Body userIdBody: UserIdBody, @Path("entrance_point") entrancePoint: String?=Constants.Point.STORE): Response<StipopResponse>
 
     @POST("analytics/send/{stickerId}")
-    suspend fun trackUsingSticker(@Query("event_point") eventPoint: String? = null): Response<StipopResponse>
+    suspend fun trackUsingSticker(@Path("stickerId") stickerId: String,
+                                  @Query("userId") userId: String,
+                                  @Query("q") query: String?=null,
+                                  @Query("countryCode") countryCode: String,
+                                  @Query("lang") lang: String,
+                                  @Query("event_point") eventPoint: String? = null): Response<StipopResponse>
 
     companion object {
         fun create(): StipopApi {
