@@ -40,7 +40,9 @@ class Stipop(
 
     companion object {
 
-        val configRepository: ConfigRepository by lazy { ConfigRepository(StipopApi.create()) }
+        private val scope = CoroutineScope(Job() + Dispatchers.Main)
+
+        private val configRepository: ConfigRepository by lazy { ConfigRepository(StipopApi.create()) }
 
         lateinit var applicationContext: Context
 
@@ -90,41 +92,9 @@ class Stipop(
             }
         }
 
-        val scope = CoroutineScope(Job() + Dispatchers.Main)
+        fun showSearch() = instance?.showSearch()
 
-        fun showSearch() {
-            if (instance == null) {
-                return
-            }
-
-            instance!!.showSearch()
-        }
-
-        fun showKeyboard() {
-            if (instance == null) {
-                return
-            }
-
-            instance!!.showKeyboard()
-        }
-
-        /*
-        fun show() {
-            if (instance == null) {
-                return
-            }
-
-            instance!!.show()
-        }
-
-        fun detail(packageId: Int) {
-            if (instance == null) {
-                return
-            }
-
-            instance!!.detail(packageId)
-        }
-        */
+        fun showKeyboard() = instance?.showKeyboard()
 
         internal fun send(
             stickerId: Int,
@@ -197,48 +167,6 @@ class Stipop(
             putExtra(Constants.IntentKey.ENTRANCE_POINT, entrancePoint)
         }.run {
             activity.startActivity(this)
-        }
-    }
-
-    fun send(stickerId: Int, searchKeyword: String, completionHandler: (result: Boolean) -> Unit) {
-
-
-        val params = JSONObject()
-        params.put("userId", userId)
-        params.put("p", searchKeyword)
-        params.put("lang", lang)
-        params.put("countryCode", countryCode)
-
-        APIClient.post(
-            activity,
-            APIClient.APIPath.ANALYTICS_SEND.rawValue + "/${stickerId}",
-            params
-        ) { response: JSONObject?, e: IOException? ->
-
-            if (null != response) {
-                var success = true
-
-                if (response.isNull("header")) {
-                    success = false
-                } else {
-
-                    val header = response.getJSONObject("header")
-
-                    if (Utils.getString(header, "status") != "success" || Utils.getInt(
-                            header,
-                            "code",
-                            -1
-                        ) == -1
-                    ) {
-                        success = false
-                    }
-
-                }
-
-                completionHandler(success)
-            } else {
-                completionHandler(false)
-            }
         }
     }
 
