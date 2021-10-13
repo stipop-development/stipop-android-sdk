@@ -35,7 +35,7 @@ class RecentKeywordAdapter(var myContext: Context, var view: Int, var data: Arra
         item.keywordTV.text = keyword
 
         item.removeLL.setOnClickListener {
-            fragment.deleteKeyword(keyword)
+//            fragment.deleteKeyword(keyword)
         }
 
         return retView

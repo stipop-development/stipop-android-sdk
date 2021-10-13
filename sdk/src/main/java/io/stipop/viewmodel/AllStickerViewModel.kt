@@ -1,33 +1,62 @@
 package io.stipop.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.stipop.PackUtils
 import io.stipop.custom.PagingRecyclerView
 import io.stipop.data.AllStickerRepository
+import io.stipop.delayedTextFlow
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class AllStickerViewModel(private val repository: AllStickerRepository) : ViewModel() {
 
-    private var keyword: String? = null
+    private val _searchQuery = MutableStateFlow("")
+    var query: String? = null
+    var recyclerView: PagingRecyclerView? = null
     var stickerPackages: MutableLiveData<List<StickerPackage>> = MutableLiveData()
+    var clearAction: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun registerRecyclerView(pagingRecyclerView: PagingRecyclerView?){
+    fun flowQuery(keyword: String) {
+        _searchQuery.value = keyword
+    }
+
+    @ExperimentalCoroutinesApi
+    @FlowPreview
+    val emittedQuery: Flow<String> = _searchQuery.debounce(700).mapLatest {
+        if (it.isEmpty()) {
+            return@mapLatest ""
+        } else {
+            return@mapLatest delayedTextFlow(it)
+        }
+    }
+
+    fun searchQuery(keyword: String){
+        query = keyword
+        refreshData()
+    }
+
+    fun refreshData() {
+        clearAction.postValue(true)
+        recyclerView?.refresh()
+    }
+
+    fun registerRecyclerView(pagingRecyclerView: PagingRecyclerView?) {
+        recyclerView = pagingRecyclerView
         getPackages(1)
         viewModelScope.launch {
-            pagingRecyclerView?.paging?.collectLatest {
-                Log.d("STIPOP-DEBUG", "PAGING : $it")
+            recyclerView?.paging?.collectLatest {
                 getPackages(it)
             }
         }
     }
 
-    fun requestDownloadPackage(stickerPackage: StickerPackage){
+    fun requestDownloadPackage(stickerPackage: StickerPackage) {
         viewModelScope.launch {
             repository.postDownloadStickers(stickerPackage) {
                 PackUtils.downloadAndSaveLocalV2(stickerPackage) {
@@ -37,9 +66,9 @@ class AllStickerViewModel(private val repository: AllStickerRepository) : ViewMo
         }
     }
 
-    private fun getPackages(page: Int){
+    private fun getPackages(page: Int) {
         viewModelScope.launch {
-            repository.getStickerPackages(page, keyword, onSuccess = {
+            repository.getStickerPackages(page, query, onSuccess = {
                 stickerPackages.postValue(it as List<StickerPackage>)
             })
         }

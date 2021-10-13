@@ -43,13 +43,16 @@ class StoreActivity : BaseFragmentActivity() {
             }
         }.attach()
 
-        storeViewPager.registerOnPageChangeCallback(callBack)
-        storeViewPager.setCurrentItem(
-            intent.getIntExtra(
-                Constants.IntentKey.STARTING_TAB_POSITION,
-                StorePagerAdapter.POSITION_MY_STICKERS
-            ), false
-        )
+        storeViewPager.apply {
+            registerOnPageChangeCallback(callBack)
+            isUserInputEnabled = false
+            setCurrentItem(
+                intent.getIntExtra(
+                    Constants.IntentKey.STARTING_TAB_POSITION,
+                    StorePagerAdapter.POSITION_MY_STICKERS
+                ), false
+            )
+        }
     }
 
     override fun applyTheme() {

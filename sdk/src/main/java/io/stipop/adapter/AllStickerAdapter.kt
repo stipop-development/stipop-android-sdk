@@ -68,6 +68,12 @@ class AllStickerAdapter(private val verticalStickerThumbViewHolderDelegate: Vert
         }
     }
 
+    fun clearData(){
+        dataSet.defaultList.clear()
+        dataSet.trendingList.clear()
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int {
         return dataSet.defaultList.size
     }

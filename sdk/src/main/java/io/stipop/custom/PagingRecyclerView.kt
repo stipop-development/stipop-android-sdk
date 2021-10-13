@@ -4,11 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
 
 class PagingRecyclerView : RecyclerView {
 
@@ -27,6 +24,13 @@ class PagingRecyclerView : RecyclerView {
         attrs,
         defStyleAttr
     )
+
+    fun refresh() {
+        scope.launch {
+            page = 1
+            paging.emit(page)
+        }
+    }
 
     fun setUpScrollListener() {
         val layoutManager = layoutManager as LinearLayoutManager

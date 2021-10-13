@@ -20,8 +20,8 @@ import io.stipop.models.SPSticker
 import io.stipop.models.body.UserIdBody
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_search.clearTextLL
-import kotlinx.android.synthetic.main.activity_search.eraseIV
-import kotlinx.android.synthetic.main.activity_search.keywordET
+import kotlinx.android.synthetic.main.activity_search.clearSearchImageView
+import kotlinx.android.synthetic.main.activity_search.searchEditText
 import kotlinx.android.synthetic.main.activity_search.searchBarContainer
 import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import kotlinx.coroutines.*
@@ -60,14 +60,14 @@ class SearchActivity: Activity() {
         drawable2.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
 
         searchIV.setImageResource(Config.getSearchbarResourceId(context))
-        eraseIV.setImageResource(Config.getEraseResourceId(context))
+        clearSearchImageView.setImageResource(Config.getEraseResourceId(context))
 
         titleTV.setTextColor(Config.getSearchTitleTextColor(context))
-        keywordET.setTextColor(Config.getSearchTitleTextColor(context))
+        searchEditText.setTextColor(Config.getSearchTitleTextColor(context))
 
 
         searchIV.setIconDefaultsColor()
-        eraseIV.setIconDefaultsColor()
+        clearSearchImageView.setIconDefaultsColor()
 
 
         val gd = GradientDrawable(
@@ -77,10 +77,10 @@ class SearchActivity: Activity() {
         shadowV.background = gd
 
         clearTextLL.setOnClickListener {
-            keywordET.setText("")
+            searchEditText.setText("")
         }
 
-        keywordET.addTextChangedListener(object : TextWatcher {
+        searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
             }
@@ -90,7 +90,7 @@ class SearchActivity: Activity() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                val keyword = Utils.getString(keywordET)
+                val keyword = Utils.getString(searchEditText)
 
                 page = 1
                 search(keyword)
@@ -127,7 +127,7 @@ class SearchActivity: Activity() {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > page) {
                     page += 1
 
-                    search(Utils.getString(keywordET))
+                    search(Utils.getString(searchEditText))
                 }
             }
 
