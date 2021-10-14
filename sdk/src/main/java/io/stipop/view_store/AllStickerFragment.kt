@@ -21,7 +21,6 @@ import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.delegates.VerticalStickerThumbViewHolderDelegate
 import io.stipop.viewmodel.AllStickerViewModel
-import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -33,8 +32,7 @@ class AllStickerFragment : BaseFragment(), VerticalStickerThumbViewHolderDelegat
 //    var getRecentKeywords = APIClient.APIPath.SEARCH_RECENT.rawValue
 
     companion object {
-        fun newInstance() = Bundle().apply {
-        }.let { AllStickerFragment().apply { arguments = it } }
+        fun newInstance() = AllStickerFragment()
     }
 
     private var binding: FragmentAllStickerBinding? = null
@@ -62,54 +60,47 @@ class AllStickerFragment : BaseFragment(), VerticalStickerThumbViewHolderDelegat
             AllStickerViewModel::class.java
         )
 
-        binding?.allStickerRecyclerView?.adapter = allStickerAdapter
-        binding?.allStickerRecyclerView?.setUpScrollListener()
+        with(binding){
+            this?.allStickerRecyclerView?.adapter = allStickerAdapter
+            this?.allStickerRecyclerView?.setUpScrollListener()
+            this?.clearSearchImageView?.setOnClickListener {
+                searchEditText.setText("")
+                viewModel.refreshData()
+                Utils.hideKeyboard(requireContext())
+                binding?.searchEditText?.clearFocus()
+            }
+            this?.searchEditText?.addTextChangedListener {
+                viewModel.flowQuery(it.toString().trim())
+            }
+        }
 
         viewModel.registerRecyclerView(binding?.allStickerRecyclerView)
         viewModel.stickerPackages.observeForever { stickers ->
             allStickerAdapter.updateData(stickers)
         }
-
         viewModel.clearAction.observeForever { isClear ->
             if (isClear) allStickerAdapter.clearData()
         }
-
         lifecycleScope.launch {
-            viewModel.emittedQuery.collect { value ->
-                if (value.isNotEmpty()) {
-                    viewModel.searchQuery(value)
-                }
-            }
+            viewModel.emittedQuery.collect { value -> viewModel.searchQuery(value) }
         }
-
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) { packageId ->
             Toast.makeText(context, getString(R.string.download_done), Toast.LENGTH_SHORT).show()
             allStickerAdapter.updateDownloadState(packageId)
         }
-
-        binding?.clearSearchImageView?.setOnClickListener {
-            if (binding?.searchEditText?.text?.trim().toString().isNotEmpty()) {
-                searchEditText.setText("")
-                viewModel.refreshData()
-            }
-            Utils.hideKeyboard(requireContext())
-            binding?.searchEditText?.clearFocus()
-        }
-
-        binding?.searchEditText?.addTextChangedListener {
-            viewModel.flowQuery(it.toString().trim())
-        }
     }
 
     override fun applyTheme() {
-        val drawable = searchBarContainer.background as GradientDrawable
-        drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
-        drawable.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
-        searchEditText.setTextColor(Config.getSearchTitleTextColor(requireContext()))
-        searchIconIV.setImageResource(Config.getSearchbarResourceId(requireContext()))
-        clearSearchImageView.setImageResource(Config.getEraseResourceId(requireContext()))
-        searchIconIV.setIconDefaultsColor()
-        clearSearchImageView.setIconDefaultsColor()
+        with(binding){
+            val drawable = this?.searchBarContainer?.background as GradientDrawable
+            drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
+            drawable.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
+            this.searchEditText.setTextColor(Config.getSearchTitleTextColor(requireContext()))
+            this.searchIconIV.setImageResource(Config.getSearchbarResourceId(requireContext()))
+            this.clearSearchImageView.setImageResource(Config.getEraseResourceId(requireContext()))
+            this.searchIconIV.setIconDefaultsColor()
+            this.clearSearchImageView.setIconDefaultsColor()
+        }
     }
 
     override fun onDownloadClicked(position: Int, stickerPackage: StickerPackage) {

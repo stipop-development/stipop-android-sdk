@@ -94,22 +94,43 @@ interface StipopApi {
     suspend fun trackViewMySticker(@Body userIdBody: UserIdBody): Response<StipopResponse>
 
     @POST("sdk/track/view/package/{entrance_point}")
-    suspend fun trackViewPackage(@Body userIdBody: UserIdBody, @Path("entrance_point") entrancePoint: String?=Constants.Point.STORE): Response<StipopResponse>
+    suspend fun trackViewPackage(
+        @Body userIdBody: UserIdBody,
+        @Path("entrance_point") entrancePoint: String? = Constants.Point.STORE
+    ): Response<StipopResponse>
 
     @POST("analytics/send/{stickerId}")
-    suspend fun trackUsingSticker(@Path("stickerId") stickerId: String,
-                                  @Query("userId") userId: String,
-                                  @Query("q") query: String?=null,
-                                  @Query("countryCode") countryCode: String,
-                                  @Query("lang") lang: String,
-                                  @Query("event_point") eventPoint: String? = null): Response<StipopResponse>
+    suspend fun trackUsingSticker(
+        @Path("stickerId") stickerId: String,
+        @Query("userId") userId: String,
+        @Query("q") query: String? = null,
+        @Query("countryCode") countryCode: String,
+        @Query("lang") lang: String,
+        @Query("event_point") eventPoint: String? = null
+    ): Response<StipopResponse>
 
     companion object {
         fun create(): StipopApi {
             val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BASIC }
             val headers = Headers.Builder()
-                .add(Constants.ApiParams.ApiKey, if(BuildConfig.DEBUG) Constants.Value.SANDBOX_APIKEY else Config.apikey)
-                .add(Constants.ApiParams.SMetadata, Gson().toJson(StipopMetaHeader(platform = Constants.Value.PLATFORM, sdk_version = BuildConfig.SDK_VERSION_NAME, os_version = Build.VERSION.SDK_INT.toString())))
+                .add(
+                    Constants.ApiParams.ApiKey, if (BuildConfig.DEBUG) {
+                        Constants.Value.SANDBOX_APIKEY
+//                        Config.apikey
+                    } else {
+                        Config.apikey
+                    }
+                )
+                .add(
+                    Constants.ApiParams.SMetadata,
+                    Gson().toJson(
+                        StipopMetaHeader(
+                            platform = Constants.Value.PLATFORM,
+                            sdk_version = BuildConfig.SDK_VERSION_NAME,
+                            os_version = Build.VERSION.SDK_INT.toString()
+                        )
+                    )
+                )
                 .build()
             val authenticator = Authenticator { _, response ->
                 response.request
@@ -124,7 +145,7 @@ interface StipopApi {
                 .followSslRedirects(false)
                 .build()
             return Retrofit.Builder()
-                .baseUrl(if(BuildConfig.DEBUG) Constants.Value.SANDBOX_URL else Constants.Value.BASE_URL)
+                .baseUrl(if (BuildConfig.DEBUG) Constants.Value.SANDBOX_URL else Constants.Value.BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

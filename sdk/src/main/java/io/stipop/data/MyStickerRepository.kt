@@ -1,5 +1,6 @@
 package io.stipop.data
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -29,6 +30,7 @@ class MyStickerRepository(private val apiService: StipopApi): BaseRepository() {
         val userId = Stipop.userId
         val fromOrder = fromStickerPackage.order
         val toOrder = toStickerPackage.order
+        Log.d("STIPOP-DEBUG", "ID : $userId // $fromOrder to $toOrder")
         val response = apiService.putMyStickerOrders(userId, OrderChangeBody(fromOrder, toOrder))
         packageOrderChangedResult.emit(response)
     }

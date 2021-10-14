@@ -28,7 +28,7 @@ class AllStickerViewModel(private val repository: AllStickerRepository) : ViewMo
 
     @ExperimentalCoroutinesApi
     @FlowPreview
-    val emittedQuery: Flow<String> = _searchQuery.debounce(700).mapLatest {
+    val emittedQuery: Flow<String> = _searchQuery.debounce(600).mapLatest {
         if (it.isEmpty()) {
             return@mapLatest ""
         } else {
@@ -48,7 +48,6 @@ class AllStickerViewModel(private val repository: AllStickerRepository) : ViewMo
 
     fun registerRecyclerView(pagingRecyclerView: PagingRecyclerView?) {
         recyclerView = pagingRecyclerView
-        getPackages(1)
         viewModelScope.launch {
             recyclerView?.paging?.collectLatest {
                 getPackages(it)

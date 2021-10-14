@@ -67,6 +67,6 @@ fun TabLayout.setTabLayoutStyle() {
 @AnyThread
 suspend fun delayedTextFlow(request: String): String =
     withContext(Dispatchers.Default) {
-        delay(700)
+        delay(600)
         request
     }

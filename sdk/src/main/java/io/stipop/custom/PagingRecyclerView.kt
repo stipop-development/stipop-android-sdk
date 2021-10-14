@@ -4,16 +4,19 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.stipop.Constants
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.*
 
 class PagingRecyclerView : RecyclerView {
 
-    private val VISIBLE_THRESHOLD = 5
+    companion object {
+        private const val VISIBLE_THRESHOLD = 5
+    }
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
-
-    val paging = MutableSharedFlow<Int>()
+    var paging = MutableSharedFlow<Int>()
     private var page = 1
+    private var expectingItemCount = 0
 
     constructor(context: Context) : super(context)
 
@@ -41,8 +44,11 @@ class PagingRecyclerView : RecyclerView {
                 val visibleItemCount = layoutManager.childCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
                 val lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition()
-                val isShouldFetchMore = lastVisibleItemPosition + 1 == totalItemCount
+//                val isShouldFetchMore = lastVisibleItemPosition + 1 == totalItemCount
+                val isShouldFetchMore =
+                    (visibleItemCount + lastVisibleItemPosition + VISIBLE_THRESHOLD >= totalItemCount) && expectingItemCount < totalItemCount
                 if (isShouldFetchMore) {
+                    expectingItemCount += Constants.ApiParams.SizePerPage
                     scope.launch {
                         page += 1
                         paging.emit(page)
