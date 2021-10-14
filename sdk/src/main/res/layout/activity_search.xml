@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/searchbarLL"
+            android:id="@+id/searchBarContainer"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="15dp"
@@ -35,7 +35,7 @@
             </LinearLayout>
 
             <io.stipop.custom.StipopEditText
-                android:id="@+id/keywordET"
+                android:id="@+id/searchEditText"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -52,7 +52,7 @@
                 android:gravity="center">
 
                 <io.stipop.custom.StipopImageView
-                    android:id="@+id/eraseIV"
+                    android:id="@+id/clearSearchImageView"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@mipmap/ic_erase_border_3"/>

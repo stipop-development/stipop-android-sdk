@@ -5,7 +5,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import io.stipop.ItemTouchHelperDelegate
 import io.stipop.models.StickerPackage
-import io.stipop.viewholder.MyStickerItemHolderDelegate
+import io.stipop.viewholder.delegates.MyStickerItemHolderDelegate
 import io.stipop.viewholder.MyStickerPackageViewHolder
 
 class MyStickerPackageAdapter(private val delegate: MyStickerItemHolderDelegate) :

@@ -1,4 +1,4 @@
-package io.stipop.adapter
+package io.stipop.adapter.legacy
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable

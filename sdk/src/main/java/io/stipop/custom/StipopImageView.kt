@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
+import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
 
@@ -79,6 +80,10 @@ class StipopImageView : AppCompatImageView {
             return true
         }
         return false
+    }
+
+    fun loadImage(resUrl: String?){
+        Glide.with(context).load(resUrl).into(this)
     }
 
     override fun setImageResource(resId: Int) {

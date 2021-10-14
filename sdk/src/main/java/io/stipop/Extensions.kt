@@ -3,11 +3,13 @@ package io.stipop
 import android.R
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.StateListDrawable
 import android.view.View
+import androidx.annotation.AnyThread
 import androidx.core.content.ContextCompat
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 fun View.setStipopBackgroundColor() {
     setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
@@ -61,3 +63,10 @@ fun TabLayout.setTabLayoutStyle() {
         ) else ContextCompat.getColor(context, io.stipop.R.color.c_f7f8f9)
     )
 }
+
+@AnyThread
+suspend fun delayedTextFlow(request: String): String =
+    withContext(Dispatchers.Default) {
+        delay(600)
+        request
+    }

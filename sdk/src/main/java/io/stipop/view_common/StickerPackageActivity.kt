@@ -9,15 +9,22 @@ import android.os.Bundle
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import io.stipop.*
-import io.stipop.adapter.StickerAdapter
+import io.stipop.adapter.legacy.StickerAdapter
 import io.stipop.api.APIClient
+import io.stipop.api.StipopApi
+import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
+import io.stipop.models.body.UserIdBody
 import kotlinx.android.synthetic.main.activity_sticker_package.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.IOException
 
-class StickerPackageActivity: Activity() {
+class StickerPackageActivity : Activity() {
 
     lateinit var context: Context
 
@@ -26,10 +33,13 @@ class StickerPackageActivity: Activity() {
     var stickerData = ArrayList<SPSticker>()
 
     var packageId = -1
+    var entrancePoint: String? = null
 
     var packageAnimated: String? = ""
 
-    lateinit var spPackage:SPPackage
+    val scope = CoroutineScope(Job() + Dispatchers.IO)
+
+    lateinit var spPackage: SPPackage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +47,8 @@ class StickerPackageActivity: Activity() {
 
         this.context = this
 
-        packageId = intent.getIntExtra("packageId", -1)
+        packageId = intent.getIntExtra(Constants.IntentKey.PACKAGE_ID, -1)
+        entrancePoint = intent.getStringExtra(Constants.IntentKey.ENTRANCE_POINT)
 
 
         val drawable = containerLL.background as GradientDrawable
@@ -78,6 +89,10 @@ class StickerPackageActivity: Activity() {
         stickerGV.adapter = stickerAdapter
 
         getPackInfo()
+
+        scope.launch {
+            StipopApi.create().trackViewPackage(UserIdBody(Stipop.userId), entrancePoint = entrancePoint)
+        }
     }
 
     private fun getPackInfo() {
@@ -85,7 +100,11 @@ class StickerPackageActivity: Activity() {
         val params = JSONObject()
         params.put("userId", Stipop.userId)
 
-        APIClient.get(this, APIClient.APIPath.PACKAGE.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
+        APIClient.get(
+            this,
+            APIClient.APIPath.PACKAGE.rawValue + "/$packageId",
+            params
+        ) { response: JSONObject?, e: IOException? ->
             // println(response)
 
             if (null != response) {
@@ -153,33 +172,26 @@ class StickerPackageActivity: Activity() {
             params.put("price", price)
         }
 
-        APIClient.post(this, APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId", params) { response: JSONObject?, e: IOException? ->
+        APIClient.post(
+            this,
+            APIClient.APIPath.DOWNLOAD.rawValue + "/$packageId",
+            params
+        ) { response: JSONObject?, e: IOException? ->
             // println(response)
 
             if (null != response) {
-
                 val header = response.getJSONObject("header")
-
                 if (Utils.getString(header, "status") == "success") {
-
-                    val intent = Intent()
-                    intent.putExtra("packageId", packageId)
-                    setResult(RESULT_OK, intent)
-
-                    // download
                     PackUtils.downloadAndSaveLocal(this, this.spPackage) {
                         downloadTV.text = getString(R.string.downloaded)
                         downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
-
-                        Toast.makeText(context, getString(R.string.download_done), Toast.LENGTH_LONG).show()
+                        PackageDownloadEvent.publishEvent(packageId)
                     }
                 }
-
             } else {
                 e?.printStackTrace()
             }
         }
 
     }
-
 }

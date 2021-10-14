@@ -1,15 +1,16 @@
-package io.stipop.adapter
+package io.stipop.adapter.legacy
 
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.ImageView
+import com.bumptech.glide.Glide
 import io.stipop.R
-import io.stipop.view_store.AllStickerFragment
+import io.stipop.models.SPSticker
 
-class RecentKeywordAdapter(var myContext: Context, var view: Int, var data: ArrayList<String>, var fragment: AllStickerFragment): ArrayAdapter<String>(myContext, view, data) {
+
+class StickerAdapter(context: Context, var view: Int, var data: ArrayList<SPSticker>): ArrayAdapter<SPSticker>(context, view, data) {
 
     private lateinit var item: ViewHolder
 
@@ -17,32 +18,27 @@ class RecentKeywordAdapter(var myContext: Context, var view: Int, var data: Arra
         lateinit var retView: View
 
         if (convertView == null) {
-            retView = View.inflate(myContext, view, null)
+            retView = View.inflate(context, view, null)
             item = ViewHolder(retView)
             retView.tag = item
         } else {
             retView = convertView
             item = convertView.tag as ViewHolder
             if (item == null) {
-                retView = View.inflate(myContext, view, null)
+                retView = View.inflate(context, view, null)
                 item = ViewHolder(retView)
                 retView.tag = item
             }
         }
-
-        val keyword = data[position]
-
-        item.keywordTV.text = keyword
-
-        item.removeLL.setOnClickListener {
-            fragment.deleteKeyword(keyword)
+        if (data.isNotEmpty()){
+            val sticker = data[position]
+            Glide.with(context).load(sticker.stickerImg).into(item.imageIV)
         }
-
         return retView
     }
 
-    override fun getItem(position: Int): String {
-        return data.get(position)
+    override fun getItem(position: Int): SPSticker {
+        return data[position]
     }
 
     override fun getItemId(position: Int): Long {
@@ -54,8 +50,7 @@ class RecentKeywordAdapter(var myContext: Context, var view: Int, var data: Arra
     }
 
     class ViewHolder(v: View) {
-        val keywordTV: TextView = v.findViewById(R.id.keywordTV) as TextView
-        val removeLL: LinearLayout = v.findViewById(R.id.removeLL) as LinearLayout
+        val imageIV: ImageView = v.findViewById(R.id.imageIV) as ImageView
     }
 
 }

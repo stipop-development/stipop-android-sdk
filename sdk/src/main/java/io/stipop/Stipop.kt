@@ -18,6 +18,7 @@ import io.stipop.data.ConfigRepository
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
+import io.stipop.models.body.UserIdBody
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -39,6 +40,12 @@ class Stipop(
 
     companion object {
 
+        private val scope = CoroutineScope(Job() + Dispatchers.Main)
+
+        private val configRepository: ConfigRepository by lazy { ConfigRepository(StipopApi.create()) }
+
+        lateinit var applicationContext: Context
+
         @SuppressLint("StaticFieldLeak")
         var instance: Stipop? = null
 
@@ -56,6 +63,9 @@ class Stipop(
 
         fun configure(context: Context) {
             Config.configure(context)
+            scope.launch {
+                StipopApi.create().trackConfig(UserIdBody())
+            }
         }
 
         fun connect(
@@ -71,63 +81,46 @@ class Stipop(
             Stipop.countryCode = countryCode
 
             val requestBody = InitSdkBody(userId = Stipop.userId, language = Stipop.countryCode)
-            val configRepo = ConfigRepository(StipopApi.create())
             scope.launch {
-                configRepo.postInitSdk(requestBody, onSuccess = {
+                configRepository.postInitSdk(requestBody, onSuccess = {
                     Stipop(activity, stipopButton, delegate).apply {
                         connect()
                         instance = this
+                        applicationContext = activity.applicationContext
                     }
                 })
             }
         }
 
-        val scope = CoroutineScope(Job() + Dispatchers.Main)
+        fun showSearch() = instance?.showSearch()
 
-        fun showSearch() {
-            if (instance == null) {
-                return
-            }
-
-            instance!!.showSearch()
-        }
-
-        fun showKeyboard() {
-            if (instance == null) {
-                return
-            }
-
-            instance!!.showKeyboard()
-        }
-
-        /*
-        fun show() {
-            if (instance == null) {
-                return
-            }
-
-            instance!!.show()
-        }
-
-        fun detail(packageId: Int) {
-            if (instance == null) {
-                return
-            }
-
-            instance!!.detail(packageId)
-        }
-        */
+        fun showKeyboard() = instance?.showKeyboard()
 
         internal fun send(
             stickerId: Int,
             keyword: String,
+            entrancePoint: String,
             completionHandler: (result: Boolean) -> Unit
         ) {
-            if (instance == null) {
+            if (instance == null || instance?.connected == false) {
                 return
             }
-
-            instance!!.send(stickerId, keyword, completionHandler)
+            scope.launch {
+                configRepository.postTrackUsingSticker(
+                    stickerId = stickerId.toString(),
+                    userId = userId,
+                    query = keyword,
+                    countryCode = countryCode,
+                    lang = lang,
+                    eventPoint = entrancePoint,
+                    onSuccess = {
+                        if (it.header.isSuccess()) {
+                            completionHandler(true)
+                        } else {
+                            completionHandler(false)
+                        }
+                    })
+            }
         }
     }
 
@@ -165,57 +158,15 @@ class Stipop(
         }
     }
 
-    fun detail(packageId: Int) {
+    fun goPackageDetail(packageId: Int, entrancePoint: String) {
         if (!this.connected) {
             return
         }
-
-        val intent = Intent(this.activity, StickerPackageActivity::class.java)
-        intent.putExtra("packageId", packageId)
-        this.activity.startActivity(intent)
-    }
-
-    fun send(stickerId: Int, searchKeyword: String, completionHandler: (result: Boolean) -> Unit) {
-        if (!this.connected) {
-            return
-        }
-
-        val params = JSONObject()
-        params.put("userId", userId)
-        params.put("p", searchKeyword)
-        params.put("lang", lang)
-        params.put("countryCode", countryCode)
-
-        APIClient.post(
-            activity,
-            APIClient.APIPath.ANALYTICS_SEND.rawValue + "/${stickerId}",
-            params
-        ) { response: JSONObject?, e: IOException? ->
-
-            if (null != response) {
-                var success = true
-
-                if (response.isNull("header")) {
-                    success = false
-                } else {
-
-                    val header = response.getJSONObject("header")
-
-                    if (Utils.getString(header, "status") != "success" || Utils.getInt(
-                            header,
-                            "code",
-                            -1
-                        ) == -1
-                    ) {
-                        success = false
-                    }
-
-                }
-
-                completionHandler(success)
-            } else {
-                completionHandler(false)
-            }
+        Intent(this.activity, StickerPackageActivity::class.java).apply {
+            putExtra("packageId", packageId)
+            putExtra(Constants.IntentKey.ENTRANCE_POINT, entrancePoint)
+        }.run {
+            activity.startActivity(this)
         }
     }
 

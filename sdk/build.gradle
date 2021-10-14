@@ -13,10 +13,14 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 31
-        versionCode 3
-        versionName "0.1.1"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        def sdkVersionCode = rootProject.sdkVersionCode
+        def sdkVersionName =  '\"' + rootProject.sdkVersionName + '\"'
+        versionCode sdkVersionCode
+        versionName sdkVersionName
+        buildConfigField 'int', 'SDK_VERSION_CODE', "$sdkVersionCode"
+        buildConfigField 'String', 'SDK_VERSION_NAME', sdkVersionName
     }
 
     buildTypes {

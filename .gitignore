@@ -3,3 +3,5 @@
 local.properties
 ./app/src/main/assets/Stipop.json
 /app/src/main/assets/Stipop.json
+./sample/src/main/assets/Stipop.json
+/sample/src/main/assets/Stipop.json
