@@ -3,7 +3,6 @@ package io.stipop.viewholder
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -11,11 +10,9 @@ import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
 import io.stipop.Utils
-import io.stipop.databinding.ItemDefaultBinding
 import io.stipop.databinding.ItemHorizontalStickerThumbBinding
-import io.stipop.databinding.ItemLoadStateFooterViewBinding
 import io.stipop.models.StickerPackage
-import io.stipop.view_common.StickerPackageActivity
+import io.stipop.view.PackageDetailActivity
 
 class HorizontalStickerThumbViewHolder(private val binding: ItemHorizontalStickerThumbBinding) :
     RecyclerView.ViewHolder(binding.root) {
@@ -25,7 +22,7 @@ class HorizontalStickerThumbViewHolder(private val binding: ItemHorizontalSticke
     init {
         itemView.setOnClickListener {
             stickerPackage?.packageId?.let {
-                Intent(itemView.context, StickerPackageActivity::class.java).apply {
+                Intent(itemView.context, PackageDetailActivity::class.java).apply {
                     putExtra(Constants.IntentKey.PACKAGE_ID, it)
                     putExtra(Constants.IntentKey.ENTRANCE_POINT, Constants.Point.TREND)
                 }.run {

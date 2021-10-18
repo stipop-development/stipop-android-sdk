@@ -16,7 +16,7 @@ import io.stipop.Constants
 import io.stipop.R
 import io.stipop.custom.StipopImageView
 import io.stipop.models.StickerPackage
-import io.stipop.view_common.StickerPackageActivity
+import io.stipop.view.PackageDetailActivity
 import io.stipop.viewholder.delegates.MyStickerItemHolderDelegate
 
 class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItemHolderDelegate?) :
@@ -38,7 +38,7 @@ class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItem
 
     init {
         itemView.setOnClickListener {
-            Intent(itemView.context, StickerPackageActivity::class.java).apply {
+            Intent(itemView.context, PackageDetailActivity::class.java).apply {
                 putExtra(Constants.IntentKey.PACKAGE_ID, stickerPackage?.packageId)
                 putExtra(Constants.IntentKey.ENTRANCE_POINT, Constants.Point.MY_STICKER)
             }.run {

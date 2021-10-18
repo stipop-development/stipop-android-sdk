@@ -17,9 +17,9 @@ import io.stipop.sample.models.ChatItem
 class MainActivity : AppCompatActivity(), StipopDelegate {
 
     // IMPORTANT :: The downloaded sticker is saved according to the user ID.
-    private val testUserId = "put-user-id-here"
+    private val testUserId = "change-user-id-here"
     private val testProfileUrl = "change-user-profile-image-url-here"
-    private val testUserName = "change-user-name-anything"
+    private val testUserName = "change-user-name-here"
 
     private val chatInputEditText: AppCompatEditText by lazy { findViewById(R.id.chatInputEditText) }
     private val chatRecyclerview: RecyclerView by lazy { findViewById(R.id.chatRecyclerView) }

@@ -25,19 +25,19 @@
         </provider>
 
         <activity
-            android:name=".view_search.SearchActivity"
+            android:name=".view.SearchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Stipop"
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <activity
-            android:name=".view_store.StoreActivity"
+            android:name=".view.StoreActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Stipop"
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <activity
-            android:name=".view_common.StickerPackageActivity"
+            android:name=".view.PackageDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Stipop"
             android:windowSoftInputMode="adjustResize|stateHidden" />

@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.view_keyboard.KeyboardPopup
+import io.stipop.view.KeyboardPopup
 import io.stipop.custom.StipopImageView
 import io.stipop.models.SPPackage
 

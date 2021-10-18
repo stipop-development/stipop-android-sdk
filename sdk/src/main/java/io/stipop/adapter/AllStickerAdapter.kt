@@ -1,5 +1,6 @@
 package io.stipop.adapter
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.models.AllStickerDataSource
@@ -13,6 +14,14 @@ class AllStickerAdapter(private val verticalStickerThumbViewHolderDelegate: Vert
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dataSet = AllStickerDataSource()
+    private var isSearchResultView = false
+
+    private fun getSyncedPosition(position: Int): Int {
+        return when (isSearchResultView) {
+            true -> position - 1
+            false -> position - 2
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -32,24 +41,40 @@ class AllStickerAdapter(private val verticalStickerThumbViewHolderDelegate: Vert
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (position) {
-            0 -> {
-                (holder as HorizontalStickerThumbContainerViewHolder).bind(
-                    "Trending",
-                    dataSet.trendingList
-                )
+        when (isSearchResultView) {
+            true -> {
+                when (position) {
+                    0 -> {
+                        (holder as HeaderViewHolder).bind("Result")
+                    }
+                    else -> {
+                        val alignedPosition = getSyncedPosition(position)
+                        (holder as VerticalStickerThumbViewHolder).bind(dataSet.defaultList[alignedPosition])
+                    }
+                }
             }
-            1 -> {
-                (holder as HeaderViewHolder).bind("Result")
-            }
-            else -> {
-                val alignedPosition = position - 2
-                (holder as VerticalStickerThumbViewHolder).bind(dataSet.defaultList[alignedPosition])
+            false -> {
+                when (position) {
+                    0 -> {
+                        (holder as HorizontalStickerThumbContainerViewHolder).bind(
+                            "Trending",
+                            dataSet.trendingList
+                        )
+                    }
+                    1 -> {
+                        (holder as HeaderViewHolder).bind("Result")
+                    }
+                    else -> {
+                        val alignedPosition = getSyncedPosition(position)
+                        (holder as VerticalStickerThumbViewHolder).bind(dataSet.defaultList[alignedPosition])
+                    }
+                }
             }
         }
     }
 
     fun updateData(stickerPackages: List<StickerPackage>) {
+        Log.d("STIPOP-DEBUG", "updateData : $isSearchResultView")
         val prevItemCount = itemCount
         dataSet.apply {
             if (trendingList.isEmpty()) {
@@ -59,7 +84,11 @@ class AllStickerAdapter(private val verticalStickerThumbViewHolderDelegate: Vert
                         trendingList.add(stickerPackage)
                     }
                 }
-                defaultList.addAll(stickerPackages.subList(8, stickerPackages.size - 1))
+                if (isSearchResultView) {
+                    defaultList.addAll(stickerPackages)
+                } else {
+                    defaultList.addAll(stickerPackages.subList(8, stickerPackages.size - 1))
+                }
                 notifyItemRangeInserted(0, itemCount - 1)
             } else {
                 defaultList.addAll(stickerPackages)
@@ -68,7 +97,9 @@ class AllStickerAdapter(private val verticalStickerThumbViewHolderDelegate: Vert
         }
     }
 
-    fun clearData(){
+    fun clearData(isSearchResultView: Boolean) {
+        Log.d("STIPOP-DEBUG", "isSearchView : $isSearchResultView")
+        this.isSearchResultView = isSearchResultView
         dataSet.defaultList.clear()
         dataSet.trendingList.clear()
         notifyDataSetChanged()
@@ -79,18 +110,29 @@ class AllStickerAdapter(private val verticalStickerThumbViewHolderDelegate: Vert
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (position) {
-            0 -> TYPE_TRENDING
-            1 -> TYPE_LIST_HEADER
-            else -> TYPE_LIST_ITEM
+        return when (isSearchResultView) {
+            true -> {
+                when (position) {
+                    0 -> TYPE_LIST_HEADER
+                    else -> TYPE_LIST_ITEM
+                }
+            }
+            false -> {
+                when (position) {
+                    0 -> TYPE_TRENDING
+                    1 -> TYPE_LIST_HEADER
+                    else -> TYPE_LIST_ITEM
+                }
+            }
         }
+
     }
 
     fun updateDownloadState(packageId: Int) {
         var position = 0
         run loop@{
             dataSet.defaultList.forEachIndexed { index, stickerPackage ->
-                if(stickerPackage.packageId == packageId){
+                if (stickerPackage.packageId == packageId) {
                     position = index
                     stickerPackage.download = "Y"
                     dataSet.defaultList[position] = stickerPackage
@@ -98,7 +140,7 @@ class AllStickerAdapter(private val verticalStickerThumbViewHolderDelegate: Vert
                 }
             }
         }
-        position += 2
+        position += if (isSearchResultView) 1 else 2
         notifyItemChanged(position)
     }
 

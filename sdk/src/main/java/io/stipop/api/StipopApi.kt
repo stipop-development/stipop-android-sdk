@@ -93,10 +93,11 @@ interface StipopApi {
     @POST("sdk/track/view/mysticker")
     suspend fun trackViewMySticker(@Body userIdBody: UserIdBody): Response<StipopResponse>
 
-    @POST("sdk/track/view/package/{entrance_point}")
+    @POST("sdk/track/view/package/{entrance_point}/{package_id}")
     suspend fun trackViewPackage(
         @Body userIdBody: UserIdBody,
-        @Path("entrance_point") entrancePoint: String? = Constants.Point.STORE
+        @Path("entrance_point") entrancePoint: String? = Constants.Point.STORE,
+        @Path("package_id") packageId: Int
     ): Response<StipopResponse>
 
     @POST("analytics/send/{stickerId}")
@@ -115,8 +116,8 @@ interface StipopApi {
             val headers = Headers.Builder()
                 .add(
                     Constants.ApiParams.ApiKey, if (BuildConfig.DEBUG) {
-                        Constants.Value.SANDBOX_APIKEY
-//                        Config.apikey
+//                        Constants.Value.SANDBOX_APIKEY
+                        Config.apikey
                     } else {
                         Config.apikey
                     }

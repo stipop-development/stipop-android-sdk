@@ -1,12 +1,10 @@
-package io.stipop.view_common
+package io.stipop.view
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import io.stipop.*
 import io.stipop.adapter.legacy.StickerAdapter
@@ -24,7 +22,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.IOException
 
-class StickerPackageActivity : Activity() {
+class PackageDetailActivity : Activity() {
 
     lateinit var context: Context
 
@@ -82,7 +80,6 @@ class StickerPackageActivity : Activity() {
             } else {
                 Utils.alert(this, getString(R.string.can_not_download))
             }
-
         }
 
         stickerAdapter = StickerAdapter(context, R.layout.item_sticker, stickerData)
@@ -91,7 +88,7 @@ class StickerPackageActivity : Activity() {
         getPackInfo()
 
         scope.launch {
-            StipopApi.create().trackViewPackage(UserIdBody(Stipop.userId), entrancePoint = entrancePoint)
+            StipopApi.create().trackViewPackage(UserIdBody(Stipop.userId), entrancePoint = entrancePoint, packageId = packageId)
         }
     }
 
