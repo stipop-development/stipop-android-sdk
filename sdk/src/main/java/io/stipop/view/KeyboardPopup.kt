@@ -1,4 +1,4 @@
-package io.stipop.view_keyboard
+package io.stipop.view
 
 import android.app.Activity
 import android.content.BroadcastReceiver
@@ -25,7 +25,6 @@ import io.stipop.databinding.ViewKeyboardPopupBinding
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.models.body.UserIdBody
-import io.stipop.view_store.StoreActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

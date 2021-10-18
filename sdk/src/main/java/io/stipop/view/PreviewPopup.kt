@@ -1,4 +1,4 @@
-package io.stipop.view_keyboard
+package io.stipop.view
 
 import android.app.Activity
 import android.os.Build

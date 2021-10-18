@@ -1,10 +1,6 @@
-package io.stipop.view_store
+package io.stipop.view
 
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import androidx.annotation.RequiresApi
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import io.stipop.*

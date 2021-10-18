@@ -1,4 +1,4 @@
-package io.stipop.view_store
+package io.stipop.view
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -65,7 +65,7 @@ class AllStickerFragment : BaseFragment(), VerticalStickerThumbViewHolderDelegat
             this?.allStickerRecyclerView?.setUpScrollListener()
             this?.clearSearchImageView?.setOnClickListener {
                 searchEditText.setText("")
-                viewModel.refreshData()
+                viewModel.refreshData("")
                 Utils.hideKeyboard(requireContext())
                 binding?.searchEditText?.clearFocus()
             }
@@ -78,8 +78,8 @@ class AllStickerFragment : BaseFragment(), VerticalStickerThumbViewHolderDelegat
         viewModel.stickerPackages.observeForever { stickers ->
             allStickerAdapter.updateData(stickers)
         }
-        viewModel.clearAction.observeForever { isClear ->
-            if (isClear) allStickerAdapter.clearData()
+        viewModel.clearAction.observeForever { isSearchView ->
+            allStickerAdapter.clearData(isSearchView)
         }
         lifecycleScope.launch {
             viewModel.emittedQuery.collect { value -> viewModel.searchQuery(value) }

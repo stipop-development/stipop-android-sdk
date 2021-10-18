@@ -5,27 +5,18 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
-import android.util.Log
 import android.view.View
-import io.stipop.view_common.StickerPackageActivity
-import io.stipop.view_keyboard.KeyboardPopup
-import io.stipop.view_search.SearchActivity
-import io.stipop.api.APIClient
+import io.stipop.view.KeyboardPopup
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
-import io.stipop.data.BaseRepository
 import io.stipop.data.ConfigRepository
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
 import io.stipop.models.body.UserIdBody
+import io.stipop.view.SearchActivity
+import io.stipop.view.PackageDetailActivity
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.subscribe
-import org.json.JSONObject
-import java.io.IOException
 
 interface StipopDelegate {
     fun onStickerSelected(sticker: SPSticker): Boolean
@@ -162,7 +153,7 @@ class Stipop(
         if (!this.connected) {
             return
         }
-        Intent(this.activity, StickerPackageActivity::class.java).apply {
+        Intent(this.activity, PackageDetailActivity::class.java).apply {
             putExtra("packageId", packageId)
             putExtra(Constants.IntentKey.ENTRANCE_POINT, entrancePoint)
         }.run {

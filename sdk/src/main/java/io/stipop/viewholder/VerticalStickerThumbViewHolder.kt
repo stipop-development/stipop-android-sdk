@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
 import io.stipop.databinding.ItemVerticalStickerThumbBinding
 import io.stipop.models.StickerPackage
-import io.stipop.view_common.StickerPackageActivity
+import io.stipop.view.PackageDetailActivity
 import io.stipop.viewholder.delegates.VerticalStickerThumbViewHolderDelegate
 
 class VerticalStickerThumbViewHolder(private val binding: ItemVerticalStickerThumbBinding, private val delegate: VerticalStickerThumbViewHolderDelegate?) :
@@ -18,7 +18,7 @@ class VerticalStickerThumbViewHolder(private val binding: ItemVerticalStickerThu
     init {
         itemView.setOnClickListener {
             stickerPackage?.packageId?.let {
-                Intent(itemView.context, StickerPackageActivity::class.java).apply {
+                Intent(itemView.context, PackageDetailActivity::class.java).apply {
                     putExtra(Constants.IntentKey.PACKAGE_ID, it)
                     putExtra(Constants.IntentKey.ENTRANCE_POINT, Constants.Point.STORE)
                 }.run {

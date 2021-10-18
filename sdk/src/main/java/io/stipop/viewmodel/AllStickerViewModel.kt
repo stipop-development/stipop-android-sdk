@@ -1,5 +1,6 @@
 package io.stipop.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,13 +37,15 @@ class AllStickerViewModel(private val repository: AllStickerRepository) : ViewMo
         }
     }
 
-    fun searchQuery(keyword: String){
+    fun searchQuery(keyword: String) {
         query = keyword
-        refreshData()
+        refreshData(query)
     }
 
-    fun refreshData() {
-        clearAction.postValue(true)
+    fun refreshData(query: String? = null) {
+        val isSearchView = !query.isNullOrEmpty()
+        Log.d("STIPOP-DEBUG", "refreshData : $isSearchView")
+        clearAction.postValue(isSearchView)
         recyclerView?.refresh()
     }
 
