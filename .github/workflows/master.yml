@@ -18,8 +18,8 @@ jobs:
       - name: Get version
         id: get_version
         run: |
-          echo "::set-output name=code::$(grep versionCode Stipop/build.gradle | awk '{print $2}')"
-          echo "::set-output name=name::$(grep versionName Stipop/build.gradle | awk '{print $2}' | tr '"' ' ' | tr -d " ")"
+          echo "::set-output name=code::$(grep sdkVersionCode build.gradle | awk '{print $3}')"
+          echo "::set-output name=name::$(grep sdkVersionName build.gradle | awk '{print $3}' | tr '"' ' ' | tr -d " ")"
 
       - name: Get tag name
         id: get_tag
@@ -46,13 +46,3 @@ jobs:
           target_branch: 'develop'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Slack Notifications
-        uses: rtCamp/action-slack-notify@master
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_COLOR: ${{ job.status }}
-          SLACK_USERNAME: Stipop Github Bot
-          SLACK_ICON_EMOJI: ':android1:'
-          SLACK_CHANNEL: android_dev
-          SLACK_TITLE: Merged into Master (SDK is deployed now)
