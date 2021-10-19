@@ -3,6 +3,9 @@ package io.stipop.sample
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Stipop
@@ -25,8 +28,8 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
     private val chatRecyclerview: RecyclerView by lazy { findViewById(R.id.chatRecyclerView) }
     private val stipopPickerImageView: StipopImageView by lazy { findViewById(R.id.stickerPickerImageView) }
     private val stipopSearchImageView: StipopImageView by lazy { findViewById(R.id.stickerSearchImageView) }
+    private val sendImageView: AppCompatImageView by lazy { findViewById(R.id.sendImageView) }
     private val chatsAdapter: ChatAdapter by lazy { ChatAdapter() }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,13 +53,31 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
             Stipop.showSearch()
         }
 
+        chatInputEditText.addTextChangedListener {
+            if (it.isNullOrEmpty()) {
+                toggleSendButton(false)
+            } else {
+                toggleSendButton(true)
+            }
+        }
+        sendImageView.setOnClickListener {
+            sendMessage()
+        }
         chatInputEditText.setOnEditorActionListener { _, _, _ ->
-            sendMessage(chatInputEditText.text?.toString() ?: "")
+            sendMessage()
             true
         }
     }
 
-    private fun sendMessage(chatMessage: String) {
+    private fun toggleSendButton(isActivate: Boolean) {
+        when (isActivate) {
+            true -> sendImageView.setColorFilter(ContextCompat.getColor(this, R.color.primary))
+            false -> sendImageView.setColorFilter(ContextCompat.getColor(this, R.color.deactivate))
+        }
+    }
+
+    private fun sendMessage() {
+        val chatMessage = chatInputEditText.text?.toString() ?: ""
         if (chatMessage.isNotEmpty()) {
             val item = ChatItem(
                 nickname = testUserName,
