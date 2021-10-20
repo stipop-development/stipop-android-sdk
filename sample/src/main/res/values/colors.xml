@@ -9,7 +9,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="primary">#FF681B</color>
+    <color name="primaryVariant">#FF6025</color>
     <color name="deactivate">#908d8d</color>
-    <color name="primaryVariant">#FFFF855B</color>
     <color name="chat_background">#F5F8F8</color>
+    <color name="stipop_b3b3b3">#B3B3B3</color>
+    <color name="stipop_6e6e6e">#6E6E6E</color>
 </resources>

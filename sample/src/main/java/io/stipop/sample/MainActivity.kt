@@ -17,33 +17,27 @@ import io.stipop.sample.adapter.ChatAdapter
 import io.stipop.sample.models.ChatItem
 
 // IMPORTANT :: The received sticker can be handled through StipopDelegate Interface.
-class MainActivity : AppCompatActivity(), StipopDelegate {
+class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDelegate {
 
     // IMPORTANT :: The downloaded sticker is saved according to the user ID.
     private val testUserId = "change-user-id-here"
     private val testProfileUrl = "change-user-profile-image-url-here"
     private val testUserName = "change-user-name-here"
 
+    // This Code below is used to configure the sample app, so you can ignore it.
     private val chatInputEditText: AppCompatEditText by lazy { findViewById(R.id.chatInputEditText) }
     private val chatRecyclerview: RecyclerView by lazy { findViewById(R.id.chatRecyclerView) }
     private val stipopPickerImageView: StipopImageView by lazy { findViewById(R.id.stickerPickerImageView) }
     private val stipopSearchImageView: StipopImageView by lazy { findViewById(R.id.stickerSearchImageView) }
     private val sendImageView: AppCompatImageView by lazy { findViewById(R.id.sendImageView) }
-    private val chatsAdapter: ChatAdapter by lazy { ChatAdapter() }
+    private val chatsAdapter: ChatAdapter by lazy { ChatAdapter(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // IMPORTANT :: This must be called to use the sdk SDK.
+        // IMPORTANT :: This method must be called to use STIPOP SDK.
         Stipop.connect(this, stipopPickerImageView, testUserId, "en", "US", this)
-
-        chatRecyclerview.apply {
-            chatsAdapter.setHasStableIds(true)
-            adapter = chatsAdapter
-            layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(true)
-        }
 
         stipopPickerImageView.setOnClickListener {
             Stipop.showKeyboard()
@@ -51,6 +45,39 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
 
         stipopSearchImageView.setOnClickListener {
             Stipop.showSearch()
+        }
+
+        initSampleUi()
+    }
+
+    override fun onStickerSelected(sticker: SPSticker): Boolean {
+        sendSticker(sticker.stickerImg)
+        return true
+    }
+
+    override fun canDownload(spPackage: SPPackage): Boolean {
+        return true
+    }
+
+    //
+    // The code below is used to configure the sample app, so you can ignore it.
+    //
+    private fun initSampleUi() {
+
+        chatRecyclerview.apply {
+            chatsAdapter.setHasStableIds(true)
+            adapter = chatsAdapter
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
+            addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+                if (bottom < oldBottom) {
+                    chatRecyclerview.postDelayed(Runnable {
+                        chatRecyclerview.smoothScrollToPosition(
+                            chatsAdapter.itemCount - 1
+                        )
+                    }, 100)
+                }
+            }
         }
 
         chatInputEditText.addTextChangedListener {
@@ -76,8 +103,8 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
         }
     }
 
-    private fun sendMessage() {
-        val chatMessage = chatInputEditText.text?.toString() ?: ""
+    private fun sendMessage(message: String? = null) {
+        val chatMessage = message ?: chatInputEditText.text?.toString() ?: ""
         if (chatMessage.isNotEmpty()) {
             val item = ChatItem(
                 nickname = testUserName,
@@ -102,16 +129,17 @@ class MainActivity : AppCompatActivity(), StipopDelegate {
         chatsAdapter.run {
             addChatItem(item)
             notifyItemInserted(itemCount - 1)
-            chatRecyclerview.scrollToPosition(itemCount - 1)
+            chatRecyclerview.smoothScrollToPosition(itemCount - 1)
         }
     }
 
-    override fun onStickerSelected(sticker: SPSticker): Boolean {
-        sendSticker(sticker.stickerImg)
-        return true
+    override fun onStickerSearchViewClick() {
+        sendMessage("Let me try Sticker Picker View! \uD83D\uDE00")
+        Stipop.showSearch()
     }
 
-    override fun canDownload(spPackage: SPPackage): Boolean {
-        return true
+    override fun onStickerPickerViewClick() {
+        sendMessage("Let me try Sticker Search View! \uD83D\uDD0D")
+        Stipop.showKeyboard()
     }
 }
