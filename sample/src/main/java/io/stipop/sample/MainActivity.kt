@@ -1,8 +1,11 @@
 package io.stipop.sample
 
+import android.content.Intent
 import android.graphics.PorterDuff
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
@@ -19,7 +22,16 @@ import io.stipop.models.SPSticker
 import io.stipop.sample.adapter.ChatAdapter
 import io.stipop.sample.models.ChatItem
 
-// IMPORTANT :: The received sticker can be handled through StipopDelegate Interface.
+/**
+ * IMPORTANT
+ * @see GlobalApplication
+ * @see assets/Stipop.json
+ *
+ * Before looking at this code, make sure that Stipop.json file is in the asset folder
+ * and that Stipop.configure method is called in the your application class.
+ *
+ * The received sticker can be handled through StipopDelegate Interface.
+ */
 class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDelegate {
 
     // IMPORTANT :: The downloaded sticker is saved according to the user ID.
@@ -40,7 +52,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // IMPORTANT :: This method must be called to use STIPOP SDK.
+        // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
         Stipop.connect(this, stipopPickerImageView, testUserId, "en", "US", this)
 
         stipopPickerImageView.setOnClickListener {
@@ -153,5 +165,17 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.contactUs->{
+                Intent(Intent.ACTION_VIEW, Uri.parse("https://developers.stipop.io/contact-us")).run { startActivity(this) }
+            }
+            R.id.goToGithub->{
+                Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/stipop-development/stipop-android-sdk")).run { startActivity(this) }
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
