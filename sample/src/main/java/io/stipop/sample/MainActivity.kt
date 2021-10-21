@@ -1,9 +1,12 @@
 package io.stipop.sample
 
+import android.graphics.PorterDuff
 import android.os.Bundle
+import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +28,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     private val testUserName = "change-user-name-here"
 
     // This Code below is used to configure the sample app, so you can ignore it.
+    private val toolBar: Toolbar by lazy { findViewById(R.id.toolBar) }
     private val chatInputEditText: AppCompatEditText by lazy { findViewById(R.id.chatInputEditText) }
     private val chatRecyclerview: RecyclerView by lazy { findViewById(R.id.chatRecyclerView) }
     private val stipopPickerImageView: StipopImageView by lazy { findViewById(R.id.stickerPickerImageView) }
@@ -63,6 +67,9 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     // The code below is used to configure the sample app, so you can ignore it.
     //
     private fun initSampleUi() {
+
+        setSupportActionBar(toolBar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         chatRecyclerview.apply {
             chatsAdapter.setHasStableIds(true)
@@ -141,5 +148,10 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     override fun onStickerPickerViewClick() {
         sendMessage("Let me try Sticker Search View! \uD83D\uDD0D")
         Stipop.showKeyboard()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
     }
 }

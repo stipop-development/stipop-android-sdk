@@ -126,9 +126,9 @@ class Stipop(
 
     fun connect() {
         this.stipopButton.setImageResource(Config.getStickerIconResourceId(this.activity))
+        this.stipopButton.setIconDefaultsColor()
 
         this.connected = true
-
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
 
         this.setSizeForSoftKeyboard()
@@ -164,7 +164,6 @@ class Stipop(
     private fun enableStickerIcon() {
         if (this.connected) {
             this.stipopButton.setTint()
-
             this.stickerIconEnabled = true
         }
     }
