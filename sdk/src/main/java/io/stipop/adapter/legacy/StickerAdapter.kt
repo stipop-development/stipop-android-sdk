@@ -32,6 +32,7 @@ class StickerAdapter(context: Context, var view: Int, var data: ArrayList<SPStic
         }
         if (data.isNotEmpty()){
             val sticker = data[position]
+            Glide.with(context).load(sticker.stickerImgLocalFilePath ?: sticker.stickerImg).into(item.imageIV)
             Glide.with(context).load(sticker.stickerImg).into(item.imageIV)
         }
         return retView
