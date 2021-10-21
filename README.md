@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/stipop-development/stipop-android-sdk.svg)](https://jitpack.io/#stipop-development/stipop-android-sdk)
+
 ## Stipop Android SDK Demo Quick Start Guide
 
 Get demo running in 5 minutes.
