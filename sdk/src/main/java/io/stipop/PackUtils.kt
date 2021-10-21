@@ -120,7 +120,7 @@ class PackUtils {
                         }
 
                         sticker.packageId = packageId
-                        sticker.stickerImg = it.absolutePath
+                        sticker.stickerImgLocalFilePath = it.absolutePath
 
                         stickerList.add(sticker)
                     }
