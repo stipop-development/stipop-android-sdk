@@ -1,5 +1,6 @@
 package io.stipop.sample.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,10 +9,11 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
-import java.util.ArrayList
 import com.bumptech.glide.Glide
 import io.stipop.sample.R
 import io.stipop.sample.models.ChatItem
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ChatAdapter(val guideDelegate: GuideDelegate) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -20,8 +22,7 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
         const val TYPE_INTRO = 1000
         const val TYPE_MESSAGE_MINE = 1001
         const val TYPE_STICKER_MINE = 1002
-        const val SAMPLE_STICKER =
-            "https://img.stipop.io/2020/3/31/1585719674256_CookieArrow_size.gif"
+        const val SAMPLE_STICKER = "https://img.stipop.io/2020/3/31/1585719674256_CookieArrow_size.gif"
     }
 
     interface GuideDelegate {
@@ -65,7 +66,6 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
 
     override fun getItemCount(): Int {
         return chatItems.size + 1
-
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
@@ -94,22 +94,24 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
     }
 
     inner class SimpleMessageItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val chatTextView: TextView = itemView.findViewById<TextView>(R.id.chat_Text)
+        private val chatTextView: TextView = itemView.findViewById(R.id.chat_Text)
         fun bind(item: ChatItem) {
             chatTextView.text = item.message
         }
     }
 
     inner class StickerMessageItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val chatStickerImageView: ImageView =
-            itemView.findViewById<ImageView>(R.id.my_sticker)
+        private val chatStickerImageView: ImageView = itemView.findViewById(R.id.my_sticker)
 
         fun bind(item: ChatItem) {
             Glide.with(itemView).load(item.stickerUrl).into(chatStickerImageView)
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     inner class GuideItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val dateTimeTextView: AppCompatTextView =
+            itemView.findViewById(R.id.datetimeTextView)
         private val sampleStickerImageView: AppCompatImageView =
             itemView.findViewById(R.id.guideImageView)
         private val searchViewTextView: AppCompatTextView =
@@ -118,6 +120,7 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
             itemView.findViewById(R.id.guideTextView6)
 
         init {
+            dateTimeTextView.text = SimpleDateFormat("a h:mm").format(Date())
             Glide.with(itemView).load(SAMPLE_STICKER).into(sampleStickerImageView)
             searchViewTextView.setOnClickListener {
                 guideDelegate.onStickerSearchViewClick()

@@ -29,11 +29,23 @@
         app:layout_constraintTop_toBottomOf="@+id/img_stipop" />
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/datetimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/stipop_b3b3b3"
+        android:textSize="14sp"
+        tools:text="PM 2:35"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guideTextView" />
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/guideTextView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="12dp"
         android:background="@drawable/bg_chat_other"
         android:text="@string/chat_intro_2"
@@ -42,7 +54,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/datetimeTextView" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/guideImageView"

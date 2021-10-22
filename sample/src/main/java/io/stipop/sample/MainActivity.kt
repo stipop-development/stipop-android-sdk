@@ -1,7 +1,6 @@
 package io.stipop.sample
 
 import android.content.Intent
-import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
@@ -88,7 +87,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
             adapter = chatsAdapter
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
-            addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
                 if (bottom < oldBottom) {
                     chatRecyclerview.postDelayed(Runnable {
                         chatRecyclerview.smoothScrollToPosition(
@@ -126,9 +125,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         val chatMessage = message ?: chatInputEditText.text?.toString() ?: ""
         if (chatMessage.isNotEmpty()) {
             val item = ChatItem(
-                nickname = testUserName,
-                message = chatMessage,
-                profileUrl = testProfileUrl
+                message = chatMessage
             )
             chatsAdapter.run {
                 addChatItem(item)
@@ -141,8 +138,6 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
 
     private fun sendSticker(stickerImg: String?) {
         val item = ChatItem(
-            nickname = testUserName,
-            profileUrl = testProfileUrl,
             stickerUrl = stickerImg.toString()
         )
         chatsAdapter.run {
