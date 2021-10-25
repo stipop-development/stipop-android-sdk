@@ -22,6 +22,7 @@ import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.sample.adapter.ChatAdapter
 import io.stipop.sample.models.ChatItem
+import java.util.*
 
 /**
  * IMPORTANT
@@ -36,9 +37,11 @@ import io.stipop.sample.models.ChatItem
 class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDelegate {
 
     // IMPORTANT :: The downloaded sticker is saved according to the user ID.
-    private val testUserId = "change-user-id-here"
+    private val testUserId = "change-user-id-here-6"
     private val testProfileUrl = "change-user-profile-image-url-here"
     private val testUserName = "change-user-name-here"
+    private val lang = "ko"
+    private val countryCode = "KR"
 
     // This Code below is used to configure the sample app, so you can ignore it.
     private val toolBar: Toolbar by lazy { findViewById(R.id.toolBar) }
@@ -55,7 +58,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         setContentView(R.layout.activity_main)
 
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
-        Stipop.connect(this, stipopPickerImageView, testUserId, "en", "US", this)
+        Stipop.connect(this, stipopPickerImageView, testUserId, lang, countryCode, this)
 
         stipopPickerImageView.setOnClickListener {
             Stipop.showKeyboard()
@@ -154,12 +157,12 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     }
 
     override fun onStickerSearchViewClick() {
-        sendMessage("Let me try Sticker Picker View! \uD83D\uDE00")
+        sendMessage("Let me try Sticker Search View! \uD83D\uDE00")
         Stipop.showSearch()
     }
 
     override fun onStickerPickerViewClick() {
-        sendMessage("Let me try Sticker Search View! \uD83D\uDD0D")
+        sendMessage("Let me try Sticker Keyboard Picker View! \uD83D\uDD0D")
         Stipop.showKeyboard()
     }
 

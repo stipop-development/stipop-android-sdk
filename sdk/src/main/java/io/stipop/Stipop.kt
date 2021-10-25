@@ -6,16 +6,19 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.view.View
-import io.stipop.view.KeyboardPopup
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
 import io.stipop.data.ConfigRepository
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
+import io.stipop.view.KeyboardPopup
 import io.stipop.view.SearchActivity
-import io.stipop.view.PackageDetailActivity
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.util.*
 
 interface StipopDelegate {
     fun onStickerSelected(sticker: SPSticker): Boolean
@@ -60,6 +63,16 @@ class Stipop(
             activity: Activity,
             stipopButton: StipopImageView,
             userId: String,
+            locale: Locale,
+            delegate: StipopDelegate
+        ) {
+            connect(activity, stipopButton, userId, locale.language, locale.country, delegate)
+        }
+
+        fun connect(
+            activity: Activity,
+            stipopButton: StipopImageView,
+            userId: String,
             lang: String,
             countryCode: String,
             delegate: StipopDelegate
@@ -68,7 +81,7 @@ class Stipop(
             Stipop.lang = lang
             Stipop.countryCode = countryCode
 
-            val requestBody = InitSdkBody(userId = Stipop.userId, language = Stipop.countryCode)
+            val requestBody = InitSdkBody(userId = Stipop.userId, language = Stipop.lang)
             scope.launch {
                 configRepository.postInitSdk(requestBody, onSuccess = {
                     Stipop(activity, stipopButton, delegate).apply {
@@ -84,7 +97,9 @@ class Stipop(
 
         fun showKeyboard() = instance?.showKeyboard()
 
-        internal fun send(
+        fun hideKeyboard() = instance?.hideKeyboard()
+
+        fun send(
             stickerId: Int,
             keyword: String,
             entrancePoint: String,
@@ -129,33 +144,6 @@ class Stipop(
         this.isConnected = true
     }
 
-    fun show() {
-        if (!this.isConnected) {
-            return
-        }
-
-        if (this.stickerIconEnabled) {
-            this.showKeyboard()
-        } else {
-            this.enableStickerIcon()
-
-            val intent = Intent(this.activity, SearchActivity::class.java)
-            this.activity.startActivity(intent)
-        }
-    }
-
-    fun goPackageDetail(packageId: Int, entrancePoint: String) {
-        if (!this.isConnected) {
-            return
-        }
-        Intent(this.activity, PackageDetailActivity::class.java).apply {
-            putExtra("packageId", packageId)
-            putExtra(Constants.IntentKey.ENTRANCE_POINT, entrancePoint)
-        }.run {
-            activity.startActivity(this)
-        }
-    }
-
     private fun enableStickerIcon() {
         if (this.isConnected) {
             this.stipopButton.setTint()
@@ -196,13 +184,24 @@ class Stipop(
             keyboard!!.hide()
             this.disableStickerIcon()
         } else {
-
             if (Stipop.keyboardHeight == 0) {
                 Utils.showKeyboard(instance!!.activity)
             }
-
             this.keyboard!!.canShow = true
             keyboard!!.show()
+        }
+    }
+
+    private fun hideKeyboard() {
+        if (!this.isConnected) {
+            return
+        }
+        keyboard?.let {
+            if (it.isShowing) {
+                it.canShow = false
+                it.hide()
+                disableStickerIcon()
+            }
         }
     }
 

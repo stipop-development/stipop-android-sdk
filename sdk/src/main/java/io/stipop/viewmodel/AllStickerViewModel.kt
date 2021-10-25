@@ -44,7 +44,6 @@ class AllStickerViewModel(private val repository: AllStickerRepository) : ViewMo
 
     fun refreshData(query: String? = null) {
         val isSearchView = !query.isNullOrEmpty()
-        Log.d("STIPOP-DEBUG", "refreshData : $isSearchView")
         clearAction.postValue(isSearchView)
         recyclerView?.refresh()
     }

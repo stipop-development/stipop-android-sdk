@@ -35,11 +35,5 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Stipop"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-
-        <activity
-            android:name=".view.PackageDetailActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.Stipop"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
     </application>
 </manifest>

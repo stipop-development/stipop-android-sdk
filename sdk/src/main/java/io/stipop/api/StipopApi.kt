@@ -9,10 +9,7 @@ import io.stipop.models.body.InitSdkBody
 import io.stipop.models.body.OrderChangeBody
 import io.stipop.models.body.StipopMetaHeader
 import io.stipop.models.body.UserIdBody
-import io.stipop.models.response.MyStickerOrderChangedResponse
-import io.stipop.models.response.MyStickerResponse
-import io.stipop.models.response.StickerPackageResponse
-import io.stipop.models.response.StipopResponse
+import io.stipop.models.response.*
 import okhttp3.Authenticator
 import okhttp3.Headers
 import okhttp3.OkHttpClient
@@ -29,6 +26,12 @@ interface StipopApi {
     suspend fun initSdk(
         @Body initSdkBody: InitSdkBody
     ): Response<StipopResponse>
+
+    @GET("package/{packageId}")
+    suspend fun getSingleStickerPackage(
+        @Path("packageId") packageId: Int,
+        @Query("userId") userId: String,
+    ): Response<StickerPackageResponse>
 
     @GET("mysticker/{userId}")
     suspend fun getMyStickers(
@@ -64,7 +67,7 @@ interface StipopApi {
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int,
         @Query("q") query: String? = null
-    ): Response<StickerPackageResponse>
+    ): Response<StickerPackagesResponse>
 
     @POST("download/{packageId}")
     suspend fun postDownloadStickers(

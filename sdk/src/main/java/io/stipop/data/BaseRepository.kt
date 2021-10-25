@@ -16,7 +16,7 @@ open class BaseRepository {
                 output = result.output
             }
             is ApiResponse.Error -> {
-                Log.e("STIPOP-SDK", "${result.exception}")
+                Log.e("STIPOP-SDK", "${result.exception.localizedMessage} / ${result.exception.stackTrace}")
             }
         }
         return output

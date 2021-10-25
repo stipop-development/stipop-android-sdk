@@ -11,11 +11,12 @@ import io.stipop.custom.RecyclerDecoration
 import io.stipop.databinding.ItemHorizontalStickerThumbContainerBinding
 import io.stipop.models.StickerPackage
 import io.stipop.setStipopUnderlineColor
+import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-class HorizontalStickerThumbContainerViewHolder(private val binding: ItemHorizontalStickerThumbContainerBinding) :
+class HorizontalStickerThumbContainerViewHolder(private val binding: ItemHorizontalStickerThumbContainerBinding, val delegate: StickerPackageClickDelegate?) :
     RecyclerView.ViewHolder(binding.root) {
 
-    private val adapter: HorizontalStickerThumbnailAdapter by lazy { HorizontalStickerThumbnailAdapter() }
+    private val adapter: HorizontalStickerThumbnailAdapter by lazy { HorizontalStickerThumbnailAdapter(delegate = delegate) }
     private val decoration = RecyclerDecoration(Utils.dpToPx(7F).toInt())
 
     init {
@@ -37,11 +38,10 @@ class HorizontalStickerThumbContainerViewHolder(private val binding: ItemHorizon
     }
 
     companion object {
-        fun create(parent: ViewGroup): HorizontalStickerThumbContainerViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_horizontal_sticker_thumb_container, parent, false)
+        fun create(parent: ViewGroup, delegate: StickerPackageClickDelegate?): HorizontalStickerThumbContainerViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_horizontal_sticker_thumb_container, parent, false)
             val binding = ItemHorizontalStickerThumbContainerBinding.bind(view)
-            return HorizontalStickerThumbContainerViewHolder(binding)
+            return HorizontalStickerThumbContainerViewHolder(binding, delegate)
         }
     }
 }

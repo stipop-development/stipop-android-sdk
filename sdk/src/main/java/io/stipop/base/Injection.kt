@@ -8,8 +8,10 @@ import androidx.savedstate.SavedStateRegistryOwner
 import io.stipop.api.StipopApi
 import io.stipop.data.AllStickerRepository
 import io.stipop.data.MyStickerRepository
+import io.stipop.data.StickerDetailRepository
 import io.stipop.viewmodel.AllStickerViewModel
 import io.stipop.viewmodel.MyStickerViewModel
+import io.stipop.viewmodel.PackageDetailViewModel
 
 object Injection {
 
@@ -21,6 +23,10 @@ object Injection {
 
     private fun provideAllStickerRepository(): AllStickerRepository {
         return AllStickerRepository(stipopApi)
+    }
+
+    private fun provideStickerDetailRepository(): StickerDetailRepository {
+        return StickerDetailRepository(stipopApi)
     }
 
     fun provideViewModelFactory(owner: SavedStateRegistryOwner): ViewModelProvider.Factory {
@@ -38,8 +44,10 @@ object Injection {
         ): T {
             if (modelClass.isAssignableFrom(MyStickerViewModel::class.java)) {
                 return MyStickerViewModel(provideMyStickerRepository()) as T
-            } else if(modelClass.isAssignableFrom(AllStickerViewModel::class.java)){
+            } else if (modelClass.isAssignableFrom(AllStickerViewModel::class.java)) {
                 return AllStickerViewModel(provideAllStickerRepository()) as T
+            } else if (modelClass.isAssignableFrom(PackageDetailViewModel::class.java)) {
+                return PackageDetailViewModel(provideStickerDetailRepository()) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

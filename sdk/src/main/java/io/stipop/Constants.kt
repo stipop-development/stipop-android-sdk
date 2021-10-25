@@ -4,6 +4,9 @@ object Constants {
     object KEY {
         const val ASSET_NAME = "Stipop.json"
     }
+    object Tag {
+        const val DETAIL = "PD"
+    }
     object IntentKey {
         const val STARTING_TAB_POSITION = "tab"
         const val PACKAGE_ID = "packageId"
