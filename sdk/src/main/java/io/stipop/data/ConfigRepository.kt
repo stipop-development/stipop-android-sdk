@@ -1,19 +1,29 @@
 package io.stipop.data
 
-import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.body.InitSdkBody
 import io.stipop.models.body.UserIdBody
 import io.stipop.models.response.StipopResponse
-import retrofit2.Response
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
 
 class ConfigRepository(private val apiService: StipopApi) : BaseRepository() {
 
+    var currentUserId: String? = null
+
     suspend fun postInitSdk(initSdkBody: InitSdkBody, onSuccess: (data: Any) -> Unit) {
-        onSuccess(safeCall(call = { apiService.initSdk(initSdkBody) }))
+        initSdkBody.userId?.let {
+            if (currentUserId == it) {
+                onSuccess(Unit)
+            } else {
+                currentUserId = it
+                safeCall(call = { apiService.initSdk(initSdkBody) })?.let(onSuccess)
+            }
+        } ?: kotlin.run {
+            onSuccess(Unit)
+        }
+    }
+
+    suspend fun postConfigSdk() {
+        safeCall(call = { apiService.trackConfig(UserIdBody()) })
     }
 
     suspend fun postTrackUsingSticker(
@@ -25,7 +35,8 @@ class ConfigRepository(private val apiService: StipopApi) : BaseRepository() {
         eventPoint: String?,
         onSuccess: (data: StipopResponse) -> Unit
     ) {
-        onSuccess(safeCall(call = {
+
+        safeCall(call = {
             apiService.trackUsingSticker(
                 stickerId = stickerId,
                 userId = userId,
@@ -34,6 +45,6 @@ class ConfigRepository(private val apiService: StipopApi) : BaseRepository() {
                 lang = lang,
                 eventPoint = eventPoint
             )
-        }))
+        })?.let(onSuccess)
     }
 }

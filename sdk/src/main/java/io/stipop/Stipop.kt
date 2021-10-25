@@ -13,7 +13,6 @@ import io.stipop.data.ConfigRepository
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
-import io.stipop.models.body.UserIdBody
 import io.stipop.view.SearchActivity
 import io.stipop.view.PackageDetailActivity
 import kotlinx.coroutines.*
@@ -54,9 +53,7 @@ class Stipop(
 
         fun configure(context: Context) {
             Config.configure(context)
-            scope.launch {
-                StipopApi.create().trackConfig(UserIdBody())
-            }
+            scope.launch { configRepository.postConfigSdk() }
         }
 
         fun connect(
@@ -93,7 +90,7 @@ class Stipop(
             entrancePoint: String,
             completionHandler: (result: Boolean) -> Unit
         ) {
-            if (instance == null || instance?.connected == false) {
+            if (instance == null || instance?.isConnected == false) {
                 return
             }
             scope.launch {
@@ -121,21 +118,19 @@ class Stipop(
     private lateinit var rootView: View
 
 
-    private var connected = false
+    private var isConnected = false
     private var stickerIconEnabled = false
 
-    fun connect() {
+    private fun connect() {
         this.stipopButton.setImageResource(Config.getStickerIconResourceId(this.activity))
-
-        this.connected = true
-
+        this.stipopButton.setIconDefaultsColor()
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
-
         this.setSizeForSoftKeyboard()
+        this.isConnected = true
     }
 
     fun show() {
-        if (!this.connected) {
+        if (!this.isConnected) {
             return
         }
 
@@ -150,7 +145,7 @@ class Stipop(
     }
 
     fun goPackageDetail(packageId: Int, entrancePoint: String) {
-        if (!this.connected) {
+        if (!this.isConnected) {
             return
         }
         Intent(this.activity, PackageDetailActivity::class.java).apply {
@@ -162,21 +157,20 @@ class Stipop(
     }
 
     private fun enableStickerIcon() {
-        if (this.connected) {
+        if (this.isConnected) {
             this.stipopButton.setTint()
-
             this.stickerIconEnabled = true
         }
     }
 
     private fun disableStickerIcon() {
-        if (this.connected) {
+        if (this.isConnected) {
             this.stipopButton.clearTint()
         }
     }
 
     private fun showSearch() {
-        if (!this.connected) {
+        if (!this.isConnected) {
             return
         }
 
@@ -187,7 +181,7 @@ class Stipop(
     }
 
     private fun showKeyboard() {
-        if (!this.connected) {
+        if (!this.isConnected) {
             return
         }
 
