@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
+import io.stipop.Constants
 import io.stipop.R
 import io.stipop.base.Injection
 import io.stipop.base.BaseFragment
@@ -117,8 +118,9 @@ class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
         }
     }
 
-    override fun onItemClicked(position: Int) {
-
+    override fun onItemClicked(packageId: Int, entrancePoint: String) {
+        PackageDetailBottomSheetFragment.newInstance(packageId, entrancePoint)
+            .showNow(parentFragmentManager, Constants.Tag.DETAIL)
     }
 
     override fun onItemLongClicked(position: Int) {

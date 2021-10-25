@@ -38,11 +38,8 @@ class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItem
 
     init {
         itemView.setOnClickListener {
-            Intent(itemView.context, PackageDetailActivity::class.java).apply {
-                putExtra(Constants.IntentKey.PACKAGE_ID, stickerPackage?.packageId)
-                putExtra(Constants.IntentKey.ENTRANCE_POINT, Constants.Point.MY_STICKER)
-            }.run {
-                itemView.context.startActivity(this)
+            stickerPackage?.packageId?.let {
+                delegate?.onItemClicked(it, Constants.Point.MY_STICKER)
             }
         }
         addLL.setOnClickListener {

@@ -15,6 +15,7 @@ import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
 import io.stipop.view.SearchActivity
 import io.stipop.view.PackageDetailActivity
+import io.stipop.view.PackageDetailBottomSheetFragment
 import kotlinx.coroutines.*
 
 interface StipopDelegate {
@@ -84,7 +85,9 @@ class Stipop(
 
         fun showKeyboard() = instance?.showKeyboard()
 
-        internal fun send(
+        fun hideKeyboard() = instance?.hideKeyboard()
+
+        fun send(
             stickerId: Int,
             keyword: String,
             entrancePoint: String,
@@ -129,33 +132,6 @@ class Stipop(
         this.isConnected = true
     }
 
-    fun show() {
-        if (!this.isConnected) {
-            return
-        }
-
-        if (this.stickerIconEnabled) {
-            this.showKeyboard()
-        } else {
-            this.enableStickerIcon()
-
-            val intent = Intent(this.activity, SearchActivity::class.java)
-            this.activity.startActivity(intent)
-        }
-    }
-
-    fun goPackageDetail(packageId: Int, entrancePoint: String) {
-        if (!this.isConnected) {
-            return
-        }
-        Intent(this.activity, PackageDetailActivity::class.java).apply {
-            putExtra("packageId", packageId)
-            putExtra(Constants.IntentKey.ENTRANCE_POINT, entrancePoint)
-        }.run {
-            activity.startActivity(this)
-        }
-    }
-
     private fun enableStickerIcon() {
         if (this.isConnected) {
             this.stipopButton.setTint()
@@ -196,13 +172,24 @@ class Stipop(
             keyboard!!.hide()
             this.disableStickerIcon()
         } else {
-
             if (Stipop.keyboardHeight == 0) {
                 Utils.showKeyboard(instance!!.activity)
             }
-
             this.keyboard!!.canShow = true
             keyboard!!.show()
+        }
+    }
+
+    private fun hideKeyboard() {
+        if (!this.isConnected) {
+            return
+        }
+        keyboard?.let {
+            if (it.isShowing) {
+                it.canShow = false
+                it.hide()
+                disableStickerIcon()
+            }
         }
     }
 

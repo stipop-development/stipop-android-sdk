@@ -154,12 +154,12 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     }
 
     override fun onStickerSearchViewClick() {
-        sendMessage("Let me try Sticker Picker View! \uD83D\uDE00")
+        sendMessage("Let me try Sticker Search View! \uD83D\uDE00")
         Stipop.showSearch()
     }
 
     override fun onStickerPickerViewClick() {
-        sendMessage("Let me try Sticker Search View! \uD83D\uDD0D")
+        sendMessage("Let me try Sticker Keyboard Picker View! \uD83D\uDD0D")
         Stipop.showKeyboard()
     }
 

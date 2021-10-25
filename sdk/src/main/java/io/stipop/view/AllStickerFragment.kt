@@ -11,6 +11,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import io.stipop.Config
+import io.stipop.Constants
 import io.stipop.R
 import io.stipop.Utils
 import io.stipop.adapter.AllStickerAdapter
@@ -19,13 +20,13 @@ import io.stipop.base.Injection
 import io.stipop.databinding.FragmentAllStickerBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
-import io.stipop.viewholder.delegates.VerticalStickerThumbViewHolderDelegate
+import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 import io.stipop.viewmodel.AllStickerViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
-class AllStickerFragment : BaseFragment(), VerticalStickerThumbViewHolderDelegate {
+class AllStickerFragment : BaseFragment(), StickerPackageClickDelegate {
 
 //    var deleteKeyword = APIClient.APIPath.SEARCH_RECENT.rawValue + "/${Stipop.userId}"
 //    var getKeywords = APIClient.get(requireActivity(), APIClient.APIPath.SEARCH_KEYWORD.rawValue, null
@@ -60,7 +61,7 @@ class AllStickerFragment : BaseFragment(), VerticalStickerThumbViewHolderDelegat
             AllStickerViewModel::class.java
         )
 
-        with(binding){
+        with(binding) {
             this?.allStickerRecyclerView?.adapter = allStickerAdapter
             this?.allStickerRecyclerView?.setUpScrollListener()
             this?.clearSearchImageView?.setOnClickListener {
@@ -91,7 +92,7 @@ class AllStickerFragment : BaseFragment(), VerticalStickerThumbViewHolderDelegat
     }
 
     override fun applyTheme() {
-        with(binding){
+        with(binding) {
             val drawable = this?.searchBarContainer?.background as GradientDrawable
             drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
             drawable.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
@@ -101,6 +102,11 @@ class AllStickerFragment : BaseFragment(), VerticalStickerThumbViewHolderDelegat
             this.searchIconIV.setIconDefaultsColor()
             this.clearSearchImageView.setIconDefaultsColor()
         }
+    }
+
+    override fun onPackageDetailClicked(packageId: Int, entrancePoint: String) {
+        PackageDetailBottomSheetFragment.newInstance(packageId, entrancePoint)
+            .showNow(parentFragmentManager, Constants.Tag.DETAIL)
     }
 
     override fun onDownloadClicked(position: Int, stickerPackage: StickerPackage) {

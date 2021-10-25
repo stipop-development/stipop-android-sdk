@@ -3,7 +3,7 @@ package io.stipop.viewholder.delegates
 import androidx.recyclerview.widget.RecyclerView
 
 interface MyStickerItemHolderDelegate {
-    fun onItemClicked(position: Int)
+    fun onItemClicked(packageId: Int, entrancePoint: String)
     fun onItemLongClicked(position: Int)
     fun onVisibilityClicked(wantToVisible: Boolean, packageId: Int, position: Int)
     fun onDragStarted(viewHolder: RecyclerView.ViewHolder)

@@ -4,12 +4,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.HorizontalStickerThumbViewHolder
+import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-class HorizontalStickerThumbnailAdapter(private val dataSet: ArrayList<StickerPackage> = ArrayList()) :
+class HorizontalStickerThumbnailAdapter(private val dataSet: ArrayList<StickerPackage> = ArrayList(), val delegate: StickerPackageClickDelegate?) :
     RecyclerView.Adapter<HorizontalStickerThumbViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HorizontalStickerThumbViewHolder {
-        return HorizontalStickerThumbViewHolder.create(parent)
+        return HorizontalStickerThumbViewHolder.create(parent, delegate)
     }
 
     override fun onBindViewHolder(holder: HorizontalStickerThumbViewHolder, position: Int) {
