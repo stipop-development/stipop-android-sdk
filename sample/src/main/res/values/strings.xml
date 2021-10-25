@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">StipopSample</string>
+    <string name="app_name" translatable="false">Stipop Demo</string>
     <string name="chat_intro_1" translatable="false">Integrate 150,000 free stickers into your app</string>
     <string name="chat_intro_2" translatable="false">Hi, there! 👋</string>
     <string name="chat_intro_3" translatable="false">Welcome to Stipop SDK!\nPress the button below to get started.</string>

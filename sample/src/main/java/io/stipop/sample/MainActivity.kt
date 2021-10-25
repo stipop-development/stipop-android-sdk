@@ -13,6 +13,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import io.stipop.Stipop
 import io.stipop.StipopDelegate
 import io.stipop.custom.StipopImageView
@@ -40,6 +42,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
 
     // This Code below is used to configure the sample app, so you can ignore it.
     private val toolBar: Toolbar by lazy { findViewById(R.id.toolBar) }
+    private val profileImageView: AppCompatImageView by lazy { findViewById(R.id.profileImageView) }
     private val chatInputEditText: AppCompatEditText by lazy { findViewById(R.id.chatInputEditText) }
     private val chatRecyclerview: RecyclerView by lazy { findViewById(R.id.chatRecyclerView) }
     private val stipopPickerImageView: StipopImageView by lazy { findViewById(R.id.stickerPickerImageView) }
@@ -81,6 +84,9 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
 
         setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        Glide.with(this).load(R.drawable.img_profile).apply(RequestOptions().circleCrop())
+            .into(profileImageView)
 
         chatRecyclerview.apply {
             chatsAdapter.setHasStableIds(true)
@@ -163,12 +169,21 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.contactUs->{
-                Intent(Intent.ACTION_VIEW, Uri.parse("https://developers.stipop.io/contact-us")).run { startActivity(this) }
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
             }
-            R.id.goToGithub->{
-                Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/stipop-development/stipop-android-sdk")).run { startActivity(this) }
+            R.id.contactUs -> {
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://developers.stipop.io/contact-us")
+                ).run { startActivity(this) }
+            }
+            R.id.goToGithub -> {
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://github.com/stipop-development/stipop-android-sdk")
+                ).run { startActivity(this) }
             }
         }
         return super.onOptionsItemSelected(item)

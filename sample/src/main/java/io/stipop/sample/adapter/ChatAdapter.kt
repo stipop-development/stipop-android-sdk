@@ -1,14 +1,21 @@
 package io.stipop.sample.adapter
 
 import android.annotation.SuppressLint
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.*
+import androidx.vectordrawable.graphics.drawable.AnimationUtilsCompat
 import com.bumptech.glide.Glide
 import io.stipop.sample.R
 import io.stipop.sample.models.ChatItem
@@ -22,7 +29,8 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
         const val TYPE_INTRO = 1000
         const val TYPE_MESSAGE_MINE = 1001
         const val TYPE_STICKER_MINE = 1002
-        const val SAMPLE_STICKER = "https://img.stipop.io/2020/3/31/1585719674256_CookieArrow_size.gif"
+        const val SAMPLE_STICKER =
+            "https://img.stipop.io/2020/3/31/1585719674256_CookieArrow_size.gif"
     }
 
     interface GuideDelegate {
@@ -102,7 +110,6 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
 
     inner class StickerMessageItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val chatStickerImageView: ImageView = itemView.findViewById(R.id.my_sticker)
-
         fun bind(item: ChatItem) {
             Glide.with(itemView).load(item.stickerUrl).into(chatStickerImageView)
         }
@@ -110,14 +117,50 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
 
     @SuppressLint("SimpleDateFormat")
     inner class GuideItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val dateTimeTextView: AppCompatTextView =
-            itemView.findViewById(R.id.datetimeTextView)
-        private val sampleStickerImageView: AppCompatImageView =
-            itemView.findViewById(R.id.guideImageView)
-        private val searchViewTextView: AppCompatTextView =
-            itemView.findViewById(R.id.guideTextView5)
-        private val pickerViewTextView: AppCompatTextView =
-            itemView.findViewById(R.id.guideTextView6)
+
+        val ANIMATION_DURATION = 500L
+
+        private val transitionSet =
+            TransitionSet().addTransition(Fade()).addTransition(Slide(Gravity.LEFT))
+                .setDuration(ANIMATION_DURATION).addListener(object : TransitionListenerAdapter() {
+                    override fun onTransitionEnd(transition: Transition) {
+                        super.onTransitionEnd(transition)
+                        TransitionManager.beginDelayedTransition(viewGroup2, transitionSet2)
+                        guideTextView4.isVisible = true
+                    }
+                })
+        private val transitionSet2 =
+            TransitionSet().addTransition(Fade()).addTransition(Slide(Gravity.LEFT))
+                .setDuration(ANIMATION_DURATION).addListener(object : TransitionListenerAdapter() {
+                    override fun onTransitionEnd(transition: Transition) {
+                        super.onTransitionEnd(transition)
+                        TransitionManager.beginDelayedTransition(viewGroup3, transitionSet3)
+                        searchViewTextView.isVisible = true
+                        pickerViewTextView.isVisible = true
+                    }
+                })
+        private val transitionSet3 =
+            TransitionSet().addTransition(Fade()).addTransition(Slide(Gravity.LEFT))
+                .setDuration(ANIMATION_DURATION).addListener(object: TransitionListenerAdapter(){
+                    override fun onTransitionEnd(transition: Transition) {
+                        super.onTransitionEnd(transition)
+                        searchViewTextView.startAnimation(focusAnimation)
+                        pickerViewTextView.startAnimation(focusAnimation)
+                    }
+                })
+
+        private val focusAnimation = AnimationUtils.loadAnimation(itemView.context, R.anim.shake)
+
+        private val dateTimeTextView: AppCompatTextView = itemView.findViewById(R.id.datetimeTextView)
+        private val sampleStickerImageView: AppCompatImageView = itemView.findViewById(R.id.guideImageView)
+        private val viewGroup1: LinearLayout = itemView.findViewById(R.id.animationViewGroup1)
+        private val viewGroup2: LinearLayout = itemView.findViewById(R.id.animationViewGroup2)
+        private val viewGroup3: LinearLayout = itemView.findViewById(R.id.animationViewGroup3)
+        private val guideTextView2: AppCompatTextView = itemView.findViewById(R.id.guideTextView2)
+        private val guideImageView: AppCompatImageView = itemView.findViewById(R.id.guideImageView)
+        private val guideTextView4: AppCompatTextView = itemView.findViewById(R.id.guideTextView4)
+        private val searchViewTextView: AppCompatTextView = itemView.findViewById(R.id.guideTextView5)
+        private val pickerViewTextView: AppCompatTextView = itemView.findViewById(R.id.guideTextView6)
 
         init {
             dateTimeTextView.text = SimpleDateFormat("a h:mm").format(Date())
@@ -127,6 +170,11 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
             }
             pickerViewTextView.setOnClickListener {
                 guideDelegate.onStickerPickerViewClick()
+            }
+            viewGroup1.post {
+                TransitionManager.beginDelayedTransition(viewGroup1, transitionSet)
+                guideTextView2.isVisible = true
+                guideImageView.isVisible = true
             }
         }
     }
