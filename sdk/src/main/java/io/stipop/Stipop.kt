@@ -6,17 +6,19 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.view.View
-import io.stipop.view.KeyboardPopup
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
 import io.stipop.data.ConfigRepository
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
+import io.stipop.view.KeyboardPopup
 import io.stipop.view.SearchActivity
-import io.stipop.view.PackageDetailActivity
-import io.stipop.view.PackageDetailBottomSheetFragment
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.util.*
 
 interface StipopDelegate {
     fun onStickerSelected(sticker: SPSticker): Boolean
@@ -61,6 +63,16 @@ class Stipop(
             activity: Activity,
             stipopButton: StipopImageView,
             userId: String,
+            locale: Locale,
+            delegate: StipopDelegate
+        ) {
+            connect(activity, stipopButton, userId, locale.language, locale.country, delegate)
+        }
+
+        fun connect(
+            activity: Activity,
+            stipopButton: StipopImageView,
+            userId: String,
             lang: String,
             countryCode: String,
             delegate: StipopDelegate
@@ -69,7 +81,7 @@ class Stipop(
             Stipop.lang = lang
             Stipop.countryCode = countryCode
 
-            val requestBody = InitSdkBody(userId = Stipop.userId, language = Stipop.countryCode)
+            val requestBody = InitSdkBody(userId = Stipop.userId, language = Stipop.lang)
             scope.launch {
                 configRepository.postInitSdk(requestBody, onSuccess = {
                     Stipop(activity, stipopButton, delegate).apply {

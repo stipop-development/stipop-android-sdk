@@ -159,10 +159,6 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
                 }
             }
 
-            buttonPopup.setOnClickListener {
-                dismiss()
-            }
-
             storeLL.setOnClickListener {
                 showStore(0)
             }

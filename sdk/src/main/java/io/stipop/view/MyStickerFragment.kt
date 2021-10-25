@@ -17,7 +17,7 @@ import io.stipop.R
 import io.stipop.base.Injection
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.FragmentMyStickerBinding
-import io.stipop.viewholder.delegates.MyStickerItemHolderDelegate
+import io.stipop.viewholder.delegates.MyStickerClickDelegate
 import io.stipop.custom.dragdrop.SimpleItemTouchHelperCallback
 import io.stipop.models.StickerPackage
 import io.stipop.adapter.MyStickerPackageAdapter
@@ -29,7 +29,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
+class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
 
     companion object {
         fun newInstance() = Bundle().let { MyStickerFragment().apply { arguments = it } }

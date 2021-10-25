@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.R
 import io.stipop.databinding.ItemStickerThumbBinding
+import io.stipop.models.SPSticker
 import io.stipop.models.Sticker
 
 class StickerThumbViewHolder(private val binding: ItemStickerThumbBinding) :
@@ -17,7 +18,7 @@ class StickerThumbViewHolder(private val binding: ItemStickerThumbBinding) :
         }
     }
 
-    fun bind(sticker: Sticker) {
+    fun bind(sticker: SPSticker) {
         with(binding) {
             Glide.with(itemView.context).load(sticker.stickerImgLocalFilePath ?: sticker.stickerImg)
                 .into(imageView)

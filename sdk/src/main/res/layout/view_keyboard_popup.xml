@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/containerLL"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/packageListLL"
@@ -24,26 +23,26 @@
                 android:id="@+id/recentlyIV"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:src="@mipmap/ic_recents_active"
-                android:layout_margin="4dp"/>
+                android:layout_margin="4dp"
+                android:src="@mipmap/ic_recents_active" />
 
             <io.stipop.custom.StipopImageView
                 android:id="@+id/favoriteIV"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:src="@mipmap/ic_favorites_normal"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:layout_margin="4dp"/>
+                android:layout_alignParentBottom="true"
+                android:layout_margin="4dp"
+                android:src="@mipmap/ic_favorites_normal" />
 
             <io.stipop.custom.StipopImageView
                 android:id="@+id/recentPreviewOffIV"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@mipmap/ic_recents_active"
                 android:layout_centerInParent="true"
-                app:stipop_tint="true"
-                android:visibility="gone"/>
+                android:src="@mipmap/ic_recents_active"
+                android:visibility="gone"
+                app:stipop_tint="true" />
 
         </RelativeLayout>
 
@@ -63,7 +62,7 @@
                 android:id="@+id/storeIV"
                 android:layout_width="24dp"
                 android:layout_height="18dp"
-                android:src="@mipmap/ic_store"/>
+                android:src="@mipmap/ic_store" />
 
         </LinearLayout>
 
@@ -78,31 +77,32 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <GridView
                 android:id="@+id/stickerGV"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="15dp"
-                android:numColumns="3"
-                android:verticalSpacing="5dp"
                 android:horizontalSpacing="25dp"
+                android:numColumns="3"
+                android:padding="15dp"
                 android:scrollbars="none"
-                android:visibility="gone"/>
+                android:verticalSpacing="5dp"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/downloadLL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:visibility="gone">
 
                 <io.stipop.custom.StipopImageView
                     android:id="@+id/packageIV"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:layout_marginRight="6dp"/>
+                    android:layout_marginRight="6dp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -115,33 +115,33 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
+                        android:lineHeight="22sp"
+                        android:text="JalGOM's Toon(Ver.1)"
                         android:textColor="#374553"
                         android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:lineHeight="22sp"
-                        android:text="JalGOM's Toon(Ver.1)"/>
+                        android:textStyle="bold" />
 
                     <io.stipop.custom.StipopTextView
                         android:id="@+id/artistNameTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#646f7c"
-                        android:textSize="10sp"
                         android:lineHeight="20sp"
-                        android:text="©Cmaker"/>
+                        android:text="©Cmaker"
+                        android:textColor="#646f7c"
+                        android:textSize="10sp" />
 
                     <io.stipop.custom.StipopTextView
                         android:id="@+id/downloadTV"
                         android:layout_width="wrap_content"
                         android:layout_height="34dp"
                         android:layout_marginTop="11dp"
-                        android:paddingHorizontal="10dp"
+                        android:background="@drawable/detail_download_btn_background"
                         android:gravity="center"
+                        android:paddingHorizontal="10dp"
+                        android:text="@string/download"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:text="DOWNLOAD"
-                        android:background="@drawable/detail_download_btn_background"/>
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -149,12 +149,4 @@
         </RelativeLayout>
 
     </LinearLayout>
-    <Button
-        android:id="@+id/button_popup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Close Me"
-        android:visibility="gone"
-        />
-
 </LinearLayout>
