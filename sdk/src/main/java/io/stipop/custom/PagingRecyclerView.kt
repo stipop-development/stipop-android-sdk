@@ -8,7 +8,7 @@ import io.stipop.Constants
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-class PagingRecyclerView : RecyclerView {
+internal class PagingRecyclerView : RecyclerView {
 
     companion object {
         private const val VISIBLE_THRESHOLD = 5

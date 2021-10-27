@@ -13,7 +13,7 @@ import io.stipop.models.StickerPackage
 import io.stipop.setStipopUnderlineColor
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-class HorizontalStickerThumbContainerViewHolder(private val binding: ItemHorizontalStickerThumbContainerBinding, val delegate: StickerPackageClickDelegate?) :
+internal class HorizontalStickerThumbContainerViewHolder(private val binding: ItemHorizontalStickerThumbContainerBinding, val delegate: StickerPackageClickDelegate?) :
     RecyclerView.ViewHolder(binding.root) {
 
     private val adapter: HorizontalStickerThumbnailAdapter by lazy { HorizontalStickerThumbnailAdapter(delegate = delegate) }

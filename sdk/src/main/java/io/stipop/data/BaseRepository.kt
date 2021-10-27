@@ -1,36 +1,42 @@
 package io.stipop.data
 
 import android.util.Log
-import io.stipop.api.ApiResponse
+import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
-import java.net.UnknownHostException
 
-open class BaseRepository {
+internal open class BaseRepository {
 
-    suspend fun <T : Any> safeCall(call: suspend () -> Response<T>): T? {
-        val result = getApiResponse(call)
-        Log.d("STIPOP-DEBUG", "$result")
-        var output: T? = null
-        when (result) {
-            is ApiResponse.Success -> {
-                output = result.output
+    suspend fun <T : Any> safeCall(call: suspend () -> Call<T>, onCompletable: (data: T?) -> Unit) {
+        call.invoke().enqueue(object : Callback<T> {
+            override fun onResponse(call: Call<T>, response: Response<T>) {
+                onCompletable(response.body())
             }
-            is ApiResponse.Error -> {
-                Log.e("STIPOP-SDK", "${result.exception.localizedMessage} / ${result.exception.stackTrace}")
+
+            override fun onFailure(call: Call<T>, t: Throwable) {
+                Log.e("STIPOP-SDK", "$t : $call")
+                onCompletable(null)
             }
-        }
-        return output
+        })
     }
 
-    private suspend fun <T : Any> getApiResponse(call: suspend () -> Response<T>): ApiResponse<T> {
-        try {
-            val response = call.invoke()
-            return if (response.isSuccessful)
-                ApiResponse.Success(response.body()!!)
-            else
-                ApiResponse.Error(Exception(response.errorBody().toString()))
-        }catch (e: UnknownHostException){
-            return ApiResponse.Error(UnknownHostException())
-        }
+    suspend fun <T : Any> safeCall(
+        call: suspend () -> Call<T>,
+        onSuccess: (data: T) -> Unit,
+        onFail: (message: String) -> Unit
+    ) {
+        call.invoke().enqueue(object : Callback<T> {
+            override fun onResponse(call: Call<T>, response: Response<T>) {
+                if (response.isSuccessful && response.body() != null) {
+                    onSuccess(response.body()!!)
+                } else {
+                    onFail(response.message())
+                }
+            }
+
+            override fun onFailure(call: Call<T>, t: Throwable) {
+                onFail("${t.message}/${t.localizedMessage}")
+            }
+        })
     }
 }

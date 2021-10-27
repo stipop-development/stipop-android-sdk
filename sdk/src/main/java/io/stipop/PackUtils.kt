@@ -13,7 +13,7 @@ import java.io.FileOutputStream
 import java.net.URL
 
 
-class PackUtils {
+internal class PackUtils {
 
     companion object {
         fun downloadAndSaveLocal(activity:Activity, spPackage: SPPackage?, responseCallback: () -> Unit) {

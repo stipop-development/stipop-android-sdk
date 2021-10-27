@@ -9,7 +9,7 @@ import io.stipop.databinding.ItemStickerThumbBinding
 import io.stipop.models.SPSticker
 import io.stipop.models.Sticker
 
-class StickerThumbViewHolder(private val binding: ItemStickerThumbBinding) :
+internal class StickerThumbViewHolder(private val binding: ItemStickerThumbBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     init {

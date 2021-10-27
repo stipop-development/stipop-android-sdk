@@ -9,7 +9,7 @@ import android.widget.TextView
 import io.stipop.R
 import io.stipop.view.AllStickerFragment
 
-class RecentKeywordAdapter(var myContext: Context, var view: Int, var data: ArrayList<String>, var fragment: AllStickerFragment): ArrayAdapter<String>(myContext, view, data) {
+internal class RecentKeywordAdapter(var myContext: Context, var view: Int, var data: ArrayList<String>, var fragment: AllStickerFragment): ArrayAdapter<String>(myContext, view, data) {
 
     private lateinit var item: ViewHolder
 

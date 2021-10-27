@@ -1,3 +1,3 @@
 package io.stipop.models.body
 
-data class UserIdBody(val userId: String? = "")
+internal data class UserIdBody(val userId: String? = "")

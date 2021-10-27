@@ -81,15 +81,12 @@ class Config {
         private const val DARK_KEY = "dark"
 
         fun configure(context: Context) {
-
             val jsonString = getJsonDataFromAsset(context) ?: return
-
             try {
                 val json = JSONObject(jsonString)
                 parse(context, json)
             } catch (e: JSONException) {
                 e.printStackTrace()
-
                 println("")
                 println("")
                 println("==========================================")

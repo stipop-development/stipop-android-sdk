@@ -3,7 +3,7 @@ package io.stipop.models.response
 import com.google.gson.annotations.SerializedName
 import io.stipop.models.StickerPackage
 
-class StickerPackagesResponse(
+internal class StickerPackagesResponse(
     @SerializedName("header") val header: ResponseHeader,
     @SerializedName("body") val body: ResponseBody,
     val nextPage: Int? = null

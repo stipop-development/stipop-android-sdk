@@ -7,7 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.stipop.view.AllStickerFragment
 import io.stipop.view.MyStickerFragment
 
-class StorePagerAdapter(fragmentActivity: FragmentActivity) :
+internal class StorePagerAdapter(fragmentActivity: FragmentActivity) :
     FragmentStateAdapter(fragmentActivity) {
 
     private val fragments = SparseArray<Fragment>()

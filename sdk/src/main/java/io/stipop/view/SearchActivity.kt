@@ -28,7 +28,7 @@ import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.io.IOException
 
-class SearchActivity: Activity() {
+internal class SearchActivity: Activity() {
 
     val scope = CoroutineScope(Job() + Dispatchers.IO)
 

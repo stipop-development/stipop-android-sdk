@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.stipop.R
 import io.stipop.databinding.ItemLoadStateFooterViewBinding
 
-class LoadStateViewHolder(
+internal class LoadStateViewHolder(
     private val binding: ItemLoadStateFooterViewBinding,
     retry: () -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {

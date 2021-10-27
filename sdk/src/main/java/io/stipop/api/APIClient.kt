@@ -11,7 +11,7 @@ import java.net.URLEncoder
 import kotlin.concurrent.thread
 
 
-class APIClient {
+internal class APIClient {
 
     enum class APIPath(val rawValue: String) {
         SEARCH("/search"),

@@ -17,7 +17,7 @@ import io.stipop.custom.StipopImageView
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.delegates.MyStickerClickDelegate
 
-class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerClickDelegate?) :
+internal class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerClickDelegate?) :
     RecyclerView.ViewHolder(view) {
 
     val containerLL: LinearLayout = view.findViewById(R.id.containerLL)

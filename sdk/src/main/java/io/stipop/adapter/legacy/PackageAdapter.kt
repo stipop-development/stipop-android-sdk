@@ -14,7 +14,7 @@ import io.stipop.custom.StipopImageView
 import io.stipop.models.SPPackage
 
 
-class PackageAdapter(private val dataList: ArrayList<SPPackage>, val context: Context):
+internal class PackageAdapter(private val dataList: ArrayList<SPPackage>, val context: Context):
     RecyclerView.Adapter<PackageAdapter.ViewHolder>() {
 
     interface OnItemClickListener {

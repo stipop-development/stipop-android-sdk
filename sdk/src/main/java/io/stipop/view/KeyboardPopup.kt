@@ -35,12 +35,11 @@ import java.io.IOException
 class KeyboardPopup(val activity: Activity) : PopupWindow(),
     StickerPackageThumbnailAdapter.OnPackageClickListener {
 
-
     val scope = CoroutineScope(Job() + Dispatchers.IO)
     private var binding: ViewKeyboardPopupBinding = ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
-    val packageThumbnailAdapter: StickerPackageThumbnailAdapter by lazy { StickerPackageThumbnailAdapter(this) }
-    var stickerAdapter: StickerAdapter
-    var previewPopup: PreviewPopup
+    private val packageThumbnailAdapter: StickerPackageThumbnailAdapter by lazy { StickerPackageThumbnailAdapter(this) }
+    private var stickerAdapter: StickerAdapter
+    private var previewPopup: PreviewPopup
     var stickerData = ArrayList<SPSticker>()
     var selectedPackage: SPPackage? = null
     var selectedPackageId = -1

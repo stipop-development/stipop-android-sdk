@@ -16,7 +16,7 @@ import io.stipop.custom.StipopImageView
 import io.stipop.models.SPPackage
 
 
-class PopularStickerAdapter(private val dataList: ArrayList<SPPackage>, val context: Context):
+internal class PopularStickerAdapter(private val dataList: ArrayList<SPPackage>, val context: Context):
     RecyclerView.Adapter<PopularStickerAdapter.ViewHolder>() {
 
     interface OnItemClickListener {

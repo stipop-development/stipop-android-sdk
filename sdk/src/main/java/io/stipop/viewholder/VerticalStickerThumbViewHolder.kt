@@ -8,7 +8,7 @@ import io.stipop.databinding.ItemVerticalStickerThumbBinding
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-class VerticalStickerThumbViewHolder(private val binding: ItemVerticalStickerThumbBinding, private val delegate: StickerPackageClickDelegate?) :
+internal class VerticalStickerThumbViewHolder(private val binding: ItemVerticalStickerThumbBinding, private val delegate: StickerPackageClickDelegate?) :
     RecyclerView.ViewHolder(binding.root) {
 
     private var stickerPackage: StickerPackage? = null

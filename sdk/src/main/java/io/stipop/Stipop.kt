@@ -5,6 +5,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
+import android.os.Build
 import android.view.View
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
@@ -37,10 +40,10 @@ class Stipop(
 
         private val configRepository: ConfigRepository by lazy { ConfigRepository(StipopApi.create()) }
 
-        lateinit var applicationContext: Context
+        internal lateinit var applicationContext: Context
 
         @SuppressLint("StaticFieldLeak")
-        var instance: Stipop? = null
+        internal var instance: Stipop? = null
 
         var userId = "-1"
             private set
@@ -51,12 +54,21 @@ class Stipop(
         var countryCode = "us"
             private set
 
-        var keyboardHeight = 0
+        internal var keyboardHeight = 0
             private set
+
+        private var isConfigured = false
+        private var isInitialized = false
 
         fun configure(context: Context) {
             Config.configure(context)
-            scope.launch { configRepository.postConfigSdk() }
+            scope.launch {
+                if (!isConfigured) {
+                    configRepository.postConfigSdk {
+                        isConfigured = true
+                    }
+                }
+            }
         }
 
         fun connect(
@@ -83,13 +95,22 @@ class Stipop(
 
             val requestBody = InitSdkBody(userId = Stipop.userId, language = Stipop.lang)
             scope.launch {
-                configRepository.postInitSdk(requestBody, onSuccess = {
+                if (!isInitialized) {
+                    configRepository.postInitSdk(requestBody, onSuccess = {
+                        Stipop(activity, stipopButton, delegate).apply {
+                            connect()
+                            instance = this
+                            applicationContext = activity.applicationContext
+                        }
+                        isInitialized = true
+                    })
+                } else {
                     Stipop(activity, stipopButton, delegate).apply {
                         connect()
                         instance = this
                         applicationContext = activity.applicationContext
                     }
-                })
+                }
             }
         }
 
@@ -184,7 +205,7 @@ class Stipop(
             keyboard!!.hide()
             this.disableStickerIcon()
         } else {
-            if (Stipop.keyboardHeight == 0) {
+            if (keyboardHeight == 0) {
                 Utils.showKeyboard(instance!!.activity)
             }
             this.keyboard!!.canShow = true

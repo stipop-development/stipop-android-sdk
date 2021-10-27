@@ -10,7 +10,7 @@ import io.stipop.viewholder.HorizontalStickerThumbContainerViewHolder
 import io.stipop.viewholder.VerticalStickerThumbViewHolder
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-class AllStickerAdapter(private val stickerPackageClickDelegate: StickerPackageClickDelegate? = null) :
+internal class AllStickerAdapter(private val stickerPackageClickDelegate: StickerPackageClickDelegate? = null) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dataSet = AllStickerDataSource()

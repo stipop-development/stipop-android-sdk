@@ -22,7 +22,6 @@ import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.sample.adapter.ChatAdapter
 import io.stipop.sample.models.ChatItem
-import java.util.*
 
 /**
  * IMPORTANT
@@ -67,7 +66,6 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         stipopSearchImageView.setOnClickListener {
             Stipop.showSearch()
         }
-
         initSampleUi()
     }
 
@@ -105,6 +103,10 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
                     }, 100)
                 }
             }
+        }
+
+        chatInputEditText.setOnClickListener {
+            Stipop.hideKeyboard()
         }
 
         chatInputEditText.addTextChangedListener {
