@@ -1,16 +1,19 @@
-<h1 align="center">Stipop Sticker Android SDK</h1></br>
+<h1 align="center">Stipop Sticker Android SDK</h1>
 <p align="center">
-:balloon: Power communication in your app with 150,000 free stickers. :balloon:</br>
+:balloon: Power communication in your app with 150,000 stickers. :balloon:</br>
+
+![Android-demo image](https://user-images.githubusercontent.com/42525347/139039262-2fc7a0d2-d000-4848-b7be-eee2beede9f8.png)
+
 </p>
-<br>
+</br>
 
 ## Introducing SDK with Demo
 [![](https://jitpack.io/v/stipop-development/stipop-android-sdk.svg)](https://jitpack.io/#stipop-development/stipop-android-sdk)
 <a href="https://android-arsenal.com/api?level=16"><img alt="AndroidMinApi" src="https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat"/></a></br>
-Add a sticker picker and searching option to let your users select the sticker packs they want to send in your app. The built-in design of the store provides easy access to the entire library of stickers grouped in packs with user-friendly navigation.
+Add the sticker picker and search feature to let your users select the stickers they want to send in your app. The built-in design of the store provides easy access to the entire library of stickers grouped in packs with user-friendly navigation.
 
 **1. Fully-featured design guide** <br/>
-Exceptionally designed assets with light and dark modes.<br/><br/>
+Exceptionally designed UI and assets with light and dark modes.<br/><br/>
 **2. The world’s largest sticker library** <br/>
 Over 150,000 GIF and PNG stickers, timely updated with trending content.<br/><br/>
 **3. Full spectrum of features** <br/>
@@ -19,7 +22,12 @@ Trend reports, easy sticker search and access to favorites, feed of recently add
 
 Demo
 --------
-If you want to know what is 'Stipop Sticker SDK', try building a demo app first.
+<p align="center">
+      
+![Android-demo-screenshot (1)](https://user-images.githubusercontent.com/42525347/139039328-e02059dc-11fd-416f-9135-1d124ef782b7.png)
+      
+</p>
+If you want to know what is 'Stipop Sticker SDK', try building a demo app first.</br></br>
 
 1. Clone or download this repository.<br/>
 2. Sign up on <a href="https://dashboard.stipop.io/" target="_blank">Stipop Dashboard</a> and download **'Stipop.json'** for free.<br/>
@@ -27,7 +35,6 @@ If you want to know what is 'Stipop Sticker SDK', try building a demo app first.
 4. Move Stipop.json into the assets folder you created. In the Stipop.json file there is your personal API key ans so on.
       - For more guide on this, please see <a href="https://docs.stipop.io/en/sdk/android/customize/overview/" target="_blank">Android SDK Customize</a>.
 5. Build and run 'sample' app on your device.<br/><br/>
-
 
 Including in your project
 --------
