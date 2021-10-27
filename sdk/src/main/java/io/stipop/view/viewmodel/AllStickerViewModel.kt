@@ -1,6 +1,5 @@
-package io.stipop.viewmodel
+package io.stipop.view.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +14,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class AllStickerViewModel(private val repository: AllStickerRepository) : ViewModel() {
+internal class AllStickerViewModel(private val repository: AllStickerRepository) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     var query: String? = null

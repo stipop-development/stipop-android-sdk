@@ -1,4 +1,4 @@
-package io.stipop.viewmodel
+package io.stipop.view.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +12,7 @@ import io.stipop.models.StickerPackage
 import io.stipop.models.body.UserIdBody
 import kotlinx.coroutines.launch
 
-class PackageDetailViewModel(private val repository: StickerDetailRepository) : ViewModel() {
+internal class PackageDetailViewModel(private val repository: StickerDetailRepository) : ViewModel() {
 
     var stickerPackage: MutableLiveData<StickerPackage> = MutableLiveData()
 

@@ -23,13 +23,13 @@ import io.stipop.models.StickerPackage
 import io.stipop.adapter.MyStickerPackageAdapter
 import io.stipop.adapter.MyStickerPackageLoadStateAdapter
 import io.stipop.event.PackageDownloadEvent
-import io.stipop.viewmodel.MyStickerViewModel
+import io.stipop.view.viewmodel.MyStickerViewModel
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
+internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
 
     companion object {
         fun newInstance() = Bundle().let { MyStickerFragment().apply { arguments = it } }

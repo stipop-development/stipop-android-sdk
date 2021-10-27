@@ -1,6 +1,7 @@
 package io.stipop.custom
 
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
 import io.stipop.Config
@@ -22,7 +23,8 @@ class StipopEditText : AppCompatEditText {
             this.typeface = Config.fontFace
         }
 
-        // letterSpacing
-        this.letterSpacing = Config.fontCharacter
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            this.letterSpacing = Config.fontCharacter
+        }
     }
 }

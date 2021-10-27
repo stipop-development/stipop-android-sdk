@@ -17,7 +17,7 @@ import io.stipop.custom.StipopImageView
 import io.stipop.models.SPPackage
 
 
-class StickerPackageThumbnailAdapter(var keyboardPopup: KeyboardPopup) :
+internal class StickerPackageThumbnailAdapter(var keyboardPopup: KeyboardPopup) :
     RecyclerView.Adapter<StickerPackageThumbnailAdapter.StickerPackageThumbnailViewHolder>() {
 
     private val dataList: ArrayList<SPPackage> = ArrayList()

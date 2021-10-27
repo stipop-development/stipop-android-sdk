@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.ViewGroup
 
 
-class TagLayout: ViewGroup {
+internal class TagLayout: ViewGroup {
 
     var vertical_spacing = 10
     var line_height = 0

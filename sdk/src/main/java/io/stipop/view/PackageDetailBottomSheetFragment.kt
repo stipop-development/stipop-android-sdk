@@ -24,7 +24,7 @@ import io.stipop.base.Injection
 import io.stipop.databinding.FragmentStickerPackageBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
-import io.stipop.viewmodel.PackageDetailViewModel
+import io.stipop.view.viewmodel.PackageDetailViewModel
 import kotlinx.coroutines.launch
 
 class PackageDetailBottomSheetFragment : BottomSheetDialogFragment() {

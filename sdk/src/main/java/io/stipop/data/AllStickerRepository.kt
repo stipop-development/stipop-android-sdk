@@ -6,10 +6,10 @@ import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
 
-class AllStickerRepository(private val apiService: StipopApi) : BaseRepository() {
+internal class AllStickerRepository(private val apiService: StipopApi) : BaseRepository() {
 
     suspend fun getStickerPackages(page: Int, keyword: String?, onSuccess: (data: Any) -> Unit) {
-        val result = safeCall(call = {
+        safeCall(call = {
             apiService.getTrendingStickerPackages(
                 userId = Stipop.userId,
                 lang = Stipop.lang,
@@ -18,12 +18,13 @@ class AllStickerRepository(private val apiService: StipopApi) : BaseRepository()
                 limit = Constants.ApiParams.SizePerPage,
                 query = keyword
             )
-        })
-        result?.let {
-            if (result.body.packageList.isNotEmpty()) {
-                onSuccess(result.body.packageList)
+        }, onCompletable = { response ->
+            response?.let{
+                if(it.body.packageList.isNotEmpty()){
+                    onSuccess(it.body.packageList)
+                }
             }
-        }
+        })
     }
 
     suspend fun postDownloadStickers(
@@ -38,7 +39,7 @@ class AllStickerRepository(private val apiService: StipopApi) : BaseRepository()
                 Config.pngPrice
             }
         }
-        val result = safeCall(call = {
+        safeCall(call = {
             apiService.postDownloadStickers(
                 packageId = stickerPackage.packageId,
                 isPurchase = Config.allowPremium,
@@ -49,9 +50,8 @@ class AllStickerRepository(private val apiService: StipopApi) : BaseRepository()
                 entrancePoint = Constants.Point.STORE,
                 eventPoint = Constants.Point.STORE
             )
+        }, onCompletable = {
+            onSuccess(stickerPackage)
         })
-        result?.let {
-            if (it.header.isSuccess()) onSuccess(stickerPackage)
-        }
     }
 }

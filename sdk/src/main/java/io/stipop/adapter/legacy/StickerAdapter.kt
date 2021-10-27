@@ -10,7 +10,7 @@ import io.stipop.R
 import io.stipop.models.SPSticker
 
 
-class StickerAdapter(context: Context, var view: Int, var data: ArrayList<SPSticker>): ArrayAdapter<SPSticker>(context, view, data) {
+internal class StickerAdapter(context: Context, var view: Int, var data: ArrayList<SPSticker>): ArrayAdapter<SPSticker>(context, view, data) {
 
     private lateinit var item: ViewHolder
 

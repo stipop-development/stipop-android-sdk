@@ -7,7 +7,7 @@ import io.stipop.models.Sticker
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.StickerThumbViewHolder
 
-class GridStickerAdapter(private val dataSet: ArrayList<SPSticker> = ArrayList()) :
+internal class GridStickerAdapter(private val dataSet: ArrayList<SPSticker> = ArrayList()) :
     RecyclerView.Adapter<StickerThumbViewHolder>() {
 
     override fun onCreateViewHolder(

@@ -15,7 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class StoreActivity : BaseFragmentActivity() {
+internal class StoreActivity : BaseFragmentActivity() {
 
     val scope = CoroutineScope(Job() + Dispatchers.IO)
     private lateinit var binding: ActivityStoreBinding

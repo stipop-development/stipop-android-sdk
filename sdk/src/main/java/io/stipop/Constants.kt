@@ -1,6 +1,6 @@
 package io.stipop
 
-object Constants {
+internal object Constants {
     object KEY {
         const val ASSET_NAME = "Stipop.json"
     }

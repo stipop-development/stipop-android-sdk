@@ -1,4 +1,4 @@
-package io.stipop.viewmodel
+package io.stipop.view.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class MyStickerViewModel(private val repository: MyStickerRepository) : ViewModel() {
+internal class MyStickerViewModel(private val repository: MyStickerRepository) : ViewModel() {
 
     private var isWantVisibleStickers: Boolean = true
     var packageVisibilityChanged: MutableLiveData<Triple<StipopResponse, Int, Int>> =

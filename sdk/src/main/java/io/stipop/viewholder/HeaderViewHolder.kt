@@ -7,7 +7,7 @@ import io.stipop.Config
 import io.stipop.R
 import io.stipop.databinding.ItemHeaderTitleBinding
 
-class HeaderViewHolder(private val binding: ItemHeaderTitleBinding): RecyclerView.ViewHolder(binding.root) {
+internal class HeaderViewHolder(private val binding: ItemHeaderTitleBinding): RecyclerView.ViewHolder(binding.root) {
 
     fun bind(title: String){
         with(binding){

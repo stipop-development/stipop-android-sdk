@@ -9,11 +9,11 @@ import io.stipop.api.StipopApi
 import io.stipop.data.AllStickerRepository
 import io.stipop.data.MyStickerRepository
 import io.stipop.data.StickerDetailRepository
-import io.stipop.viewmodel.AllStickerViewModel
-import io.stipop.viewmodel.MyStickerViewModel
-import io.stipop.viewmodel.PackageDetailViewModel
+import io.stipop.view.viewmodel.AllStickerViewModel
+import io.stipop.view.viewmodel.MyStickerViewModel
+import io.stipop.view.viewmodel.PackageDetailViewModel
 
-object Injection {
+internal object Injection {
 
     private val stipopApi = StipopApi.create()
 

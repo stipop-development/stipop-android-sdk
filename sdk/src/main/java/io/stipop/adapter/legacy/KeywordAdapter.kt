@@ -13,7 +13,7 @@ import io.stipop.Utils
 import org.json.JSONObject
 
 
-class KeywordAdapter(private val dataList: ArrayList<JSONObject>):
+internal class KeywordAdapter(private val dataList: ArrayList<JSONObject>):
     RecyclerView.Adapter<KeywordAdapter.ViewHolder>() {
 
     interface OnItemClickListener {

@@ -8,10 +8,17 @@ import io.stipop.models.StickerPackage
 import io.stipop.models.response.StickerPackageResponse
 import io.stipop.models.response.StipopResponse
 
-class StickerDetailRepository(private val apiService: StipopApi) : BaseRepository() {
+internal class StickerDetailRepository(private val apiService: StipopApi) : BaseRepository() {
 
-    suspend fun getStickerPackage(packageId: Int, onSuccess: (data: StickerPackageResponse) -> Unit) {
-        safeCall(call = { apiService.getSingleStickerPackage(packageId, Stipop.userId) })?.let(onSuccess)
+    suspend fun getStickerPackage(
+        packageId: Int,
+        onSuccess: (data: StickerPackageResponse) -> Unit
+    ) {
+        safeCall(
+            call = { apiService.getSingleStickerPackage(packageId, Stipop.userId) },
+            onCompletable = {
+                it?.let(onSuccess)
+            })
     }
 
     suspend fun postDownloadStickers(
@@ -26,7 +33,7 @@ class StickerDetailRepository(private val apiService: StipopApi) : BaseRepositor
                 Config.pngPrice
             }
         }
-        val result = safeCall(call = {
+        safeCall(call = {
             apiService.postDownloadStickers(
                 packageId = stickerPackage.packageId,
                 isPurchase = Config.allowPremium,
@@ -37,9 +44,8 @@ class StickerDetailRepository(private val apiService: StipopApi) : BaseRepositor
                 entrancePoint = Constants.Point.STORE,
                 eventPoint = Constants.Point.STORE
             )
+        }, onCompletable = {
+            onSuccess(stickerPackage)
         })
-        result?.let {
-            if (it.header.isSuccess()) onSuccess(stickerPackage)
-        }
     }
 }

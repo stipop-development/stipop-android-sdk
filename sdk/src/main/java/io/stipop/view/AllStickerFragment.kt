@@ -21,12 +21,12 @@ import io.stipop.databinding.FragmentAllStickerBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
-import io.stipop.viewmodel.AllStickerViewModel
+import io.stipop.view.viewmodel.AllStickerViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
-class AllStickerFragment : BaseFragment(), StickerPackageClickDelegate {
+internal class AllStickerFragment : BaseFragment(), StickerPackageClickDelegate {
 
 //    var deleteKeyword = APIClient.APIPath.SEARCH_RECENT.rawValue + "/${Stipop.userId}"
 //    var getKeywords = APIClient.get(requireActivity(), APIClient.APIPath.SEARCH_KEYWORD.rawValue, null

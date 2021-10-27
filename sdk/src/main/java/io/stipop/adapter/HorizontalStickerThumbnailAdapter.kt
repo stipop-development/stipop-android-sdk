@@ -6,7 +6,7 @@ import io.stipop.models.StickerPackage
 import io.stipop.viewholder.HorizontalStickerThumbViewHolder
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-class HorizontalStickerThumbnailAdapter(private val dataSet: ArrayList<StickerPackage> = ArrayList(), val delegate: StickerPackageClickDelegate?) :
+internal class HorizontalStickerThumbnailAdapter(private val dataSet: ArrayList<StickerPackage> = ArrayList(), val delegate: StickerPackageClickDelegate?) :
     RecyclerView.Adapter<HorizontalStickerThumbViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HorizontalStickerThumbViewHolder {
