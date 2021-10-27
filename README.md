@@ -1,40 +1,117 @@
+<h1 align="center">Stipop Sticker Android SDK</h1></br>
+<p align="center">
+:balloon: Power communication in your app with 150,000 free stickers. :balloon:</br>
+</p>
+<br>
+
+## Introducing SDK with Demo
 [![](https://jitpack.io/v/stipop-development/stipop-android-sdk.svg)](https://jitpack.io/#stipop-development/stipop-android-sdk)
+<a href="https://android-arsenal.com/api?level=16"><img alt="AndroidMinApi" src="https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat"/></a></br>
+Add a sticker picker and searching option to let your users select the sticker packs they want to send in your app. The built-in design of the store provides easy access to the entire library of stickers grouped in packs with user-friendly navigation.
 
-## Stipop Android SDK Demo Quick Start Guide
+**1. Fully-featured design guide** <br/>
+Exceptionally designed assets with light and dark modes.<br/><br/>
+**2. The world’s largest sticker library** <br/>
+Over 150,000 GIF and PNG stickers, timely updated with trending content.<br/><br/>
+**3. Full spectrum of features** <br/>
+Trend reports, easy sticker search and access to favorites, feed of recently added stickers, and more.<br/><br/>
 
-Get demo running in 5 minutes.
-With the demo you can test 2 view types for the sticker integration:
-  1. Search View: Instant usage where users search for stickers and send right away.
-  2. Keyboard(Picker) View: Users can download packs from store and send them from the sticker keyboard.
+
+Demo
+--------
+If you want to know what is 'Stipop Sticker SDK', try building a demo app first.
+
+1. Clone or download this repository.<br/>
+2. Sign up on <a href="https://dashboard.stipop.io/" target="_blank">Stipop Dashboard</a> and download **'Stipop.json'** for free.<br/>
+3. Open code on Android Studio, then create 'assets' resource folder under **'app > src > main'**.<br/>
+4. Move Stipop.json into the assets folder you created. In the Stipop.json file there is your personal API key ans so on.
+      - For more guide on this, please see <a href="https://docs.stipop.io/en/sdk/android/customize/overview/" target="_blank">Android SDK Customize</a>.
+5. Build and run 'sample' app on your device.<br/><br/>
+
+
+Including in your project
+--------
+For detailed instructions and requirements, see [Android SDK docs page][1].
+
+Use Gradle:
+
+```gradle
+allprojects {
+  repositories {
+    maven { url 'https://jitpack.io' }
+  }
+}
+
+dependencies {
+  // like 0.2.2. Please check latest release!
+  implementation 'com.github.stipop-development:stipop-android-sdk:{latest_version}' 
+}
+```
 <br/>
 
-## Quick Start :rocket:  
+How do I use Stipop SDK?
+-------------------
+1. Sign up on <a href="https://dashboard.stipop.io/" target="_blank">Stipop Dashboard</a> and create a application.
+2. Download **'Stipop.json'** and move it into 'assets'.
+3. Make or update your application class. (This operation initializes the SDK from Stipop.json.)
+```kotlin
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        Stipop.configure(this)
+    }
+}
+```
+4. Update your AndroidManifest.xml
+```xml
+    <application
+        android:name=".{YourApplicationClass}"
+                 ...
+        tools:replace="android:theme">
+}
+```
+5. Then implement 'StipopDelegate' interface and Call 'Stipop.connect' method wherever you want to use it.
+```kotlin
+class YourActivity : Activity(), StipopDelegate {
 
-1. Download code and add Stipop.json file
-  - Sign up on <a href="https://dashboard.stipop.io/" target="_blank">Stipop Dashboard</a> and download **Stipop.json** for free.
-  - Open code on Android Studio, then create 'assets' folder under **app > src > main**.
-  - Move Stipop.json into the assets folder you created. In the Stipop.json file there is your personal API key and customization values.
-  - For more guide on this, please see <a href="https://docs.stipop.io/en/sdk/android/get-started/quick-start/" target="_blank">Stipop Docs</a>.
+    override fun onCreate() {
+        super.onCreate()
+        Stipop.connect(activity = this, userId = "userId", delegate = this)
+    }
+    ...
+    override fun onStickerSelected(sticker: SPSticker): Boolean {
+      // Sticker will be received here.
+      // sendSticker(sticker.stickerImg)
+      return true
+    }
+}
+```
+6. Two types of explorers are provided.
+```kotlin
+class YourActivity : Activity(), StipopDelegate {
+    ...
+    fun setListener() {
+      button.onClick {
+        Stipop.showKeyboard() // Use Sticker SDK in keyboard
+        // Stipop.showSearch() // Use Sticker SDK in dialog
+      }
+    }
+}
+```
 <br/>
 
-2. Run code and test 'Search View' (default) on device.
-  - The language of stickers is optimized for user's lang info.
-  - You can change user lang info in #4 below.
-<br/>
-
-3. Switch to 'Keyboard View' and test on device.
-  - To switch the view from Search to Keyboard:
-     - Go to **app > src > main > java.io.stipop.stipopsample > MainActivity**
-     - From the **stipopIV.setOnClickListener**, comment the Search() part and activate Keyboard() part.
-          Stipop.showSearch()      //Search UI
-          Stipop.showKeyboard()    //Keyboard UI
-<br/>
-
-4. How to change user lang
-  - Go to **app > src > main > java.io.stipop.stipopsample > MainActivity**
-  - Change **lang** and **country** from **Stipop.connect(this, stipopIV, "9937", "en", "US", this)**. 
-  - The lang code should be a two letter language code like en or es (Spanish), and country should be the same but capitalized.
-<br/>
+Requirements
+-------------------
+- Kotlin
+- Android + (API level 16) or higher
+- Java 7 or higher
+- Support androidx only
+- Gradle 3.4.0 or higher
 
 
 For any questions regarding the demo, please email us at tech-support@stipop.io. Thank you.
+
+<br/>
+<br/>
+
+[1]: https://docs.stipop.io/en/sdk/android/get-started/quick-start
