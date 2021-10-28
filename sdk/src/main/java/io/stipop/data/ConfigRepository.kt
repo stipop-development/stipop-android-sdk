@@ -1,5 +1,7 @@
 package io.stipop.data
 
+import android.util.Log
+import io.stipop.api.ApiResponse
 import io.stipop.api.StipopApi
 import io.stipop.models.body.InitSdkBody
 import io.stipop.models.body.UserIdBody
@@ -14,6 +16,7 @@ internal class ConfigRepository(private val apiService: StipopApi) : BaseReposit
             if (currentUserId == it) {
                 onSuccess(Unit)
             } else {
+                Log.d("STIPOP-API", "HERE")
                 currentUserId = it
                 safeCall(call = { apiService.initSdk(initSdkBody) }, onCompletable = {
                     onSuccess(Unit)
@@ -25,7 +28,9 @@ internal class ConfigRepository(private val apiService: StipopApi) : BaseReposit
     }
 
     suspend fun postConfigSdk(onSuccess: (data: Any?) -> Unit) {
-        safeCall(call = { apiService.trackConfig(UserIdBody()) }, onCompletable = { onSuccess(it) })
+        safeCall(call = { apiService.trackConfig(UserIdBody()) }, onCompletable = {
+            onSuccess(it)
+        })
     }
 
     suspend fun postTrackUsingSticker(

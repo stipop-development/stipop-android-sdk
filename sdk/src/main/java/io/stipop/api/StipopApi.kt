@@ -24,15 +24,15 @@ import retrofit2.http.*
 internal interface StipopApi {
 
     @POST("init")
-    fun initSdk(
+    suspend fun initSdk(
         @Body initSdkBody: InitSdkBody
-    ): Call<StipopResponse>
+    ): StipopResponse
 
     @GET("package/{packageId}")
-    fun getSingleStickerPackage(
+    suspend fun getSingleStickerPackage(
         @Path("packageId") packageId: Int,
         @Query("userId") userId: String,
-    ): Call<StickerPackageResponse>
+    ): StickerPackageResponse
 
     @GET("mysticker/{userId}")
     suspend fun getMyStickers(
@@ -61,17 +61,17 @@ internal interface StipopApi {
     ): StipopResponse
 
     @GET("package")
-    fun getTrendingStickerPackages(
+    suspend fun getTrendingStickerPackages(
         @Query("userId") userId: String,
         @Query("lang") lang: String,
         @Query("countryCode") countryCode: String,
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int,
         @Query("q") query: String? = null
-    ): Call<StickerPackagesResponse>
+    ): StickerPackagesResponse
 
     @POST("download/{packageId}")
-    fun postDownloadStickers(
+    suspend fun postDownloadStickers(
         @Path("packageId") packageId: Int,
         @Query("userId") userId: String,
         @Query("isPurchase") isPurchase: String,
@@ -80,10 +80,10 @@ internal interface StipopApi {
         @Query("price") price: Double? = null,
         @Query("entrance_point") entrancePoint: String? = null,
         @Query("event_point") eventPoint: String? = null,
-    ): Call<StipopResponse>
+    ): StipopResponse
 
     @POST("sdk/track/config")
-    fun trackConfig(@Body userIdBody: UserIdBody): Call<StipopResponse>
+    suspend fun trackConfig(@Body userIdBody: UserIdBody): StipopResponse
 
     @POST("sdk/track/view/picker")
     suspend fun trackViewPicker(@Body userIdBody: UserIdBody): Response<StipopResponse>
@@ -105,14 +105,14 @@ internal interface StipopApi {
     ): Response<StipopResponse>
 
     @POST("analytics/send/{stickerId}")
-    fun trackUsingSticker(
+    suspend fun trackUsingSticker(
         @Path("stickerId") stickerId: String,
         @Query("userId") userId: String,
         @Query("q") query: String? = null,
         @Query("countryCode") countryCode: String,
         @Query("lang") lang: String,
         @Query("event_point") eventPoint: String? = null
-    ): Call<StipopResponse>
+    ): StipopResponse
 
     companion object {
         fun create(): StipopApi {
