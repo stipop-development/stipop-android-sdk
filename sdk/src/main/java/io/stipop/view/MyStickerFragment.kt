@@ -12,23 +12,24 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
+import io.stipop.Constants
 import io.stipop.R
 import io.stipop.base.Injection
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.FragmentMyStickerBinding
-import io.stipop.viewholder.delegates.MyStickerItemHolderDelegate
+import io.stipop.viewholder.delegates.MyStickerClickDelegate
 import io.stipop.custom.dragdrop.SimpleItemTouchHelperCallback
 import io.stipop.models.StickerPackage
 import io.stipop.adapter.MyStickerPackageAdapter
 import io.stipop.adapter.MyStickerPackageLoadStateAdapter
 import io.stipop.event.PackageDownloadEvent
-import io.stipop.viewmodel.MyStickerViewModel
+import io.stipop.view.viewmodel.MyStickerViewModel
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
+internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
 
     companion object {
         fun newInstance() = Bundle().let { MyStickerFragment().apply { arguments = it } }
@@ -117,8 +118,9 @@ class MyStickerFragment : BaseFragment(), MyStickerItemHolderDelegate {
         }
     }
 
-    override fun onItemClicked(position: Int) {
-
+    override fun onItemClicked(packageId: Int, entrancePoint: String) {
+        PackageDetailBottomSheetFragment.newInstance(packageId, entrancePoint)
+            .showNow(parentFragmentManager, Constants.Tag.DETAIL)
     }
 
     override fun onItemLongClicked(position: Int) {

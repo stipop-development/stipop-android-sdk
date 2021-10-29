@@ -1,16 +1,14 @@
 package io.stipop.viewholder
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
 import io.stipop.databinding.ItemVerticalStickerThumbBinding
 import io.stipop.models.StickerPackage
-import io.stipop.view.PackageDetailActivity
-import io.stipop.viewholder.delegates.VerticalStickerThumbViewHolderDelegate
+import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-class VerticalStickerThumbViewHolder(private val binding: ItemVerticalStickerThumbBinding, private val delegate: VerticalStickerThumbViewHolderDelegate?) :
+internal class VerticalStickerThumbViewHolder(private val binding: ItemVerticalStickerThumbBinding, private val delegate: StickerPackageClickDelegate?) :
     RecyclerView.ViewHolder(binding.root) {
 
     private var stickerPackage: StickerPackage? = null
@@ -18,12 +16,7 @@ class VerticalStickerThumbViewHolder(private val binding: ItemVerticalStickerThu
     init {
         itemView.setOnClickListener {
             stickerPackage?.packageId?.let {
-                Intent(itemView.context, PackageDetailActivity::class.java).apply {
-                    putExtra(Constants.IntentKey.PACKAGE_ID, it)
-                    putExtra(Constants.IntentKey.ENTRANCE_POINT, Constants.Point.STORE)
-                }.run {
-                    itemView.context.startActivity(this)
-                }
+                delegate?.onPackageDetailClicked(it, Constants.Point.STORE)
             }
         }
 
@@ -62,10 +55,10 @@ class VerticalStickerThumbViewHolder(private val binding: ItemVerticalStickerThu
     }
 
     companion object {
-        fun create(parent: ViewGroup, verticalStickerThumbViewHolderDelegate: VerticalStickerThumbViewHolderDelegate?): VerticalStickerThumbViewHolder {
+        fun create(parent: ViewGroup, stickerPackageClickDelegate: StickerPackageClickDelegate?): VerticalStickerThumbViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_vertical_sticker_thumb, parent, false)
             val binding = ItemVerticalStickerThumbBinding.bind(view)
-            return VerticalStickerThumbViewHolder(binding, verticalStickerThumbViewHolderDelegate)
+            return VerticalStickerThumbViewHolder(binding, stickerPackageClickDelegate)
         }
     }
 }

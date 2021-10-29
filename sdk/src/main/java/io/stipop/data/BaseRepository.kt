@@ -1,29 +1,57 @@
 package io.stipop.data
 
+import android.util.Log
 import io.stipop.api.ApiResponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
+import java.io.IOException
+import java.net.UnknownHostException
 
-open class BaseRepository {
+internal open class BaseRepository {
 
-    suspend fun <T : Any> safeCall(call: suspend () -> Response<T>): T {
-        val result = getApiResponse(call)
-        var output: T? = null
-        when (result) {
-            is ApiResponse.Success -> {
-                output = result.output
-            }
-            is ApiResponse.Error -> {
-
-            }
+    suspend fun <T : Any> safeCall(
+        call: suspend () -> T,
+        onSuccess: (data: T) -> Unit,
+        onError: (message: String?) -> Unit
+    ) {
+        try {
+            onSuccess(call.invoke())
+        } catch (e: Exception) {
+            onError(e.message)
         }
-        return output!!
     }
 
-    private suspend fun <T : Any> getApiResponse(call: suspend () -> Response<T>): ApiResponse<T> {
-        val response = call.invoke()
-        return if (response.isSuccessful)
-            ApiResponse.Success(response.body()!!)
-        else
-            ApiResponse.Error(Exception(""))
+    suspend fun <T : Any> safeCall(
+        call: suspend () -> T,
+        onCompletable: (data: T?) -> Unit,
+    ) {
+        try {
+            onCompletable(call.invoke())
+        } catch (e: Exception) {
+            onCompletable(null)
+        }
+    }
+
+    suspend fun <T> safeApiCall(apiCall: suspend () -> T): ApiResponse<T> {
+        return try {
+            ApiResponse.Success(apiCall.invoke())
+        } catch (throwable: Throwable) {
+            Log.e("STIPOP-API", "${throwable.cause} :: ${throwable.localizedMessage}")
+            when (throwable) {
+                is IOException -> ApiResponse.NetworkError
+                is HttpException -> {
+                    val code = throwable.code()
+                    ApiResponse.Error(code, Exception(throwable.localizedMessage))
+                }
+                is UnknownHostException -> {
+                    ApiResponse.Error(null, Exception(throwable.localizedMessage))
+                }
+                else -> {
+                    ApiResponse.Error(null, Exception(throwable.localizedMessage))
+                }
+            }
+        }
     }
 }

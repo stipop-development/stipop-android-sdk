@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.ItemTouchHelperDelegate
 
-class SimpleItemTouchHelperCallback(val delegate: ItemTouchHelperDelegate) : ItemTouchHelper.Callback() {
+internal class SimpleItemTouchHelperCallback(val delegate: ItemTouchHelperDelegate) : ItemTouchHelper.Callback() {
 
     override fun isItemViewSwipeEnabled(): Boolean {
         return false

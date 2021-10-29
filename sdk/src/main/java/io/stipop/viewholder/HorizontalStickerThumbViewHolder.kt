@@ -1,6 +1,5 @@
 package io.stipop.viewholder
 
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
@@ -12,9 +11,9 @@ import io.stipop.R
 import io.stipop.Utils
 import io.stipop.databinding.ItemHorizontalStickerThumbBinding
 import io.stipop.models.StickerPackage
-import io.stipop.view.PackageDetailActivity
+import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-class HorizontalStickerThumbViewHolder(private val binding: ItemHorizontalStickerThumbBinding) :
+internal class HorizontalStickerThumbViewHolder(private val binding: ItemHorizontalStickerThumbBinding, val delegate: StickerPackageClickDelegate?) :
     RecyclerView.ViewHolder(binding.root) {
 
     private var stickerPackage: StickerPackage? = null
@@ -22,12 +21,7 @@ class HorizontalStickerThumbViewHolder(private val binding: ItemHorizontalSticke
     init {
         itemView.setOnClickListener {
             stickerPackage?.packageId?.let {
-                Intent(itemView.context, PackageDetailActivity::class.java).apply {
-                    putExtra(Constants.IntentKey.PACKAGE_ID, it)
-                    putExtra(Constants.IntentKey.ENTRANCE_POINT, Constants.Point.TREND)
-                }.run {
-                    itemView.context.startActivity(this)
-                }
+                delegate?.onPackageDetailClicked(it, Constants.Point.TREND)
             }
         }
         with(binding){
@@ -45,7 +39,7 @@ class HorizontalStickerThumbViewHolder(private val binding: ItemHorizontalSticke
     }
 
     companion object {
-        fun create(parent: ViewGroup): HorizontalStickerThumbViewHolder {
+        fun create(parent: ViewGroup, delegate: StickerPackageClickDelegate?): HorizontalStickerThumbViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_horizontal_sticker_thumb, parent, false)
             val screenWidth = Utils.getScreenWidth(parent.context)
             val itemWidth = (screenWidth - Utils.dpToPx(48F) - (Utils.dpToPx(7F) * 3)) / 4
@@ -53,7 +47,7 @@ class HorizontalStickerThumbViewHolder(private val binding: ItemHorizontalSticke
             view.layoutParams = ViewGroup.LayoutParams(itemWidth.toInt(), itemHeight.toInt())
 
             val binding = ItemHorizontalStickerThumbBinding.bind(view)
-            return HorizontalStickerThumbViewHolder(binding)
+            return HorizontalStickerThumbViewHolder(binding, delegate)
         }
     }
 }

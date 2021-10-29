@@ -9,26 +9,30 @@ import io.stipop.models.body.InitSdkBody
 import io.stipop.models.body.OrderChangeBody
 import io.stipop.models.body.StipopMetaHeader
 import io.stipop.models.body.UserIdBody
-import io.stipop.models.response.MyStickerOrderChangedResponse
-import io.stipop.models.response.MyStickerResponse
-import io.stipop.models.response.StickerPackageResponse
-import io.stipop.models.response.StipopResponse
+import io.stipop.models.response.*
 import okhttp3.Authenticator
 import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 
-interface StipopApi {
+internal interface StipopApi {
 
     @POST("init")
     suspend fun initSdk(
         @Body initSdkBody: InitSdkBody
-    ): Response<StipopResponse>
+    ): StipopResponse
+
+    @GET("package/{packageId}")
+    suspend fun getSingleStickerPackage(
+        @Path("packageId") packageId: Int,
+        @Query("userId") userId: String,
+    ): StickerPackageResponse
 
     @GET("mysticker/{userId}")
     suspend fun getMyStickers(
@@ -64,7 +68,7 @@ interface StipopApi {
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int,
         @Query("q") query: String? = null
-    ): Response<StickerPackageResponse>
+    ): StickerPackagesResponse
 
     @POST("download/{packageId}")
     suspend fun postDownloadStickers(
@@ -76,10 +80,10 @@ interface StipopApi {
         @Query("price") price: Double? = null,
         @Query("entrance_point") entrancePoint: String? = null,
         @Query("event_point") eventPoint: String? = null,
-    ): Response<StipopResponse>
+    ): StipopResponse
 
     @POST("sdk/track/config")
-    suspend fun trackConfig(@Body userIdBody: UserIdBody): Response<StipopResponse>
+    suspend fun trackConfig(@Body userIdBody: UserIdBody): StipopResponse
 
     @POST("sdk/track/view/picker")
     suspend fun trackViewPicker(@Body userIdBody: UserIdBody): Response<StipopResponse>
@@ -108,7 +112,7 @@ interface StipopApi {
         @Query("countryCode") countryCode: String,
         @Query("lang") lang: String,
         @Query("event_point") eventPoint: String? = null
-    ): Response<StipopResponse>
+    ): StipopResponse
 
     companion object {
         fun create(): StipopApi {
@@ -116,7 +120,6 @@ interface StipopApi {
             val headers = Headers.Builder()
                 .add(
                     Constants.ApiParams.ApiKey, if (BuildConfig.DEBUG) {
-//                        Constants.Value.SANDBOX_APIKEY
                         Config.apikey
                     } else {
                         Config.apikey
@@ -142,8 +145,6 @@ interface StipopApi {
             val client = OkHttpClient.Builder()
                 .authenticator(authenticator)
                 .addInterceptor(loggingInterceptor)
-                .followRedirects(false)
-                .followSslRedirects(false)
                 .build()
             return Retrofit.Builder()
                 .baseUrl(if (BuildConfig.DEBUG) Constants.Value.SANDBOX_URL else Constants.Value.BASE_URL)

@@ -11,7 +11,7 @@ import java.io.IOException
 
 private const val STARTING_PAGE_INDEX = 1
 
-class MyStickerPagingSource(
+internal class MyStickerPagingSource(
     private val apiService: StipopApi,
     private val wantVisibleSticker: Boolean
 ) : PagingSource<Int, StickerPackage>() {

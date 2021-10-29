@@ -13,7 +13,7 @@ import io.stipop.models.SPSticker
 import org.json.JSONObject
 import java.io.IOException
 
-class PreviewPopup(val activity: Activity, val keyboard: KeyboardPopup) : PopupWindow() {
+internal class PreviewPopup(val activity: Activity, val keyboard: KeyboardPopup) : PopupWindow() {
 
     private lateinit var rootView: View
 

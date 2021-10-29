@@ -5,18 +5,23 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
+import android.os.Build
 import android.view.View
-import io.stipop.view.KeyboardPopup
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
 import io.stipop.data.ConfigRepository
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
-import io.stipop.models.body.UserIdBody
+import io.stipop.view.KeyboardPopup
 import io.stipop.view.SearchActivity
-import io.stipop.view.PackageDetailActivity
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.util.*
 
 interface StipopDelegate {
     fun onStickerSelected(sticker: SPSticker): Boolean
@@ -35,10 +40,10 @@ class Stipop(
 
         private val configRepository: ConfigRepository by lazy { ConfigRepository(StipopApi.create()) }
 
-        lateinit var applicationContext: Context
+        internal lateinit var applicationContext: Context
 
         @SuppressLint("StaticFieldLeak")
-        var instance: Stipop? = null
+        internal var instance: Stipop? = null
 
         var userId = "-1"
             private set
@@ -49,14 +54,31 @@ class Stipop(
         var countryCode = "us"
             private set
 
-        var keyboardHeight = 0
+        internal var keyboardHeight = 0
             private set
+
+        private var isConfigured = false
+        private var isInitialized = false
 
         fun configure(context: Context) {
             Config.configure(context)
             scope.launch {
-                StipopApi.create().trackConfig(UserIdBody())
+                if (!isConfigured) {
+                    configRepository.postConfigSdk {
+                        isConfigured = true
+                    }
+                }
             }
+        }
+
+        fun connect(
+            activity: Activity,
+            stipopButton: StipopImageView,
+            userId: String,
+            locale: Locale,
+            delegate: StipopDelegate
+        ) {
+            connect(activity, stipopButton, userId, locale.language, locale.country, delegate)
         }
 
         fun connect(
@@ -71,15 +93,24 @@ class Stipop(
             Stipop.lang = lang
             Stipop.countryCode = countryCode
 
-            val requestBody = InitSdkBody(userId = Stipop.userId, language = Stipop.countryCode)
+            val requestBody = InitSdkBody(userId = Stipop.userId, language = Stipop.lang)
             scope.launch {
-                configRepository.postInitSdk(requestBody, onSuccess = {
+                if (!isInitialized) {
+                    configRepository.postInitSdk(requestBody, onSuccess = {
+                        Stipop(activity, stipopButton, delegate).apply {
+                            connect()
+                            instance = this
+                            applicationContext = activity.applicationContext
+                        }
+                        isInitialized = true
+                    })
+                } else {
                     Stipop(activity, stipopButton, delegate).apply {
                         connect()
                         instance = this
                         applicationContext = activity.applicationContext
                     }
-                })
+                }
             }
         }
 
@@ -87,13 +118,15 @@ class Stipop(
 
         fun showKeyboard() = instance?.showKeyboard()
 
-        internal fun send(
+        fun hideKeyboard() = instance?.hideKeyboard()
+
+        fun send(
             stickerId: Int,
             keyword: String,
             entrancePoint: String,
             completionHandler: (result: Boolean) -> Unit
         ) {
-            if (instance == null || instance?.connected == false) {
+            if (instance == null || instance?.isConnected == false) {
                 return
             }
             scope.launch {
@@ -121,62 +154,32 @@ class Stipop(
     private lateinit var rootView: View
 
 
-    private var connected = false
+    private var isConnected = false
     private var stickerIconEnabled = false
 
-    fun connect() {
+    private fun connect() {
         this.stipopButton.setImageResource(Config.getStickerIconResourceId(this.activity))
-
-        this.connected = true
-
+        this.stipopButton.setIconDefaultsColor()
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
-
         this.setSizeForSoftKeyboard()
-    }
-
-    fun show() {
-        if (!this.connected) {
-            return
-        }
-
-        if (this.stickerIconEnabled) {
-            this.showKeyboard()
-        } else {
-            this.enableStickerIcon()
-
-            val intent = Intent(this.activity, SearchActivity::class.java)
-            this.activity.startActivity(intent)
-        }
-    }
-
-    fun goPackageDetail(packageId: Int, entrancePoint: String) {
-        if (!this.connected) {
-            return
-        }
-        Intent(this.activity, PackageDetailActivity::class.java).apply {
-            putExtra("packageId", packageId)
-            putExtra(Constants.IntentKey.ENTRANCE_POINT, entrancePoint)
-        }.run {
-            activity.startActivity(this)
-        }
+        this.isConnected = true
     }
 
     private fun enableStickerIcon() {
-        if (this.connected) {
+        if (this.isConnected) {
             this.stipopButton.setTint()
-
             this.stickerIconEnabled = true
         }
     }
 
     private fun disableStickerIcon() {
-        if (this.connected) {
+        if (this.isConnected) {
             this.stipopButton.clearTint()
         }
     }
 
     private fun showSearch() {
-        if (!this.connected) {
+        if (!this.isConnected) {
             return
         }
 
@@ -187,7 +190,7 @@ class Stipop(
     }
 
     private fun showKeyboard() {
-        if (!this.connected) {
+        if (!this.isConnected) {
             return
         }
 
@@ -202,13 +205,24 @@ class Stipop(
             keyboard!!.hide()
             this.disableStickerIcon()
         } else {
-
-            if (Stipop.keyboardHeight == 0) {
+            if (keyboardHeight == 0) {
                 Utils.showKeyboard(instance!!.activity)
             }
-
             this.keyboard!!.canShow = true
             keyboard!!.show()
+        }
+    }
+
+    private fun hideKeyboard() {
+        if (!this.isConnected) {
+            return
+        }
+        keyboard?.let {
+            if (it.isShowing) {
+                it.canShow = false
+                it.hide()
+                disableStickerIcon()
+            }
         }
     }
 

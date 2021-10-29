@@ -1,6 +1,5 @@
 package io.stipop.viewholder
 
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
@@ -16,10 +15,9 @@ import io.stipop.Constants
 import io.stipop.R
 import io.stipop.custom.StipopImageView
 import io.stipop.models.StickerPackage
-import io.stipop.view.PackageDetailActivity
-import io.stipop.viewholder.delegates.MyStickerItemHolderDelegate
+import io.stipop.viewholder.delegates.MyStickerClickDelegate
 
-class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItemHolderDelegate?) :
+internal class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerClickDelegate?) :
     RecyclerView.ViewHolder(view) {
 
     val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
@@ -38,11 +36,8 @@ class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItem
 
     init {
         itemView.setOnClickListener {
-            Intent(itemView.context, PackageDetailActivity::class.java).apply {
-                putExtra(Constants.IntentKey.PACKAGE_ID, stickerPackage?.packageId)
-                putExtra(Constants.IntentKey.ENTRANCE_POINT, Constants.Point.MY_STICKER)
-            }.run {
-                itemView.context.startActivity(this)
+            stickerPackage?.packageId?.let {
+                delegate?.onItemClicked(it, Constants.Point.MY_STICKER)
             }
         }
         addLL.setOnClickListener {
@@ -113,7 +108,7 @@ class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerItem
     companion object {
         fun create(
             parent: ViewGroup,
-            delegate: MyStickerItemHolderDelegate?
+            delegate: MyStickerClickDelegate?
         ): MyStickerPackageViewHolder {
             val view =
                 LayoutInflater.from(parent.context).inflate(R.layout.item_my_sticker, parent, false)

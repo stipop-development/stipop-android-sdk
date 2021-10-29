@@ -1,6 +1,6 @@
 package io.stipop.models
 
-data class AllStickerDataSource(
+internal data class AllStickerDataSource(
     val trendingList: ArrayList<StickerPackage> = ArrayList(),
     val defaultList: ArrayList<StickerPackage> = ArrayList()
 )

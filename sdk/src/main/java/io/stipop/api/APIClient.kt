@@ -11,20 +11,15 @@ import java.net.URLEncoder
 import kotlin.concurrent.thread
 
 
-class APIClient {
+internal class APIClient {
 
     enum class APIPath(val rawValue: String) {
         SEARCH("/search"),
         SEARCH_KEYWORD("/search/keyword"),
-        SEARCH_RECENT("/search/recent"),
         PACKAGE("/package"),
         PACKAGE_RECENT("/package/send"),
         MY_STICKER("/mysticker"),
-        MY_STICKER_ORDER("/mysticker/order"),
-        MY_STICKER_HIDE("/mysticker/hide"),
         MY_STICKER_FAVORITE("/mysticker/favorite"),
-        DOWNLOAD("/download"),
-        ANALYTICS_SEND("/analytics/send")
     }
 
     companion object {

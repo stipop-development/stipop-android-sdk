@@ -8,9 +8,9 @@ import io.stipop.models.StickerPackage
 import io.stipop.viewholder.HeaderViewHolder
 import io.stipop.viewholder.HorizontalStickerThumbContainerViewHolder
 import io.stipop.viewholder.VerticalStickerThumbViewHolder
-import io.stipop.viewholder.delegates.VerticalStickerThumbViewHolderDelegate
+import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-class AllStickerAdapter(private val verticalStickerThumbViewHolderDelegate: VerticalStickerThumbViewHolderDelegate? = null) :
+internal class AllStickerAdapter(private val stickerPackageClickDelegate: StickerPackageClickDelegate? = null) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dataSet = AllStickerDataSource()
@@ -26,7 +26,7 @@ class AllStickerAdapter(private val verticalStickerThumbViewHolderDelegate: Vert
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             TYPE_TRENDING -> {
-                HorizontalStickerThumbContainerViewHolder.create(parent)
+                HorizontalStickerThumbContainerViewHolder.create(parent, stickerPackageClickDelegate)
             }
             TYPE_LIST_HEADER -> {
                 HeaderViewHolder.create(parent)
@@ -34,7 +34,7 @@ class AllStickerAdapter(private val verticalStickerThumbViewHolderDelegate: Vert
             else -> {
                 VerticalStickerThumbViewHolder.create(
                     parent,
-                    verticalStickerThumbViewHolderDelegate
+                    stickerPackageClickDelegate
                 )
             }
         }
