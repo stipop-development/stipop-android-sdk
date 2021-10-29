@@ -32,7 +32,6 @@ internal open class BaseRepository {
         } catch (e: Exception) {
             onCompletable(null)
         }
-
     }
 
     suspend fun <T> safeApiCall(apiCall: suspend () -> T): ApiResponse<T> {

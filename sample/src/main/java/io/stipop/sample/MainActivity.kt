@@ -36,7 +36,7 @@ import io.stipop.sample.models.ChatItem
 class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDelegate {
 
     // IMPORTANT :: The downloaded sticker is saved according to the user ID.
-    private val testUserId = "change-user-id-here-6"
+    private val testUserId = "change-user-id-here"
     private val testProfileUrl = "change-user-profile-image-url-here"
     private val testUserName = "change-user-name-here"
     private val lang = "ko"
@@ -159,12 +159,12 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     }
 
     override fun onStickerSearchViewClick() {
-        sendMessage("Let me try Sticker Search View! \uD83D\uDE00")
+        sendMessage("Let me try Sticker Search View! \uD83D\uDD0D")
         Stipop.showSearch()
     }
 
     override fun onStickerPickerViewClick() {
-        sendMessage("Let me try Sticker Keyboard Picker View! \uD83D\uDD0D")
+        sendMessage("Let me try Sticker Keyboard Picker View! \uD83D\uDE00")
         Stipop.showKeyboard()
     }
 
