@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
+import android.util.Log
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
@@ -50,8 +51,6 @@ internal class PackUtils {
             filePath = File(Stipop.applicationContext.filesDir, "stipop/$packageId")
             filePath.mkdirs()
             filePath = File(Stipop.applicationContext.filesDir, "stipop/$packageId/$fileName")
-
-            // println("filePath : $filePath")
 
             val policy = ThreadPolicy.Builder().permitAll().build()
             StrictMode.setThreadPolicy(policy)
@@ -132,7 +131,7 @@ internal class PackUtils {
 
         fun saveStickerJsonData(context: Context, sticker: SPSticker, packageId: Int) {
 
-            val fileName = sticker.stickerImg!!.split(File.separator)!!.last()
+            val fileName = sticker.stickerImg!!.split(File.separator).last()
 
             val fileNames = fileName.split(".")
 
