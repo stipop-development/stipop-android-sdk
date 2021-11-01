@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -104,9 +105,14 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment() {
         viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
             PackageDetailViewModel::class.java
         )
-        viewModel.stickerPackage.observeForever {
-            updateUi(it)
-            adapter.updateData(it)
+        viewModel.stickerPackage.observeForever { stickerPackage ->
+            stickerPackage?.let {
+                updateUi(it)
+                adapter.updateData(it)
+            }?:run {
+                Toast.makeText(context, getString(R.string.can_not_open_package), Toast.LENGTH_SHORT).show()
+                dismiss()
+            }
         }
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
             binding?.run {

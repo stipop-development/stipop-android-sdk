@@ -6,6 +6,7 @@ internal object Constants {
     }
     object Tag {
         const val DETAIL = "PD"
+        const val EXTERNAL = "EXTERNAL"
     }
     object IntentKey {
         const val STARTING_TAB_POSITION = "tab"
@@ -34,5 +35,6 @@ internal object Constants {
         const val PACKAGE_DETAIL = "detail"
         const val PICKER_VIEW = "picker"
         const val SEARCH_VIEW = "search"
+        const val EXTERNAL = "external"
     }
 }

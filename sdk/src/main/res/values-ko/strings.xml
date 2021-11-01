@@ -20,4 +20,5 @@
     <string name="clear">삭제</string>
     <string name="download_done">다운로드 완료!</string>
     <string name="can_not_download">"다운로드가 되지 않았습니다."</string>
+    <string name="can_not_open_package">이 스티커 패키지를 열 수 없어요.</string>
 </resources>

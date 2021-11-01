@@ -1,11 +1,11 @@
 package io.stipop.sample.adapter
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -15,7 +15,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.*
-import androidx.vectordrawable.graphics.drawable.AnimationUtilsCompat
 import com.bumptech.glide.Glide
 import io.stipop.sample.R
 import io.stipop.sample.models.ChatItem
@@ -36,6 +35,7 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
     interface GuideDelegate {
         fun onStickerSearchViewClick()
         fun onStickerPickerViewClick()
+        fun onSentStickerClick(packageId: Int?)
     }
 
     private val chatItems: ArrayList<ChatItem> = ArrayList()
@@ -94,7 +94,7 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
         if (position == 0) {
             return TYPE_INTRO
         }
-        return if (chatItems[position - 1].stickerUrl.isNullOrEmpty()) {
+        return if (chatItems[position - 1].spSticker == null) {
             TYPE_MESSAGE_MINE
         } else {
             TYPE_STICKER_MINE
@@ -110,8 +110,19 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
 
     inner class StickerMessageItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val chatStickerImageView: ImageView = itemView.findViewById(R.id.my_sticker)
+        private lateinit var chatItem: ChatItem
+
+        init {
+            chatStickerImageView.setOnClickListener {
+                guideDelegate.onSentStickerClick(chatItem.spSticker?.packageId)
+            }
+        }
+
         fun bind(item: ChatItem) {
-            Glide.with(itemView).load(item.stickerUrl).into(chatStickerImageView)
+            chatItem = item
+            Glide.with(itemView)
+                .load(item.spSticker?.stickerImgLocalFilePath ?: item.spSticker?.stickerImg)
+                .into(chatStickerImageView)
         }
     }
 
@@ -141,7 +152,7 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
                 })
         private val transitionSet3 =
             TransitionSet().addTransition(Fade()).addTransition(Slide(Gravity.LEFT))
-                .setDuration(ANIMATION_DURATION).addListener(object: TransitionListenerAdapter(){
+                .setDuration(ANIMATION_DURATION).addListener(object : TransitionListenerAdapter() {
                     override fun onTransitionEnd(transition: Transition) {
                         super.onTransitionEnd(transition)
                         searchViewTextView.startAnimation(focusAnimation)
@@ -151,16 +162,20 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
 
         private val focusAnimation = AnimationUtils.loadAnimation(itemView.context, R.anim.shake)
 
-        private val dateTimeTextView: AppCompatTextView = itemView.findViewById(R.id.datetimeTextView)
-        private val sampleStickerImageView: AppCompatImageView = itemView.findViewById(R.id.guideImageView)
+        private val dateTimeTextView: AppCompatTextView =
+            itemView.findViewById(R.id.datetimeTextView)
+        private val sampleStickerImageView: AppCompatImageView =
+            itemView.findViewById(R.id.guideImageView)
         private val viewGroup1: LinearLayout = itemView.findViewById(R.id.animationViewGroup1)
         private val viewGroup2: LinearLayout = itemView.findViewById(R.id.animationViewGroup2)
         private val viewGroup3: LinearLayout = itemView.findViewById(R.id.animationViewGroup3)
         private val guideTextView2: AppCompatTextView = itemView.findViewById(R.id.guideTextView2)
         private val guideImageView: AppCompatImageView = itemView.findViewById(R.id.guideImageView)
         private val guideTextView4: AppCompatTextView = itemView.findViewById(R.id.guideTextView4)
-        private val searchViewTextView: AppCompatTextView = itemView.findViewById(R.id.guideTextView5)
-        private val pickerViewTextView: AppCompatTextView = itemView.findViewById(R.id.guideTextView6)
+        private val searchViewTextView: AppCompatTextView =
+            itemView.findViewById(R.id.guideTextView5)
+        private val pickerViewTextView: AppCompatTextView =
+            itemView.findViewById(R.id.guideTextView6)
 
         init {
             dateTimeTextView.text = SimpleDateFormat("a h:mm").format(Date())
