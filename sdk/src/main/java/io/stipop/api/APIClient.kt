@@ -17,9 +17,10 @@ internal class APIClient {
         SEARCH("/search"),
         SEARCH_KEYWORD("/search/keyword"),
         PACKAGE("/package"),
-        PACKAGE_RECENT("/package/send"),
+
         MY_STICKER("/mysticker"),
         MY_STICKER_FAVORITE("/mysticker/favorite"),
+        PACKAGE_RECENT("/package/send")
     }
 
     companion object {

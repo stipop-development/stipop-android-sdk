@@ -1,45 +1,39 @@
 package io.stipop.view
 
 import android.app.Activity
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
 import io.stipop.*
-import io.stipop.adapter.legacy.StickerPackageThumbnailAdapter
 import io.stipop.adapter.legacy.StickerAdapter
+import io.stipop.adapter.legacy.StickerPackageThumbnailAdapter
 import io.stipop.api.APIClient
-import io.stipop.api.StipopApi
 import io.stipop.databinding.ViewKeyboardPopupBinding
+import io.stipop.event.PackageDownloadEvent
+import io.stipop.event.PackageVisibilityChangeEvent
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
-import io.stipop.models.body.UserIdBody
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import io.stipop.view.viewmodel.KeyboardViewModel
 import org.json.JSONObject
 import java.io.IOException
 
 class KeyboardPopup(val activity: Activity) : PopupWindow(),
     StickerPackageThumbnailAdapter.OnPackageClickListener {
 
-    val scope = CoroutineScope(Job() + Dispatchers.IO)
+    private lateinit var keyboardViewModel: KeyboardViewModel
+
     private var binding: ViewKeyboardPopupBinding = ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
     private val packageThumbnailAdapter: StickerPackageThumbnailAdapter by lazy { StickerPackageThumbnailAdapter(this) }
-    private var stickerAdapter: StickerAdapter
-    private var previewPopup: PreviewPopup
+    private val previewPopup: PreviewPopup by lazy { PreviewPopup(activity, this@KeyboardPopup) }
+    private val stickerAdapter: StickerAdapter by lazy { StickerAdapter(activity, R.layout.item_sticker, stickerData) }
+
     var stickerData = ArrayList<SPSticker>()
     var selectedPackage: SPPackage? = null
     var selectedPackageId = -1
@@ -50,40 +44,16 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     var stickerTotalPage = 1
     internal var canShow = true
 
-    private var reloadPackageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent?) {
-            if (intent != null) {
-                reloadPackages()
-            }
-        }
-    }
-
-    init {
-        contentView = binding.root
-        width = LinearLayout.LayoutParams.MATCH_PARENT
-        height = Stipop.keyboardHeight
+    private fun applyTheme() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) elevation = 10.0F
-
         with(binding) {
             containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
             packageListLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-            val animator: RecyclerView.ItemAnimator? = packageThumbRecyclerView.itemAnimator
-            if (animator is SimpleItemAnimator) {
-                animator.supportsChangeAnimations = false
-            }
-            packageThumbRecyclerView.setHasFixedSize(true)
-            packageThumbRecyclerView.setItemViewCacheSize(20)
             val drawable2 = downloadTV.background as GradientDrawable
             drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
             storeIV.setImageResource(Config.getKeyboardStoreResourceId(activity))
             storeIV.setIconDefaultsColor()
-
-
-            ///////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////
-            // Events
-
+            setThemeImageIcon()
             if (!Config.showPreview) {
                 recentPreviewOffIV.visibility = View.VISIBLE
                 recentlyIV.visibility = View.GONE
@@ -93,22 +63,33 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
                 recentlyIV.visibility = View.VISIBLE
                 favoriteIV.visibility = View.VISIBLE
             }
-
+            stickerGV.numColumns = Config.keyboardNumOfColumns
             favoriteRL.tag = 0
-            setThemeImageIcon()
+        }
+    }
 
-            packageThumbRecyclerView.layoutManager =
-                LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-            packageThumbnailAdapter.setHasStableIds(true)
-            packageThumbnailAdapter.setOnItemClickListener(this@KeyboardPopup)
-            packageThumbRecyclerView.adapter = packageThumbnailAdapter
+    init {
+        contentView = binding.root
+        width = LinearLayout.LayoutParams.MATCH_PARENT
+        height = Stipop.keyboardHeight
 
+        keyboardViewModel = KeyboardViewModel()
+        applyTheme()
+
+        packageThumbnailAdapter.apply {
+            setHasStableIds(true)
+            setOnItemClickListener(this@KeyboardPopup)
+        }
+        with(binding) {
+            packageThumbRecyclerView.run {
+                setHasFixedSize(true)
+                setItemViewCacheSize(20)
+                adapter = packageThumbnailAdapter
+            }
             packageThumbRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-
-                    val lastVisibleItemPosition =
-                        (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+                    val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                     val itemTotalCount = packageThumbnailAdapter.itemCount
                     if (lastVisibleItemPosition + 1 == itemTotalCount && totalPage > page) {
                         // 리스트 마지막 도착! 다음 페이지 로드!
@@ -117,9 +98,6 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
                     }
                 }
             })
-            previewPopup = PreviewPopup(activity, this@KeyboardPopup)
-            stickerAdapter = StickerAdapter(activity, R.layout.item_sticker, stickerData)
-            stickerGV.numColumns = Config.keyboardNumOfColumns
             stickerGV.adapter = stickerAdapter
             stickerGV.setOnScrollListener(object : AbsListView.OnScrollListener {
                 override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
@@ -128,6 +106,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
                         loadFavoriteRecently()
                     }
                 }
+
                 override fun onScroll(
                     view: AbsListView?,
                     firstVisibleItem: Int,
@@ -140,7 +119,11 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
             })
             stickerGV.setOnItemClickListener { adapterView, view, i, l ->
                 val sticker = stickerData[i]
-                Stipop.send(sticker.stickerId, sticker.keyword, Constants.Point.PICKER_VIEW) { result ->
+                Stipop.send(
+                    sticker.stickerId,
+                    sticker.keyword,
+                    Constants.Point.PICKER_VIEW
+                ) { result ->
                     if (result) {
                         if (Config.showPreview) {
                             previewPopup.sticker = sticker
@@ -161,6 +144,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
             storeLL.setOnClickListener {
                 showStore(0)
             }
+
             favoriteRL.setOnClickListener {
                 favoriteRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
@@ -183,22 +167,12 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
                 loadFavoriteRecently()
             }
             downloadTV.setOnClickListener {
-                // download
                 PackUtils.downloadAndSaveLocal(activity, selectedPackage) {
                     showStickers()
                 }
             }
         }
-
-
-
         reloadPackages()
-
-        activity.registerReceiver(
-            reloadPackageReceiver,
-            IntentFilter("${this.activity.packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION")
-        )
-            .also { Log.d("DEBUGGING", "REGISTER RECEIVER") }
     }
 
 
@@ -207,43 +181,51 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
             return
         }
 
+        keyboardViewModel.loadRecent()
+        keyboardViewModel.loadFavorites()
+        keyboardViewModel.loadMyPackages()
         reloadPackages()
-
-        val rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
 
         if (Stipop.keyboardHeight > 0) {
             showAtLocation(
-                rootView,
+                activity.window.decorView.findViewById(android.R.id.content) as View,
                 Gravity.BOTTOM,
                 0,
                 0
             )
+            keyboardViewModel.trackSpv()
         }
     }
 
     override fun showAtLocation(parent: View?, gravity: Int, x: Int, y: Int) {
         super.showAtLocation(parent, gravity, x, y)
-        scope.launch {
-            StipopApi.create().trackViewPicker(UserIdBody(Stipop.userId))
+        PackageVisibilityChangeEvent.liveData.observeForever {
+            reloadPackages()
+        }
+        PackageDownloadEvent.liveData.observeForever {
+            reloadPackages()
         }
     }
 
-    internal fun hide() {
-        dismiss()
+    override fun dismiss() {
+        super.dismiss()
+        PackageDownloadEvent.onDestroy()
+        PackageVisibilityChangeEvent.onDestroy()
     }
 
-    fun showStore(tab: Int) {
-        this.hide()
-        val intent = Intent(this.activity, StoreActivity::class.java)
-        intent.putExtra(Constants.IntentKey.STARTING_TAB_POSITION, tab)
-        this.activity.startActivity(intent)
+    private fun showStore(startingPosition: Int) {
+        dismiss()
+        Intent(activity, StoreActivity::class.java).apply {
+            putExtra(Constants.IntentKey.STARTING_TAB_POSITION, startingPosition)
+        }.run {
+            activity.startActivity(this)
+        }
     }
 
     fun changeFavorite(stickerId: Int, favoriteYN: String, packageId: Int) {
         for (i in 0 until stickerData.size) {
             if (stickerData[i].stickerId == stickerId) {
                 stickerData[i].favoriteYN = favoriteYN
-
                 PackUtils.saveStickerJsonData(this.activity, stickerData[i], packageId)
                 break
             }
@@ -264,10 +246,6 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
             }
             recentPreviewOffIV.setTint()
         }
-    }
-
-    private fun clearThemeImageIcon() {
-        binding.recentPreviewOffIV.clearTint()
     }
 
     private fun reloadPackages() {
@@ -470,6 +448,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     }
 
     private fun loadRecently() {
+
         with(binding) {
             favoriteRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
             downloadLL.visibility = View.GONE
@@ -520,7 +499,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
         if (position > packageThumbnailAdapter.itemCount) {
             return
         }
-        clearThemeImageIcon()
+        binding.recentPreviewOffIV.clearTint()
         if (data.packageId == -999) {
             showStore(1)
         } else {

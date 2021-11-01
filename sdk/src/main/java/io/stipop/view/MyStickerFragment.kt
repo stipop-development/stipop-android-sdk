@@ -23,6 +23,7 @@ import io.stipop.models.StickerPackage
 import io.stipop.adapter.MyStickerPackageAdapter
 import io.stipop.adapter.MyStickerPackageLoadStateAdapter
 import io.stipop.event.PackageDownloadEvent
+import io.stipop.event.PackageVisibilityChangeEvent
 import io.stipop.view.viewmodel.MyStickerViewModel
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import kotlinx.coroutines.Job
@@ -85,9 +86,7 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
 
         viewModel.packageVisibilityChanged.observeForever {
             myStickerPackageAdapter.refresh()
-            requireActivity().sendBroadcast(Intent().apply {
-                action = "${requireContext().packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION"
-            })
+            PackageVisibilityChangeEvent.publishEvent(it.second)
         }
 
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {

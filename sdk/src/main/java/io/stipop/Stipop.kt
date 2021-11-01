@@ -206,7 +206,7 @@ class Stipop(
 
         if (keyboard!!.isShowing) {
             this.keyboard!!.canShow = false
-            keyboard!!.hide()
+            keyboard!!.dismiss()
             this.disableStickerIcon()
         } else {
             if (keyboardHeight == 0) {
@@ -224,7 +224,7 @@ class Stipop(
         keyboard?.let {
             if (it.isShowing) {
                 it.canShow = false
-                it.hide()
+                it.dismiss()
                 disableStickerIcon()
             }
         }
@@ -277,7 +277,7 @@ class Stipop(
                 keyboardHeight = 0
                 if (this.keyboard != null) {
                     this.keyboard!!.height = 0
-                    this.keyboard!!.hide()
+                    this.keyboard!!.dismiss()
                     this.disableStickerIcon()
                 }
             }

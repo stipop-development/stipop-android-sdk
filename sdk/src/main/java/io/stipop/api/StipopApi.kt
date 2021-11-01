@@ -29,10 +29,24 @@ internal interface StipopApi {
     ): StipopResponse
 
     @GET("package/{packageId}")
-    suspend fun getSingleStickerPackage(
+    suspend fun getStickerPackage(
         @Path("packageId") packageId: Int,
         @Query("userId") userId: String,
     ): StickerPackageResponse
+
+    @GET("package/send/{userId}")
+    suspend fun getRecentlySentStickers(
+        @Path("userId") userId: String,
+        @Query("pageNumber") pageNumber: Int,
+        @Query("limit") limit: Int
+    ): StickerListResponse
+
+    @GET("mysticker/favorite/{userId}")
+    suspend fun getFavoriteStickers(
+        @Path("userId") userId: String,
+        @Query("pageNumber") pageNumber: Int,
+        @Query("limit") limit: Int
+    ): StickerListResponse
 
     @GET("mysticker/{userId}")
     suspend fun getMyStickers(

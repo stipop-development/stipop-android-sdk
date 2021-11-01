@@ -97,7 +97,6 @@ internal class AllStickerAdapter(private val stickerPackageClickDelegate: Sticke
     }
 
     fun clearData(isSearchResultView: Boolean) {
-        Log.d("STIPOP-DEBUG", "isSearchView : $isSearchResultView")
         this.isSearchResultView = isSearchResultView
         dataSet.defaultList.clear()
         dataSet.trendingList.clear()
