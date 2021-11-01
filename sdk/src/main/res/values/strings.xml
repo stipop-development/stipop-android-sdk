@@ -17,6 +17,7 @@
     <string name="stickers">Stickers</string>
     <string name="recent_search">Recent Search</string>
     <string name="clear">Clear</string>
-    <string name="download_done">다운로드 완료!</string>
+    <string name="download_done">Sticker Package is downloaded : )</string>
     <string name="can_not_download">"Can not download!!!"</string>
+    <string name="can_not_open_package">Can not open this sticker package.</string>
 </resources>

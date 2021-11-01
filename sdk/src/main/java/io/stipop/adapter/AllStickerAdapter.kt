@@ -74,7 +74,6 @@ internal class AllStickerAdapter(private val stickerPackageClickDelegate: Sticke
     }
 
     fun updateData(stickerPackages: List<StickerPackage>) {
-        Log.d("STIPOP-DEBUG", "updateData : $isSearchResultView")
         val prevItemCount = itemCount
         dataSet.apply {
             if (trendingList.isEmpty()) {

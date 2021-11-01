@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     }
 
     override fun onStickerSelected(sticker: SPSticker): Boolean {
-        sendSticker(sticker.stickerImg)
+        sendSticker(sticker)
         return true
     }
 
@@ -147,14 +147,20 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         }
     }
 
-    private fun sendSticker(stickerImg: String?) {
+    private fun sendSticker(spSticker: SPSticker?) {
         val item = ChatItem(
-            stickerUrl = stickerImg.toString()
+            spSticker = spSticker
         )
         chatsAdapter.run {
             addChatItem(item)
             notifyItemInserted(itemCount - 1)
             chatRecyclerview.smoothScrollToPosition(itemCount - 1)
+        }
+    }
+
+    override fun onSentStickerClick(packageId: Int?) {
+        packageId?.let {
+            Stipop.showStickerPackage(supportFragmentManager, packageId)
         }
     }
 

@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
 import android.view.View
+import androidx.fragment.app.FragmentManager
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
 import io.stipop.data.ConfigRepository
@@ -16,6 +17,7 @@ import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
 import io.stipop.view.KeyboardPopup
+import io.stipop.view.PackageDetailBottomSheetFragment
 import io.stipop.view.SearchActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -119,6 +121,8 @@ class Stipop(
         fun showKeyboard() = instance?.showKeyboard()
 
         fun hideKeyboard() = instance?.hideKeyboard()
+
+        fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) = instance?.showStickerPackage(fragmentManager, packageId)
 
         fun send(
             stickerId: Int,
@@ -226,6 +230,9 @@ class Stipop(
         }
     }
 
+    private fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) {
+        PackageDetailBottomSheetFragment.newInstance(packageId, Constants.Point.EXTERNAL).showNow(fragmentManager, Constants.Tag.EXTERNAL)
+    }
 
     private fun setSizeForSoftKeyboard() {
 

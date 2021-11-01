@@ -5,7 +5,7 @@ import io.stipop.models.StickerPackage
 
 internal data class StickerPackageResponse(
     @SerializedName("header") val header: ResponseHeader,
-    @SerializedName("body") val body: ResponseBody
+    @SerializedName("body") val body: ResponseBody?
 ){
-    data class ResponseBody(@SerializedName("package") val stickerPackage: StickerPackage)
+    data class ResponseBody(@SerializedName("package") val stickerPackage: StickerPackage?)
 }
