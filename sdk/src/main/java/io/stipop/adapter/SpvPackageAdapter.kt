@@ -17,6 +17,15 @@ internal class SpvPackageAdapter(val delegate: OnPackageClickListener) :
 
     var prevSelectedPosition = -1
 
+    fun getItemByPosition(position: Int): StickerPackage? {
+        return if (itemCount > position)
+            getItem(position)
+        else
+            null
+    }
+
+    fun isSelectedItemExist() = prevSelectedPosition != -1
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpvThumbHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_keyboard_package, parent, false)
@@ -25,7 +34,7 @@ internal class SpvPackageAdapter(val delegate: OnPackageClickListener) :
 
     override fun onBindViewHolder(holder: SpvThumbHolder, position: Int) {
         getItem(position)?.let {
-            holder.bindData(it)
+            holder.bindData(it, position == prevSelectedPosition)
         }
     }
 
@@ -34,6 +43,7 @@ internal class SpvPackageAdapter(val delegate: OnPackageClickListener) :
             notifyItemChanged(prevSelectedPosition, Unit)
         }
         prevSelectedPosition = position
+        notifyItemChanged(prevSelectedPosition, Unit)
     }
 
     companion object {

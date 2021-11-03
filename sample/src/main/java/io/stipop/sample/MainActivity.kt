@@ -1,5 +1,6 @@
 package io.stipop.sample
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -22,6 +23,8 @@ import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.sample.adapter.ChatAdapter
 import io.stipop.sample.models.ChatItem
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * IMPORTANT
@@ -36,7 +39,8 @@ import io.stipop.sample.models.ChatItem
 class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDelegate {
 
     // IMPORTANT :: The downloaded sticker is saved according to the user ID.
-    private val testUserId = "change-user-id-here"
+    @SuppressLint("SimpleDateFormat")
+    private val testUserId = SimpleDateFormat("yyyyMMddHHmmss").format(Date())
     private val testProfileUrl = "change-user-profile-image-url-here"
     private val testUserName = "change-user-name-here"
     private val lang = "ko"

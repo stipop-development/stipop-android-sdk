@@ -22,17 +22,15 @@ internal class SpvThumbHolder(view: View, val delegate: SpvPackageAdapter.OnPack
     init {
         itemView.setOnClickListener {
             stickerPackage?.let {
-                (bindingAdapter as SpvPackageAdapter).updateSelected(bindingAdapterPosition)
-                setSelectFilter(true)
                 delegate.onPackageClick(bindingAdapterPosition, it)
             }
         }
     }
 
-    fun bindData(data: StickerPackage) {
+    fun bindData(data: StickerPackage, isSelected: Boolean=false) {
         stickerPackage = data
         Glide.with(itemView.context).load(stickerPackage?.packageImg).dontAnimate().into(imageIV)
-        setSelectFilter(false)
+        setSelectFilter(isSelected)
 //        if (stickerPackage?.packageId == -999) {
 //            containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
 //            imageIV.setImageResource(R.mipmap.ic_setting)

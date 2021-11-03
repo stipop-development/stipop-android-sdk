@@ -5,14 +5,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
-import android.os.Build
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
 import io.stipop.data.ConfigRepository
+import io.stipop.data.SimplePref
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
@@ -95,7 +93,7 @@ class Stipop(
             Stipop.lang = lang
             Stipop.countryCode = countryCode
 
-            val requestBody = InitSdkBody(userId = Stipop.userId, language = Stipop.lang)
+            val requestBody = InitSdkBody(userId = Stipop.userId, lang = Stipop.lang)
             scope.launch {
                 if (!isInitialized) {
                     configRepository.postInitSdk(requestBody, onSuccess = {
@@ -122,7 +120,8 @@ class Stipop(
 
         fun hideKeyboard() = instance?.hideKeyboard()
 
-        fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) = instance?.showStickerPackage(fragmentManager, packageId)
+        fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) =
+            instance?.showStickerPackage(fragmentManager, packageId)
 
         fun send(
             stickerId: Int,
@@ -166,6 +165,7 @@ class Stipop(
         this.stipopButton.setIconDefaultsColor()
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
         this.setSizeForSoftKeyboard()
+        SimplePref.init(this.activity.applicationContext)
         this.isConnected = true
     }
 
@@ -228,7 +228,8 @@ class Stipop(
     }
 
     private fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) {
-        PackageDetailBottomSheetFragment.newInstance(packageId, Constants.Point.EXTERNAL).showNow(fragmentManager, Constants.Tag.EXTERNAL)
+        PackageDetailBottomSheetFragment.newInstance(packageId, Constants.Point.EXTERNAL)
+            .showNow(fragmentManager, Constants.Tag.EXTERNAL)
     }
 
     private fun setSizeForSoftKeyboard() {

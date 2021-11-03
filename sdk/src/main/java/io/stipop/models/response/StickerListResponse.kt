@@ -7,5 +7,5 @@ internal data class StickerListResponse(
     @SerializedName("header") val header: ResponseHeader,
     @SerializedName("body") val body: ResponseBody
 ) {
-    data class ResponseBody(val stickerList: List<Sticker>, val pageMap: PageMapInfo)
+    data class ResponseBody(val stickerList: List<Sticker>?=emptyList(), val pageMap: PageMapInfo)
 }

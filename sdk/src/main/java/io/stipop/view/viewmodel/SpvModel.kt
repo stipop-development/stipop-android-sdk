@@ -19,8 +19,8 @@ internal class SpvModel {
 
     private val taskScope = CoroutineScope(Job() + Dispatchers.IO)
     private val repository = SpvRepository(StipopApi.create())
-    private val recentStickers: ArrayList<Sticker> = ArrayList()
-    var selectedPackage: StickerPackage? = null
+    val recentStickers: ArrayList<Sticker> = ArrayList()
+    private var selectedPackage: StickerPackage? = null
 
     fun trackSpv() {
         taskScope.launch {
@@ -50,22 +50,26 @@ internal class SpvModel {
         } else {
             taskScope.launch {
                 val result = StipopApi.create().getRecentlySentStickers(Stipop.userId, 1, 20)
-                if (result.header.isSuccess()) {
+                if (result.header.isSuccess() && result.body.stickerList != null) {
                     if (recentStickers.isEmpty()) {
                         recentStickers.addAll(result.body.stickerList)
                     }
                     launch(Dispatchers.Main) {
                         onSuccess(result.body.stickerList)
                     }
+                } else {
+                    launch(Dispatchers.Main) {
+                        onSuccess(emptyList())
+                    }
                 }
             }
         }
     }
 
-    fun loadFavorites(onSuccess: (data: List<Sticker>?) -> Unit) {
+    fun loadFavorites(onSuccess: (data: List<Sticker>) -> Unit) {
         taskScope.launch {
             val result = StipopApi.create().getFavoriteStickers(Stipop.userId, 1, 20)
-            if (result.header.isSuccess()) {
+            if (result.header.isSuccess() && result.body.stickerList != null) {
                 launch(Dispatchers.Main) {
                     onSuccess(result.body.stickerList)
                 }
