@@ -3,9 +3,7 @@
 
 [![](https://jitpack.io/v/stipop-development/stipop-android-sdk.svg)](https://jitpack.io/#stipop-development/stipop-android-sdk)
 <a href="https://android-arsenal.com/api?level=16"><img alt="AndroidMinApi" src="https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat"/></a></br>
-Stipop SDK powers over 150,000 stickers(+animated) that can be integrated to chat, camera, video call, and profile interfaces. Get access to world's no.1 sticker platform and boost user engagement.
-
-Stipop Android UI SDK offers you a super easy way to implement sticker service right into your app.
+Stipop SDK provides over 150,000 .png and .gif stickers that can be easily integrated into mobile app chats, comment sections, live streams, video calls, and other features. Bring fun to your mobile app with stickers loved by millions of users worldwide.
 
 Requirements
 -------------------
@@ -17,22 +15,18 @@ Requirements
 
 Getting Started
 --------
-1. Sign up on <a href="https://dashboard.stipop.io/" target="_blank">Stipop Dashboard</a>
+1. Sign up to <a href="https://dashboard.stipop.io/" target="_blank">Stipop Dashboard</a>
 2. Create your application to get API Key.
-3. Download **'Stipop.json'** from the dashboard and move it into 'assets' folder in android project.
-4. After that, you can build demo app or your own project.
+3. Download **'Stipop.json'** file.
 
 Try Demo
 --------
 
 If you want to know what is 'Stipop Sticker SDK', try building a demo app first.</br></br>
 
-1. Clone or download this repository.<br/>
-2. Move Stipop.json into the assets folder you created. 
-      - If you do not have this file, see 'Getting Started' first.
-      - In the Stipop.json file there is your personal API key ans so on.
-      - For more guide on this, please see <a href="https://docs.stipop.io/en/sdk/android/customize/overview/" target="_blank">Android SDK Customize</a>.
-3. Build and run 'sample' app on your device.<br/><br/>
+1. Clone this repository.<br/>
+2. Move **Stipop.json** into the assets folder you created. 
+3. Build and run 'sample' on your device.<br/><br/>
 
 <p align="center">
       
@@ -62,10 +56,7 @@ dependencies {
 
 How do I use Stipop SDK?
 -------------------
-1. Move Stipop.json into the assets folder you created. 
-      - If you do not have this file, see 'Getting Started' first.
-      - In the Stipop.json file there is your personal API key ans so on.
-      - For more guide on this, please see <a href="https://docs.stipop.io/en/sdk/android/customize/overview/" target="_blank">Android SDK Customize</a>.
+1. Move **Stipop.json** into the assets folder you created. 
 2. Make or update your application class. (This operation initializes the SDK from 'Stipop.json' file)
 ```kotlin
 class MyApplication : Application() {
@@ -99,9 +90,9 @@ class YourActivity : Activity(), StipopDelegate {
     }
 }
 ```
-5. Two types of UI components are supported.
-      - Stipop.showKeyboard() : Sticker Picker View
-      - Stipop.showSearch() : Sticker Search View
+5. Choose one of the two supported UI components.
+      a. Stipop.showKeyboard() : Sticker Picker View
+      b. Stipop.showSearch() : Sticker Search View
 ```kotlin
 class YourActivity : Activity(), StipopDelegate {
 
@@ -128,7 +119,7 @@ class YourActivity : Activity(), StipopDelegate {
 
 ## Contact us
 
-- For more information, visit [Stipop Docs][1] to see our official document.
-- If you have any trouble or question, email us at tech-support@stipop.io . We'll gladly support you :)
+- For more information, visit [Stipop Documentation][1] to see our official document.
+- Email us at tech-support@stipop.io if you need our help.
 
 [1]: https://docs.stipop.io/en/sdk/android/get-started/quick-start
