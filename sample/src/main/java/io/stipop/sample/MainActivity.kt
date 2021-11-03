@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
 
     // IMPORTANT :: The downloaded sticker is saved according to the user ID.
     @SuppressLint("SimpleDateFormat")
-    private val testUserId = SimpleDateFormat("yyyyMMddHHmmss").format(Date())
+    private val testUserId = SimpleDateFormat("yyyyMMddHHmm").format(Date())
     private val testProfileUrl = "change-user-profile-image-url-here"
     private val testUserName = "change-user-name-here"
     private val lang = "ko"

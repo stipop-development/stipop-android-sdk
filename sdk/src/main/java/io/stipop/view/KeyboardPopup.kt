@@ -31,8 +31,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     private var keyboardViewModel: SpvModel
     private val previewPopup: PreviewPopup by lazy { PreviewPopup(activity, this@KeyboardPopup) }
     private val ioScope = CoroutineScope(Job() + Dispatchers.IO)
-    private var binding: ViewKeyboardPopupBinding =
-        ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
+    private var binding: ViewKeyboardPopupBinding = ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
     private val packageThumbnailAdapter: SpvPackageAdapter by lazy { SpvPackageAdapter(this) }
     private val stickerThumbnailAdapter: StickerThumbAdapter by lazy { StickerThumbAdapter(this) }
     private val decoration = StickerDecoration(Utils.dpToPx(8F).toInt())
@@ -136,13 +135,14 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     }
 
     private fun showStickers(selectedPackage: StickerPackage) {
+        binding.emptyListTextView.isVisible = false
         binding.progressBar.isVisible = false
         val stickerList = PackUtils.stickerListOf(activity, selectedPackage.packageId)
-        if (stickerList.size == 0) {
-            stickerThumbnailAdapter.updateDatas(selectedPackage.stickers)
-            PackUtils.downloadAndSaveLocalV2(selectedPackage) { }
-        } else {
-            stickerThumbnailAdapter.updateDatas(stickerList)
+        stickerThumbnailAdapter.updateDatas(if (stickerList.isEmpty()) selectedPackage.stickers else stickerList)
+        if (stickerList.isEmpty()) {
+            ioScope.launch {
+                PackUtils.downloadAndSaveLocalV2(selectedPackage) { }
+            }
         }
     }
 
@@ -242,7 +242,8 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     private fun applyTheme() {
         with(binding) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                progressBar.indeterminateTintList = ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
+                progressBar.indeterminateTintList =
+                    ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
             }
             containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
             packageListHeader.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
