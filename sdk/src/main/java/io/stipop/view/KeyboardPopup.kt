@@ -2,8 +2,9 @@ package io.stipop.view
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
-import android.util.Log
+import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.widget.*
@@ -15,8 +16,6 @@ import io.stipop.adapter.SpvPackageAdapter
 import io.stipop.adapter.StickerThumbAdapter
 import io.stipop.custom.StickerDecoration
 import io.stipop.databinding.ViewKeyboardPopupBinding
-import io.stipop.event.PackageDownloadEvent
-import io.stipop.event.PackageVisibilityChangeEvent
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.SpvModel
@@ -31,8 +30,9 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
 
     private var keyboardViewModel: SpvModel
     private val previewPopup: PreviewPopup by lazy { PreviewPopup(activity, this@KeyboardPopup) }
-    private val scope = CoroutineScope(Job() + Dispatchers.Main)
-    private var binding: ViewKeyboardPopupBinding = ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
+    private val ioScope = CoroutineScope(Job() + Dispatchers.IO)
+    private var binding: ViewKeyboardPopupBinding =
+        ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
     private val packageThumbnailAdapter: SpvPackageAdapter by lazy { SpvPackageAdapter(this) }
     private val stickerThumbnailAdapter: StickerThumbAdapter by lazy { StickerThumbAdapter(this) }
     private val decoration = StickerDecoration(Utils.dpToPx(8F).toInt())
@@ -62,9 +62,11 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
                 showStore(0)
             }
         }
-        scope.launch {
+        ioScope.launch {
             keyboardViewModel.loadMyPackages().collectLatest {
-                packageThumbnailAdapter.submitData(it)
+                launch(Dispatchers.Main) {
+                    packageThumbnailAdapter.submitData(it)
+                }
             }
         }
         packageThumbnailAdapter.registerAdapterDataObserver(object :
@@ -74,6 +76,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
                 if (positionStart == 0) {
                     initialize()
                 }
+                binding.packageThumbRecyclerView.scrollToPosition(0)
             }
         })
     }
@@ -101,14 +104,9 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     }
 
     private fun refreshData() {
-        if (binding.recentFavoriteContainer.tag == 1) {
-            loadFavorite()
-        } else {
-            loadRecently()
-        }
+        loadRecentOrFavorite()
         packageThumbnailAdapter.updateSelected()
         packageThumbnailAdapter.refresh()
-        binding.packageThumbRecyclerView.scrollToPosition(0)
     }
 
     private fun applyRecentFavoriteTheme() {
@@ -138,7 +136,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     }
 
     private fun showStickers(selectedPackage: StickerPackage) {
-        stickerThumbnailAdapter.clearData()
+        binding.progressBar.isVisible = false
         val stickerList = PackUtils.stickerListOf(activity, selectedPackage.packageId)
         if (stickerList.size == 0) {
             stickerThumbnailAdapter.updateDatas(selectedPackage.stickers)
@@ -150,7 +148,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
 
     private fun onRecentFavoriteClick() {
         packageThumbnailAdapter.updateSelected()
-        stickerThumbnailAdapter.clearData()
+        binding.progressBar.isVisible = true
         applyRecentFavoriteTheme()
         if (Config.showPreview) {
             if (binding.recentFavoriteContainer.tag == 0) {
@@ -161,46 +159,46 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
         } else {
             binding.recentFavoriteContainer.tag = 0
         }
+        loadRecentOrFavorite()
+    }
+
+    private fun loadRecentOrFavorite() {
+        stickerThumbnailAdapter.clearData()
         if (binding.recentFavoriteContainer.tag == 1) {
-            loadFavorite()
+            keyboardViewModel.loadFavorites(onSuccess = {
+                binding.progressBar.isVisible = false
+                if (it.isEmpty()) {
+                    initialize()
+                } else {
+                    applyRecentFavoriteTheme()
+                    it.forEach {
+                        stickerThumbnailAdapter.updateData(it)
+                    }
+                }
+            })
         } else {
-            loadRecently()
+            keyboardViewModel.loadRecent(onSuccess = {
+                binding.progressBar.isVisible = false
+                if (it.isEmpty()) {
+                    binding.emptyListTextView.isVisible = true
+                    initialize()
+                } else {
+                    applyRecentFavoriteTheme()
+                    it.forEach {
+                        stickerThumbnailAdapter.updateData(it)
+                    }
+                }
+            })
         }
     }
 
-    private fun loadFavorite() {
-        stickerThumbnailAdapter.clearData()
-        keyboardViewModel.loadFavorites(onSuccess = {
-            if (it.isEmpty()) {
-                initialize()
-            } else {
-                applyRecentFavoriteTheme()
-                it.forEach {
-                    stickerThumbnailAdapter.updateData(it)
-                }
-            }
-        })
-    }
-
-    private fun loadRecently() {
-        stickerThumbnailAdapter.clearData()
-        keyboardViewModel.loadRecent(onSuccess = {
-            if (it.isEmpty()) {
-                binding.emptyListTextView.isVisible = true
-                initialize()
-            } else {
-                applyRecentFavoriteTheme()
-                it.forEach {
-                    stickerThumbnailAdapter.updateData(it)
-                }
-            }
-        })
-    }
-
     override fun onPackageClick(position: Int, stickerPackage: StickerPackage) {
-        binding.emptyListTextView.isVisible = false
-        binding.recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-        binding.recentStickerImageView.clearTint()
+        with(binding) {
+            emptyListTextView.isVisible = false
+            progressBar.isVisible = true
+            recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
+            recentStickerImageView.clearTint()
+        }
         packageThumbnailAdapter.updateSelected(position)
         stickerThumbnailAdapter.clearData()
         keyboardViewModel.loadStickerPackage(stickerPackage, onSuccess = {
@@ -243,6 +241,9 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
 
     private fun applyTheme() {
         with(binding) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                progressBar.indeterminateTintList = ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
+            }
             containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
             packageListHeader.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
             storeImageView.setImageResource(Config.getKeyboardStoreResourceId(activity))
@@ -269,7 +270,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     }
 
     private fun initialize() {
-        if(!isInitialized){
+        if (!isInitialized) {
             if (keyboardViewModel.recentStickers.isEmpty() && !packageThumbnailAdapter.isSelectedItemExist()) {
                 packageThumbnailAdapter.getItemByPosition(0)?.let {
                     onPackageClick(0, it)
