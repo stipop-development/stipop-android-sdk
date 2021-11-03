@@ -33,8 +33,6 @@ Try Demo
 
 Including in your project
 --------
-For detailed instructions and requirements, see [Android SDK docs page][1].
-
 Use Gradle:
 
 ```gradle
