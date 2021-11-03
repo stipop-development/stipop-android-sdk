@@ -205,14 +205,12 @@ class Stipop(
         }
 
         if (keyboard!!.isShowing) {
-            this.keyboard!!.canShow = false
             keyboard!!.dismiss()
             this.disableStickerIcon()
         } else {
             if (keyboardHeight == 0) {
                 Utils.showKeyboard(instance!!.activity)
             }
-            this.keyboard!!.canShow = true
             keyboard!!.show()
         }
     }
@@ -223,7 +221,6 @@ class Stipop(
         }
         keyboard?.let {
             if (it.isShowing) {
-                it.canShow = false
                 it.dismiss()
                 disableStickerIcon()
             }
@@ -268,7 +265,7 @@ class Stipop(
 
                     if (preHeight == 0 || !this.keyboard!!.isShowing) {
                         this.keyboard!!.show()
-                        if (this.keyboard!!.canShow) {
+                        if (this.keyboard!!.isShowing) {
                             this.enableStickerIcon()
                         }
                     }

@@ -59,8 +59,10 @@ internal class AllStickerViewModel(private val repository: AllStickerRepository)
     fun requestDownloadPackage(stickerPackage: StickerPackage) {
         viewModelScope.launch {
             repository.postDownloadStickers(stickerPackage) {
-                PackUtils.downloadAndSaveLocalV2(stickerPackage) {
-                    PackageDownloadEvent.publishEvent(stickerPackage.packageId)
+                it?.let { response ->
+                    if (response.header.isSuccess()) {
+                        PackageDownloadEvent.publishEvent(stickerPackage.packageId)
+                    }
                 }
             }
         }

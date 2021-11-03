@@ -9,13 +9,12 @@ import io.stipop.models.StickerPackage
 import retrofit2.HttpException
 import java.io.IOException
 
-private const val STARTING_PAGE_INDEX = 1
-
 internal class MyStickerPagingSource(
     private val apiService: StipopApi,
     private val wantVisibleSticker: Boolean
 ) : PagingSource<Int, StickerPackage>() {
 
+    private val STARTING_PAGE_INDEX = 1
     private var currentVisibleSetting = true
 
     override fun getRefreshKey(state: PagingState<Int, StickerPackage>): Int? {

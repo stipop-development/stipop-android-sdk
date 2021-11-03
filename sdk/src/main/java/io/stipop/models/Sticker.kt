@@ -7,4 +7,20 @@ data class Sticker(
     var stickerImgLocalFilePath: String? = null,
     var favoriteYN: String = "",
     var keyword: String = "",
-)
+) {
+    fun toSPSticker(): SPSticker {
+        return SPSticker(
+            packageId = packageId,
+            stickerId = stickerId,
+            stickerImg = stickerImg ?: "",
+            favoriteYN = favoriteYN,
+            keyword = keyword,
+        )
+    }
+
+    companion object {
+        fun fromSpSticker(spSticker: SPSticker) : Sticker{
+            return Sticker(spSticker.packageId, spSticker.stickerId, spSticker.stickerImg, spSticker.stickerImgLocalFilePath, spSticker.favoriteYN, spSticker.keyword)
+        }
+    }
+}

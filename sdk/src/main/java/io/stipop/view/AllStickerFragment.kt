@@ -14,7 +14,7 @@ import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
 import io.stipop.Utils
-import io.stipop.adapter.AllStickerAdapter
+import io.stipop.adapter.StoreAdapter
 import io.stipop.base.BaseFragment
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentAllStickerBinding
@@ -38,7 +38,7 @@ internal class AllStickerFragment : BaseFragment(), StickerPackageClickDelegate 
 
     private var binding: FragmentAllStickerBinding? = null
     private lateinit var viewModel: AllStickerViewModel
-    private val allStickerAdapter: AllStickerAdapter by lazy { AllStickerAdapter(this) }
+    private val storeAdapter: StoreAdapter by lazy { StoreAdapter(this) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,7 +62,7 @@ internal class AllStickerFragment : BaseFragment(), StickerPackageClickDelegate 
         )
 
         with(binding) {
-            this?.allStickerRecyclerView?.adapter = allStickerAdapter
+            this?.allStickerRecyclerView?.adapter = storeAdapter
             this?.allStickerRecyclerView?.setUpScrollListener()
             this?.clearSearchImageView?.setOnClickListener {
                 searchEditText.setText("")
@@ -77,17 +77,17 @@ internal class AllStickerFragment : BaseFragment(), StickerPackageClickDelegate 
 
         viewModel.registerRecyclerView(binding?.allStickerRecyclerView)
         viewModel.stickerPackages.observeForever { stickers ->
-            allStickerAdapter.updateData(stickers)
+            storeAdapter.updateData(stickers)
         }
         viewModel.clearAction.observeForever { isSearchView ->
-            allStickerAdapter.clearData(isSearchView)
+            storeAdapter.clearData(isSearchView)
         }
         lifecycleScope.launch {
             viewModel.emittedQuery.collect { value -> viewModel.searchQuery(value) }
         }
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) { packageId ->
             Toast.makeText(context, getString(R.string.download_done), Toast.LENGTH_SHORT).show()
-            allStickerAdapter.updateDownloadState(packageId)
+            storeAdapter.updateDownloadState(packageId)
         }
     }
 

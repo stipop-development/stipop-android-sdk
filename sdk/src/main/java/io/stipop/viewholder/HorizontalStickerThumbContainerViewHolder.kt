@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.R
 import io.stipop.Utils
-import io.stipop.adapter.HorizontalStickerThumbnailAdapter
+import io.stipop.adapter.HorizontalPackageAdapter
 import io.stipop.custom.RecyclerDecoration
 import io.stipop.databinding.ItemHorizontalStickerThumbContainerBinding
 import io.stipop.models.StickerPackage
@@ -16,7 +16,7 @@ import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 internal class HorizontalStickerThumbContainerViewHolder(private val binding: ItemHorizontalStickerThumbContainerBinding, val delegate: StickerPackageClickDelegate?) :
     RecyclerView.ViewHolder(binding.root) {
 
-    private val adapter: HorizontalStickerThumbnailAdapter by lazy { HorizontalStickerThumbnailAdapter(delegate = delegate) }
+    private val adapter: HorizontalPackageAdapter by lazy { HorizontalPackageAdapter(delegate = delegate) }
     private val decoration = RecyclerDecoration(Utils.dpToPx(7F).toInt())
 
     init {

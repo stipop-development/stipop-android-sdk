@@ -17,18 +17,6 @@ import java.net.URL
 internal class PackUtils {
 
     companion object {
-        fun downloadAndSaveLocal(activity:Activity, spPackage: SPPackage?, responseCallback: () -> Unit) {
-            val stickers = spPackage!!.stickers
-            // println(stickers)
-            for (sticker in stickers) {
-                val packageId = sticker.packageId
-                val stickerImg = sticker.stickerImg
-                // val encodedString = URLEncoder.encode(stickerImg, "utf-8")
-                downloadImage(activity, packageId, stickerImg, sticker)
-            }
-            responseCallback()
-        }
-
         fun downloadAndSaveLocalV2(stickerPackage: StickerPackage, responseCallback: () -> Unit) {
             val stickers = stickerPackage.stickers
             for (sticker in stickers) {
@@ -39,7 +27,7 @@ internal class PackUtils {
             responseCallback()
         }
 
-        private fun downloadImageV2(packageId: Int, encodedString: String?, sticker: SPSticker){
+        private fun downloadImageV2(packageId: Int, encodedString: String?, sticker: SPSticker) {
             if (encodedString == null) {
                 return
             }
@@ -63,7 +51,12 @@ internal class PackUtils {
             }
         }
 
-        private fun downloadImage(activity:Activity, packageId: Int, encodedString: String?, sticker: SPSticker) {
+        private fun downloadImage(
+            activity: Activity,
+            packageId: Int,
+            encodedString: String?,
+            sticker: SPSticker
+        ) {
             if (encodedString == null) {
                 return
             }
@@ -90,7 +83,7 @@ internal class PackUtils {
             }
         }
 
-        fun stickerListOf(activity:Activity, packageId:Int): ArrayList<SPSticker> {
+        fun stickerListOf(activity: Activity, packageId: Int): ArrayList<SPSticker> {
             val stickerList = ArrayList<SPSticker>()
 
             val filePath = File(activity.filesDir, "stipop/$packageId")
@@ -109,7 +102,8 @@ internal class PackUtils {
                         if (fileNames.count() > 0) {
                             val jsonFileName = fileNames[0]
 
-                            val file = File(activity.filesDir, "stipop/$packageId/$jsonFileName.json")
+                            val file =
+                                File(activity.filesDir, "stipop/$packageId/$jsonFileName.json")
                             if (file.isFile) {
                                 val json = JSONObject(file.readText())
                                 sticker.stickerId = Utils.getInt(json, "stickerId")

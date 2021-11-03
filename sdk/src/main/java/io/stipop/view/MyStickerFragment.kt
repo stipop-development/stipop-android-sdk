@@ -1,6 +1,5 @@
 package io.stipop.view
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,8 +19,8 @@ import io.stipop.databinding.FragmentMyStickerBinding
 import io.stipop.viewholder.delegates.MyStickerClickDelegate
 import io.stipop.custom.dragdrop.SimpleItemTouchHelperCallback
 import io.stipop.models.StickerPackage
-import io.stipop.adapter.MyStickerPackageAdapter
-import io.stipop.adapter.MyStickerPackageLoadStateAdapter
+import io.stipop.adapter.MyPackageAdapter
+import io.stipop.adapter.MyLoadStateAdapter
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.event.PackageVisibilityChangeEvent
 import io.stipop.view.viewmodel.MyStickerViewModel
@@ -41,8 +40,8 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
     private var binding: FragmentMyStickerBinding? = null
     private lateinit var viewModel: MyStickerViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
-    private val myStickerPackageAdapter: MyStickerPackageAdapter by lazy {
-        MyStickerPackageAdapter(
+    private val myPackageAdapter: MyPackageAdapter by lazy {
+        MyPackageAdapter(
             this
         )
     }
@@ -70,27 +69,25 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
 
         myStickersRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter =
-                myStickerPackageAdapter.withLoadStateFooter(footer = MyStickerPackageLoadStateAdapter { myStickerPackageAdapter.retry() })
+            adapter = myPackageAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { myPackageAdapter.retry() })
         }
 
-        val wantVisibleSticker =
-            savedInstanceState?.getBoolean(LAST_VISIBLE_SETTING) ?: DEFAULT_VISIBLE
+        val wantVisibleSticker = savedInstanceState?.getBoolean(LAST_VISIBLE_SETTING) ?: DEFAULT_VISIBLE
         toggleMyStickers(wantVisibleSticker)
         initRequest(wantVisibleSticker)
 
         itemTouchHelper =
-            ItemTouchHelper(SimpleItemTouchHelperCallback(myStickerPackageAdapter)).apply {
+            ItemTouchHelper(SimpleItemTouchHelperCallback(myPackageAdapter)).apply {
                 attachToRecyclerView(myStickersRecyclerView)
             }
 
         viewModel.packageVisibilityChanged.observeForever {
-            myStickerPackageAdapter.refresh()
+            myPackageAdapter.refresh()
             PackageVisibilityChangeEvent.publishEvent(it.second)
         }
 
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
-            myStickerPackageAdapter.refresh()
+            myPackageAdapter.refresh()
             binding?.myStickersRecyclerView?.scrollToPosition(0)
         }
     }
@@ -112,7 +109,7 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
             viewModel.loadsPackages(wantVisibleSticker).collectLatest {
-                myStickerPackageAdapter.submitData(it)
+                myPackageAdapter.submitData(it)
             }
         }
     }
@@ -179,7 +176,7 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
     }
 
     private fun setNoResultView() {
-        if (myStickerPackageAdapter.itemCount > 0) {
+        if (myPackageAdapter.itemCount > 0) {
             listLL.visibility = View.VISIBLE
             emptyTextView.visibility = View.GONE
         } else {
@@ -187,34 +184,4 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
             emptyTextView.visibility = View.VISIBLE
         }
     }
-//
-//    fun showConfirmAlert(packageId: Int, position: Int) {
-//        val customSelectProfilePicBottomSheetDialog = BottomSheetDialog(requireContext(), R.style.CustomBottomSheetDialogTheme)
-//
-//        val layoutBottomSheetView = this.layoutInflater.inflate(R.layout.bottom_alert, null)
-//
-//        val drawable = layoutBottomSheetView.findViewById<LinearLayout>(R.id.containerLL).background as GradientDrawable
-//        drawable.setColor(Config.getAlertBackgroundColor(requireContext())) // solid  color
-//
-//        layoutBottomSheetView.findViewById<TextView>(R.id.titleTV).setTextColor(Config.getAlertTitleTextColor(requireContext()))
-//        layoutBottomSheetView.findViewById<TextView>(R.id.contentsTV).setTextColor(Config.getAlertContentsTextColor(requireContext()))
-//
-//        val cancelTV = layoutBottomSheetView.findViewById<TextView>(R.id.cancelTV)
-//        val hideTV = layoutBottomSheetView.findViewById<TextView>(R.id.hideTV)
-//
-//        cancelTV.setTextColor(Config.getAlertButtonTextColor(requireContext()))
-//        hideTV.setTextColor(Config.getAlertButtonTextColor(requireContext()))
-//
-//        cancelTV.setOnClickListener {
-//            customSelectProfilePicBottomSheetDialog.dismiss()
-//        }
-//
-//        hideTV.setOnClickListener {
-//            hidePackage(packageId, position)
-//            customSelectProfilePicBottomSheetDialog.dismiss()
-//        }
-//
-//        customSelectProfilePicBottomSheetDialog.setContentView(layoutBottomSheetView)
-//        customSelectProfilePicBottomSheetDialog.show()
-//    }
 }
