@@ -21,9 +21,6 @@ Getting Started
 
 Try Demo
 --------
-
-If you want to know what is 'Stipop Sticker SDK', try building a demo app first.</br></br>
-
 1. Clone this repository.<br/>
 2. Move **Stipop.json** into the assets folder you created. 
 3. Build and run 'sample' on your device.<br/><br/>
