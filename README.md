@@ -1,5 +1,5 @@
 ![Android-demo image](https://user-images.githubusercontent.com/42525347/139039262-2fc7a0d2-d000-4848-b7be-eee2beede9f8.png)
-<h1>Stipop Android UI SDK</h1>
+<h1>Stipop UI SDK for Android</h1>
 
 [![](https://jitpack.io/v/stipop-development/stipop-android-sdk.svg)](https://jitpack.io/#stipop-development/stipop-android-sdk)
 <a href="https://android-arsenal.com/api?level=16"><img alt="AndroidMinApi" src="https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat"/></a></br>
@@ -114,7 +114,7 @@ class YourActivity : Activity(), StipopDelegate {
 
 ## Contact us
 
-- For more information, visit [Stipop Documentation][1] to see our official document.
+- For more information, visit [Stipop Documentation][1].
 - Email us at tech-support@stipop.io if you need our help.
 
 [1]: https://docs.stipop.io/en/sdk/android/get-started/quick-start
