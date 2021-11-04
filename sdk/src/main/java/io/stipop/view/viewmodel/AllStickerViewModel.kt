@@ -3,7 +3,6 @@ package io.stipop.view.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.stipop.PackUtils
 import io.stipop.custom.PagingRecyclerView
 import io.stipop.data.AllStickerRepository
 import io.stipop.delayedTextFlow

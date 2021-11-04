@@ -130,18 +130,18 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
 
     internal fun changeFavorite(stickerId: Int, favoriteYN: String, packageId: Int) {
         stickerThumbnailAdapter.updateFavorite(stickerId, favoriteYN)?.let {
-            PackUtils.saveStickerJsonData(activity, it, packageId)
+            StipopUtils.saveStickerAsJson(activity, it, packageId)
         }
     }
 
     private fun showStickers(selectedPackage: StickerPackage) {
         binding.emptyListTextView.isVisible = false
         binding.progressBar.isVisible = false
-        val stickerList = PackUtils.stickerListOf(activity, selectedPackage.packageId)
+        val stickerList = StipopUtils.getStickersFromLocal(activity, selectedPackage.packageId)
         stickerThumbnailAdapter.updateDatas(if (stickerList.isEmpty()) selectedPackage.stickers else stickerList)
         if (stickerList.isEmpty()) {
             ioScope.launch {
-                PackUtils.downloadAndSaveLocalV2(selectedPackage) { }
+                StipopUtils.downloadAtLocal(selectedPackage) { }
             }
         }
     }
