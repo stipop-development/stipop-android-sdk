@@ -10,7 +10,7 @@ import io.stipop.viewholder.HorizontalStickerThumbContainerViewHolder
 import io.stipop.viewholder.VerticalStickerThumbViewHolder
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-internal class AllStickerAdapter(private val stickerPackageClickDelegate: StickerPackageClickDelegate? = null) :
+internal class StoreAdapter(private val stickerPackageClickDelegate: StickerPackageClickDelegate? = null) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dataSet = AllStickerDataSource()
@@ -97,7 +97,6 @@ internal class AllStickerAdapter(private val stickerPackageClickDelegate: Sticke
     }
 
     fun clearData(isSearchResultView: Boolean) {
-        Log.d("STIPOP-DEBUG", "isSearchView : $isSearchResultView")
         this.isSearchResultView = isSearchResultView
         dataSet.defaultList.clear()
         dataSet.trendingList.clear()

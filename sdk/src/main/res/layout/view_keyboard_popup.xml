@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/containerLL"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,14 +9,18 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/packageListLL"
+        android:id="@+id/packageListHeader"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:background="#eaebee"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
 
         <RelativeLayout
-            android:id="@+id/favoriteRL"
+            android:id="@+id/recent_favorite_container"
             android:layout_width="48dp"
             android:layout_height="match_parent">
 
@@ -23,7 +28,12 @@
                 android:id="@+id/recentlyIV"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:layout_margin="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="4dp"
                 android:src="@mipmap/ic_recents_active" />
 
             <io.stipop.custom.StipopImageView
@@ -32,11 +42,16 @@
                 android:layout_height="18dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
-                android:layout_margin="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="4dp"
                 android:src="@mipmap/ic_favorites_normal" />
 
             <io.stipop.custom.StipopImageView
-                android:id="@+id/recentPreviewOffIV"
+                android:id="@+id/recentStickerImageView"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_centerInParent="true"
@@ -50,103 +65,61 @@
             android:id="@+id/packageThumbRecyclerView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:animateLayoutChanges="false"
+            android:layoutAnimation="@null"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_keyboard_package" />
 
-        <LinearLayout
-            android:id="@+id/storeLL"
-            android:layout_width="48dp"
+        <io.stipop.custom.StipopImageView
+            android:id="@+id/storeImageView"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center">
-
-            <io.stipop.custom.StipopImageView
-                android:id="@+id/storeIV"
-                android:layout_width="24dp"
-                android:layout_height="18dp"
-                android:src="@mipmap/ic_store" />
-
-        </LinearLayout>
+            android:layout_gravity="center"
+            android:padding="12dp"
+            android:src="@mipmap/ic_store" />
 
     </LinearLayout>
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/stickerRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:scrollbars="none"
+        android:visibility="visible"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/packageListHeader"
+        app:spanCount="3"
+        tools:listitem="@layout/item_sticker_thumb" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/emptyListTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/empty_recent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/packageListHeader" />
 
-            <GridView
-                android:id="@+id/stickerGV"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:horizontalSpacing="25dp"
-                android:numColumns="3"
-                android:padding="15dp"
-                android:scrollbars="none"
-                android:verticalSpacing="5dp"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:id="@+id/downloadLL"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <io.stipop.custom.StipopImageView
-                    android:id="@+id/packageIV"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginRight="6dp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="5dp"
-                    android:orientation="vertical">
-
-                    <io.stipop.custom.StipopTextView
-                        android:id="@+id/packageNameTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
-                        android:lineHeight="22sp"
-                        android:text="JalGOM's Toon(Ver.1)"
-                        android:textColor="#374553"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-
-                    <io.stipop.custom.StipopTextView
-                        android:id="@+id/artistNameTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:lineHeight="20sp"
-                        android:text="©Cmaker"
-                        android:textColor="#646f7c"
-                        android:textSize="10sp" />
-
-                    <io.stipop.custom.StipopTextView
-                        android:id="@+id/downloadTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="34dp"
-                        android:layout_marginTop="11dp"
-                        android:background="@drawable/detail_download_btn_background"
-                        android:gravity="center"
-                        android:paddingHorizontal="10dp"
-                        android:text="@string/download"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-        </RelativeLayout>
-
-    </LinearLayout>
-</LinearLayout>
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.2"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/packageListHeader"
+        tools:visibility="visible" />
+</androidx.constraintlayout.widget.ConstraintLayout>

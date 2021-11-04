@@ -5,6 +5,7 @@ import io.stipop.Constants
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
+import io.stipop.models.response.StipopResponse
 
 internal class AllStickerRepository(private val apiService: StipopApi) : BaseRepository() {
 
@@ -29,7 +30,7 @@ internal class AllStickerRepository(private val apiService: StipopApi) : BaseRep
 
     suspend fun postDownloadStickers(
         stickerPackage: StickerPackage,
-        onSuccess: (data: Any) -> Unit
+        onSuccess: (data: StipopResponse?) -> Unit
     ) {
         var price: Double? = null
         if (Config.allowPremium == "Y") {
@@ -51,7 +52,7 @@ internal class AllStickerRepository(private val apiService: StipopApi) : BaseRep
                 eventPoint = Constants.Point.STORE
             )
         }, onCompletable = {
-            onSuccess(stickerPackage)
+            onSuccess(it)
         })
     }
 }

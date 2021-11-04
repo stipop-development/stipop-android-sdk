@@ -61,7 +61,6 @@ class StipopImageView : AppCompatImageView {
         if (checkErrorIcon()) {
             return
         }
-
         setColorFilter(Color.parseColor(Config.themeIconTintColor))
     }
 

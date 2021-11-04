@@ -3,7 +3,6 @@ package io.stipop.view.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.stipop.PackUtils
 import io.stipop.custom.PagingRecyclerView
 import io.stipop.data.AllStickerRepository
 import io.stipop.delayedTextFlow
@@ -59,8 +58,10 @@ internal class AllStickerViewModel(private val repository: AllStickerRepository)
     fun requestDownloadPackage(stickerPackage: StickerPackage) {
         viewModelScope.launch {
             repository.postDownloadStickers(stickerPackage) {
-                PackUtils.downloadAndSaveLocalV2(stickerPackage) {
-                    PackageDownloadEvent.publishEvent(stickerPackage.packageId)
+                it?.let { response ->
+                    if (response.header.isSuccess()) {
+                        PackageDownloadEvent.publishEvent(stickerPackage.packageId)
+                    }
                 }
             }
         }

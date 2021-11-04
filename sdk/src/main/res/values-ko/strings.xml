@@ -21,4 +21,5 @@
     <string name="download_done">다운로드 완료!</string>
     <string name="can_not_download">"다운로드가 되지 않았습니다."</string>
     <string name="can_not_open_package">이 스티커 패키지를 열 수 없어요.</string>
+    <string name="empty_recent">최근 사용한 스티커가 보여요.\n스티커를 사용해보세요!</string>
 </resources>
