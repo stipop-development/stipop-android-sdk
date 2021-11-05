@@ -1,6 +1,8 @@
 package io.stipop.view
 
 import android.os.Bundle
+import android.view.MotionEvent
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import io.stipop.*
@@ -8,6 +10,7 @@ import io.stipop.base.BaseFragmentActivity
 import io.stipop.databinding.ActivityStoreBinding
 import io.stipop.adapter.StorePagerAdapter
 import io.stipop.api.StipopApi
+import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.body.UserIdBody
 import kotlinx.android.synthetic.main.activity_store.*
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +36,9 @@ internal class StoreActivity : BaseFragmentActivity() {
                 StorePagerAdapter.POSITION_ALL_STICKERS -> {
                     tab.text = getString(R.string.all_stickers)
                 }
+                StorePagerAdapter.POSITION_NEW_STICKERS -> {
+                    tab.text = getString(R.string.news_tab)
+                }
                 StorePagerAdapter.POSITION_MY_STICKERS -> {
                     tab.text = getString(R.string.my_stickers)
                 }
@@ -41,7 +47,7 @@ internal class StoreActivity : BaseFragmentActivity() {
 
         storeViewPager.apply {
             registerOnPageChangeCallback(callBack)
-            isUserInputEnabled = false
+//            isUserInputEnabled = false
             setCurrentItem(
                 intent.getIntExtra(
                     Constants.IntentKey.STARTING_TAB_POSITION,
@@ -55,6 +61,11 @@ internal class StoreActivity : BaseFragmentActivity() {
         container.setStipopBackgroundColor()
         dividingLine.setStipopUnderlineColor()
         storeTabLayout.setTabLayoutStyle()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        PackageDownloadEvent.onDestroy()
     }
 
     private val callBack = object : ViewPager2.OnPageChangeCallback() {

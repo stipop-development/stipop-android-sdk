@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.stipop.custom.PagingRecyclerView
-import io.stipop.data.AllStickerRepository
+import io.stipop.data.PackageRepository
 import io.stipop.delayedTextFlow
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
@@ -13,7 +13,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-internal class AllStickerViewModel(private val repository: AllStickerRepository) : ViewModel() {
+internal class AllStickerViewModel(private val repository: PackageRepository) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     var query: String? = null

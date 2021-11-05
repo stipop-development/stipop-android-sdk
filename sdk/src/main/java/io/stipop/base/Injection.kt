@@ -6,11 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.savedstate.SavedStateRegistryOwner
 import io.stipop.api.StipopApi
-import io.stipop.data.AllStickerRepository
+import io.stipop.data.PackageRepository
 import io.stipop.data.MyStickerRepository
 import io.stipop.data.StickerDetailRepository
 import io.stipop.view.viewmodel.AllStickerViewModel
 import io.stipop.view.viewmodel.MyStickerViewModel
+import io.stipop.view.viewmodel.NewStickerViewModel
 import io.stipop.view.viewmodel.PackageDetailViewModel
 
 internal object Injection {
@@ -21,8 +22,8 @@ internal object Injection {
         return MyStickerRepository(stipopApi)
     }
 
-    private fun provideAllStickerRepository(): AllStickerRepository {
-        return AllStickerRepository(stipopApi)
+    private fun providePackageRepository(): PackageRepository {
+        return PackageRepository(stipopApi)
     }
 
     private fun provideStickerDetailRepository(): StickerDetailRepository {
@@ -45,8 +46,10 @@ internal object Injection {
             if (modelClass.isAssignableFrom(MyStickerViewModel::class.java)) {
                 return MyStickerViewModel(provideMyStickerRepository()) as T
             } else if (modelClass.isAssignableFrom(AllStickerViewModel::class.java)) {
-                return AllStickerViewModel(provideAllStickerRepository()) as T
-            } else if (modelClass.isAssignableFrom(PackageDetailViewModel::class.java)) {
+                return AllStickerViewModel(providePackageRepository()) as T
+            } else if (modelClass.isAssignableFrom(NewStickerViewModel::class.java)) {
+                return NewStickerViewModel(providePackageRepository()) as T
+            }  else if (modelClass.isAssignableFrom(PackageDetailViewModel::class.java)) {
                 return PackageDetailViewModel(provideStickerDetailRepository()) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")

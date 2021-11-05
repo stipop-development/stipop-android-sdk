@@ -4,12 +4,14 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
@@ -51,7 +53,6 @@ internal class AllStickerFragment : BaseFragment(), StickerPackageClickDelegate 
 
     override fun onDestroyView() {
         super.onDestroyView()
-        PackageDownloadEvent.onDestroy()
         binding = null
     }
 
