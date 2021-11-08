@@ -4,50 +4,50 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.Constants
-import io.stipop.R
 import io.stipop.Utils
-import io.stipop.adapter.StoreAdapter
+import io.stipop.adapter.HomeAdapter
+import io.stipop.adapter.MyLoadStateAdapter
+import io.stipop.adapter.NewsAdapter
 import io.stipop.base.BaseFragment
 import io.stipop.base.Injection
-import io.stipop.databinding.FragmentAllStickerBinding
+import io.stipop.databinding.FragmentStoreHomeBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
-import io.stipop.view.viewmodel.AllStickerViewModel
+import io.stipop.view.viewmodel.StoreHomeViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
-internal class AllStickerFragment : BaseFragment(), StickerPackageClickDelegate {
-
-//    var deleteKeyword = APIClient.APIPath.SEARCH_RECENT.rawValue + "/${Stipop.userId}"
-//    var getKeywords = APIClient.get(requireActivity(), APIClient.APIPath.SEARCH_KEYWORD.rawValue, null
-//    var getRecentKeywords = APIClient.APIPath.SEARCH_RECENT.rawValue
+internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate {
 
     companion object {
-        fun newInstance() = AllStickerFragment()
+        fun newInstance() = StoreHomeFragment()
     }
 
-    private var binding: FragmentAllStickerBinding? = null
-    private lateinit var viewModel: AllStickerViewModel
-    private val storeAdapter: StoreAdapter by lazy { StoreAdapter(this) }
+    private var binding: FragmentStoreHomeBinding? = null
+    private lateinit var viewModel: StoreHomeViewModel
+//    private val storeHomeAdapter: StoreHomeAdapter by lazy { StoreHomeAdapter(this) }
+    private val homeTabAdapter: HomeAdapter by lazy { HomeAdapter(this) }
+    private val newsAdapter: NewsAdapter by lazy { NewsAdapter(this) }
+    private var searchJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentAllStickerBinding.inflate(inflater, container, false)
+        binding = FragmentStoreHomeBinding.inflate(inflater, container, false)
         return binding!!.root
     }
 
@@ -59,43 +59,42 @@ internal class AllStickerFragment : BaseFragment(), StickerPackageClickDelegate 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
-            AllStickerViewModel::class.java
+            StoreHomeViewModel::class.java
         )
 
-        with(binding) {
-            this?.allStickerRecyclerView?.adapter = storeAdapter
-            this?.allStickerRecyclerView?.setUpScrollListener()
-            this?.clearSearchImageView?.setOnClickListener {
+        with(binding!!){
+            homeRecyclerView.adapter = homeTabAdapter
+            allStickerRecyclerView.adapter = newsAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { newsAdapter.retry() })
+            clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")
-                viewModel.refreshData("")
                 Utils.hideKeyboard(requireContext())
                 binding?.searchEditText?.clearFocus()
             }
-            this?.searchEditText?.addTextChangedListener {
-                viewModel.flowQuery(it.toString().trim())
-            }
+            searchEditText.addTextChangedListener { viewModel.flowQuery(it.toString().trim()) }
         }
+        lifecycleScope.launch { viewModel.emittedQuery.collect { value -> refreshList(value) } }
+        viewModel.getHomes()
+        viewModel.dataSet.observeForever { homeTabAdapter.setInitData(it) }
+        viewModel.uiState.observeForever { isSearchView ->
+            binding!!.homeRecyclerView.isVisible = !isSearchView
+        }
+        refreshList()
+        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) { newsAdapter.refresh() }
+    }
 
-        viewModel.registerRecyclerView(binding?.allStickerRecyclerView)
-        viewModel.stickerPackages.observeForever { stickers ->
-            storeAdapter.updateData(stickers)
-        }
-        viewModel.clearAction.observeForever { isSearchView ->
-            storeAdapter.clearData(isSearchView)
-        }
-        lifecycleScope.launch {
-            viewModel.emittedQuery.collect { value -> viewModel.searchQuery(value) }
-        }
-        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) { packageId ->
-            Toast.makeText(context, getString(R.string.download_done), Toast.LENGTH_SHORT).show()
-            storeAdapter.updateDownloadState(packageId)
+    private fun refreshList(query: String?=null){
+        searchJob?.cancel()
+        searchJob = lifecycleScope.launch {
+            viewModel.loadsPackages(query).collectLatest {
+                newsAdapter.submitData(it)
+            }
         }
     }
 
     override fun applyTheme() {
         with(binding) {
             val drawable = this?.searchBarContainer?.background as GradientDrawable
-            drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
+            drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
             drawable.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
             this.searchEditText.setTextColor(Config.getSearchTitleTextColor(requireContext()))
             this.searchIconIV.setImageResource(Config.getSearchbarResourceId(requireContext()))
@@ -106,8 +105,7 @@ internal class AllStickerFragment : BaseFragment(), StickerPackageClickDelegate 
     }
 
     override fun onPackageDetailClicked(packageId: Int, entrancePoint: String) {
-        PackageDetailBottomSheetFragment.newInstance(packageId, entrancePoint)
-            .showNow(parentFragmentManager, Constants.Tag.DETAIL)
+        PackageDetailBottomSheetFragment.newInstance(packageId, entrancePoint).showNow(parentFragmentManager, Constants.Tag.DETAIL)
     }
 
     override fun onDownloadClicked(position: Int, stickerPackage: StickerPackage) {

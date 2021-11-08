@@ -9,7 +9,7 @@ import io.stipop.api.StipopApi
 import io.stipop.data.PackageRepository
 import io.stipop.data.MyStickerRepository
 import io.stipop.data.StickerDetailRepository
-import io.stipop.view.viewmodel.AllStickerViewModel
+import io.stipop.view.viewmodel.StoreHomeViewModel
 import io.stipop.view.viewmodel.MyStickerViewModel
 import io.stipop.view.viewmodel.NewStickerViewModel
 import io.stipop.view.viewmodel.PackageDetailViewModel
@@ -45,8 +45,8 @@ internal object Injection {
         ): T {
             if (modelClass.isAssignableFrom(MyStickerViewModel::class.java)) {
                 return MyStickerViewModel(provideMyStickerRepository()) as T
-            } else if (modelClass.isAssignableFrom(AllStickerViewModel::class.java)) {
-                return AllStickerViewModel(providePackageRepository()) as T
+            } else if (modelClass.isAssignableFrom(StoreHomeViewModel::class.java)) {
+                return StoreHomeViewModel(providePackageRepository()) as T
             } else if (modelClass.isAssignableFrom(NewStickerViewModel::class.java)) {
                 return NewStickerViewModel(providePackageRepository()) as T
             }  else if (modelClass.isAssignableFrom(PackageDetailViewModel::class.java)) {

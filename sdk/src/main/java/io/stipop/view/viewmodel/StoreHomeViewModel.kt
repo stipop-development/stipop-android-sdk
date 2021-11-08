@@ -3,7 +3,8 @@ package io.stipop.view.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.stipop.custom.PagingRecyclerView
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import io.stipop.data.PackageRepository
 import io.stipop.delayedTextFlow
 import io.stipop.event.PackageDownloadEvent
@@ -13,13 +14,11 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-internal class AllStickerViewModel(private val repository: PackageRepository) : ViewModel() {
+internal class StoreHomeViewModel(private val repository: PackageRepository) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
-    var query: String? = null
-    var recyclerView: PagingRecyclerView? = null
-    var stickerPackages: MutableLiveData<List<StickerPackage>> = MutableLiveData()
-    var clearAction: MutableLiveData<Boolean> = MutableLiveData()
+    var dataSet: MutableLiveData<ArrayList<List<StickerPackage>>> = MutableLiveData()
+    var uiState: MutableLiveData<Boolean> = MutableLiveData()
 
     fun flowQuery(keyword: String) {
         _searchQuery.value = keyword
@@ -27,7 +26,7 @@ internal class AllStickerViewModel(private val repository: PackageRepository) : 
 
     @ExperimentalCoroutinesApi
     @FlowPreview
-    val emittedQuery: Flow<String> = _searchQuery.debounce(600).mapLatest {
+    val emittedQuery: Flow<String> = _searchQuery.debounce(300).mapLatest {
         if (it.isEmpty()) {
             return@mapLatest ""
         } else {
@@ -35,22 +34,21 @@ internal class AllStickerViewModel(private val repository: PackageRepository) : 
         }
     }
 
-    fun searchQuery(keyword: String) {
-        query = keyword
-        refreshData(query)
-    }
-
-    fun refreshData(query: String? = null) {
-        val isSearchView = !query.isNullOrEmpty()
-        clearAction.postValue(isSearchView)
-        recyclerView?.refresh()
-    }
-
-    fun registerRecyclerView(pagingRecyclerView: PagingRecyclerView?) {
-        recyclerView = pagingRecyclerView
+    fun getHomes() {
         viewModelScope.launch {
-            recyclerView?.paging?.collectLatest {
-                getPackages(it)
+            combineTransform(
+                repository.getPackagesAsFlow(1),
+                repository.getPackagesAsFlow(2),
+                repository.getPackagesAsFlow(3)
+            ) { value1, value2, value3 ->
+                val lists = arrayListOf(
+                    value1.body.packageList,
+                    value2.body.packageList,
+                    value3.body.packageList
+                )
+                emit(lists)
+            }.collect {
+                dataSet.postValue(it)
             }
         }
     }
@@ -67,11 +65,8 @@ internal class AllStickerViewModel(private val repository: PackageRepository) : 
         }
     }
 
-    private fun getPackages(page: Int) {
-        viewModelScope.launch {
-            repository.getStickerPackages(page, query, onSuccess = {
-                stickerPackages.postValue(it as List<StickerPackage>)
-            })
-        }
+    fun loadsPackages(query: String? = null): Flow<PagingData<StickerPackage>> {
+        uiState.postValue(!query.isNullOrEmpty())
+        return repository.getHomeStickerPackageStream(query).cachedIn(viewModelScope)
     }
 }

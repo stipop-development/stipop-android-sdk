@@ -8,10 +8,24 @@ import io.stipop.Constants
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
+import io.stipop.models.response.StickerPackageResponse
+import io.stipop.models.response.StickerPackagesResponse
 import io.stipop.models.response.StipopResponse
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import retrofit2.Call
 
 internal class PackageRepository(private val apiService: StipopApi) : BaseRepository() {
+
+    fun getHomeStickerPackageStream(query:String?=null): Flow<PagingData<StickerPackage>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
+                enablePlaceholders = false
+            ), pagingSourceFactory = { StickerPackagePagingSource(apiService, query) }).flow
+    }
 
     fun getNewStickerPackageStream(): Flow<PagingData<StickerPackage>> {
         return Pager(
@@ -19,6 +33,20 @@ internal class PackageRepository(private val apiService: StipopApi) : BaseReposi
                 pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ), pagingSourceFactory = { StickerPackagePagingSource(apiService) }).flow
+    }
+
+    @FlowPreview
+    suspend fun getPackagesAsFlow(page: Int) : Flow<StickerPackagesResponse> {
+        return safeCallAsFlow(call = {
+            apiService.getTrendingStickerPackages(
+                userId = Stipop.userId,
+                lang = Stipop.lang,
+                countryCode = Stipop.countryCode,
+                pageNumber = page,
+                limit = Constants.ApiParams.SizePerPage,
+                query = null
+            )
+        })
     }
 
     suspend fun getStickerPackages(page: Int, keyword: String?, onSuccess: (data: Any) -> Unit) {
@@ -32,8 +60,8 @@ internal class PackageRepository(private val apiService: StipopApi) : BaseReposi
                 query = keyword
             )
         }, onCompletable = { response ->
-            response?.let{
-                if(it.body.packageList.isNotEmpty()){
+            response?.let {
+                if (it.body.packageList.isNotEmpty()) {
                     onSuccess(it.body.packageList)
                 }
             }

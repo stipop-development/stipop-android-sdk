@@ -1,6 +1,5 @@
 package io.stipop.adapter
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.models.AllStickerDataSource
@@ -10,7 +9,7 @@ import io.stipop.viewholder.HorizontalStickerThumbContainerViewHolder
 import io.stipop.viewholder.VerticalStickerThumbViewHolder
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-internal class StoreAdapter(private val stickerPackageClickDelegate: StickerPackageClickDelegate? = null) :
+internal class StoreHomeAdapter(private val stickerPackageClickDelegate: StickerPackageClickDelegate? = null) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val dataSet = AllStickerDataSource()

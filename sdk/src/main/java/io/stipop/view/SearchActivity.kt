@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.activity_search.clearTextLL
 import kotlinx.android.synthetic.main.activity_search.clearSearchImageView
 import kotlinx.android.synthetic.main.activity_search.searchEditText
 import kotlinx.android.synthetic.main.activity_search.searchBarContainer
-import kotlinx.android.synthetic.main.fragment_all_sticker.*
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.io.IOException

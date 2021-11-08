@@ -85,7 +85,8 @@ internal class SpvModel {
         taskScope.launch {
             when (selectedPackage?.stickers.isNullOrEmpty()) {
                 true -> {
-                    val result = StipopApi.create().getStickerPackage(stickerPackage.packageId, Stipop.userId)
+                    val result = StipopApi.create()
+                        .getStickerPackage(stickerPackage.packageId, Stipop.userId)
                     if (result.header.isSuccess()) {
                         this@SpvModel.selectedPackage = result.body?.stickerPackage
                         launch(Dispatchers.Main) {

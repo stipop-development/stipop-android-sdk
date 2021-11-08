@@ -2,6 +2,9 @@ package io.stipop.data
 
 import android.util.Log
 import io.stipop.api.ApiResponse
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.HttpException
@@ -21,6 +24,13 @@ internal open class BaseRepository {
         } catch (e: Exception) {
             onError(e.message)
         }
+    }
+
+    @FlowPreview
+    fun <T : Any> safeCallAsFlow(
+        call: suspend () -> T
+    ): Flow<T> {
+        return call.asFlow()
     }
 
     suspend fun <T : Any> safeCall(

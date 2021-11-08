@@ -8,12 +8,17 @@ import io.stipop.models.StickerPackage
 import retrofit2.HttpException
 import java.io.IOException
 
-internal class StickerPackagePagingSource(private val apiService: StipopApi) :
+internal class StickerPackagePagingSource(private val apiService: StipopApi, private val query:String?=null) :
     PagingSource<Int, StickerPackage>() {
 
     private val STARTING_PAGE_INDEX = 1
+    private var currentQuery: String? = null
 
     override fun getRefreshKey(state: PagingState<Int, StickerPackage>): Int? {
+        if (query != currentQuery) {
+            currentQuery = query
+            return null
+        }
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
@@ -30,7 +35,8 @@ internal class StickerPackagePagingSource(private val apiService: StipopApi) :
                 limit = limit,
                 pageNumber = pageNumber,
                 countryCode = Stipop.countryCode,
-                lang = Stipop.lang
+                lang = Stipop.lang,
+                query = currentQuery
             )
             val stickerPackages = response.body.packageList
             val nextKey = if (stickerPackages.isNullOrEmpty()) {

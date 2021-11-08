@@ -29,7 +29,7 @@ internal class HorizontalStickerThumbContainerViewHolder(
             titleTextView.setTextColor(Config.getTitleTextColor(itemView.context))
             recyclerView.removeItemDecoration(decoration)
             recyclerView.addItemDecoration(decoration)
-            recyclerView.addOnItemTouchListener(listener)
+//            recyclerView.addOnItemTouchListener(listener)
         }
     }
 

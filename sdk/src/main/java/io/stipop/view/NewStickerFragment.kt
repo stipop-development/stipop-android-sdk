@@ -55,8 +55,7 @@ internal class NewStickerFragment : BaseFragment(), StickerPackageClickDelegate 
         with(binding!!) {
             recyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter =
-                    newsAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { newsAdapter.retry() })
+                adapter = newsAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { newsAdapter.retry() })
             }
         }
         lifecycleScope.launch {
