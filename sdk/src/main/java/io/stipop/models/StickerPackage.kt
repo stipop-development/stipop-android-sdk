@@ -21,6 +21,8 @@ data class StickerPackage(
     var packageCategory: String? = null,
     @SerializedName("packageImg")
     var packageImg: String? = null,
+    @SerializedName("cardImgUrl")
+    var cardImgUrl: String? = null,
     @SerializedName("packageKeywords")
     var packageKeywords: String? = null,
     @SerializedName("packageName")

@@ -28,11 +28,28 @@ internal interface StipopApi {
         @Body initSdkBody: InitSdkBody
     ): StipopResponse
 
+    @GET("curation/type/{type}")
+    suspend fun getCurationPackages(
+        @Path("type") curationType: String,
+        @Query("userId") userId: String,
+        @Query("lang") lang: String?="en",
+        @Query("countryCode") countryCode: String?="US",
+        @Query("pageNumber") pageNumber: Int=1,
+        @Query("limit") limit: Int=12
+    ): CurationPackageResponse
+
     @GET("package/{packageId}")
     suspend fun getStickerPackage(
         @Path("packageId") packageId: Int,
         @Query("userId") userId: String,
     ): StickerPackageResponse
+
+    @GET("search/keyword")
+    suspend fun getRecommendedKeywords(
+        @Query("userId") userId: String,
+        @Query("lang") lang: String,
+        @Query("countryCode") countryCode: String,
+    ): KeywordListResponse
 
     @GET("package/send/{userId}")
     suspend fun getRecentlySentStickers(
@@ -130,11 +147,11 @@ internal interface StipopApi {
 
     companion object {
         fun create(): StipopApi {
-            val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BASIC }
+            val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BODY }
             val headers = Headers.Builder()
                 .add(
-                    Constants.ApiParams.ApiKey, if (BuildConfig.DEBUG) {
-                        Config.apikey
+                    Constants.ApiParams.ApiKey, if (Constants.Value.IS_SANDBOX) {
+                        Constants.Value.SANDBOX_APIKEY
                     } else {
                         Config.apikey
                     }
@@ -161,7 +178,7 @@ internal interface StipopApi {
                 .addInterceptor(loggingInterceptor)
                 .build()
             return Retrofit.Builder()
-                .baseUrl(if (BuildConfig.DEBUG) Constants.Value.SANDBOX_URL else Constants.Value.BASE_URL)
+                .baseUrl(if (Constants.Value.IS_SANDBOX) Constants.Value.SANDBOX_URL else Constants.Value.BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

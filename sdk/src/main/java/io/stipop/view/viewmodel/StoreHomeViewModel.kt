@@ -16,39 +16,39 @@ import kotlinx.coroutines.launch
 
 internal class StoreHomeViewModel(private val repository: PackageRepository) : ViewModel() {
 
-    private val _searchQuery = MutableStateFlow("")
-    var dataSet: MutableLiveData<ArrayList<List<StickerPackage>>> = MutableLiveData()
-    var uiState: MutableLiveData<Boolean> = MutableLiveData()
-
-    fun flowQuery(keyword: String) {
-        _searchQuery.value = keyword
-    }
+    private val typedQuery = MutableStateFlow("")
 
     @ExperimentalCoroutinesApi
     @FlowPreview
-    val emittedQuery: Flow<String> = _searchQuery.debounce(300).mapLatest {
+    val emittedQuery: Flow<String> = typedQuery.debounce(300).mapLatest {
         if (it.isEmpty()) {
             return@mapLatest ""
         } else {
             return@mapLatest delayedTextFlow(it)
         }
     }
+    var homeDataFlow: MutableLiveData<ArrayList<Any>> = MutableLiveData()
+    var uiState: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun getHomes() {
+    fun flowQuery(keyword: String) {
+        typedQuery.value = keyword
+    }
+
+    fun getHomeSources() {
         viewModelScope.launch {
             combineTransform(
-                repository.getPackagesAsFlow(1),
-                repository.getPackagesAsFlow(2),
-                repository.getPackagesAsFlow(3)
+                repository.getRecommendQueryAsFlow(),
+                repository.getCurationPackagesAsFlow("a"),
+                repository.getCurationPackagesAsFlow("b")
             ) { value1, value2, value3 ->
                 val lists = arrayListOf(
-                    value1.body.packageList,
-                    value2.body.packageList,
-                    value3.body.packageList
+                    value1.body.keywordList,
+                    value2.body.card,
+                    value3.body.card
                 )
                 emit(lists)
             }.collect {
-                dataSet.postValue(it)
+                homeDataFlow.postValue(it)
             }
         }
     }

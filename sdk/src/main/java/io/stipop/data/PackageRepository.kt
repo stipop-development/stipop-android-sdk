@@ -8,7 +8,9 @@ import io.stipop.Constants
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
-import io.stipop.models.response.StickerPackageResponse
+import io.stipop.models.response.*
+import io.stipop.models.response.CurationPackageResponse
+import io.stipop.models.response.KeywordListResponse
 import io.stipop.models.response.StickerPackagesResponse
 import io.stipop.models.response.StipopResponse
 import kotlinx.coroutines.FlowPreview
@@ -19,7 +21,7 @@ import retrofit2.Call
 
 internal class PackageRepository(private val apiService: StipopApi) : BaseRepository() {
 
-    fun getHomeStickerPackageStream(query:String?=null): Flow<PagingData<StickerPackage>> {
+    fun getHomeStickerPackageStream(query: String? = null): Flow<PagingData<StickerPackage>> {
         return Pager(
             config = PagingConfig(
                 pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
@@ -36,7 +38,17 @@ internal class PackageRepository(private val apiService: StipopApi) : BaseReposi
     }
 
     @FlowPreview
-    suspend fun getPackagesAsFlow(page: Int) : Flow<StickerPackagesResponse> {
+    suspend fun getCurationPackagesAsFlow(type:String): Flow<CurationPackageResponse> {
+        return safeCallAsFlow(call = {
+            apiService.getCurationPackages(
+                curationType= type,
+                userId = Stipop.userId
+            )
+        })
+    }
+
+    @FlowPreview
+    suspend fun getPackagesAsFlow(page: Int): Flow<StickerPackagesResponse> {
         return safeCallAsFlow(call = {
             apiService.getTrendingStickerPackages(
                 userId = Stipop.userId,
@@ -49,22 +61,14 @@ internal class PackageRepository(private val apiService: StipopApi) : BaseReposi
         })
     }
 
-    suspend fun getStickerPackages(page: Int, keyword: String?, onSuccess: (data: Any) -> Unit) {
-        safeCall(call = {
-            apiService.getTrendingStickerPackages(
+    @FlowPreview
+    suspend fun getRecommendQueryAsFlow(): Flow<KeywordListResponse> {
+        return safeCallAsFlow(call = {
+            apiService.getRecommendedKeywords(
                 userId = Stipop.userId,
                 lang = Stipop.lang,
                 countryCode = Stipop.countryCode,
-                pageNumber = page,
-                limit = Constants.ApiParams.SizePerPage,
-                query = keyword
             )
-        }, onCompletable = { response ->
-            response?.let {
-                if (it.body.packageList.isNotEmpty()) {
-                    onSuccess(it.body.packageList)
-                }
-            }
         })
     }
 

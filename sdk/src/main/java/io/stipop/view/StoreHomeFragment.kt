@@ -23,13 +23,15 @@ import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 import io.stipop.view.viewmodel.StoreHomeViewModel
+import io.stipop.viewholder.delegates.KeywordClickDelegate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
-internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate {
+internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
+    KeywordClickDelegate {
 
     companion object {
         fun newInstance() = StoreHomeFragment()
@@ -37,8 +39,9 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate {
 
     private var binding: FragmentStoreHomeBinding? = null
     private lateinit var viewModel: StoreHomeViewModel
-//    private val storeHomeAdapter: StoreHomeAdapter by lazy { StoreHomeAdapter(this) }
-    private val homeTabAdapter: HomeAdapter by lazy { HomeAdapter(this) }
+
+    //    private val storeHomeAdapter: StoreHomeAdapter by lazy { StoreHomeAdapter(this) }
+    private val homeTabAdapter: HomeAdapter by lazy { HomeAdapter(this, this) }
     private val newsAdapter: NewsAdapter by lazy { NewsAdapter(this) }
     private var searchJob: Job? = null
 
@@ -62,9 +65,10 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate {
             StoreHomeViewModel::class.java
         )
 
-        with(binding!!){
+        with(binding!!) {
             homeRecyclerView.adapter = homeTabAdapter
-            allStickerRecyclerView.adapter = newsAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { newsAdapter.retry() })
+            allStickerRecyclerView.adapter =
+                newsAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { newsAdapter.retry() })
             clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")
                 Utils.hideKeyboard(requireContext())
@@ -73,8 +77,8 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate {
             searchEditText.addTextChangedListener { viewModel.flowQuery(it.toString().trim()) }
         }
         lifecycleScope.launch { viewModel.emittedQuery.collect { value -> refreshList(value) } }
-        viewModel.getHomes()
-        viewModel.dataSet.observeForever { homeTabAdapter.setInitData(it) }
+        viewModel.getHomeSources()
+        viewModel.homeDataFlow.observeForever { homeTabAdapter.setInitData(it) }
         viewModel.uiState.observeForever { isSearchView ->
             binding!!.homeRecyclerView.isVisible = !isSearchView
         }
@@ -82,7 +86,7 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate {
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) { newsAdapter.refresh() }
     }
 
-    private fun refreshList(query: String?=null){
+    private fun refreshList(query: String? = null) {
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
             viewModel.loadsPackages(query).collectLatest {
@@ -105,10 +109,17 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate {
     }
 
     override fun onPackageDetailClicked(packageId: Int, entrancePoint: String) {
-        PackageDetailBottomSheetFragment.newInstance(packageId, entrancePoint).showNow(parentFragmentManager, Constants.Tag.DETAIL)
+        PackageDetailBottomSheetFragment.newInstance(packageId, entrancePoint)
+            .showNow(parentFragmentManager, Constants.Tag.DETAIL)
     }
 
     override fun onDownloadClicked(position: Int, stickerPackage: StickerPackage) {
         viewModel.requestDownloadPackage(stickerPackage)
+    }
+
+    override fun onKeywordClicked(keyword: String) {
+        binding?.searchEditText?.setText(keyword)
+        Utils.hideKeyboard(requireContext())
+        binding?.searchEditText?.clearFocus()
     }
 }

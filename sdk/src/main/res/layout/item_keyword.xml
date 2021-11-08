@@ -4,13 +4,13 @@
     android:layout_height="wrap_content">
 
     <io.stipop.custom.StipopTextView
-        android:id="@+id/keywordTV"
+        android:id="@+id/keywordTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/keyword_background"
         android:paddingHorizontal="12dp"
         android:paddingVertical="4dp"
-        android:textSize="12sp"
         android:textColor="@color/white"
-        android:background="@drawable/keyword_background"/>
+        android:textSize="12sp" />
 
 </LinearLayout>

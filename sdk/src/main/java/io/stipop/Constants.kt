@@ -20,9 +20,9 @@ internal object Constants {
         const val SizePerPage = 20
     }
     object Value {
-//        const val SANDBOX_URL = "https://sandbox.stipop.com/v1/"
+        const val IS_SANDBOX = true
+        const val SANDBOX_URL = "https://sandbox.stipop.com/v1/"
         const val SANDBOX_APIKEY = "a3e68b6c54d8132f6879d5bc2c49708d"
-        const val SANDBOX_URL = "https://messenger.stipop.io/v1/"
         const val BASE_URL = "https://messenger.stipop.io/v1/"
         const val PLATFORM = "android-sdk"
     }

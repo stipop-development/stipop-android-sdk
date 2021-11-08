@@ -3,37 +3,53 @@ package io.stipop.adapter
 import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import io.stipop.models.CuratedCard
 import io.stipop.models.StickerPackage
+import io.stipop.models.response.KeywordListResponse
+import io.stipop.viewholder.CurationCardContainerViewHolder
 import io.stipop.viewholder.HorizontalStickerThumbContainerViewHolder
+import io.stipop.viewholder.KeywordTagViewHolder
+import io.stipop.viewholder.delegates.KeywordClickDelegate
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-internal class HomeAdapter(private val stickerPackageClickDelegate: StickerPackageClickDelegate? = null) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+internal class HomeAdapter(
+    private val stickerPackageClickDelegate: StickerPackageClickDelegate? = null,
+    private val keywordClickDelegate: KeywordClickDelegate? = null
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var screenType: ScreenType = ScreenType.DEFAULT
     private var dataSet: ArrayList<Any> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return HorizontalStickerThumbContainerViewHolder.create(parent, stickerPackageClickDelegate)
+        return when (viewType) {
+            TYPE_RECOMMEND_KEYWORD -> {
+                KeywordTagViewHolder.create(parent, keywordClickDelegate)
+            }
+            else -> {
+                CurationCardContainerViewHolder.create(
+                    parent,
+                    stickerPackageClickDelegate
+                )
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val data = dataSet[position] as? List<StickerPackage>
-        when(position){
-            0->{
-                (holder as HorizontalStickerThumbContainerViewHolder).bind("MD`s Pick", data ?: emptyList())
+        when (position) {
+            0 -> {
+                val data = dataSet[position] as? List<KeywordListResponse.KeywordSet>
+                (holder as KeywordTagViewHolder).bind(data ?: emptyList())
             }
-            1->{
-                (holder as HorizontalStickerThumbContainerViewHolder).bind("Weekly`s Pack", data ?: emptyList())
-            }
-            2->{
-                (holder as HorizontalStickerThumbContainerViewHolder).bind("Hot Popular", data ?: emptyList())
+            1, 2 -> {
+                val data = dataSet[position] as? CuratedCard
+                (holder as CurationCardContainerViewHolder).bind(data)
             }
         }
 
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setInitData(sets: ArrayList<List<StickerPackage>>) {
+    fun setInitData(sets: ArrayList<Any>) {
         dataSet.clear()
         notifyDataSetChanged()
         dataSet.addAll(sets)
