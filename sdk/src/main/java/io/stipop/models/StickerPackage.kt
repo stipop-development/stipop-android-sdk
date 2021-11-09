@@ -34,30 +34,34 @@ data class StickerPackage(
     @SerializedName("order")
     var order: Int = -1,
     @SerializedName("stickers")
-    var stickers: ArrayList<SPSticker> = ArrayList()
-){
+    var stickers: ArrayList<SPSticker> = ArrayList(),
+    @SerializedName("lightBackgroundCode")
+    val lightBackgroundCode: String? = null,
+    @SerializedName("darkBackgroundCode")
+    val darkBackgroundCode: String? = null
+) {
     fun getIsVisible(): Boolean {
         return this.view == "Y"
     }
 
-    fun isDownloaded(): Boolean{
+    fun isDownloaded(): Boolean {
         return this.download == "Y"
     }
 
-    fun toSPPackage(): SPPackage{
+    fun toSPPackage(): SPPackage {
         return SPPackage(
-            artistName = artistName?:"",
-            download = download?:"",
-            language = language?:"",
-            new = new?:"",
-            packageAnimated = packageAnimated?:"",
-            packageCategory = packageCategory?:"",
+            artistName = artistName ?: "",
+            download = download ?: "",
+            language = language ?: "",
+            new = new ?: "",
+            packageAnimated = packageAnimated ?: "",
+            packageCategory = packageCategory ?: "",
             packageId = packageId,
-            packageImg = packageImg?:"",
-            packageKeywords = packageKeywords?:"",
-            packageName = packageName?:"",
-            wish = wish?:"",
-            view = view?:""
+            packageImg = packageImg ?: "",
+            packageKeywords = packageKeywords ?: "",
+            packageName = packageName ?: "",
+            wish = wish ?: "",
+            view = view ?: ""
         )
     }
 }

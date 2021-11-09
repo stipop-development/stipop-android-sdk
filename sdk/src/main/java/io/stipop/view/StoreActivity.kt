@@ -44,7 +44,7 @@ internal class StoreActivity : BaseFragmentActivity() {
             }.attach()
 
             storeViewPager.apply {
-                isUserInputEnabled = false
+//                isUserInputEnabled = false
                 registerOnPageChangeCallback(callBack)
                 setCurrentItem(
                     intent.getIntExtra(

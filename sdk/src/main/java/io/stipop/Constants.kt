@@ -36,5 +36,7 @@ internal object Constants {
         const val PICKER_VIEW = "picker"
         const val SEARCH_VIEW = "search"
         const val EXTERNAL = "external"
+        const val CURATE_A = "CuratedA"
+        const val CURATE_B = "CuratedB"
     }
 }

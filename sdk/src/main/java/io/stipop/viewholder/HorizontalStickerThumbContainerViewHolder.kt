@@ -29,7 +29,6 @@ internal class HorizontalStickerThumbContainerViewHolder(
             titleTextView.setTextColor(Config.getTitleTextColor(itemView.context))
             recyclerView.removeItemDecoration(decoration)
             recyclerView.addItemDecoration(decoration)
-//            recyclerView.addOnItemTouchListener(listener)
         }
     }
 
@@ -51,21 +50,6 @@ internal class HorizontalStickerThumbContainerViewHolder(
                 .inflate(R.layout.item_horizontal_sticker_thumb_container, parent, false)
             val binding = ItemHorizontalStickerThumbContainerBinding.bind(view)
             return HorizontalStickerThumbContainerViewHolder(binding, delegate)
-        }
-
-        val listener = object : RecyclerView.OnItemTouchListener {
-            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                rv.parent.requestDisallowInterceptTouchEvent(true)
-                return false
-            }
-
-            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-                //
-            }
-
-            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-                //
-            }
         }
     }
 }

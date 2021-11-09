@@ -32,8 +32,7 @@ internal class KeywordTagViewHolder(
                 text = it.keyword
                 isCheckable = true
                 isCheckedIconVisible = false
-                chipBackgroundColor =
-                    ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
+                chipBackgroundColor = ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
             }.run {
                 binding.chipGroup.addView(this)
             }

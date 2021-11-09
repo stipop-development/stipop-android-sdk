@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="bottom_alert_title">이모티콘을 숨기시겠어요??</string>
-    <string name="bottom_alert_contents">이모티콘을 숨기시겠어요? 나중에 다시 다운받을 수 있습니다.</string>
+    <string name="bottom_alert_title">스티커를 숨기시겠어요??</string>
+    <string name="bottom_alert_contents">스티커를 숨기시겠어요? 나중에 다시 다운받을 수 있습니다.</string>
     <string name="cancel">취소</string>
     <string name="hide">숨기기</string>
     <string name="downloaded">다운로드 완료</string>
     <string name="download">다운로드</string>
-    <string name="search">검색..</string>
-    <string name="all_stickers">이모티콘</string>
+    <string name="search">스티커 찾기</string>
+    <string name="all_stickers">홈</string>
     <string name="news_tab">신규</string>
-    <string name="my_stickers">내 이모티콘</string>
-    <string name="popular_stickers">인기 이모티콘</string>
+    <string name="my_stickers">내 스티커</string>
+    <string name="popular_stickers">인기 스티커</string>
     <string name="recommended_tag">추천 검색어</string>
-    <string name="view_hidden_stickers">숨긴 이모티콘 보기</string>
-    <string name="view_active_stickers">내 이모티콘 보기</string>
+    <string name="view_hidden_stickers">숨긴 스티커 보기</string>
+    <string name="view_active_stickers">내 스티커 보기</string>
     <string name="no_result">결과없음</string>
-    <string name="trending">추천 이모티콘</string>
-    <string name="stickers">이모티콘</string>
+    <string name="trending">추천 스티커</string>
+    <string name="stickers">스티커</string>
     <string name="recent_search">최근 검색</string>
     <string name="clear">삭제</string>
     <string name="download_done">다운로드 완료!</string>

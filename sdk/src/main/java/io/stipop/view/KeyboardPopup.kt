@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
 import io.stipop.adapter.SpvPackageAdapter
 import io.stipop.adapter.StickerThumbAdapter
-import io.stipop.custom.StickerDecoration
+import io.stipop.custom.HorizontalDecoration
 import io.stipop.databinding.ViewKeyboardPopupBinding
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
@@ -34,7 +34,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     private var binding: ViewKeyboardPopupBinding = ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
     private val packageThumbnailAdapter: SpvPackageAdapter by lazy { SpvPackageAdapter(this) }
     private val stickerThumbnailAdapter: StickerThumbAdapter by lazy { StickerThumbAdapter(this) }
-    private val decoration = StickerDecoration(Utils.dpToPx(8F).toInt())
+    private val decoration = HorizontalDecoration(Utils.dpToPx(8F).toInt(), Utils.dpToPx(8F).toInt())
     private var isInitialized = false
 
     init {

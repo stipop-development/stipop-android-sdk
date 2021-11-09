@@ -375,7 +375,7 @@ class Config {
             return imageId
         }
 
-        fun getStoreNavigationTextColor(context: Context, selected: Boolean): Int {
+        fun getSelectableTextColor(context: Context, selected: Boolean): Int {
             return if (selected) {
                 if (!useLightMode) {
                     ContextCompat.getColor(context, R.color.c_f3f4f5)

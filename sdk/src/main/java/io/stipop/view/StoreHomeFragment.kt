@@ -40,7 +40,6 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
     private var binding: FragmentStoreHomeBinding? = null
     private lateinit var viewModel: StoreHomeViewModel
 
-    //    private val storeHomeAdapter: StoreHomeAdapter by lazy { StoreHomeAdapter(this) }
     private val homeTabAdapter: HomeAdapter by lazy { HomeAdapter(this, this) }
     private val newsAdapter: NewsAdapter by lazy { NewsAdapter(this) }
     private var searchJob: Job? = null
@@ -68,7 +67,9 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
         with(binding!!) {
             homeRecyclerView.adapter = homeTabAdapter
             allStickerRecyclerView.adapter =
-                newsAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { newsAdapter.retry() })
+                newsAdapter.withLoadStateHeaderAndFooter(
+                    MyLoadStateAdapter { newsAdapter.retry() },
+                    MyLoadStateAdapter { newsAdapter.retry() })
             clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")
                 Utils.hideKeyboard(requireContext())
