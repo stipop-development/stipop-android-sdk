@@ -9,7 +9,7 @@ import io.stipop.viewholder.CurationBtypeViewHolder
 import io.stipop.viewholder.HorizontalStickerThumbViewHolder
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-internal class HorizontalPackageAdapter(
+internal class PackageHorizontalAdapter(
     private val dataSet: ArrayList<StickerPackage> = ArrayList(),
     val delegate: StickerPackageClickDelegate?
 ) :

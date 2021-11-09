@@ -1,13 +1,12 @@
 package io.stipop.viewholder
 
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.R
 import io.stipop.Utils
-import io.stipop.adapter.HorizontalPackageAdapter
+import io.stipop.adapter.PackageHorizontalAdapter
 import io.stipop.custom.RecyclerDecoration
 import io.stipop.databinding.ItemHorizontalStickerThumbContainerBinding
 import io.stipop.models.StickerPackage
@@ -20,7 +19,7 @@ internal class HorizontalStickerThumbContainerViewHolder(
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
-    private val adapter: HorizontalPackageAdapter by lazy { HorizontalPackageAdapter(delegate = delegate) }
+    private val horizontalAdapter: PackageHorizontalAdapter by lazy { PackageHorizontalAdapter(delegate = delegate) }
     private val decoration = RecyclerDecoration(Utils.dpToPx(7F).toInt())
 
     init {
@@ -35,9 +34,9 @@ internal class HorizontalStickerThumbContainerViewHolder(
     fun bind(title: String, stickerPackages: List<StickerPackage>) {
         with(binding) {
             titleTextView.text = title
-            recyclerView.adapter = adapter
-            adapter.clearData()
-            adapter.updateData(stickerPackages)
+            recyclerView.adapter = horizontalAdapter
+            horizontalAdapter.clearData()
+            horizontalAdapter.updateData(stickerPackages)
         }
     }
 

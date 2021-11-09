@@ -16,20 +16,25 @@ internal class APIClient {
     enum class APIPath(val rawValue: String) {
         SEARCH("/search"),
         SEARCH_KEYWORD("/search/keyword"),
-        PACKAGE("/package"),
-
-        MY_STICKER("/mysticker"),
         MY_STICKER_FAVORITE("/mysticker/favorite"),
-        PACKAGE_RECENT("/package/send")
     }
 
     companion object {
 
-        fun get(activity:Activity, path: String, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
+        fun get(
+            activity: Activity,
+            path: String,
+            responseCallback: (response: JSONObject?, e: IOException?) -> Unit
+        ) {
             get(activity, path, null, responseCallback)
         }
 
-        fun get(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
+        fun get(
+            activity: Activity,
+            path: String,
+            parameters: JSONObject?,
+            responseCallback: (response: JSONObject?, e: IOException?) -> Unit
+        ) {
 
             thread(start = true) {
                 // parameters
@@ -95,54 +100,15 @@ internal class APIClient {
             return result.toString()
         }
 
-        fun post(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
+        fun put(
+            activity: Activity,
+            path: String,
+            parameters: JSONObject?,
+            responseCallback: (response: JSONObject?, e: IOException?) -> Unit
+        ) {
             thread(start = true) {
 
-                var resolvedPath = Config.baseUrl + path
-
-                if (parameters != null && parameters.keys().hasNext()) {
-                    resolvedPath += "?"
-                    resolvedPath += getQuery(parameters)
-                    resolvedPath += "&platform=android-sdk"
-                } else {
-                    resolvedPath += "?platform=android-sdk"
-                }
-
-                // println(resolvedPath)
-
-                val url = URL(resolvedPath)
-
-                val huc = url.openConnection() as HttpURLConnection
-                huc.requestMethod = "POST"
-                huc.setRequestProperty("apikey", Config.apikey)
-
-
-                val buffered = if (huc.responseCode in 100..399) {
-                    BufferedReader(InputStreamReader(huc.inputStream))
-                } else {
-                    BufferedReader(InputStreamReader(huc.errorStream))
-                }
-
-                val content = StringBuilder()
-                while (true) {
-                    val data = buffered.readLine() ?: break
-                    content.append(data)
-                }
-
-                buffered.close()
-                huc.disconnect()
-
-                activity.runOnUiThread {
-                    val response = JSONObject(content.toString())
-                    responseCallback(response, null)
-                }
-            }
-        }
-
-        fun put(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
-            thread(start = true) {
-
-                val resolvedPath = Config.baseUrl + path +"?platform=android-sdk"
+                val resolvedPath = Config.baseUrl + path + "?platform=android-sdk"
 
                 val url = URL(resolvedPath)
 
@@ -152,57 +118,14 @@ internal class APIClient {
                 huc.doInput = true
 
                 huc.setRequestProperty("apikey", Config.apikey)
-                huc.setRequestProperty("Content-Type","application/json;charset=utf-8");
-                huc.setRequestProperty("Accept","application/json");
+                huc.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                huc.setRequestProperty("Accept", "application/json");
 
 
                 val writer = OutputStreamWriter(huc.outputStream)
                 writer.write(parameters.toString())
                 writer.flush()
                 writer.close()
-
-                val buffered = if (huc.responseCode in 100..399) {
-                    BufferedReader(InputStreamReader(huc.inputStream))
-                } else {
-                    BufferedReader(InputStreamReader(huc.errorStream))
-                }
-
-                val content = StringBuilder()
-                while (true) {
-                    val data = buffered.readLine() ?: break
-                    content.append(data)
-                }
-
-                buffered.close()
-                huc.disconnect()
-
-                activity.runOnUiThread {
-                    val response = JSONObject(content.toString())
-                    responseCallback(response, null)
-                }
-            }
-        }
-
-        fun delete(activity:Activity, path: String, parameters: JSONObject?, responseCallback: (response:JSONObject?, e: IOException?) -> Unit) {
-            thread(start = true) {
-                var resolvedPath = Config.baseUrl + path
-
-                if (parameters != null && parameters.keys().hasNext()) {
-                    resolvedPath += "?"
-                    resolvedPath += getQuery(parameters)
-                    resolvedPath += "&platform=android-sdk"
-                } else {
-                    resolvedPath += "?platform=android-sdk"
-                }
-
-                // println(resolvedPath)
-
-                val url = URL(resolvedPath)
-
-                val huc = url.openConnection() as HttpURLConnection
-                huc.requestMethod = "DELETE"
-
-                huc.setRequestProperty("apikey", Config.apikey)
 
                 val buffered = if (huc.responseCode in 100..399) {
                     BufferedReader(InputStreamReader(huc.inputStream))

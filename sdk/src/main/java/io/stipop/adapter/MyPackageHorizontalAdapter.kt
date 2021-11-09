@@ -8,7 +8,7 @@ import io.stipop.R
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.SpvThumbHolder
 
-internal class SpvPackageAdapter(val delegate: OnPackageClickListener) :
+internal class MyPackageHorizontalAdapter(val delegate: OnPackageClickListener) :
     PagingDataAdapter<StickerPackage, SpvThumbHolder>(REPO_COMPARATOR) {
 
     interface OnPackageClickListener {

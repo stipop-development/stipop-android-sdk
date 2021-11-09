@@ -12,6 +12,7 @@ import io.stipop.models.body.UserIdBody
 import io.stipop.models.response.*
 import okhttp3.Authenticator
 import okhttp3.Headers
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
@@ -32,10 +33,10 @@ internal interface StipopApi {
     suspend fun getCurationPackages(
         @Path("type") curationType: String,
         @Query("userId") userId: String,
-        @Query("lang") lang: String?="en",
-        @Query("countryCode") countryCode: String?="US",
-        @Query("pageNumber") pageNumber: Int=1,
-        @Query("limit") limit: Int=12
+        @Query("lang") lang: String? = "en",
+        @Query("countryCode") countryCode: String? = "US",
+        @Query("pageNumber") pageNumber: Int = 1,
+        @Query("limit") limit: Int = 12
     ): CurationPackageResponse
 
     @GET("package/{packageId}")
@@ -168,14 +169,22 @@ internal interface StipopApi {
                 )
                 .build()
             val authenticator = Authenticator { _, response ->
-                response.request
-                    .newBuilder()
-                    .headers(headers)
-                    .build()
+                if (response.code >= 400) {
+                    if (!headers[Constants.ApiParams.ApiKey].isNullOrEmpty()) {
+                        response.request.newBuilder().headers(headers).build()
+                    } else {
+                        null
+                    }
+                } else {
+                    null
+                }
             }
             val client = OkHttpClient.Builder()
-                .authenticator(authenticator)
                 .addInterceptor(loggingInterceptor)
+                .addInterceptor(Interceptor {
+                    it.proceed(it.request().newBuilder().headers(headers).build())
+                })
+                .authenticator(authenticator)
                 .build()
             return Retrofit.Builder()
                 .baseUrl(if (Constants.Value.IS_SANDBOX) Constants.Value.SANDBOX_URL else Constants.Value.BASE_URL)

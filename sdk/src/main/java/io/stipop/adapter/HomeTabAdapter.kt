@@ -12,7 +12,7 @@ import io.stipop.viewholder.KeywordTagViewHolder
 import io.stipop.viewholder.delegates.KeywordClickDelegate
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-internal class HomeAdapter(
+internal class HomeTabAdapter(
     private val stickerPackageClickDelegate: StickerPackageClickDelegate? = null,
     private val keywordClickDelegate: KeywordClickDelegate? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

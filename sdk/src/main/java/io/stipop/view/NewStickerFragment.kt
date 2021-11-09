@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.stipop.Constants
-import io.stipop.R
 import io.stipop.adapter.MyLoadStateAdapter
-import io.stipop.adapter.NewsAdapter
+import io.stipop.adapter.PackageVerticalAdapter
 import io.stipop.base.BaseFragment
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentNewStickerBinding
@@ -30,7 +28,7 @@ internal class NewStickerFragment : BaseFragment(), StickerPackageClickDelegate 
 
     private var binding: FragmentNewStickerBinding? = null
     private lateinit var viewModel: NewStickerViewModel
-    private val newsAdapter: NewsAdapter by lazy { NewsAdapter(this) }
+    private val packageVerticalAdapter: PackageVerticalAdapter by lazy { PackageVerticalAdapter(this) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,16 +53,16 @@ internal class NewStickerFragment : BaseFragment(), StickerPackageClickDelegate 
         with(binding!!) {
             recyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter = newsAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { newsAdapter.retry() })
+                adapter = packageVerticalAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { packageVerticalAdapter.retry() })
             }
         }
         lifecycleScope.launch {
             viewModel.loadsPackages().collectLatest {
-                newsAdapter.submitData(it)
+                packageVerticalAdapter.submitData(it)
             }
         }
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
-            newsAdapter.refresh()
+            packageVerticalAdapter.refresh()
         }
     }
 

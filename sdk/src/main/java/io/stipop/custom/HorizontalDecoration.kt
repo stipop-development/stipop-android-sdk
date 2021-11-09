@@ -18,13 +18,17 @@ internal class HorizontalDecoration(
     ) {
         outRect.top = verticalSpacing
         outRect.bottom = verticalSpacing
-        if (parent.getChildAdapterPosition(view) == 0) {
-            outRect.left = horizontalSpacing
-            outRect.right = itemSpacing ?: horizontalSpacing
-        } else if (parent.getChildAdapterPosition(view) == parent.adapter!!.itemCount - 1) {
-            outRect.right = horizontalSpacing
-        } else {
-            outRect.right = itemSpacing ?: horizontalSpacing
+        when {
+            parent.getChildAdapterPosition(view) == 0 -> {
+                outRect.left = horizontalSpacing
+                outRect.right = itemSpacing ?: horizontalSpacing
+            }
+            parent.getChildAdapterPosition(view) == parent.adapter!!.itemCount - 1 -> {
+                outRect.right = horizontalSpacing
+            }
+            else -> {
+                outRect.right = itemSpacing ?: horizontalSpacing
+            }
         }
     }
 }

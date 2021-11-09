@@ -13,9 +13,9 @@ import androidx.lifecycle.lifecycleScope
 import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.Utils
-import io.stipop.adapter.HomeAdapter
+import io.stipop.adapter.HomeTabAdapter
 import io.stipop.adapter.MyLoadStateAdapter
-import io.stipop.adapter.NewsAdapter
+import io.stipop.adapter.PackageVerticalAdapter
 import io.stipop.base.BaseFragment
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentStoreHomeBinding
@@ -40,8 +40,8 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
     private var binding: FragmentStoreHomeBinding? = null
     private lateinit var viewModel: StoreHomeViewModel
 
-    private val homeTabAdapter: HomeAdapter by lazy { HomeAdapter(this, this) }
-    private val newsAdapter: NewsAdapter by lazy { NewsAdapter(this) }
+    private val homeTabTabAdapter: HomeTabAdapter by lazy { HomeTabAdapter(this, this) }
+    private val packageVerticalAdapter: PackageVerticalAdapter by lazy { PackageVerticalAdapter(this) }
     private var searchJob: Job? = null
 
     override fun onCreateView(
@@ -65,11 +65,11 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
         )
 
         with(binding!!) {
-            homeRecyclerView.adapter = homeTabAdapter
+            homeRecyclerView.adapter = homeTabTabAdapter
             allStickerRecyclerView.adapter =
-                newsAdapter.withLoadStateHeaderAndFooter(
-                    MyLoadStateAdapter { newsAdapter.retry() },
-                    MyLoadStateAdapter { newsAdapter.retry() })
+                packageVerticalAdapter.withLoadStateHeaderAndFooter(
+                    MyLoadStateAdapter { packageVerticalAdapter.retry() },
+                    MyLoadStateAdapter { packageVerticalAdapter.retry() })
             clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")
                 Utils.hideKeyboard(requireContext())
@@ -79,19 +79,19 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
         }
         lifecycleScope.launch { viewModel.emittedQuery.collect { value -> refreshList(value) } }
         viewModel.getHomeSources()
-        viewModel.homeDataFlow.observeForever { homeTabAdapter.setInitData(it) }
+        viewModel.homeDataFlow.observeForever { homeTabTabAdapter.setInitData(it) }
         viewModel.uiState.observeForever { isSearchView ->
             binding!!.homeRecyclerView.isVisible = !isSearchView
         }
         refreshList()
-        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) { newsAdapter.refresh() }
+        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) { packageVerticalAdapter.refresh() }
     }
 
     private fun refreshList(query: String? = null) {
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
             viewModel.loadsPackages(query).collectLatest {
-                newsAdapter.submitData(it)
+                packageVerticalAdapter.submitData(it)
             }
         }
     }
