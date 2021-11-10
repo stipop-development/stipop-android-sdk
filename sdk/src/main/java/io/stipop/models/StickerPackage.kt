@@ -40,6 +40,10 @@ data class StickerPackage(
     @SerializedName("darkBackgroundCode")
     val darkBackgroundCode: String? = null
 ) {
+    fun getIsNew(): Boolean {
+        return this.view == "Y"
+    }
+
     fun getIsVisible(): Boolean {
         return this.view == "Y"
     }

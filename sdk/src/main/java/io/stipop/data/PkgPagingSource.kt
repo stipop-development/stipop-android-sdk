@@ -8,7 +8,7 @@ import io.stipop.models.StickerPackage
 import retrofit2.HttpException
 import java.io.IOException
 
-internal class StickerPackagePagingSource(private val apiService: StipopApi, private val query:String?=null) :
+internal class PkgPagingSource(private val apiService: StipopApi, private val query:String?=null) :
     PagingSource<Int, StickerPackage>() {
 
     private val STARTING_PAGE_INDEX = 1

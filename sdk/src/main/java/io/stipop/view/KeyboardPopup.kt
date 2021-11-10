@@ -31,11 +31,16 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     private var keyboardViewModel: SpvModel
     private val previewPopup: PreviewPopup by lazy { PreviewPopup(activity, this@KeyboardPopup) }
     private val ioScope = CoroutineScope(Job() + Dispatchers.IO)
-    private var binding: ViewKeyboardPopupBinding = ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
-    private val packageThumbnailHorizontalAdapter: MyPackageHorizontalAdapter by lazy { MyPackageHorizontalAdapter(this) }
+    private var binding: ViewKeyboardPopupBinding =
+        ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
+    private val packageThumbnailHorizontalAdapter: MyPackageHorizontalAdapter by lazy {
+        MyPackageHorizontalAdapter(
+            this
+        )
+    }
     private val stickerThumbnailAdapter: StickerGridAdapter by lazy { StickerGridAdapter(this) }
-    private val decoration = HorizontalDecoration(Utils.dpToPx(8F).toInt(), Utils.dpToPx(8F).toInt())
-    private var isInitialized = false
+    private val decoration =
+        HorizontalDecoration(Utils.dpToPx(8F).toInt(), Utils.dpToPx(8F).toInt())
 
     init {
         contentView = binding.root
@@ -72,9 +77,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
             RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
-                if (positionStart == 0) {
-                    initialize()
-                }
+                initialize(positionStart == 0)
                 binding.packageThumbRecyclerView.scrollToPosition(0)
             }
         })
@@ -99,11 +102,10 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     override fun dismiss() {
         super.dismiss()
         packageThumbnailHorizontalAdapter.updateSelected()
-        isInitialized = false
     }
 
     private fun refreshData() {
-        loadRecentOrFavorite()
+        loadRecentOrFavorite(false)
         packageThumbnailHorizontalAdapter.updateSelected()
         packageThumbnailHorizontalAdapter.refresh()
     }
@@ -159,16 +161,16 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
         } else {
             binding.recentFavoriteContainer.tag = 0
         }
-        loadRecentOrFavorite()
+        loadRecentOrFavorite(true)
     }
 
-    private fun loadRecentOrFavorite() {
+    private fun loadRecentOrFavorite(isClicked: Boolean) {
         stickerThumbnailAdapter.clearData()
         if (binding.recentFavoriteContainer.tag == 1) {
             keyboardViewModel.loadFavorites(onSuccess = {
                 binding.progressBar.isVisible = false
                 if (it.isEmpty()) {
-                    initialize()
+                    initialize(!isClicked)
                 } else {
                     applyRecentFavoriteTheme()
                     it.forEach {
@@ -181,7 +183,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
                 binding.progressBar.isVisible = false
                 if (it.isEmpty()) {
                     binding.emptyListTextView.isVisible = true
-                    initialize()
+                    initialize(!isClicked)
                 } else {
                     applyRecentFavoriteTheme()
                     it.forEach {
@@ -270,12 +272,11 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
         applyRecentFavoriteTheme()
     }
 
-    private fun initialize() {
-        if (!isInitialized) {
+    private fun initialize(isFirst: Boolean? = false) {
+        if (isFirst == true) {
             if (keyboardViewModel.recentStickers.isEmpty() && !packageThumbnailHorizontalAdapter.isSelectedItemExist()) {
                 packageThumbnailHorizontalAdapter.getItemByPosition(0)?.let {
                     onPackageClick(0, it)
-                    isInitialized = true
                 }
             }
         }

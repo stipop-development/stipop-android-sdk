@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.models.CuratedCard
-import io.stipop.models.StickerPackage
 import io.stipop.models.response.KeywordListResponse
 import io.stipop.viewholder.CurationCardContainerViewHolder
-import io.stipop.viewholder.HorizontalStickerThumbContainerViewHolder
 import io.stipop.viewholder.KeywordTagViewHolder
 import io.stipop.viewholder.delegates.KeywordClickDelegate
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate

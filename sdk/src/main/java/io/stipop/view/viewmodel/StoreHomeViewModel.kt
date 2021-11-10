@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import io.stipop.data.PackageRepository
+import io.stipop.data.PkgRepository
 import io.stipop.delayedTextFlow
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
@@ -14,7 +14,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-internal class StoreHomeViewModel(private val repository: PackageRepository) : ViewModel() {
+internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewModel() {
 
     private val typedQuery = MutableStateFlow("")
 

@@ -8,25 +8,21 @@ import io.stipop.Constants
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
-import io.stipop.models.response.*
 import io.stipop.models.response.CurationPackageResponse
 import io.stipop.models.response.KeywordListResponse
 import io.stipop.models.response.StickerPackagesResponse
 import io.stipop.models.response.StipopResponse
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
-import retrofit2.Call
 
-internal class PackageRepository(private val apiService: StipopApi) : BaseRepository() {
+internal class PkgRepository(private val apiService: StipopApi) : BaseRepository() {
 
     fun getHomeStickerPackageStream(query: String? = null): Flow<PagingData<StickerPackage>> {
         return Pager(
             config = PagingConfig(
                 pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
-            ), pagingSourceFactory = { StickerPackagePagingSource(apiService, query) }).flow
+            ), pagingSourceFactory = { PkgPagingSource(apiService, query) }).flow
     }
 
     fun getNewStickerPackageStream(): Flow<PagingData<StickerPackage>> {
@@ -34,7 +30,7 @@ internal class PackageRepository(private val apiService: StipopApi) : BaseReposi
             config = PagingConfig(
                 pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
-            ), pagingSourceFactory = { StickerPackagePagingSource(apiService) }).flow
+            ), pagingSourceFactory = { PkgPagingSource(apiService) }).flow
     }
 
     @FlowPreview

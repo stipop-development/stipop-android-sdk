@@ -110,8 +110,12 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment() {
                 updateUi(it)
                 gridAdapter.clearData()
                 gridAdapter.updateDatas(it)
-            }?:run {
-                Toast.makeText(context, getString(R.string.can_not_open_package), Toast.LENGTH_SHORT).show()
+            } ?: run {
+                Toast.makeText(
+                    context,
+                    getString(R.string.can_not_open_package),
+                    Toast.LENGTH_SHORT
+                ).show()
                 dismiss()
             }
         }

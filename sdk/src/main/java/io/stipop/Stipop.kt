@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentManager
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
 import io.stipop.data.ConfigRepository
-import io.stipop.data.SimplePref
+import io.stipop.data.UserPref
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
@@ -165,7 +165,7 @@ class Stipop(
         this.stipopButton.setIconDefaultsColor()
         this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
         this.setSizeForSoftKeyboard()
-        SimplePref.init(this.activity.applicationContext)
+        UserPref.init(this.activity.applicationContext)
         this.isConnected = true
     }
 

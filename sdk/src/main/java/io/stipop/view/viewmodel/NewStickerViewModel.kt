@@ -4,13 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import io.stipop.data.PackageRepository
+import io.stipop.data.PkgRepository
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-internal class NewStickerViewModel(private val repository: PackageRepository) : ViewModel() {
+internal class NewStickerViewModel(private val repository: PkgRepository) : ViewModel() {
 
     fun requestDownloadPackage(stickerPackage: StickerPackage) {
         viewModelScope.launch {

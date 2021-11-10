@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.Config
 import io.stipop.R
 
@@ -13,7 +14,12 @@ class StipopImageView : AppCompatImageView {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init(attrs)
     }
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         init(attrs)
     }
 
@@ -80,8 +86,10 @@ class StipopImageView : AppCompatImageView {
         return false
     }
 
-    fun loadImage(resUrl: String?){
-        Glide.with(context).load(resUrl).into(this)
+    fun loadImage(resUrl: String?) {
+        Glide.with(context)
+            .load(resUrl)
+            .placeholder(R.color.cardview_shadow_start_color).into(this)
     }
 
     override fun setImageResource(resId: Int) {

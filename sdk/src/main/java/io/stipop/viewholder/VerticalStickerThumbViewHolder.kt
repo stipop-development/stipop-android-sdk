@@ -2,6 +2,7 @@ package io.stipop.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
 import io.stipop.databinding.ItemVerticalStickerThumbBinding
@@ -43,6 +44,7 @@ internal class VerticalStickerThumbViewHolder(private val binding: ItemVerticalS
             stickerPackageThumb.loadImage(stickerPackage.packageImg)
             packageNameTextView.text = stickerPackage.packageName
             artistNameTextView.text = stickerPackage.artistName
+            newLabel.isVisible = stickerPackage.getIsNew()
 
             if (stickerPackage.isDownloaded()) {
                 downloadImageView.setImageResource(Config.getCompleteIconResourceId(itemView.context))

@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.savedstate.SavedStateRegistryOwner
 import io.stipop.api.StipopApi
-import io.stipop.data.PackageRepository
+import io.stipop.data.PkgRepository
 import io.stipop.data.MyStickerRepository
 import io.stipop.data.StickerDetailRepository
 import io.stipop.view.viewmodel.StoreHomeViewModel
@@ -22,8 +22,8 @@ internal object Injection {
         return MyStickerRepository(stipopApi)
     }
 
-    private fun providePackageRepository(): PackageRepository {
-        return PackageRepository(stipopApi)
+    private fun providePackageRepository(): PkgRepository {
+        return PkgRepository(stipopApi)
     }
 
     private fun provideStickerDetailRepository(): StickerDetailRepository {

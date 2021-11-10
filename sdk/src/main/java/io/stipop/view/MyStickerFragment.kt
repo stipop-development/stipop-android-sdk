@@ -17,7 +17,7 @@ import io.stipop.base.Injection
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.FragmentMyStickerBinding
 import io.stipop.viewholder.delegates.MyStickerClickDelegate
-import io.stipop.custom.dragdrop.SimpleItemTouchHelperCallback
+import io.stipop.custom.DragAndDropHelperCallback
 import io.stipop.models.StickerPackage
 import io.stipop.adapter.MyPackageVerticalAdapter
 import io.stipop.adapter.MyLoadStateAdapter
@@ -77,7 +77,7 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
         initRequest(wantVisibleSticker)
 
         itemTouchHelper =
-            ItemTouchHelper(SimpleItemTouchHelperCallback(myPackageVerticalAdapter)).apply {
+            ItemTouchHelper(DragAndDropHelperCallback(myPackageVerticalAdapter)).apply {
                 attachToRecyclerView(myStickersRecyclerView)
             }
 
