@@ -103,6 +103,16 @@ internal interface StipopApi {
         @Query("q") query: String? = null
     ): StickerPackagesResponse
 
+    @GET("package/new")
+    suspend fun getNewStickerPackages(
+        @Query("userId") userId: String,
+        @Query("lang") lang: String,
+        @Query("countryCode") countryCode: String,
+        @Query("pageNumber") pageNumber: Int,
+        @Query("limit") limit: Int,
+        @Query("q") query: String? = null
+    ): StickerPackagesResponse
+
     @POST("download/{packageId}")
     suspend fun postDownloadStickers(
         @Path("packageId") packageId: Int,
@@ -133,7 +143,7 @@ internal interface StipopApi {
     @POST("sdk/track/view/package/{entrance_point}/{package_id}")
     suspend fun trackViewPackage(
         @Body userIdBody: UserIdBody,
-        @Path("entrance_point") entrancePoint: String? = Constants.Point.STORE,
+        @Path("entrance_point") entrancePoint: String? = Constants.Point.DEFAULT,
         @Path("package_id") packageId: Int
     ): Response<StipopResponse>
 

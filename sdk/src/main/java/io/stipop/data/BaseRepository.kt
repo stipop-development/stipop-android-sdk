@@ -5,6 +5,8 @@ import io.stipop.api.ApiResponse
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEmpty
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.UnknownHostException
@@ -23,11 +25,15 @@ internal open class BaseRepository {
         }
     }
 
-    @FlowPreview
-    fun <T : Any> safeCallAsFlow(
+    suspend fun <T : Any> safeCallAsFlow(
         call: suspend () -> T
-    ): Flow<T> {
-        return call.asFlow()
+    ): Flow<T?> {
+        return try{
+            val r = call.invoke()
+            flowOf(r)
+        }catch (e:Exception){
+            flowOf(null)
+        }
     }
 
     suspend fun <T : Any> safeCall(

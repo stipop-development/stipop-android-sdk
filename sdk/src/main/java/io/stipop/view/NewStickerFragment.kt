@@ -28,7 +28,7 @@ internal class NewStickerFragment : BaseFragment(), StickerPackageClickDelegate 
 
     private var binding: FragmentNewStickerBinding? = null
     private lateinit var viewModel: NewStickerViewModel
-    private val packageVerticalAdapter: PackageVerticalAdapter by lazy { PackageVerticalAdapter(this) }
+    private val packageVerticalAdapter: PackageVerticalAdapter by lazy { PackageVerticalAdapter(this, Constants.Point.NEW) }
 
     override fun onCreateView(
         inflater: LayoutInflater,

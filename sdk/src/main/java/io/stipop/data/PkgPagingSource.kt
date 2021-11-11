@@ -5,18 +5,28 @@ import androidx.paging.PagingState
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
+import io.stipop.models.response.StickerPackagesResponse
 import retrofit2.HttpException
 import java.io.IOException
 
-internal class PkgPagingSource(private val apiService: StipopApi, private val query:String?=null) :
+internal class PkgPagingSource(
+    private val apiService: StipopApi,
+    private val query: String? = null,
+    private val newOrder: Boolean = false
+) :
     PagingSource<Int, StickerPackage>() {
 
     private val STARTING_PAGE_INDEX = 1
     private var currentQuery: String? = null
+    private var currentOrder: Boolean = false
 
     override fun getRefreshKey(state: PagingState<Int, StickerPackage>): Int? {
         if (query != currentQuery) {
             currentQuery = query
+            return null
+        }
+        if (currentOrder != newOrder) {
+            currentOrder = newOrder
             return null
         }
         return state.anchorPosition?.let { anchorPosition ->
@@ -30,14 +40,27 @@ internal class PkgPagingSource(private val apiService: StipopApi, private val qu
         val userId = Stipop.userId
         val limit = 20
         return try {
-            val response = apiService.getTrendingStickerPackages(
-                userId = userId,
-                limit = limit,
-                pageNumber = pageNumber,
-                countryCode = Stipop.countryCode,
-                lang = Stipop.lang,
-                query = currentQuery
-            )
+
+            val response: StickerPackagesResponse
+            when (newOrder) {
+                true -> response = apiService.getNewStickerPackages(
+                    userId = userId,
+                    limit = limit,
+                    pageNumber = pageNumber,
+                    countryCode = Stipop.countryCode,
+                    lang = Stipop.lang,
+                    query = currentQuery
+                )
+                false -> response = apiService.getTrendingStickerPackages(
+                    userId = userId,
+                    limit = limit,
+                    pageNumber = pageNumber,
+                    countryCode = Stipop.countryCode,
+                    lang = Stipop.lang,
+                    query = currentQuery
+                )
+            }
+
             val stickerPackages = response.body.packageList
             val nextKey = if (stickerPackages.isNullOrEmpty()) {
                 null

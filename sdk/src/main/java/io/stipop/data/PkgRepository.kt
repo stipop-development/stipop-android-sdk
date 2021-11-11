@@ -22,7 +22,14 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
             config = PagingConfig(
                 pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
-            ), pagingSourceFactory = { PkgPagingSource(apiService, query) }).flow
+            ),
+            pagingSourceFactory = {
+                PkgPagingSource(
+                    apiService,
+                    query = query,
+                    newOrder = false
+                )
+            }).flow
     }
 
     fun getNewStickerPackageStream(): Flow<PagingData<StickerPackage>> {
@@ -30,21 +37,20 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
             config = PagingConfig(
                 pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
-            ), pagingSourceFactory = { PkgPagingSource(apiService) }).flow
+            ), pagingSourceFactory = { PkgPagingSource(apiService, newOrder = true) }).flow
     }
 
-    @FlowPreview
-    suspend fun getCurationPackagesAsFlow(type:String): Flow<CurationPackageResponse> {
+    suspend fun getCurationPackagesAsFlow(type: String): Flow<CurationPackageResponse?> {
         return safeCallAsFlow(call = {
             apiService.getCurationPackages(
-                curationType= type,
+                curationType = type,
                 userId = Stipop.userId
             )
         })
     }
 
     @FlowPreview
-    suspend fun getPackagesAsFlow(page: Int): Flow<StickerPackagesResponse> {
+    suspend fun getPackagesAsFlow(page: Int): Flow<StickerPackagesResponse?> {
         return safeCallAsFlow(call = {
             apiService.getTrendingStickerPackages(
                 userId = Stipop.userId,
@@ -57,8 +63,7 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
         })
     }
 
-    @FlowPreview
-    suspend fun getRecommendQueryAsFlow(): Flow<KeywordListResponse> {
+    suspend fun getRecommendQueryAsFlow(): Flow<KeywordListResponse?> {
         return safeCallAsFlow(call = {
             apiService.getRecommendedKeywords(
                 userId = Stipop.userId,

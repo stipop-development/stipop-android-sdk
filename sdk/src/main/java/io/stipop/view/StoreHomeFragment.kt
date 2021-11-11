@@ -41,7 +41,7 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
     private lateinit var viewModel: StoreHomeViewModel
 
     private val homeTabTabAdapter: HomeTabAdapter by lazy { HomeTabAdapter(this, this) }
-    private val packageVerticalAdapter: PackageVerticalAdapter by lazy { PackageVerticalAdapter(this) }
+    private val packageVerticalAdapter: PackageVerticalAdapter by lazy { PackageVerticalAdapter(this, Constants.Point.TREND) }
     private var searchJob: Job? = null
 
     override fun onCreateView(

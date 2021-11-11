@@ -41,7 +41,7 @@ data class StickerPackage(
     val darkBackgroundCode: String? = null
 ) {
     fun getIsNew(): Boolean {
-        return this.view == "Y"
+        return this.new == "Y"
     }
 
     fun getIsVisible(): Boolean {

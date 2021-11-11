@@ -5,7 +5,6 @@
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/black</item>
         <item name="colorOnSecondary">@color/black</item>
-        <item name="colorSurface">@color/c_ff774a</item>
         <item name="colorOnSurface">@color/white</item>
         <item name="colorPrimaryVariant">@color/c_ff855b</item>"
         <item name="colorSecondaryVariant">@color/black</item>

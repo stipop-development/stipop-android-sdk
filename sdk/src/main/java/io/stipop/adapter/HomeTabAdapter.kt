@@ -15,8 +15,7 @@ internal class HomeTabAdapter(
     private val keywordClickDelegate: KeywordClickDelegate? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var screenType: ScreenType = ScreenType.DEFAULT
-    private var dataSet: ArrayList<Any> = ArrayList()
+    private var dataSet: ArrayList<Any?> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -24,11 +23,17 @@ internal class HomeTabAdapter(
                 KeywordTagViewHolder.create(parent, keywordClickDelegate)
             }
             else -> {
-                CurationCardContainerViewHolder.create(
-                    parent,
-                    stickerPackageClickDelegate
-                )
+                CurationCardContainerViewHolder.create(parent, stickerPackageClickDelegate)
             }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (position) {
+            0 -> TYPE_RECOMMEND_KEYWORD
+            1 -> dataSet[position]?.let { TYPE_HORIZONTAL_THUMB } ?: run { TYPE_HORIZONTAL_BANNER }
+            2 -> TYPE_HORIZONTAL_BANNER
+            else -> TYPE_LIST
         }
     }
 
@@ -47,7 +52,7 @@ internal class HomeTabAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setInitData(sets: ArrayList<Any>) {
+    fun setInitData(sets: ArrayList<Any?>) {
         dataSet.clear()
         notifyDataSetChanged()
         dataSet.addAll(sets)
@@ -55,23 +60,8 @@ internal class HomeTabAdapter(
     }
 
     override fun getItemCount(): Int {
-        return dataSet.size
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return when (screenType) {
-            ScreenType.DEFAULT -> {
-                when (position) {
-                    0 -> TYPE_RECOMMEND_KEYWORD
-                    1 -> TYPE_HORIZONTAL_THUMB
-                    2 -> TYPE_HORIZONTAL_BANNER
-                    else -> TYPE_LIST
-                }
-            }
-            ScreenType.SEARCH_RESULT -> {
-                TYPE_LIST
-            }
-        }
+        val filter = dataSet.filterNotNull()
+        return filter.size
     }
 
     companion object {
@@ -79,9 +69,5 @@ internal class HomeTabAdapter(
         private const val TYPE_HORIZONTAL_THUMB = 1001
         private const val TYPE_HORIZONTAL_BANNER = 1002
         private const val TYPE_LIST = 1003
-    }
-
-    enum class ScreenType {
-        DEFAULT, SEARCH_RESULT
     }
 }

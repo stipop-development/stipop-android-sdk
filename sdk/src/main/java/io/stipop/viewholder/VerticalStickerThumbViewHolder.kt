@@ -9,7 +9,7 @@ import io.stipop.databinding.ItemVerticalStickerThumbBinding
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-internal class VerticalStickerThumbViewHolder(private val binding: ItemVerticalStickerThumbBinding, private val delegate: StickerPackageClickDelegate?) :
+internal class VerticalStickerThumbViewHolder(private val binding: ItemVerticalStickerThumbBinding, private val delegate: StickerPackageClickDelegate?, private val point: String) :
     RecyclerView.ViewHolder(binding.root) {
 
     private var stickerPackage: StickerPackage? = null
@@ -17,7 +17,7 @@ internal class VerticalStickerThumbViewHolder(private val binding: ItemVerticalS
     init {
         itemView.setOnClickListener {
             stickerPackage?.packageId?.let {
-                delegate?.onPackageDetailClicked(it, Constants.Point.STORE)
+                delegate?.onPackageDetailClicked(it, point)
             }
         }
 
@@ -57,10 +57,10 @@ internal class VerticalStickerThumbViewHolder(private val binding: ItemVerticalS
     }
 
     companion object {
-        fun create(parent: ViewGroup, stickerPackageClickDelegate: StickerPackageClickDelegate?): VerticalStickerThumbViewHolder {
+        fun create(parent: ViewGroup, stickerPackageClickDelegate: StickerPackageClickDelegate?, clickPoint: String): VerticalStickerThumbViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_vertical_sticker_thumb, parent, false)
             val binding = ItemVerticalStickerThumbBinding.bind(view)
-            return VerticalStickerThumbViewHolder(binding, stickerPackageClickDelegate)
+            return VerticalStickerThumbViewHolder(binding, stickerPackageClickDelegate, clickPoint)
         }
     }
 }

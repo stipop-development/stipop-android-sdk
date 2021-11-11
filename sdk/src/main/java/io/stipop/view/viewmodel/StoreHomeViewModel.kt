@@ -27,7 +27,7 @@ internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewM
             return@mapLatest delayedTextFlow(it)
         }
     }
-    var homeDataFlow: MutableLiveData<ArrayList<Any>> = MutableLiveData()
+    var homeDataFlow: MutableLiveData<ArrayList<Any?>> = MutableLiveData()
     var uiState: MutableLiveData<Boolean> = MutableLiveData()
 
     fun flowQuery(keyword: String) {
@@ -42,9 +42,9 @@ internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewM
                 repository.getCurationPackagesAsFlow("b")
             ) { value1, value2, value3 ->
                 val lists = arrayListOf(
-                    value1.body.keywordList,
-                    value2.body.card,
-                    value3.body.card
+                    value1?.body?.keywordList,
+                    value2?.body?.card,
+                    value3?.body?.card
                 )
                 emit(lists)
             }.collect {
