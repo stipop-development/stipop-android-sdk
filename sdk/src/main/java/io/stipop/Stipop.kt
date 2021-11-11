@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import io.stipop.api.StipopApi
@@ -51,24 +52,19 @@ class Stipop(
         var lang = "en"
             private set
 
-        var countryCode = "us"
+        var countryCode = "US"
             private set
 
         internal var keyboardHeight = 0
             private set
 
-        private var isConfigured = false
         private var isInitialized = false
 
-        fun configure(context: Context) {
-            Config.configure(context)
-            scope.launch {
-                if (!isConfigured) {
-                    configRepository.postConfigSdk {
-                        isConfigured = true
-                    }
-                }
-            }
+        fun configure(context: Context, callback: ((isSuccess: Boolean) -> Unit)? = null) {
+            Config.configure(context, callback = { result ->
+                callback?.let { it -> it(result) }
+            })
+            scope.launch { configRepository.postConfigSdk() }
         }
 
         fun connect(
@@ -92,6 +88,11 @@ class Stipop(
             Stipop.userId = userId
             Stipop.lang = lang
             Stipop.countryCode = countryCode
+
+            if (!configRepository.isConfigured) {
+                Log.e("STIPOP-SDK", "Please call Stipop.connect() first.")
+                return
+            }
 
             val requestBody = InitSdkBody(userId = Stipop.userId, lang = Stipop.lang)
             scope.launch {
