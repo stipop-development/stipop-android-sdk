@@ -61,13 +61,16 @@ class MyApplication : Application() {
     }
 }
 ```
-3. Update your 'AndroidManifest.xml' to specify application class.
+3. Update your 'AndroidManifest.xml' to specify application class.<br>
+   Check your applicatin include 'INTERNET' permission to perform network operations.<br>
+   Please put 'tools:replace="android:theme" to avoid conflict theme file in the application setting area.
 ```xml
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".{YourApplicationClass}"
                  ...
         tools:replace="android:theme">
-}
 ```
 4. Then implement 'StipopDelegate' interface and Call 'Stipop.connect' method wherever you want to use it. (like Activity or Fragment)
 ```kotlin
