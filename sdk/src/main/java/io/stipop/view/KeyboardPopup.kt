@@ -12,9 +12,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
-import io.stipop.adapter.SpvPackageAdapter
-import io.stipop.adapter.StickerThumbAdapter
-import io.stipop.custom.StickerDecoration
+import io.stipop.adapter.MyPackageHorizontalAdapter
+import io.stipop.adapter.StickerGridAdapter
+import io.stipop.custom.HorizontalDecoration
 import io.stipop.databinding.ViewKeyboardPopupBinding
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
@@ -26,16 +26,21 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class KeyboardPopup(val activity: Activity) : PopupWindow(),
-    SpvPackageAdapter.OnPackageClickListener, StickerThumbAdapter.OnStickerClickListener {
+    MyPackageHorizontalAdapter.OnPackageClickListener, StickerGridAdapter.OnStickerClickListener {
 
     private var keyboardViewModel: SpvModel
     private val previewPopup: PreviewPopup by lazy { PreviewPopup(activity, this@KeyboardPopup) }
     private val ioScope = CoroutineScope(Job() + Dispatchers.IO)
-    private var binding: ViewKeyboardPopupBinding = ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
-    private val packageThumbnailAdapter: SpvPackageAdapter by lazy { SpvPackageAdapter(this) }
-    private val stickerThumbnailAdapter: StickerThumbAdapter by lazy { StickerThumbAdapter(this) }
-    private val decoration = StickerDecoration(Utils.dpToPx(8F).toInt())
-    private var isInitialized = false
+    private var binding: ViewKeyboardPopupBinding =
+        ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
+    private val packageThumbnailHorizontalAdapter: MyPackageHorizontalAdapter by lazy {
+        MyPackageHorizontalAdapter(
+            this
+        )
+    }
+    private val stickerThumbnailAdapter: StickerGridAdapter by lazy { StickerGridAdapter(this) }
+    private val decoration =
+        HorizontalDecoration(Utils.dpToPx(8F).toInt(), Utils.dpToPx(8F).toInt())
 
     init {
         contentView = binding.root
@@ -47,7 +52,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
             packageThumbRecyclerView.run {
                 setHasFixedSize(true)
                 setItemViewCacheSize(20)
-                adapter = packageThumbnailAdapter
+                adapter = packageThumbnailHorizontalAdapter
             }
             stickerRecyclerView.run {
                 addItemDecoration(decoration)
@@ -64,17 +69,15 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
         ioScope.launch {
             keyboardViewModel.loadMyPackages().collectLatest {
                 launch(Dispatchers.Main) {
-                    packageThumbnailAdapter.submitData(it)
+                    packageThumbnailHorizontalAdapter.submitData(it)
                 }
             }
         }
-        packageThumbnailAdapter.registerAdapterDataObserver(object :
+        packageThumbnailHorizontalAdapter.registerAdapterDataObserver(object :
             RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
-                if (positionStart == 0) {
-                    initialize()
-                }
+                initialize(positionStart == 0)
                 binding.packageThumbRecyclerView.scrollToPosition(0)
             }
         })
@@ -98,14 +101,13 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
 
     override fun dismiss() {
         super.dismiss()
-        packageThumbnailAdapter.updateSelected()
-        isInitialized = false
+        packageThumbnailHorizontalAdapter.updateSelected()
     }
 
     private fun refreshData() {
-        loadRecentOrFavorite()
-        packageThumbnailAdapter.updateSelected()
-        packageThumbnailAdapter.refresh()
+        loadRecentOrFavorite(false)
+        packageThumbnailHorizontalAdapter.updateSelected()
+        packageThumbnailHorizontalAdapter.refresh()
     }
 
     private fun applyRecentFavoriteTheme() {
@@ -147,7 +149,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     }
 
     private fun onRecentFavoriteClick() {
-        packageThumbnailAdapter.updateSelected()
+        packageThumbnailHorizontalAdapter.updateSelected()
         binding.progressBar.isVisible = true
         applyRecentFavoriteTheme()
         if (Config.showPreview) {
@@ -159,16 +161,16 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
         } else {
             binding.recentFavoriteContainer.tag = 0
         }
-        loadRecentOrFavorite()
+        loadRecentOrFavorite(true)
     }
 
-    private fun loadRecentOrFavorite() {
+    private fun loadRecentOrFavorite(isClicked: Boolean) {
         stickerThumbnailAdapter.clearData()
         if (binding.recentFavoriteContainer.tag == 1) {
             keyboardViewModel.loadFavorites(onSuccess = {
                 binding.progressBar.isVisible = false
                 if (it.isEmpty()) {
-                    initialize()
+                    initialize(!isClicked)
                 } else {
                     applyRecentFavoriteTheme()
                     it.forEach {
@@ -181,7 +183,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
                 binding.progressBar.isVisible = false
                 if (it.isEmpty()) {
                     binding.emptyListTextView.isVisible = true
-                    initialize()
+                    initialize(!isClicked)
                 } else {
                     applyRecentFavoriteTheme()
                     it.forEach {
@@ -199,7 +201,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
             recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
             recentStickerImageView.clearTint()
         }
-        packageThumbnailAdapter.updateSelected(position)
+        packageThumbnailHorizontalAdapter.updateSelected(position)
         stickerThumbnailAdapter.clearData()
         keyboardViewModel.loadStickerPackage(stickerPackage, onSuccess = {
             it?.let {
@@ -270,12 +272,11 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
         applyRecentFavoriteTheme()
     }
 
-    private fun initialize() {
-        if (!isInitialized) {
-            if (keyboardViewModel.recentStickers.isEmpty() && !packageThumbnailAdapter.isSelectedItemExist()) {
-                packageThumbnailAdapter.getItemByPosition(0)?.let {
+    private fun initialize(isFirst: Boolean? = false) {
+        if (isFirst == true) {
+            if (keyboardViewModel.recentStickers.isEmpty() && !packageThumbnailHorizontalAdapter.isSelectedItemExist()) {
+                packageThumbnailHorizontalAdapter.getItemByPosition(0)?.let {
                     onPackageClick(0, it)
-                    isInitialized = true
                 }
             }
         }

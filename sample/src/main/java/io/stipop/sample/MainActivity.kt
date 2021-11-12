@@ -40,11 +40,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
 
     // IMPORTANT :: The downloaded sticker is saved according to the user ID.
     @SuppressLint("SimpleDateFormat")
-    private val testUserId = SimpleDateFormat("yyyyMMddHHmm").format(Date())
-    private val testProfileUrl = "change-user-profile-image-url-here"
-    private val testUserName = "change-user-name-here"
-    private val lang = "ko"
-    private val countryCode = "KR"
+    private val testUserId = SimpleDateFormat("yyyyMMdd").format(Date())
 
     // This Code below is used to configure the sample app, so you can ignore it.
     private val toolBar: Toolbar by lazy { findViewById(R.id.toolBar) }
@@ -61,7 +57,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         setContentView(R.layout.activity_main)
 
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
-        Stipop.connect(this, stipopPickerImageView, testUserId, lang, countryCode, this)
+        Stipop.connect(this, stipopPickerImageView, testUserId, Locale.getDefault(), this)
 
         stipopPickerImageView.setOnClickListener {
             Stipop.showKeyboard()
@@ -100,7 +96,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
             setHasFixedSize(true)
             addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
                 if (bottom < oldBottom) {
-                    chatRecyclerview.postDelayed(Runnable {
+                    chatRecyclerview.postDelayed({
                         chatRecyclerview.smoothScrollToPosition(
                             chatsAdapter.itemCount - 1
                         )

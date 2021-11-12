@@ -3,7 +3,7 @@ package io.stipop.data
 import android.content.Context
 import android.content.SharedPreferences
 
-object SimplePref {
+internal object UserPref {
 
     private var mPreferences: SharedPreferences? = null
     private const val NAME = "StipopUserPref"

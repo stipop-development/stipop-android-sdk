@@ -1,6 +1,7 @@
 package io.stipop.api
 
 import android.os.Build
+import android.util.Log
 import com.google.gson.Gson
 import io.stipop.BuildConfig
 import io.stipop.Config
@@ -12,6 +13,7 @@ import io.stipop.models.body.UserIdBody
 import io.stipop.models.response.*
 import okhttp3.Authenticator
 import okhttp3.Headers
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
@@ -28,11 +30,28 @@ internal interface StipopApi {
         @Body initSdkBody: InitSdkBody
     ): StipopResponse
 
+    @GET("curation/type/{type}")
+    suspend fun getCurationPackages(
+        @Path("type") curationType: String,
+        @Query("userId") userId: String,
+        @Query("lang") lang: String? = "en",
+        @Query("countryCode") countryCode: String? = "US",
+        @Query("pageNumber") pageNumber: Int = 1,
+        @Query("limit") limit: Int = 12
+    ): CurationPackageResponse
+
     @GET("package/{packageId}")
     suspend fun getStickerPackage(
         @Path("packageId") packageId: Int,
         @Query("userId") userId: String,
     ): StickerPackageResponse
+
+    @GET("search/keyword")
+    suspend fun getRecommendedKeywords(
+        @Query("userId") userId: String,
+        @Query("lang") lang: String,
+        @Query("countryCode") countryCode: String,
+    ): KeywordListResponse
 
     @GET("package/send/{userId}")
     suspend fun getRecentlySentStickers(
@@ -84,6 +103,16 @@ internal interface StipopApi {
         @Query("q") query: String? = null
     ): StickerPackagesResponse
 
+    @GET("package/new")
+    suspend fun getNewStickerPackages(
+        @Query("userId") userId: String,
+        @Query("lang") lang: String,
+        @Query("countryCode") countryCode: String,
+        @Query("pageNumber") pageNumber: Int,
+        @Query("limit") limit: Int,
+        @Query("q") query: String? = null
+    ): StickerPackagesResponse
+
     @POST("download/{packageId}")
     suspend fun postDownloadStickers(
         @Path("packageId") packageId: Int,
@@ -114,7 +143,7 @@ internal interface StipopApi {
     @POST("sdk/track/view/package/{entrance_point}/{package_id}")
     suspend fun trackViewPackage(
         @Body userIdBody: UserIdBody,
-        @Path("entrance_point") entrancePoint: String? = Constants.Point.STORE,
+        @Path("entrance_point") entrancePoint: String? = Constants.Point.DEFAULT,
         @Path("package_id") packageId: Int
     ): Response<StipopResponse>
 
@@ -129,39 +158,37 @@ internal interface StipopApi {
     ): StipopResponse
 
     companion object {
-        fun create(): StipopApi {
-            val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BASIC }
-            val headers = Headers.Builder()
-                .add(
-                    Constants.ApiParams.ApiKey, if (BuildConfig.DEBUG) {
-                        Config.apikey
-                    } else {
-                        Config.apikey
-                    }
-                )
-                .add(
-                    Constants.ApiParams.SMetadata,
-                    Gson().toJson(
-                        StipopMetaHeader(
-                            platform = Constants.Value.PLATFORM,
-                            sdk_version = BuildConfig.SDK_VERSION_NAME,
-                            os_version = Build.VERSION.SDK_INT.toString()
-                        )
+        private val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BODY }
+        private val headers = Headers.Builder()
+            .add(
+                Constants.ApiParams.ApiKey, if (Constants.Value.IS_SANDBOX) {
+                    Constants.Value.SANDBOX_APIKEY
+                } else {
+                    Config.apikey
+                }
+            )
+            .add(
+                Constants.ApiParams.SMetadata,
+                Gson().toJson(
+                    StipopMetaHeader(
+                        platform = Constants.Value.PLATFORM,
+                        sdk_version = BuildConfig.SDK_VERSION_NAME,
+                        os_version = Build.VERSION.SDK_INT.toString()
                     )
                 )
-                .build()
-            val authenticator = Authenticator { _, response ->
-                response.request
-                    .newBuilder()
-                    .headers(headers)
-                    .build()
-            }
-            val client = OkHttpClient.Builder()
-                .authenticator(authenticator)
-                .addInterceptor(loggingInterceptor)
-                .build()
+            )
+            .build()
+        private val client = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .addInterceptor(Interceptor {
+                it.proceed(
+                    it.request().newBuilder().headers(headers).build()
+                )
+            })
+            .build()
+        fun create(): StipopApi {
             return Retrofit.Builder()
-                .baseUrl(if (BuildConfig.DEBUG) Constants.Value.SANDBOX_URL else Constants.Value.BASE_URL)
+                .baseUrl(if (Constants.Value.IS_SANDBOX) Constants.Value.SANDBOX_URL else Constants.Value.BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

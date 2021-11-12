@@ -162,20 +162,15 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
 
         private val focusAnimation = AnimationUtils.loadAnimation(itemView.context, R.anim.shake)
 
-        private val dateTimeTextView: AppCompatTextView =
-            itemView.findViewById(R.id.datetimeTextView)
-        private val sampleStickerImageView: AppCompatImageView =
-            itemView.findViewById(R.id.guideImageView)
+        private val dateTimeTextView: AppCompatTextView = itemView.findViewById(R.id.datetimeTextView)
+        private val sampleStickerImageView: AppCompatImageView = itemView.findViewById(R.id.guideImageView)
         private val viewGroup1: LinearLayout = itemView.findViewById(R.id.animationViewGroup1)
         private val viewGroup2: LinearLayout = itemView.findViewById(R.id.animationViewGroup2)
         private val viewGroup3: LinearLayout = itemView.findViewById(R.id.animationViewGroup3)
         private val guideTextView2: AppCompatTextView = itemView.findViewById(R.id.guideTextView2)
-        private val guideImageView: AppCompatImageView = itemView.findViewById(R.id.guideImageView)
         private val guideTextView4: AppCompatTextView = itemView.findViewById(R.id.guideTextView4)
-        private val searchViewTextView: AppCompatTextView =
-            itemView.findViewById(R.id.guideTextView5)
-        private val pickerViewTextView: AppCompatTextView =
-            itemView.findViewById(R.id.guideTextView6)
+        private val searchViewTextView: AppCompatTextView = itemView.findViewById(R.id.guideTextView5)
+        private val pickerViewTextView: AppCompatTextView = itemView.findViewById(R.id.guideTextView6)
 
         init {
             dateTimeTextView.text = SimpleDateFormat("a h:mm").format(Date())
@@ -189,7 +184,7 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
             viewGroup1.post {
                 TransitionManager.beginDelayedTransition(viewGroup1, transitionSet)
                 guideTextView2.isVisible = true
-                guideImageView.isVisible = true
+                sampleStickerImageView.isVisible = true
             }
         }
     }

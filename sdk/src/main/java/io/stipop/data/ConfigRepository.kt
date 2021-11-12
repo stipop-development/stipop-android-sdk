@@ -7,6 +7,7 @@ import io.stipop.models.response.StipopResponse
 
 internal class ConfigRepository(private val apiService: StipopApi) : BaseRepository() {
 
+    var isConfigured = false
     var currentUserId: String? = null
 
     suspend fun postInitSdk(initSdkBody: InitSdkBody, onSuccess: (data: Any) -> Unit) {
@@ -24,10 +25,12 @@ internal class ConfigRepository(private val apiService: StipopApi) : BaseReposit
         }
     }
 
-    suspend fun postConfigSdk(onSuccess: (data: Any?) -> Unit) {
-        safeCall(call = { apiService.trackConfig(UserIdBody()) }, onCompletable = {
-            onSuccess(it)
-        })
+    suspend fun postConfigSdk() {
+        if(!isConfigured){
+            safeCall(call = { apiService.trackConfig(UserIdBody()) }, onCompletable = {
+                isConfigured = true
+            })
+        }
     }
 
     suspend fun postTrackUsingSticker(

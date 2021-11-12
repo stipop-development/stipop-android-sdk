@@ -1,11 +1,10 @@
-package io.stipop.custom.dragdrop
+package io.stipop.custom
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.stipop.ItemTouchHelperDelegate
 
-internal class SimpleItemTouchHelperCallback(val delegate: ItemTouchHelperDelegate) : ItemTouchHelper.Callback() {
+internal class DragAndDropHelperCallback(val delegate: DragAndDropDelegate) : ItemTouchHelper.Callback() {
 
     override fun isItemViewSwipeEnabled(): Boolean {
         return false

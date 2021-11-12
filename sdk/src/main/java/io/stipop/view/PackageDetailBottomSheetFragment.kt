@@ -20,7 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
-import io.stipop.adapter.StickerThumbAdapter
+import io.stipop.adapter.StickerGridAdapter
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentStickerPackageBinding
 import io.stipop.event.PackageDownloadEvent
@@ -32,7 +32,7 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment() {
 
     private var binding: FragmentStickerPackageBinding? = null
     private lateinit var viewModel: PackageDetailViewModel
-    private val thumbAdapter: StickerThumbAdapter by lazy { StickerThumbAdapter() }
+    private val gridAdapter: StickerGridAdapter by lazy { StickerGridAdapter() }
 
     companion object {
         fun newInstance(packageId: Int, entrancePoint: String) =
@@ -108,10 +108,14 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment() {
         viewModel.stickerPackage.observeForever { stickerPackage ->
             stickerPackage?.let {
                 updateUi(it)
-                thumbAdapter.clearData()
-                thumbAdapter.updateDatas(it)
-            }?:run {
-                Toast.makeText(context, getString(R.string.can_not_open_package), Toast.LENGTH_SHORT).show()
+                gridAdapter.clearData()
+                gridAdapter.updateDatas(it)
+            } ?: run {
+                Toast.makeText(
+                    context,
+                    getString(R.string.can_not_open_package),
+                    Toast.LENGTH_SHORT
+                ).show()
                 dismiss()
             }
         }
@@ -127,7 +131,7 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment() {
             val entrancePoint = it.getString(Constants.IntentKey.ENTRANCE_POINT)
             val gridLayoutManager = GridLayoutManager(requireContext(), Config.detailNumOfColumns)
             binding?.recyclerView?.layoutManager = gridLayoutManager
-            binding?.recyclerView?.adapter = thumbAdapter
+            binding?.recyclerView?.adapter = gridAdapter
             binding
             lifecycleScope.launch {
                 viewModel.trackViewPackage(packageId, entrancePoint)

@@ -2,10 +2,12 @@ package io.stipop.data
 
 import android.util.Log
 import io.stipop.api.ApiResponse
-import retrofit2.Call
-import retrofit2.Callback
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEmpty
 import retrofit2.HttpException
-import retrofit2.Response
 import java.io.IOException
 import java.net.UnknownHostException
 
@@ -20,6 +22,17 @@ internal open class BaseRepository {
             onSuccess(call.invoke())
         } catch (e: Exception) {
             onError(e.message)
+        }
+    }
+
+    suspend fun <T : Any> safeCallAsFlow(
+        call: suspend () -> T
+    ): Flow<T?> {
+        return try{
+            val r = call.invoke()
+            flowOf(r)
+        }catch (e:Exception){
+            flowOf(null)
         }
     }
 

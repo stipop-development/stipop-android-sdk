@@ -3,14 +3,14 @@ package io.stipop.adapter
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import io.stipop.ItemTouchHelperDelegate
+import io.stipop.custom.DragAndDropDelegate
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.delegates.MyStickerClickDelegate
 import io.stipop.viewholder.MyStickerPackageViewHolder
 
-internal class MyPackageAdapter(private val delegate: MyStickerClickDelegate) :
+internal class MyPackageVerticalAdapter(private val delegate: MyStickerClickDelegate) :
     PagingDataAdapter<StickerPackage, MyStickerPackageViewHolder>(REPO_COMPARATOR),
-    ItemTouchHelperDelegate {
+    DragAndDropDelegate {
 
     var fromData: StickerPackage? = null
     var toData: StickerPackage? = null
