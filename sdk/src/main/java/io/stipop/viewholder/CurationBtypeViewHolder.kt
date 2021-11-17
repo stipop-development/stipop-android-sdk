@@ -31,10 +31,10 @@ internal class CurationBtypeViewHolder(
     fun bind(stickerPackage: StickerPackage) {
         this.stickerPackage = stickerPackage
         with(binding) {
-            image.loadImage(stickerPackage.cardImgUrl ?: stickerPackage.packageImg)
             val color = Color.parseColor(Config.themeMainColor)
             val drawable = frame.background as GradientDrawable
             drawable.setColor(color)
+            image.loadImage(stickerPackage.cardImgUrl ?: stickerPackage.packageImg, false)
         }
     }
 

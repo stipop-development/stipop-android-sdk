@@ -24,7 +24,7 @@ internal class VerticalStickerThumbViewHolder(private val binding: ItemVerticalS
         with(binding) {
             packageNameTextView.setTextColor(Config.getAllStickerPackageNameTextColor(itemView.context))
             artistNameTextView.setTextColor(Config.getTitleTextColor(itemView.context))
-
+            underLine.setStipopUnderlineColor()
             downloadImageView.setOnClickListener {
                 if (stickerPackage?.isDownloaded()==false) {
                     if (Stipop.instance!!.delegate.canDownload(stickerPackage!!.toSPPackage())) {
