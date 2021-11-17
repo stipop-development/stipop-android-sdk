@@ -137,6 +137,9 @@ internal interface StipopApi {
     @POST("sdk/track/view/store")
     suspend fun trackViewStore(@Body userIdBody: UserIdBody): Response<StipopResponse>
 
+    @POST("sdk/track/view/new")
+    suspend fun trackViewNew(@Body userIdBody: UserIdBody): Response<StipopResponse>
+
     @POST("sdk/track/view/mysticker")
     suspend fun trackViewMySticker(@Body userIdBody: UserIdBody): Response<StipopResponse>
 

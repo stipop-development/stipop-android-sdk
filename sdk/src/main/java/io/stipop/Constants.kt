@@ -20,17 +20,17 @@ internal object Constants {
         const val SizePerPage = 20
     }
     object Value {
-        const val IS_SANDBOX = false
+        const val IS_SANDBOX = true
         const val SANDBOX_URL = "https://sandbox.stipop.com/v1/"
         const val SANDBOX_APIKEY = "a3e68b6c54d8132f6879d5bc2c49708d"
         const val BASE_URL = "https://messenger.stipop.io/v1/"
         const val PLATFORM = "android-sdk"
     }
     object Point {
-        const val DEFAULT = "default" // 스토어
+        const val DEFAULT = "default"
         const val STORE = "store"
-        const val SEARCH = "searching" // 검색결과
-        const val TREND = "trending" // 인기이모티콘
+        const val SEARCH = "searching"
+        const val TREND = "trending"
         const val MY_STICKER = "mysticker"
         const val PACKAGE_DETAIL = "detail"
         const val PICKER_VIEW = "picker"

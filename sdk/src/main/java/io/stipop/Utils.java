@@ -959,9 +959,9 @@ public class Utils {
         return sb.toString();
     }
 
-    public static void hideKeyboard(Activity context) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(context.getWindow().getDecorView().getWindowToken(), 0);
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
     }
 
     public static boolean availableLocationService(Context context) {
@@ -1458,17 +1458,6 @@ public class Utils {
     public static void showKeyboard(final Context context) {
         InputMethodManager immhide = (InputMethodManager) context.getSystemService(context.INPUT_METHOD_SERVICE);
         immhide.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-    }
-
-    // 키보드 숨기기
-    public static void hideKeyboard(final Context context) {
-        try {
-            InputMethodManager immhide = (InputMethodManager) context.getSystemService(context.INPUT_METHOD_SERVICE);
-            immhide.hideSoftInputFromWindow(((Activity) context).getWindow().getCurrentFocus().getWindowToken(), 0);
-        } catch (NullPointerException e) {
-
-        }
-
     }
 
     public static Uri getLocalBitmapUri(Bitmap bmp) {
