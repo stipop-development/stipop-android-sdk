@@ -175,8 +175,7 @@ public class Utils {
     /**
      * EXIF정보를 회전각도로 변환하는 메서드
      *
-     * @param exifOrientation
-     *            EXIF 회전각
+     * @param exifOrientation EXIF 회전각
      * @return 실제 각도
      */
     public static int exifOrientationToDegrees(int exifOrientation) {
@@ -233,10 +232,8 @@ public class Utils {
     /**
      * 이미지를 회전시킵니다.
      *
-     * @param bitmap
-     *            비트맵 이미지
-     * @param degrees
-     *            회전 각도
+     * @param bitmap  비트맵 이미지
+     * @param degrees 회전 각도
      * @return 회전된 이미지
      */
     public static Bitmap rotate(Bitmap bitmap, int degrees) {
@@ -1043,8 +1040,8 @@ public class Utils {
      * Enables/Disables all child views in a view group.
      *
      * @param viewGroup the view group
-     * @param enabled <code>true</code> to enable, <code>false</code> to disable
-     * the views.
+     * @param enabled   <code>true</code> to enable, <code>false</code> to disable
+     *                  the views.
      */
     public static void enableDisableViewGroup(ViewGroup viewGroup, boolean enabled) {
         int childCount = viewGroup.getChildCount();
@@ -1292,6 +1289,7 @@ public class Utils {
 
     /**
      * 천단위로 콤마를 찍어서 리턴한다.
+     *
      * @param number
      * @return
      */
@@ -1994,7 +1992,10 @@ public class Utils {
             try {
                 size.x = (Integer) Display.class.getMethod("getRawWidth").invoke(display);
                 size.y = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
-            } catch (IllegalAccessException e) {} catch (InvocationTargetException e) {} catch (NoSuchMethodException e) {}
+            } catch (IllegalAccessException e) {
+            } catch (InvocationTargetException e) {
+            } catch (NoSuchMethodException e) {
+            }
         }
 
         return size;

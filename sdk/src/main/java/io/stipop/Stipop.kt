@@ -24,17 +24,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.*
 
-interface StipopDelegate {
-    fun onStickerSelected(sticker: SPSticker): Boolean
-    fun canDownload(spPackage: SPPackage): Boolean
-}
-
 class Stipop(
     private val activity: Activity,
-    private val stipopButton: StipopImageView,
+    private var stipopButton: StipopImageView? = null,
     val delegate: StipopDelegate
 ) {
-
     companion object {
 
         private val scope = CoroutineScope(Job() + Dispatchers.Main)
@@ -61,25 +55,29 @@ class Stipop(
         private var isInitialized = false
 
         fun configure(context: Context, callback: ((isSuccess: Boolean) -> Unit)? = null) {
+            scope.launch {
+                configRepository.postConfigSdk()
+            }
             Config.configure(context, callback = { result ->
-                callback?.let { it -> it(result) }
+                configRepository.isConfigured = result
+                callback?.let { callback -> callback(result) }
             })
-            scope.launch { configRepository.postConfigSdk() }
         }
 
         fun connect(
             activity: Activity,
-            stipopButton: StipopImageView,
             userId: String,
-            locale: Locale,
-            delegate: StipopDelegate
+            delegate: StipopDelegate,
+            stipopButton: StipopImageView? = null,
+            locale: Locale = Locale.getDefault(),
         ) {
             connect(activity, stipopButton, userId, locale.language, locale.country, delegate)
         }
 
+        @Deprecated("Please use connect(activity, userId, delegate, stipopButton, locale) instead. This method will be modified soon.")
         fun connect(
             activity: Activity,
-            stipopButton: StipopImageView,
+            stipopButton: StipopImageView? = null,
             userId: String,
             lang: String,
             countryCode: String,
@@ -90,7 +88,10 @@ class Stipop(
             Stipop.countryCode = countryCode
 
             if (!configRepository.isConfigured) {
-                Log.e("STIPOP-SDK", "Please call Stipop.connect() first.")
+                Log.e(
+                    "STIPOP-SDK",
+                    "Stipop SDK connect failed. Please call Stipop.configure(context) first."
+                )
                 return
             }
 
@@ -121,7 +122,8 @@ class Stipop(
 
         fun hideKeyboard() = instance?.hideKeyboard()
 
-        fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) = instance?.showStickerPackage(fragmentManager, packageId)
+        fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) =
+            instance?.showStickerPackage(fragmentManager, packageId)
 
         fun send(
             stickerId: Int,
@@ -156,49 +158,49 @@ class Stipop(
     private var keyboard: KeyboardPopup? = null
     private lateinit var rootView: View
 
-
     private var isConnected = false
     private var stickerIconEnabled = false
 
+    private fun connectIcon() {
+        stipopButton?.setImageResource(Config.getStickerIconResourceId(activity))
+        stipopButton?.setIconDefaultsColor()
+    }
+
     private fun connect() {
-        this.stipopButton.setImageResource(Config.getStickerIconResourceId(this.activity))
-        this.stipopButton.setIconDefaultsColor()
-        this.rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
-        this.setSizeForSoftKeyboard()
-        UserPref.init(this.activity.applicationContext)
-        this.isConnected = true
+        connectIcon()
+        rootView = activity.window.decorView.findViewById(android.R.id.content) as View
+        setSizeForSoftKeyboard()
+        isConnected = true
     }
 
     private fun enableStickerIcon() {
-        if (this.isConnected) {
-            this.stipopButton.setTint()
-            this.stickerIconEnabled = true
+        if (isConnected) {
+            stipopButton?.setTint()
+            stickerIconEnabled = true
         }
     }
 
     private fun disableStickerIcon() {
-        if (this.isConnected) {
-            this.stipopButton.clearTint()
+        if (isConnected) {
+            stipopButton?.clearTint()
         }
     }
 
     private fun showSearch() {
-        if (!this.isConnected) {
+        if (!isConnected) {
             return
         }
-
-        // this.enableStickerIcon()
-
-        val intent = Intent(this.activity, SearchActivity::class.java)
-        this.activity.startActivity(intent)
+        Intent(activity, SearchActivity::class.java).run {
+            activity.startActivity(this)
+        }
     }
 
     private fun showKeyboard() {
-        if (!this.isConnected) {
+        if (!isConnected) {
             return
         }
 
-        this.enableStickerIcon()
+        enableStickerIcon()
 
         if (keyboard == null) {
             keyboard = KeyboardPopup(activity)
@@ -206,7 +208,7 @@ class Stipop(
 
         if (keyboard!!.isShowing) {
             keyboard!!.dismiss()
-            this.disableStickerIcon()
+            disableStickerIcon()
         } else {
             if (keyboardHeight == 0) {
                 Utils.showKeyboard(instance!!.activity)
@@ -216,7 +218,7 @@ class Stipop(
     }
 
     private fun hideKeyboard() {
-        if (!this.isConnected) {
+        if (!isConnected) {
             return
         }
         keyboard?.let {
@@ -229,17 +231,18 @@ class Stipop(
 
     private fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) {
         Utils.hideKeyboard(activity)
-        PackageDetailBottomSheetFragment.newInstance(packageId, Constants.Point.EXTERNAL).showNow(fragmentManager, Constants.Tag.EXTERNAL)
+        PackageDetailBottomSheetFragment.newInstance(packageId, Constants.Point.EXTERNAL)
+            .showNow(fragmentManager, Constants.Tag.EXTERNAL)
     }
 
     private fun setSizeForSoftKeyboard() {
 
-        this.rootView.viewTreeObserver.addOnGlobalLayoutListener {
+        rootView.viewTreeObserver.addOnGlobalLayoutListener {
 
             val visibleFrameSize = Rect()
-            this.rootView.getWindowVisibleDisplayFrame(visibleFrameSize)
+            rootView.getWindowVisibleDisplayFrame(visibleFrameSize)
 
-            val screenHeight = Utils.getScreenHeight(this.activity)
+            val screenHeight = Utils.getScreenHeight(activity)
             val visibleFrameHeight: Int = visibleFrameSize.bottom - visibleFrameSize.top
 
             var b = 0
@@ -247,36 +250,36 @@ class Stipop(
                 b = visibleFrameSize.bottom - screenHeight
             }
 
-            if (b > this.maxBottom) {
-                this.maxBottom = b
+            if (b > maxBottom) {
+                maxBottom = b
             }
 
-            if (visibleFrameSize.top > this.maxTop) {
-                this.maxTop = visibleFrameSize.top
+            if (visibleFrameSize.top > maxTop) {
+                maxTop = visibleFrameSize.top
             }
 
-            val heightDifference = screenHeight - this.maxTop - visibleFrameHeight + this.maxBottom
+            val heightDifference = screenHeight - maxTop - visibleFrameHeight + maxBottom
 
             if (heightDifference > 100) {
                 keyboardHeight = heightDifference
 
-                if (this.keyboard != null) {
-                    val preHeight = this.keyboard!!.height
-                    this.keyboard!!.height = keyboardHeight
+                if (keyboard != null) {
+                    val preHeight = keyboard!!.height
+                    keyboard!!.height = keyboardHeight
 
-                    if (preHeight == 0 || !this.keyboard!!.isShowing) {
-                        this.keyboard!!.show()
-                        if (this.keyboard!!.isShowing) {
-                            this.enableStickerIcon()
+                    if (preHeight == 0 || !keyboard!!.isShowing) {
+                        keyboard!!.show()
+                        if (keyboard!!.isShowing) {
+                            enableStickerIcon()
                         }
                     }
                 }
             } else {
                 keyboardHeight = 0
-                if (this.keyboard != null) {
-                    this.keyboard!!.height = 0
-                    this.keyboard!!.dismiss()
-                    this.disableStickerIcon()
+                if (keyboard != null) {
+                    keyboard!!.height = 0
+                    keyboard!!.dismiss()
+                    disableStickerIcon()
                 }
             }
         }

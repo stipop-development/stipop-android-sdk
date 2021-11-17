@@ -12,7 +12,7 @@ import java.io.FileOutputStream
 import java.net.URL
 
 
-object StipopUtils {
+internal object StipopUtils {
 
     fun downloadAtLocal(stickerPackage: StickerPackage, responseCallback: () -> Unit) {
         val stickers = stickerPackage.stickers

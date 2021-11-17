@@ -27,7 +27,7 @@ internal class VerticalStickerThumbViewHolder(private val binding: ItemVerticalS
             underLine.setStipopUnderlineColor()
             downloadImageView.setOnClickListener {
                 if (stickerPackage?.isDownloaded()==false) {
-                    if (Stipop.instance!!.delegate.canDownload(stickerPackage!!.toSPPackage())) {
+                    if (Stipop.instance!!.delegate.onStickerPackageRequested(stickerPackage!!.toSPPackage())) {
                         delegate?.onDownloadClicked(bindingAdapterPosition, stickerPackage!!)
                     } else {
                         Utils.alert(itemView.context, "This sticker set can not download now. :(")

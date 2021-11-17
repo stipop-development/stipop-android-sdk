@@ -25,13 +25,9 @@ internal class ConfigRepository(private val apiService: StipopApi) : BaseReposit
         }
     }
 
-    suspend fun postConfigSdk() {
-        if(!isConfigured){
-            safeCall(call = { apiService.trackConfig(UserIdBody()) }, onCompletable = {
-                isConfigured = true
+    suspend fun postConfigSdk() = safeCall(call = { apiService.trackConfig(UserIdBody()) }, onCompletable = {
+                //
             })
-        }
-    }
 
     suspend fun postTrackUsingSticker(
         stickerId: String,
