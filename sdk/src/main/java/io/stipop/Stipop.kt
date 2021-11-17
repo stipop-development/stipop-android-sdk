@@ -121,8 +121,7 @@ class Stipop(
 
         fun hideKeyboard() = instance?.hideKeyboard()
 
-        fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) =
-            instance?.showStickerPackage(fragmentManager, packageId)
+        fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) = instance?.showStickerPackage(fragmentManager, packageId)
 
         fun send(
             stickerId: Int,
@@ -229,8 +228,8 @@ class Stipop(
     }
 
     private fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) {
-        PackageDetailBottomSheetFragment.newInstance(packageId, Constants.Point.EXTERNAL)
-            .showNow(fragmentManager, Constants.Tag.EXTERNAL)
+        Utils.hideKeyboard(activity)
+        PackageDetailBottomSheetFragment.newInstance(packageId, Constants.Point.EXTERNAL).showNow(fragmentManager, Constants.Tag.EXTERNAL)
     }
 
     private fun setSizeForSoftKeyboard() {

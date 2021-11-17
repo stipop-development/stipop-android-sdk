@@ -1,11 +1,13 @@
 package io.stipop.view
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -41,8 +43,24 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
     private lateinit var viewModel: StoreHomeViewModel
 
     private val homeTabTabAdapter: HomeTabAdapter by lazy { HomeTabAdapter(this, this) }
-    private val packageVerticalAdapter: PackageVerticalAdapter by lazy { PackageVerticalAdapter(this, Constants.Point.TREND) }
+    private val packageVerticalAdapter: PackageVerticalAdapter by lazy {
+        PackageVerticalAdapter(
+            this,
+            Constants.Point.TREND
+        )
+    }
     private var searchJob: Job? = null
+    private var backPressCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (viewModel.isSearchView) {
+                binding?.searchEditText?.setText("")
+                Utils.hideKeyboard(requireActivity())
+                binding?.searchEditText?.clearFocus()
+            } else {
+                requireActivity().finish()
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,8 +71,14 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
         return binding!!.root
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        requireActivity().onBackPressedDispatcher.addCallback(this, backPressCallback)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        backPressCallback.remove()
         binding = null
     }
 
@@ -66,13 +90,10 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
 
         with(binding!!) {
             homeRecyclerView.adapter = homeTabTabAdapter
-            allStickerRecyclerView.adapter =
-                packageVerticalAdapter.withLoadStateHeaderAndFooter(
-                    MyLoadStateAdapter { packageVerticalAdapter.retry() },
-                    MyLoadStateAdapter { packageVerticalAdapter.retry() })
+            allStickerRecyclerView.adapter = packageVerticalAdapter.withLoadStateFooter(MyLoadStateAdapter { packageVerticalAdapter.retry() })
             clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")
-                Utils.hideKeyboard(requireContext())
+                Utils.hideKeyboard(requireActivity())
                 binding?.searchEditText?.clearFocus()
             }
             searchEditText.addTextChangedListener { viewModel.flowQuery(it.toString().trim()) }
@@ -118,9 +139,10 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
         viewModel.requestDownloadPackage(stickerPackage)
     }
 
+
     override fun onKeywordClicked(keyword: String) {
         binding?.searchEditText?.setText(keyword)
-        Utils.hideKeyboard(requireContext())
+        Utils.hideKeyboard(requireActivity())
         binding?.searchEditText?.clearFocus()
     }
 }

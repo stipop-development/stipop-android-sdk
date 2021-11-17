@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewModel() {
 
     private val typedQuery = MutableStateFlow("")
+    var isSearchView = false
 
     @ExperimentalCoroutinesApi
     @FlowPreview
@@ -31,6 +32,7 @@ internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewM
     var uiState: MutableLiveData<Boolean> = MutableLiveData()
 
     fun flowQuery(keyword: String) {
+        isSearchView = keyword.isNotEmpty()
         typedQuery.value = keyword
     }
 
@@ -69,4 +71,6 @@ internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewM
         uiState.postValue(!query.isNullOrEmpty())
         return repository.getHomeStickerPackageStream(query).cachedIn(viewModelScope)
     }
+
+
 }

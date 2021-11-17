@@ -27,10 +27,10 @@ internal object Constants {
         const val PLATFORM = "android-sdk"
     }
     object Point {
-        const val DEFAULT = "default" // 스토어
+        const val DEFAULT = "default"
         const val STORE = "store"
-        const val SEARCH = "searching" // 검색결과
-        const val TREND = "trending" // 인기이모티콘
+        const val SEARCH = "searching"
+        const val TREND = "trending"
         const val MY_STICKER = "mysticker"
         const val PACKAGE_DETAIL = "detail"
         const val PICKER_VIEW = "picker"
