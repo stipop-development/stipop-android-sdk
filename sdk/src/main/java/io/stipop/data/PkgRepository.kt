@@ -44,7 +44,9 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
         return safeCallAsFlow(call = {
             apiService.getCurationPackages(
                 curationType = type,
-                userId = Stipop.userId
+                userId = Stipop.userId,
+                lang = Stipop.lang,
+                countryCode = Stipop.countryCode,
             )
         })
     }
