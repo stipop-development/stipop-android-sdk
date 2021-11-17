@@ -162,7 +162,7 @@ internal interface StipopApi {
     ): StipopResponse
 
     companion object {
-        private val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BODY }
+        private val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BASIC }
         private val headers = Headers.Builder()
             .add(
                 Constants.ApiParams.ApiKey, if (Constants.Value.IS_SANDBOX) {
