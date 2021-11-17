@@ -33,4 +33,6 @@
     <color name="c_ff855b">#ff855b</color>
     <color name="c_f34539">#F34539</color>
     <color name="c_292929">#292929</color>
+    <color name="b0_c7c7c7">#b0c7c7c7</color>
+    <color name="transparent">#FFFFFFFF</color>
 </resources>

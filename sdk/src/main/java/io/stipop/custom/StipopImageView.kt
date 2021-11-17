@@ -15,6 +15,10 @@ class StipopImageView : AppCompatImageView {
         init(attrs)
     }
 
+    enum class Density(val density: String?) {
+        DEFAULT(null), SMALL("100x100")
+    }
+
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
@@ -86,10 +90,10 @@ class StipopImageView : AppCompatImageView {
         return false
     }
 
-    fun loadImage(resUrl: String?) {
+    fun loadImage(resUrl: String?, usePlaceHolder: Boolean = true) {
         Glide.with(context)
             .load(resUrl)
-            .placeholder(R.color.cardview_shadow_start_color).into(this)
+            .placeholder(if (usePlaceHolder) R.color.b0_c7c7c7 else R.color.transparent).into(this)
     }
 
     override fun setImageResource(resId: Int) {
