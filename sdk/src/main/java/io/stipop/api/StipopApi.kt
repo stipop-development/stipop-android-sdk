@@ -22,6 +22,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.util.*
 
 internal interface StipopApi {
 
@@ -34,8 +35,8 @@ internal interface StipopApi {
     suspend fun getCurationPackages(
         @Path("type") curationType: String,
         @Query("userId") userId: String,
-        @Query("lang") lang: String? = "en",
-        @Query("countryCode") countryCode: String? = "US",
+        @Query("lang") lang: String? = Locale.getDefault().language,
+        @Query("countryCode") countryCode: String? = Locale.getDefault().country,
         @Query("pageNumber") pageNumber: Int = 1,
         @Query("limit") limit: Int = 12
     ): CurationPackageResponse
