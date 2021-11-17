@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         setContentView(R.layout.activity_main)
 
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
-        Stipop.connect(this, stipopPickerImageView, testUserId, Locale.getDefault(), this)
+        Stipop.connect(this, testUserId, this)
 
         stipopPickerImageView.setOnClickListener {
             Stipop.showKeyboard()
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         return true
     }
 
-    override fun canDownload(spPackage: SPPackage): Boolean {
+    override fun onStickerPackageRequested(spPackage: SPPackage): Boolean {
         return true
     }
 

@@ -12,7 +12,7 @@ import org.json.JSONObject
 import java.io.IOException
 import kotlin.math.roundToInt
 
-class Config {
+internal class Config {
     companion object {
 
         const val baseUrl = "https://messenger.stipop.io/v1"
@@ -85,12 +85,12 @@ class Config {
             try {
                 val json = JSONObject(jsonString)
                 parse(context, json)
-                Log.d("STIPOP-SDK", "Stipop.json configuration completed.")
                 callback(true)
+                Log.d("STIPOP-SDK", "Stipop.json configuration completed.")
             } catch (e: JSONException) {
                 e.printStackTrace()
-                Log.e("STIPOP-SDK", "Stipop.json configuration failed.\nPlease check it is in 'assets' folder.")
                 callback(false)
+                Log.e("STIPOP-SDK", "Stipop.json configuration failed.\nPlease check it is in 'assets' folder.")
             }
         }
 
