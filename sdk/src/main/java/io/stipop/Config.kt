@@ -34,8 +34,8 @@ class Config {
 
         var fontFamily = "system"
         var fontWeight = 400
-        var fontCharacter:Float = 0.0f
-        var fontFace:Typeface? = null
+        var fontCharacter: Float = 0.0f
+        var fontFace: Typeface? = null
 
         var searchbarRadius = 10
         var searchNumOfColumns = 3
@@ -80,27 +80,25 @@ class Config {
         private const val LIGHT_KEY = "light"
         private const val DARK_KEY = "dark"
 
-        fun configure(context: Context) {
+        internal fun configure(context: Context, callback: ((isSuccess: Boolean) -> Unit)) {
             val jsonString = getJsonDataFromAsset(context) ?: return
             try {
                 val json = JSONObject(jsonString)
                 parse(context, json)
+                Log.d("STIPOP-SDK", "Stipop.json configuration completed.")
+                callback(true)
             } catch (e: JSONException) {
                 e.printStackTrace()
-                println("")
-                println("")
-                println("==========================================")
-                println("sdk configuration check-out failed.")
-                println("==========================================")
-                println("")
-                println("")
+                Log.e("STIPOP-SDK", "Stipop.json configuration failed.\nPlease check it is in 'assets' folder.")
+                callback(false)
             }
         }
 
         private fun getJsonDataFromAsset(context: Context): String? {
             val jsonString: String
             try {
-                jsonString = context.assets.open(Constants.KEY.ASSET_NAME).bufferedReader().use { it.readText() }
+                jsonString = context.assets.open(Constants.KEY.ASSET_NAME).bufferedReader()
+                    .use { it.readText() }
             } catch (ioException: IOException) {
                 ioException.printStackTrace()
                 return null
@@ -115,7 +113,8 @@ class Config {
             useLightMode = Utils.getBoolen(theme, "useLightMode", true)
 
             val backgroundColor = theme?.optJSONObject("backgroundColor")
-            val groupedContentBackgroundColor = theme?.optJSONObject("groupedContentBackgroundColor")
+            val groupedContentBackgroundColor =
+                theme?.optJSONObject("groupedContentBackgroundColor")
             val mainColor = theme?.optJSONObject("mainColor")
 
             val iconColor = theme?.optJSONObject("iconColor")
@@ -141,7 +140,7 @@ class Config {
             800    Black, Extra Bold or Heavy
             900    Extra Black, Fat, Poster or Ultra Black
             */
-            var builder:Typeface.Builder? = null
+            var builder: Typeface.Builder? = null
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     builder = Typeface.Builder(context.assets, fontFamily)
@@ -149,7 +148,8 @@ class Config {
                     builder.setWeight(fontWeight) // Tell the system that this is a bold font.
                     fontFace = builder.build()
                 }
-            } catch (e:Exception) {}
+            } catch (e: Exception) {
+            }
 
             if (fontFace == null) {
                 try {
@@ -159,7 +159,8 @@ class Config {
                         builder.setWeight(fontWeight) // Tell the system that this is a bold font.
                         fontFace = builder.build()
                     }
-                } catch (e:Exception) {}
+                } catch (e: Exception) {
+                }
 
                 if (fontFace == null) {
                     try {
@@ -169,7 +170,8 @@ class Config {
                             builder.setWeight(fontWeight) // Tell the system that this is a bold font.
                             fontFace = builder.build()
                         }
-                    } catch (e:Exception) {}
+                    } catch (e: Exception) {
+                    }
                 }
             }
 
@@ -184,7 +186,8 @@ class Config {
             searchNumOfColumns = Utils.getInt(search, "numOfColumns", 3)
 
             searchbarIconName = Utils.getString(search, "searchbarIcon", "icon_search")
-            searchbarDeleteIconName = Utils.getString(search, "searchbarDeleteIcon", "ic_erase_border_3")
+            searchbarDeleteIconName =
+                Utils.getString(search, "searchbarDeleteIcon", "ic_erase_border_3")
 
             val searchTags = search?.optJSONObject("searchTags")
             searchTagsHidden = Utils.getBoolen(searchTags, "hidden", false)
@@ -197,10 +200,13 @@ class Config {
             storeTrendingBackgroundColor = Utils.getString(trending, "backgroundColor", "#eeeeee")
             storeTrendingOpacity = Utils.getDouble(trending, "opacity", 0.7)
 
-            storeDownloadIconName = Utils.getString(liteStore, "downloadIcon", "ic_download_border_3")
-            storeCompleteIconName = Utils.getString(liteStore, "completeIcon", "ic_downloaded_border_3")
+            storeDownloadIconName =
+                Utils.getString(liteStore, "downloadIcon", "ic_download_border_3")
+            storeCompleteIconName =
+                Utils.getString(liteStore, "completeIcon", "ic_downloaded_border_3")
 
-            storeRecommendedTagShow = Utils.getString(liteStore, "bottomOfSearch", "recommendedTags") == "recommendedTags"
+            storeRecommendedTagShow =
+                Utils.getString(liteStore, "bottomOfSearch", "recommendedTags") == "recommendedTags"
 
             val mySticker = json.optJSONObject("MySticker")
 
@@ -234,23 +240,29 @@ class Config {
 
             if (useLightMode) {
                 themeBackgroundColor = Utils.getString(backgroundColor, LIGHT_KEY, "#FFFFFF")
-                themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, LIGHT_KEY, "#F7F8F9")
+                themeGroupedContentBackgroundColor =
+                    Utils.getString(groupedContentBackgroundColor, LIGHT_KEY, "#F7F8F9")
                 themeMainColor = Utils.getString(mainColor, LIGHT_KEY, "#FF501E")
                 themeIconColor = Utils.getString(normalColor, LIGHT_KEY, "#414141")
                 themeIconTintColor = Utils.getString(tintColor, LIGHT_KEY, "#FF5D1E")
 
-                previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, LIGHT_KEY, "ic_favorites_on")
-                previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, LIGHT_KEY, "ic_favorites_off")
+                previewFavoritesOnIconName =
+                    Utils.getString(previewFavoritesOnIcon, LIGHT_KEY, "ic_favorites_on")
+                previewFavoritesOffIconName =
+                    Utils.getString(previewFavoritesOffIcon, LIGHT_KEY, "ic_favorites_off")
                 previewCloseIconName = Utils.getString(previewCloseIcon, LIGHT_KEY, "ic_cancel")
             } else {
                 themeBackgroundColor = Utils.getString(backgroundColor, DARK_KEY, "#171B1C")
-                themeGroupedContentBackgroundColor = Utils.getString(groupedContentBackgroundColor, DARK_KEY, "#2E363A")
+                themeGroupedContentBackgroundColor =
+                    Utils.getString(groupedContentBackgroundColor, DARK_KEY, "#2E363A")
                 themeMainColor = Utils.getString(mainColor, DARK_KEY, "#FF8558")
                 themeIconColor = Utils.getString(normalColor, DARK_KEY, "#646F7C")
                 themeIconTintColor = Utils.getString(tintColor, DARK_KEY, "#FF855B")
 
-                previewFavoritesOnIconName = Utils.getString(previewFavoritesOnIcon, DARK_KEY, "ic_favorites_on")
-                previewFavoritesOffIconName = Utils.getString(previewFavoritesOffIcon, DARK_KEY, "ic_favorites_off")
+                previewFavoritesOnIconName =
+                    Utils.getString(previewFavoritesOnIcon, DARK_KEY, "ic_favorites_on")
+                previewFavoritesOffIconName =
+                    Utils.getString(previewFavoritesOffIcon, DARK_KEY, "ic_favorites_off")
                 previewCloseIconName = Utils.getString(previewCloseIcon, DARK_KEY, "ic_cancel")
             }
 
@@ -375,7 +387,7 @@ class Config {
             return imageId
         }
 
-        fun getStoreNavigationTextColor(context: Context, selected: Boolean): Int {
+        fun getSelectableTextColor(context: Context, selected: Boolean): Int {
             return if (selected) {
                 if (!useLightMode) {
                     ContextCompat.getColor(context, R.color.c_f3f4f5)

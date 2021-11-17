@@ -1,532 +1,284 @@
 package io.stipop.view
 
 import android.app.Activity
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
+import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Build
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.*
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
-import com.bumptech.glide.Glide
 import io.stipop.*
-import io.stipop.adapter.legacy.StickerPackageThumbnailAdapter
-import io.stipop.adapter.legacy.StickerAdapter
-import io.stipop.api.APIClient
-import io.stipop.api.StipopApi
+import io.stipop.adapter.MyPackageHorizontalAdapter
+import io.stipop.adapter.StickerGridAdapter
+import io.stipop.custom.HorizontalDecoration
 import io.stipop.databinding.ViewKeyboardPopupBinding
-import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
-import io.stipop.models.body.UserIdBody
+import io.stipop.models.StickerPackage
+import io.stipop.view.viewmodel.SpvModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import java.io.IOException
 
 class KeyboardPopup(val activity: Activity) : PopupWindow(),
-    StickerPackageThumbnailAdapter.OnPackageClickListener {
+    MyPackageHorizontalAdapter.OnPackageClickListener, StickerGridAdapter.OnStickerClickListener {
 
-    val scope = CoroutineScope(Job() + Dispatchers.IO)
-    private var binding: ViewKeyboardPopupBinding = ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
-    private val packageThumbnailAdapter: StickerPackageThumbnailAdapter by lazy { StickerPackageThumbnailAdapter(this) }
-    private var stickerAdapter: StickerAdapter
-    private var previewPopup: PreviewPopup
-    var stickerData = ArrayList<SPSticker>()
-    var selectedPackage: SPPackage? = null
-    var selectedPackageId = -1
-    var page = 1
-    var totalPage = 1
-    private var lastItemVisibleFlag = false
-    var stickerPage = 1
-    var stickerTotalPage = 1
-    internal var canShow = true
-
-    private var reloadPackageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent?) {
-            if (intent != null) {
-                reloadPackages()
-            }
-        }
+    private var keyboardViewModel: SpvModel
+    private val previewPopup: PreviewPopup by lazy { PreviewPopup(activity, this@KeyboardPopup) }
+    private val ioScope = CoroutineScope(Job() + Dispatchers.IO)
+    private var binding: ViewKeyboardPopupBinding =
+        ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
+    private val packageThumbnailHorizontalAdapter: MyPackageHorizontalAdapter by lazy {
+        MyPackageHorizontalAdapter(
+            this
+        )
     }
+    private val stickerThumbnailAdapter: StickerGridAdapter by lazy { StickerGridAdapter(this) }
+    private val decoration =
+        HorizontalDecoration(Utils.dpToPx(8F).toInt(), Utils.dpToPx(8F).toInt())
 
     init {
         contentView = binding.root
         width = LinearLayout.LayoutParams.MATCH_PARENT
         height = Stipop.keyboardHeight
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) elevation = 10.0F
-
+        keyboardViewModel = SpvModel()
+        applyTheme()
         with(binding) {
-            containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
-            packageListLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-            val animator: RecyclerView.ItemAnimator? = packageThumbRecyclerView.itemAnimator
-            if (animator is SimpleItemAnimator) {
-                animator.supportsChangeAnimations = false
+            packageThumbRecyclerView.run {
+                setHasFixedSize(true)
+                setItemViewCacheSize(20)
+                adapter = packageThumbnailHorizontalAdapter
             }
-            packageThumbRecyclerView.setHasFixedSize(true)
-            packageThumbRecyclerView.setItemViewCacheSize(20)
-            val drawable2 = downloadTV.background as GradientDrawable
-            drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
-            storeIV.setImageResource(Config.getKeyboardStoreResourceId(activity))
-            storeIV.setIconDefaultsColor()
-
-
-            ///////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////
-            // Events
-
-            if (!Config.showPreview) {
-                recentPreviewOffIV.visibility = View.VISIBLE
-                recentlyIV.visibility = View.GONE
-                favoriteIV.visibility = View.GONE
-            } else {
-                recentPreviewOffIV.visibility = View.GONE
-                recentlyIV.visibility = View.VISIBLE
-                favoriteIV.visibility = View.VISIBLE
+            stickerRecyclerView.run {
+                addItemDecoration(decoration)
+                setHasFixedSize(true)
+                adapter = stickerThumbnailAdapter
             }
-
-            favoriteRL.tag = 0
-            setThemeImageIcon()
-
-            packageThumbRecyclerView.layoutManager =
-                LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-            packageThumbnailAdapter.setHasStableIds(true)
-            packageThumbnailAdapter.setOnItemClickListener(this@KeyboardPopup)
-            packageThumbRecyclerView.adapter = packageThumbnailAdapter
-
-            packageThumbRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-
-                    val lastVisibleItemPosition =
-                        (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
-                    val itemTotalCount = packageThumbnailAdapter.itemCount
-                    if (lastVisibleItemPosition + 1 == itemTotalCount && totalPage > page) {
-                        // 리스트 마지막 도착! 다음 페이지 로드!
-                        page += 1
-                        loadPackages()
-                    }
-                }
-            })
-            previewPopup = PreviewPopup(activity, this@KeyboardPopup)
-            stickerAdapter = StickerAdapter(activity, R.layout.item_sticker, stickerData)
-            stickerGV.numColumns = Config.keyboardNumOfColumns
-            stickerGV.adapter = stickerAdapter
-            stickerGV.setOnScrollListener(object : AbsListView.OnScrollListener {
-                override fun onScrollStateChanged(absListView: AbsListView?, scrollState: Int) {
-                    if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && stickerTotalPage > stickerPage) {
-                        stickerPage += 1
-                        loadFavoriteRecently()
-                    }
-                }
-                override fun onScroll(
-                    view: AbsListView?,
-                    firstVisibleItem: Int,
-                    visibleItemCount: Int,
-                    totalItemCount: Int
-                ) {
-                    lastItemVisibleFlag =
-                        (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount)
-                }
-            })
-            stickerGV.setOnItemClickListener { adapterView, view, i, l ->
-                val sticker = stickerData[i]
-                Stipop.send(sticker.stickerId, sticker.keyword, Constants.Point.PICKER_VIEW) { result ->
-                    if (result) {
-                        if (Config.showPreview) {
-                            previewPopup.sticker = sticker
-
-                            if (previewPopup.windowIsShowing()) {
-                                previewPopup.setStickerView()
-                            } else {
-                                previewPopup.show()
-                            }
-                        } else {
-                            Stipop.instance!!.delegate.onStickerSelected(sticker)
-                        }
-
-                    }
-                }
+            recentFavoriteContainer.setOnClickListener {
+                onRecentFavoriteClick()
             }
-
-            storeLL.setOnClickListener {
+            storeImageView.setOnClickListener {
                 showStore(0)
             }
-            favoriteRL.setOnClickListener {
-                favoriteRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
-
-                if (selectedPackageId == -1 && Config.showPreview) {
-                    if (favoriteRL.tag == 0) {
-                        favoriteRL.tag = 1
-                    } else {
-                        favoriteRL.tag = 0
-                    }
-                }
-
-                selectedPackageId = -1
-                packageThumbnailAdapter.notifyDataSetChanged()
-
-                stickerPage = 1
-
-                stickerData.clear()
-                stickerAdapter.notifyDataSetChanged()
-
-                loadFavoriteRecently()
-            }
-            downloadTV.setOnClickListener {
-                // download
-                PackUtils.downloadAndSaveLocal(activity, selectedPackage) {
-                    showStickers()
+        }
+        ioScope.launch {
+            keyboardViewModel.loadMyPackages().collectLatest {
+                launch(Dispatchers.Main) {
+                    packageThumbnailHorizontalAdapter.submitData(it)
                 }
             }
         }
-
-
-
-        reloadPackages()
-
-        activity.registerReceiver(
-            reloadPackageReceiver,
-            IntentFilter("${this.activity.packageName}.RELOAD_PACKAGE_LIST_NOTIFICATION")
-        )
-            .also { Log.d("DEBUGGING", "REGISTER RECEIVER") }
+        packageThumbnailHorizontalAdapter.registerAdapterDataObserver(object :
+            RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                initialize(positionStart == 0)
+                binding.packageThumbRecyclerView.scrollToPosition(0)
+            }
+        })
     }
 
-
     internal fun show() {
-        if (!this.canShow) {
+        if (isShowing) {
             return
         }
-
-        reloadPackages()
-
-        val rootView = this.activity.window.decorView.findViewById(android.R.id.content) as View
-
         if (Stipop.keyboardHeight > 0) {
+            refreshData()
             showAtLocation(
-                rootView,
+                activity.window.decorView.findViewById(android.R.id.content) as View,
                 Gravity.BOTTOM,
                 0,
                 0
             )
+            keyboardViewModel.trackSpv()
         }
     }
 
-    override fun showAtLocation(parent: View?, gravity: Int, x: Int, y: Int) {
-        super.showAtLocation(parent, gravity, x, y)
-        scope.launch {
-            StipopApi.create().trackViewPicker(UserIdBody(Stipop.userId))
-        }
+    override fun dismiss() {
+        super.dismiss()
+        packageThumbnailHorizontalAdapter.updateSelected()
     }
 
-    internal fun hide() {
-        dismiss()
+    private fun refreshData() {
+        loadRecentOrFavorite(false)
+        packageThumbnailHorizontalAdapter.updateSelected()
+        packageThumbnailHorizontalAdapter.refresh()
     }
 
-    fun showStore(tab: Int) {
-        this.hide()
-        val intent = Intent(this.activity, StoreActivity::class.java)
-        intent.putExtra(Constants.IntentKey.STARTING_TAB_POSITION, tab)
-        this.activity.startActivity(intent)
-    }
-
-    fun changeFavorite(stickerId: Int, favoriteYN: String, packageId: Int) {
-        for (i in 0 until stickerData.size) {
-            if (stickerData[i].stickerId == stickerId) {
-                stickerData[i].favoriteYN = favoriteYN
-
-                PackUtils.saveStickerJsonData(this.activity, stickerData[i], packageId)
-                break
-            }
-        }
-    }
-
-    private fun setThemeImageIcon() {
+    private fun applyRecentFavoriteTheme() {
         with(binding) {
-            favoriteIV.setImageResource(R.mipmap.ic_favorites_active)
-            recentlyIV.setImageResource(R.mipmap.ic_recents_active)
-
-            if (favoriteRL.tag == 1) {
-                favoriteIV.setIconDefaultsColor()
-                recentlyIV.setIconDefaultsColor40Opacity()
-            } else {
-                recentlyIV.setIconDefaultsColor()
-                favoriteIV.setIconDefaultsColor40Opacity()
+            recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
+            when (Config.showPreview) {
+                true -> {
+                    if (recentFavoriteContainer.tag == 1) {
+                        favoriteIV.setIconDefaultsColor()
+                        recentlyIV.setIconDefaultsColor40Opacity()
+                    } else {
+                        recentlyIV.setIconDefaultsColor()
+                        favoriteIV.setIconDefaultsColor40Opacity()
+                    }
+                }
+                false -> {
+                    recentStickerImageView.setTint()
+                }
             }
-            recentPreviewOffIV.setTint()
         }
     }
 
-    private fun clearThemeImageIcon() {
-        binding.recentPreviewOffIV.clearTint()
+    internal fun changeFavorite(stickerId: Int, favoriteYN: String, packageId: Int) {
+        stickerThumbnailAdapter.updateFavorite(stickerId, favoriteYN)?.let {
+            StipopUtils.saveStickerAsJson(activity, it, packageId)
+        }
     }
 
-    private fun reloadPackages() {
-        packageThumbnailAdapter.clearData()
-        page = 1
-        loadPackages()
-    }
-
-    private fun loadPackages() {
-
-        val params = JSONObject()
-        params.put("pageNumber", page)
-        params.put("limit", 20)
-
-        APIClient.get(
-            activity,
-            APIClient.APIPath.MY_STICKER.rawValue + "/${Stipop.userId}",
-            params
-        ) { response: JSONObject?, e: IOException? ->
-            if (page == 1) {
-                packageThumbnailAdapter.clearData()
+    private fun showStickers(selectedPackage: StickerPackage) {
+        binding.emptyListTextView.isVisible = false
+        binding.progressBar.isVisible = false
+        val stickerList = StipopUtils.getStickersFromLocal(activity, selectedPackage.packageId)
+        stickerThumbnailAdapter.updateDatas(if (stickerList.isEmpty()) selectedPackage.stickers else stickerList)
+        if (stickerList.isEmpty()) {
+            ioScope.launch {
+                StipopUtils.downloadAtLocal(selectedPackage) { }
             }
-            if (null != response) {
-                val data: ArrayList<SPPackage> = ArrayList()
-                val header = response.getJSONObject("header")
+        }
+    }
 
-                if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
-                    val body = response.getJSONObject("body")
+    private fun onRecentFavoriteClick() {
+        packageThumbnailHorizontalAdapter.updateSelected()
+        binding.progressBar.isVisible = true
+        applyRecentFavoriteTheme()
+        if (Config.showPreview) {
+            if (binding.recentFavoriteContainer.tag == 0) {
+                binding.recentFavoriteContainer.tag = 1
+            } else {
+                binding.recentFavoriteContainer.tag = 0
+            }
+        } else {
+            binding.recentFavoriteContainer.tag = 0
+        }
+        loadRecentOrFavorite(true)
+    }
 
-                    if (!response.isNull("pageMap")) {
-                        val pageMap = body.getJSONObject("pageMap")
-                        totalPage = Utils.getInt(pageMap, "pageCount")
-                    }
-
-                    if (!body.isNull("packageList")) {
-                        val packageList = body.getJSONArray("packageList")
-                        for (i in 0 until packageList.length()) {
-                            data.add(SPPackage(packageList.get(i) as JSONObject))
-                        }
+    private fun loadRecentOrFavorite(isClicked: Boolean) {
+        stickerThumbnailAdapter.clearData()
+        if (binding.recentFavoriteContainer.tag == 1) {
+            keyboardViewModel.loadFavorites(onSuccess = {
+                binding.progressBar.isVisible = false
+                if (it.isEmpty()) {
+                    initialize(!isClicked)
+                } else {
+                    applyRecentFavoriteTheme()
+                    it.forEach {
+                        stickerThumbnailAdapter.updateData(it)
                     }
                 }
-                if (page == totalPage) {
-                    data.add(SPPackage(-999))
-                }
-                var isSelectedTabValid = false
-                for (spPackage in data) {
-                    if (spPackage.packageId == selectedPackageId) {
-                        isSelectedTabValid = true
-                        break
+            })
+        } else {
+            keyboardViewModel.loadRecent(onSuccess = {
+                binding.progressBar.isVisible = false
+                if (it.isEmpty()) {
+                    binding.emptyListTextView.isVisible = true
+                    initialize(!isClicked)
+                } else {
+                    applyRecentFavoriteTheme()
+                    it.forEach {
+                        stickerThumbnailAdapter.updateData(it)
                     }
                 }
+            })
+        }
+    }
 
-                // println("isSelectedTabValid : $isSelectedTabValid")
+    override fun onPackageClick(position: Int, stickerPackage: StickerPackage) {
+        with(binding) {
+            emptyListTextView.isVisible = false
+            progressBar.isVisible = true
+            recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
+            recentStickerImageView.clearTint()
+        }
+        packageThumbnailHorizontalAdapter.updateSelected(position)
+        stickerThumbnailAdapter.clearData()
+        keyboardViewModel.loadStickerPackage(stickerPackage, onSuccess = {
+            it?.let {
+                showStickers(it)
+            }
+        })
+    }
 
-                if (isSelectedTabValid) {
-                    if (selectedPackageId == -1) {
-                        stickerPage = 1
-                        loadRecently()
+    override fun onStickerClick(position: Int, spSticker: SPSticker) {
+        Stipop.send(
+            spSticker.stickerId,
+            spSticker.keyword,
+            Constants.Point.PICKER_VIEW
+        ) { result ->
+            if (result) {
+                if (Config.showPreview) {
+                    previewPopup.sticker = spSticker
+                    if (previewPopup.windowIsShowing()) {
+                        previewPopup.setStickerView()
+                    } else {
+                        previewPopup.show()
                     }
                 } else {
-                    selectedPackageId = -1
-                    stickerPage = 1
-                    loadRecently()
+                    keyboardViewModel.saveRecent(spSticker)
+                    Stipop.instance?.delegate?.onStickerSelected(spSticker)
                 }
-                packageThumbnailAdapter.setData(data)
-            } else {
-                e?.printStackTrace()
             }
-
         }
-
     }
 
-    private fun showStickers() {
+    private fun showStore(startingPosition: Int) {
+        dismiss()
+        Intent(activity, StoreActivity::class.java).apply {
+            putExtra(Constants.IntentKey.STARTING_TAB_POSITION, startingPosition)
+        }.run {
+            activity.startActivity(this)
+        }
+    }
+
+    private fun applyTheme() {
         with(binding) {
-            stickerData.clear()
-            stickerAdapter.notifyDataSetChanged()
-
-            val stickerList = PackUtils.stickerListOf(activity, selectedPackageId)
-            if (stickerList.size == 0) {
-                stickerGV.visibility = View.GONE
-                downloadLL.visibility = View.VISIBLE
-
-                val packageImg = selectedPackage!!.packageImg
-                val packageName = selectedPackage!!.packageName
-                val artistName = selectedPackage!!.artistName
-
-                Glide.with(activity).load(packageImg).into(packageIV)
-                packageNameTV.text = packageName
-                artistNameTV.text = artistName
-
-            } else {
-                stickerGV.visibility = View.VISIBLE
-                downloadLL.visibility = View.GONE
-
-                for (i in 0 until stickerList.size) {
-                    stickerData.add(stickerList[i])
-                }
-
-                stickerAdapter.notifyDataSetChanged()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                progressBar.indeterminateTintList =
+                    ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
             }
-        }
-    }
-
-    private fun loadStickers() {
-        binding.favoriteRL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-
-        stickerData.clear()
-
-        val params = JSONObject()
-        params.put("userId", Stipop.userId)
-
-        APIClient.get(
-            activity,
-            APIClient.APIPath.PACKAGE.rawValue + "/$selectedPackageId",
-            params
-        ) { response: JSONObject?, e: IOException? ->
-
-            if (null != response) {
-
-                val header = response.getJSONObject("header")
-
-                if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
-                    val body = response.getJSONObject("body")
-                    this.selectedPackage = SPPackage(body.getJSONObject("package"))
-
-                    showStickers()
+            containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
+            packageListHeader.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
+            storeImageView.setImageResource(Config.getKeyboardStoreResourceId(activity))
+            storeImageView.setIconDefaultsColor()
+            favoriteIV.setImageResource(R.mipmap.ic_favorites_active)
+            recentlyIV.setImageResource(R.mipmap.ic_recents_active)
+            recentFavoriteContainer.tag = 0
+            when (Config.showPreview) {
+                true -> {
+                    recentStickerImageView.visibility = View.GONE
+                    recentlyIV.visibility = View.VISIBLE
+                    favoriteIV.visibility = View.VISIBLE
+                }
+                false -> {
+                    recentStickerImageView.visibility = View.VISIBLE
+                    recentlyIV.visibility = View.GONE
+                    favoriteIV.visibility = View.GONE
                 }
             }
-
+            stickerRecyclerView.layoutManager =
+                GridLayoutManager(activity, Config.keyboardNumOfColumns)
         }
-
+        applyRecentFavoriteTheme()
     }
 
-    private fun loadFavoriteRecently() {
-        setThemeImageIcon()
-
-        selectedPackageId = -1
-
-        // Favorite
-        if (binding.favoriteRL.tag == 1) {
-            loadFavorite()
-        } else {
-            // Recently
-            loadRecently()
-        }
-    }
-
-    private fun loadFavorite() {
-        with(binding) {
-            favoriteRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
-            downloadLL.visibility = View.GONE
-            stickerGV.visibility = View.VISIBLE
-        }
-
-        val params = JSONObject()
-        params.put("pageNumber", stickerPage)
-        params.put("limit", 12)
-
-        APIClient.get(
-            activity,
-            APIClient.APIPath.MY_STICKER_FAVORITE.rawValue + "/${Stipop.userId}",
-            null
-        ) { response: JSONObject?, e: IOException? ->
-
-            // println(response)
-
-            if (stickerPage == 1) {
-                stickerData.clear()
-                stickerAdapter.notifyDataSetChanged()
-            }
-
-            if (null != response) {
-
-                val header = response.getJSONObject("header")
-
-                if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
-                    val body = response.getJSONObject("body")
-
-                    if (!response.isNull("pageMap")) {
-                        val pageMap = body.getJSONObject("pageMap")
-                        stickerTotalPage = Utils.getInt(pageMap, "pageCount")
-                    }
-
-                    if (!body.isNull("favoriteList")) {
-                        val favoriteList = body.getJSONArray("favoriteList")
-
-                        for (i in 0 until favoriteList.length()) {
-                            stickerData.add(SPSticker(favoriteList.get(i) as JSONObject))
-                        }
-
-                        stickerAdapter.notifyDataSetChanged()
-
-                    }
-
+    private fun initialize(isFirst: Boolean? = false) {
+        if (isFirst == true) {
+            if (keyboardViewModel.recentStickers.isEmpty() && !packageThumbnailHorizontalAdapter.isSelectedItemExist()) {
+                packageThumbnailHorizontalAdapter.getItemByPosition(0)?.let {
+                    onPackageClick(0, it)
                 }
             }
-
-        }
-    }
-
-    private fun loadRecently() {
-        with(binding) {
-            favoriteRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
-            downloadLL.visibility = View.GONE
-            stickerGV.visibility = View.VISIBLE
-        }
-
-        val params = JSONObject()
-        params.put("pageNumber", stickerPage)
-        params.put("limit", 12)
-
-        APIClient.get(
-            activity,
-            APIClient.APIPath.PACKAGE_RECENT.rawValue + "/${Stipop.userId}",
-            null
-        ) { response: JSONObject?, e: IOException? ->
-
-            if (stickerPage == 1) {
-                stickerData.clear()
-                stickerAdapter.notifyDataSetChanged()
-            }
-
-            if (null != response) {
-
-                val header = response.getJSONObject("header")
-
-                if (!response.isNull("body") && Utils.getString(header, "status") == "success") {
-                    val body = response.getJSONObject("body")
-
-                    if (!response.isNull("pageMap")) {
-                        val pageMap = body.getJSONObject("pageMap")
-                        stickerTotalPage = Utils.getInt(pageMap, "pageCount")
-                    }
-
-                    if (!body.isNull("stickerList")) {
-                        val stickerList = body.getJSONArray("stickerList")
-
-                        for (i in 0 until stickerList.length()) {
-                            stickerData.add(SPSticker(stickerList[i] as JSONObject))
-                        }
-                        stickerAdapter.notifyDataSetChanged()
-                    }
-                }
-            }
-        }
-    }
-
-    override fun onItemClick(position: Int, data: SPPackage) {
-        if (position > packageThumbnailAdapter.itemCount) {
-            return
-        }
-        clearThemeImageIcon()
-        if (data.packageId == -999) {
-            showStore(1)
-        } else {
-            selectedPackageId = data.packageId
-            packageThumbnailAdapter.notifyDataSetChanged()
-            loadStickers()
         }
     }
 }

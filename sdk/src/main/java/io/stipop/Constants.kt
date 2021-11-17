@@ -6,6 +6,7 @@ internal object Constants {
     }
     object Tag {
         const val DETAIL = "PD"
+        const val EXTERNAL = "EXTERNAL"
     }
     object IntentKey {
         const val STARTING_TAB_POSITION = "tab"
@@ -19,20 +20,24 @@ internal object Constants {
         const val SizePerPage = 20
     }
     object Value {
-//        const val SANDBOX_URL = "https://sandbox.stipop.com/v1/"
+        const val IS_SANDBOX = false
+        const val SANDBOX_URL = "https://sandbox.stipop.com/v1/"
         const val SANDBOX_APIKEY = "a3e68b6c54d8132f6879d5bc2c49708d"
-        const val SANDBOX_URL = "https://messenger.stipop.io/v1/"
         const val BASE_URL = "https://messenger.stipop.io/v1/"
         const val PLATFORM = "android-sdk"
     }
     object Point {
-        const val DEFAULT = "default" // 스토어
+        const val DEFAULT = "default"
         const val STORE = "store"
-        const val SEARCH = "searching" // 검색결과
-        const val TREND = "trending" // 인기이모티콘
+        const val SEARCH = "searching"
+        const val TREND = "trending"
         const val MY_STICKER = "mysticker"
         const val PACKAGE_DETAIL = "detail"
         const val PICKER_VIEW = "picker"
         const val SEARCH_VIEW = "search"
+        const val EXTERNAL = "external"
+        const val CURATE_A = "curation_a"
+        const val CURATE_B = "curation_b"
+        const val NEW = "new"
     }
 }

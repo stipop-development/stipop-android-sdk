@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import io.stipop.Config
 import io.stipop.R
 
@@ -13,7 +14,16 @@ class StipopImageView : AppCompatImageView {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init(attrs)
     }
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+
+    enum class Density(val density: String?) {
+        DEFAULT(null), SMALL("100x100")
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         init(attrs)
     }
 
@@ -61,7 +71,6 @@ class StipopImageView : AppCompatImageView {
         if (checkErrorIcon()) {
             return
         }
-
         setColorFilter(Color.parseColor(Config.themeIconTintColor))
     }
 
@@ -81,8 +90,10 @@ class StipopImageView : AppCompatImageView {
         return false
     }
 
-    fun loadImage(resUrl: String?){
-        Glide.with(context).load(resUrl).into(this)
+    fun loadImage(resUrl: String?, usePlaceHolder: Boolean = true) {
+        Glide.with(context)
+            .load(resUrl)
+            .placeholder(if (usePlaceHolder) R.color.b0_c7c7c7 else R.color.transparent).into(this)
     }
 
     override fun setImageResource(resId: Int) {

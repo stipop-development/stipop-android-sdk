@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/containerLL"
     android:layout_width="49dp"
     android:layout_height="42dp"
@@ -9,6 +10,7 @@
         android:id="@+id/imageIV"
         android:layout_width="29dp"
         android:layout_height="29dp"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        tools:src="@tools:sample/avatars"/>
 
 </LinearLayout>

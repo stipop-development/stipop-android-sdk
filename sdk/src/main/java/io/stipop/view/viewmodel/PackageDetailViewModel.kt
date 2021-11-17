@@ -3,7 +3,7 @@ package io.stipop.view.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.stipop.PackUtils
+import io.stipop.StipopUtils
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.data.StickerDetailRepository
@@ -12,9 +12,10 @@ import io.stipop.models.StickerPackage
 import io.stipop.models.body.UserIdBody
 import kotlinx.coroutines.launch
 
-internal class PackageDetailViewModel(private val repository: StickerDetailRepository) : ViewModel() {
+internal class PackageDetailViewModel(private val repository: StickerDetailRepository) :
+    ViewModel() {
 
-    var stickerPackage: MutableLiveData<StickerPackage> = MutableLiveData()
+    var stickerPackage: MutableLiveData<StickerPackage?> = MutableLiveData()
 
     fun trackViewPackage(packageId: Int, entrancePoint: String?) {
         viewModelScope.launch {
@@ -30,7 +31,7 @@ internal class PackageDetailViewModel(private val repository: StickerDetailRepos
         viewModelScope.launch {
             repository.getStickerPackage(packageId, onSuccess = {
                 if (it.header.isSuccess()) {
-                    stickerPackage.postValue(it.body.stickerPackage)
+                    stickerPackage.postValue(it.body?.stickerPackage)
                 }
             })
         }
@@ -41,7 +42,7 @@ internal class PackageDetailViewModel(private val repository: StickerDetailRepos
             stickerPackage.value?.let { stickerPackage ->
                 if (!stickerPackage.isDownloaded()) {
                     repository.postDownloadStickers(stickerPackage) {
-                        PackUtils.downloadAndSaveLocalV2(stickerPackage) {
+                        StipopUtils.downloadAtLocal(stickerPackage) {
                             PackageDownloadEvent.publishEvent(stickerPackage.packageId)
                         }
                     }

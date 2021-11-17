@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,7 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
-import io.stipop.adapter.GridStickerAdapter
+import io.stipop.adapter.StickerGridAdapter
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentStickerPackageBinding
 import io.stipop.event.PackageDownloadEvent
@@ -31,7 +32,7 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment() {
 
     private var binding: FragmentStickerPackageBinding? = null
     private lateinit var viewModel: PackageDetailViewModel
-    private val adapter: GridStickerAdapter by lazy { GridStickerAdapter() }
+    private val gridAdapter: StickerGridAdapter by lazy { StickerGridAdapter() }
 
     companion object {
         fun newInstance(packageId: Int, entrancePoint: String) =
@@ -104,9 +105,19 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment() {
         viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
             PackageDetailViewModel::class.java
         )
-        viewModel.stickerPackage.observeForever {
-            updateUi(it)
-            adapter.updateData(it)
+        viewModel.stickerPackage.observeForever { stickerPackage ->
+            stickerPackage?.let {
+                updateUi(it)
+                gridAdapter.clearData()
+                gridAdapter.updateDatas(it)
+            } ?: run {
+                Toast.makeText(
+                    context,
+                    getString(R.string.can_not_open_package),
+                    Toast.LENGTH_SHORT
+                ).show()
+                dismiss()
+            }
         }
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
             binding?.run {
@@ -120,7 +131,7 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment() {
             val entrancePoint = it.getString(Constants.IntentKey.ENTRANCE_POINT)
             val gridLayoutManager = GridLayoutManager(requireContext(), Config.detailNumOfColumns)
             binding?.recyclerView?.layoutManager = gridLayoutManager
-            binding?.recyclerView?.adapter = adapter
+            binding?.recyclerView?.adapter = gridAdapter
             binding
             lifecycleScope.launch {
                 viewModel.trackViewPackage(packageId, entrancePoint)

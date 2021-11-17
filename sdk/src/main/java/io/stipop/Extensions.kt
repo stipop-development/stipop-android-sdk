@@ -25,18 +25,6 @@ fun View.setStipopUnderlineColor() {
 }
 
 fun TabLayout.setTabLayoutStyle() {
-//    StateListDrawable().apply {
-//        addState(
-//            intArrayOf(R.attr.state_selected),
-//            ColorDrawable(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-//        )
-//        addState(
-//            intArrayOf(-R.attr.state_selected),
-//            ColorDrawable(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-//        )
-//    }.let {
-//        background = it
-//    }
     setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
     ColorStateList(
         arrayOf(

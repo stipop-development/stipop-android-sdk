@@ -6,7 +6,6 @@ import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
 import io.stipop.models.response.StickerPackageResponse
-import io.stipop.models.response.StipopResponse
 
 internal class StickerDetailRepository(private val apiService: StipopApi) : BaseRepository() {
 
@@ -15,7 +14,7 @@ internal class StickerDetailRepository(private val apiService: StipopApi) : Base
         onSuccess: (data: StickerPackageResponse) -> Unit
     ) {
         safeCall(
-            call = { apiService.getSingleStickerPackage(packageId, Stipop.userId) },
+            call = { apiService.getStickerPackage(packageId, Stipop.userId) },
             onCompletable = {
                 it?.let(onSuccess)
             })

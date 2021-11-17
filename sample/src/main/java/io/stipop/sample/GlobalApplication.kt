@@ -1,9 +1,9 @@
 package io.stipop.sample
 
-import android.app.Application
+import androidx.multidex.MultiDexApplication
 import io.stipop.Stipop
 
-class GlobalApplication : Application() {
+class GlobalApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
