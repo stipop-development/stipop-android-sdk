@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         setContentView(R.layout.activity_main)
 
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
-        Stipop.connect(this, testUserId, this)
+        Stipop.connect(this, testUserId, this, stipopPickerImageView)
 
         stipopPickerImageView.setOnClickListener {
             Stipop.showKeyboard()
