@@ -5,9 +5,13 @@ import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
+import io.stipop.Utils
 import io.stipop.databinding.ItemCuratedCardTypeBBinding
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
@@ -31,10 +35,17 @@ internal class CurationBtypeViewHolder(
     fun bind(stickerPackage: StickerPackage) {
         this.stickerPackage = stickerPackage
         with(binding) {
-            val color = Color.parseColor(Config.themeMainColor)
+            val colorCode = if (Config.useLightMode) {
+                stickerPackage.lightBackgroundCode
+            } else {
+                stickerPackage.darkBackgroundCode
+            }
+            val color = Color.parseColor(colorCode ?: Config.themeMainColor)
             val drawable = frame.background as GradientDrawable
             drawable.setColor(color)
-            image.loadImage(stickerPackage.cardImgUrl ?: stickerPackage.packageImg, false)
+            Glide.with(itemView.context)
+                .load(stickerPackage.cardImgUrl ?: stickerPackage.packageImg)
+                .transform(CenterCrop(), RoundedCorners(Utils.pxToDp(7).toInt())).into(image)
         }
     }
 

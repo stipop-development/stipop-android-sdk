@@ -8,26 +8,29 @@ import io.stipop.models.response.StipopResponse
 internal class ConfigRepository(private val apiService: StipopApi) : BaseRepository() {
 
     var isConfigured = false
+    var isInitialized = false
     var currentUserId: String? = null
 
-    suspend fun postInitSdk(initSdkBody: InitSdkBody, onSuccess: (data: Any) -> Unit) {
+    suspend fun postInitSdk(initSdkBody: InitSdkBody, onSuccess: ((data: Any) -> Unit)? = null) {
         initSdkBody.userId?.let {
-            if (currentUserId == it) {
-                onSuccess(Unit)
+            if (currentUserId == it || isInitialized) {
+                onSuccess?.let { it(Unit) }
             } else {
                 currentUserId = it
                 safeCall(call = { apiService.initSdk(initSdkBody) }, onCompletable = {
-                    onSuccess(Unit)
+                    onSuccess?.let { it(Unit) }
                 })
+                isInitialized = true
             }
         } ?: kotlin.run {
-            onSuccess(Unit)
+            onSuccess?.let { it(Unit) }
         }
     }
 
-    suspend fun postConfigSdk() = safeCall(call = { apiService.trackConfig(UserIdBody()) }, onCompletable = {
-                //
-            })
+    suspend fun postConfigSdk() =
+        safeCall(call = { apiService.trackConfig(UserIdBody()) }, onCompletable = {
+            //
+        })
 
     suspend fun postTrackUsingSticker(
         stickerId: String,

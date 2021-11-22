@@ -53,9 +53,10 @@ internal class HomeTabAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun setInitData(sets: ArrayList<Any?>) {
+        val filter = sets.filterNotNull()
         dataSet.clear()
         notifyDataSetChanged()
-        dataSet.addAll(sets)
+        dataSet.addAll(filter)
         notifyDataSetChanged()
     }
 
