@@ -49,7 +49,7 @@ internal class StickerPickerView(private val activity: Activity, private val vis
     }
     private val stickerThumbnailAdapter: StickerGridAdapter by lazy { StickerGridAdapter(this) }
     private val decoration =
-        HorizontalDecoration(Utils.dpToPx(8F).toInt(), Utils.dpToPx(8F).toInt())
+        HorizontalDecoration(StipopUtils.dpToPx(8F).toInt(), StipopUtils.dpToPx(8F).toInt())
 
     init {
         contentView = binding.root

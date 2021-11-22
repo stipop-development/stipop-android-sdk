@@ -196,7 +196,7 @@ class Stipop(
         } else {
             stickerPickerView.wantShowing = true
             if (currentKeyboardHeight == 0) {
-                Utils.showKeyboard(instance!!.activity)
+                StipopUtils.showKeyboard(instance!!.activity)
             } else {
                 stickerPickerView.show()
             }
@@ -208,7 +208,7 @@ class Stipop(
     }
 
     private fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) {
-        Utils.hideKeyboard(activity)
+        StipopUtils.hideKeyboard(activity)
         PackageDetailBottomSheetFragment.newInstance(packageId, Constants.Point.EXTERNAL)
             .showNow(fragmentManager, Constants.Tag.EXTERNAL)
     }
@@ -217,7 +217,7 @@ class Stipop(
         rootView = activity.window.decorView.findViewById(android.R.id.content) as View
         rootView.viewTreeObserver.addOnGlobalLayoutListener {
             val heightDifference = getBottomChangedHeight()
-            if (heightDifference > Utils.pxToDp(100)) {
+            if (heightDifference > StipopUtils.pxToDp(100)) {
                 currentKeyboardHeight = heightDifference
                 stickerPickerView.let { spv ->
                     if (!spv.isShowing && spv.wantShowing) {
@@ -235,7 +235,7 @@ class Stipop(
     private fun getBottomChangedHeight(): Int {
         val visibleFrameSize = Rect()
         rootView.getWindowVisibleDisplayFrame(visibleFrameSize)
-        val screenHeight = Utils.getScreenHeight(activity)
+        val screenHeight = StipopUtils.getScreenHeight(activity)
         val visibleFrameHeight: Int = visibleFrameSize.bottom - visibleFrameSize.top
         var b = 0
         if (screenHeight < visibleFrameSize.bottom) {
