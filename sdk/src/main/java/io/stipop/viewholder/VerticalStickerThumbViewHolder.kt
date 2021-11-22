@@ -30,7 +30,7 @@ internal class VerticalStickerThumbViewHolder(private val binding: ItemVerticalS
                     if (Stipop.instance!!.delegate.onStickerPackageRequested(stickerPackage!!.toSPPackage())) {
                         delegate?.onDownloadClicked(bindingAdapterPosition, stickerPackage!!)
                     } else {
-                        Utils.alert(itemView.context, "This sticker set can not download now. :(")
+                        StipopUtils.alert(itemView.context, "This sticker set can not download now. :(")
                     }
                 }
             }

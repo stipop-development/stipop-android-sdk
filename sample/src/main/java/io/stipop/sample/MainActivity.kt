@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -57,7 +58,9 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         setContentView(R.layout.activity_main)
 
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
-        Stipop.connect(this, testUserId, this)
+        Stipop.connect(this, testUserId, this, stipopPickerImageView, taskCallBack = {
+            Log.d(this.javaClass.name, "Use callback if you need.")
+        })
 
         stipopPickerImageView.setOnClickListener {
             Stipop.showKeyboard()

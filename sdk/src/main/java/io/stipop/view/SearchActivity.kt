@@ -56,7 +56,7 @@ internal class SearchActivity: Activity() {
 
         val drawable2 = searchBarContainer.background as GradientDrawable
         drawable2.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
-        drawable2.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
+        drawable2.cornerRadius = StipopUtils.dpToPx(Config.searchbarRadius.toFloat())
 
         searchIV.setImageResource(Config.getSearchbarResourceId(context))
         clearSearchImageView.setImageResource(Config.getEraseResourceId(context))
@@ -89,7 +89,7 @@ internal class SearchActivity: Activity() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                val keyword = Utils.getString(searchEditText)
+                val keyword = searchEditText.text.toString().trim()
 
                 page = 1
                 search(keyword)
@@ -104,7 +104,7 @@ internal class SearchActivity: Activity() {
                 }
 
                 val item = keywords[position]
-                val keyword = Utils.getString(item, "keyword")
+                val keyword = StipopUtils.getString(item, "keyword")
                 page = 1
                 search(keyword)
             }
@@ -126,7 +126,7 @@ internal class SearchActivity: Activity() {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastItemVisibleFlag && totalPage > page) {
                     page += 1
 
-                    search(Utils.getString(searchEditText))
+                    search(searchEditText.text.toString().trim())
                 }
             }
 
@@ -212,7 +212,7 @@ internal class SearchActivity: Activity() {
 
                     if (!body.isNull("pageMap")) {
                         val pageMap = body.getJSONObject("pageMap")
-                        totalPage = Utils.getInt(pageMap, "pageCount")
+                        totalPage = StipopUtils.getInt(pageMap, "pageCount")
                     }
 
                     if (!body.isNull("stickerList")) {

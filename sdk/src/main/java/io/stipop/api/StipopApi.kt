@@ -185,9 +185,7 @@ internal interface StipopApi {
         private val client = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor(Interceptor {
-                it.proceed(
-                    it.request().newBuilder().headers(headers).build()
-                )
+                it.proceed(it.request().newBuilder().headers(headers).build())
             })
             .build()
         fun create(): StipopApi {

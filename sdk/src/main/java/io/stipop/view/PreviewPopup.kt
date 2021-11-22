@@ -13,7 +13,7 @@ import io.stipop.models.SPSticker
 import org.json.JSONObject
 import java.io.IOException
 
-internal class PreviewPopup(val activity: Activity, val keyboard: KeyboardPopup) : PopupWindow() {
+internal class PreviewPopup(val activity: Activity, val keyboard: StickerPickerView) : PopupWindow() {
 
     private lateinit var rootView: View
 
@@ -26,7 +26,7 @@ internal class PreviewPopup(val activity: Activity, val keyboard: KeyboardPopup)
 
     fun show() {
 
-        if (Stipop.keyboardHeight == 0) {
+        if (Stipop.currentKeyboardHeight == 0) {
             return
         }
 
@@ -64,7 +64,7 @@ internal class PreviewPopup(val activity: Activity, val keyboard: KeyboardPopup)
             this.rootView,
             Gravity.BOTTOM,
             0,
-            Stipop.keyboardHeight + Config.previewPadding + Utils.getNavigationBarSize(this.activity).y
+            Stipop.currentKeyboardHeight + Config.previewPadding + StipopUtils.getNavigationBarSize(activity).y
         )
     }
 
@@ -98,7 +98,7 @@ internal class PreviewPopup(val activity: Activity, val keyboard: KeyboardPopup)
 
                 val header = response.getJSONObject("header")
 
-                if (Utils.getString(header, "status") == "success") {
+                if (StipopUtils.getString(header, "status") == "success") {
                     if (sticker.favoriteYN != "Y") {
                         sticker.favoriteYN = "Y"
                     } else {

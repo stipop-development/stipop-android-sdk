@@ -5,10 +5,10 @@ import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import io.stipop.*
 import io.stipop.Config
 import io.stipop.Constants
-import io.stipop.R
-import io.stipop.Utils
+import io.stipop.StipopUtils
 import io.stipop.databinding.ItemHorizontalStickerThumbBinding
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
@@ -41,8 +41,8 @@ internal class HorizontalStickerThumbViewHolder(private val binding: ItemHorizon
     companion object {
         fun create(parent: ViewGroup, delegate: StickerPackageClickDelegate?): HorizontalStickerThumbViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_horizontal_sticker_thumb, parent, false)
-            val screenWidth = Utils.getScreenWidth(parent.context)
-            val itemWidth = (screenWidth - Utils.dpToPx(48F) - (Utils.dpToPx(7F) * 3)) / 4
+            val screenWidth = StipopUtils.getScreenWidth(parent.context)
+            val itemWidth = (screenWidth - StipopUtils.dpToPx(48F) - (StipopUtils.dpToPx(7F) * 3)) / 4
             val itemHeight = (75 * itemWidth) / 73
             view.layoutParams = ViewGroup.LayoutParams(itemWidth.toInt(), itemHeight.toInt())
 

@@ -1,5 +1,6 @@
 package io.stipop.view.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,12 +44,9 @@ internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewM
                 repository.getCurationPackagesAsFlow("a"),
                 repository.getCurationPackagesAsFlow("b")
             ) { value1, value2, value3 ->
-                val lists = arrayListOf(
-                    value1?.body?.keywordList,
-                    value2?.body?.card,
-                    value3?.body?.card
-                )
-                emit(lists)
+                arrayListOf(value1?.body?.keywordList, value2?.body?.card, value3?.body?.card).run {
+                    emit(this)
+                }
             }.collect {
                 homeDataFlow.postValue(it)
             }

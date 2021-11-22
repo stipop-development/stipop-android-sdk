@@ -25,11 +25,20 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class KeyboardPopup(val activity: Activity) : PopupWindow(),
-    MyPackageHorizontalAdapter.OnPackageClickListener, StickerGridAdapter.OnStickerClickListener {
+internal class StickerPickerView(private val activity: Activity, private val visibleStateListener: VisibleStateListener) : PopupWindow(), MyPackageHorizontalAdapter.OnPackageClickListener, StickerGridAdapter.OnStickerClickListener {
 
+    interface VisibleStateListener {
+        fun onSpvVisibleState(isVisible: Boolean)
+    }
+
+    var wantShowing: Boolean = false
     private var keyboardViewModel: SpvModel
-    private val previewPopup: PreviewPopup by lazy { PreviewPopup(activity, this@KeyboardPopup) }
+    private val previewPopup: PreviewPopup by lazy {
+        PreviewPopup(
+            activity,
+            this@StickerPickerView
+        )
+    }
     private val ioScope = CoroutineScope(Job() + Dispatchers.IO)
     private var binding: ViewKeyboardPopupBinding =
         ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
@@ -40,12 +49,12 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
     }
     private val stickerThumbnailAdapter: StickerGridAdapter by lazy { StickerGridAdapter(this) }
     private val decoration =
-        HorizontalDecoration(Utils.dpToPx(8F).toInt(), Utils.dpToPx(8F).toInt())
+        HorizontalDecoration(StipopUtils.dpToPx(8F).toInt(), StipopUtils.dpToPx(8F).toInt())
 
     init {
         contentView = binding.root
         width = LinearLayout.LayoutParams.MATCH_PARENT
-        height = Stipop.keyboardHeight
+        height = Stipop.currentKeyboardHeight
         keyboardViewModel = SpvModel()
         applyTheme()
         with(binding) {
@@ -87,7 +96,7 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
         if (isShowing) {
             return
         }
-        if (Stipop.keyboardHeight > 0) {
+        if (Stipop.currentKeyboardHeight > 0) {
             refreshData()
             showAtLocation(
                 activity.window.decorView.findViewById(android.R.id.content) as View,
@@ -95,13 +104,16 @@ class KeyboardPopup(val activity: Activity) : PopupWindow(),
                 0,
                 0
             )
+            visibleStateListener.onSpvVisibleState(true)
             keyboardViewModel.trackSpv()
         }
     }
 
     override fun dismiss() {
+        wantShowing = false
         super.dismiss()
         packageThumbnailHorizontalAdapter.updateSelected()
+        visibleStateListener.onSpvVisibleState(false)
     }
 
     private fun refreshData() {

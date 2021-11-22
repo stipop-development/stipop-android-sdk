@@ -2,9 +2,12 @@ package io.stipop.api
 
 import android.app.Activity
 import io.stipop.Config
-import io.stipop.Utils
+import io.stipop.StipopUtils
 import org.json.JSONObject
-import java.io.*
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -92,7 +95,7 @@ internal class APIClient {
                     result.append("&")
                 }
 
-                val value = Utils.getString(params, key)
+                val value = StipopUtils.getString(params, key)
                 result.append(URLEncoder.encode(key, "UTF-8"))
                 result.append("=")
                 result.append(URLEncoder.encode(value, "UTF-8"))

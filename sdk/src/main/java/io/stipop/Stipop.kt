@@ -11,11 +11,8 @@ import androidx.fragment.app.FragmentManager
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
 import io.stipop.data.ConfigRepository
-import io.stipop.data.UserPref
-import io.stipop.models.SPPackage
-import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
-import io.stipop.view.KeyboardPopup
+import io.stipop.view.StickerPickerView
 import io.stipop.view.PackageDetailBottomSheetFragment
 import io.stipop.view.SearchActivity
 import kotlinx.coroutines.CoroutineScope
@@ -28,10 +25,10 @@ class Stipop(
     private val activity: Activity,
     private var stipopButton: StipopImageView? = null,
     val delegate: StipopDelegate
-) {
+) : StickerPickerView.VisibleStateListener {
     companion object {
 
-        private val scope = CoroutineScope(Job() + Dispatchers.Main)
+        private val mainScope = CoroutineScope(Job() + Dispatchers.Main)
 
         private val configRepository: ConfigRepository by lazy { ConfigRepository(StipopApi.create()) }
 
@@ -49,13 +46,11 @@ class Stipop(
         var countryCode = "US"
             private set
 
-        internal var keyboardHeight = 0
+        internal var currentKeyboardHeight = 0
             private set
 
-        private var isInitialized = false
-
         fun configure(context: Context, callback: ((isSuccess: Boolean) -> Unit)? = null) {
-            scope.launch {
+            mainScope.launch {
                 configRepository.postConfigSdk()
             }
             Config.configure(context, callback = { result ->
@@ -70,50 +65,67 @@ class Stipop(
             delegate: StipopDelegate,
             stipopButton: StipopImageView? = null,
             locale: Locale = Locale.getDefault(),
-        ) {
-            connect(activity, stipopButton, userId, locale.language, locale.country, delegate)
-        }
-
-        @Deprecated("Please use connect(activity, userId, delegate, stipopButton, locale) instead. This method will be modified soon.")
-        fun connect(
-            activity: Activity,
-            stipopButton: StipopImageView? = null,
-            userId: String,
-            lang: String,
-            countryCode: String,
-            delegate: StipopDelegate
+            taskCallBack: ((isSuccess: Boolean) -> Unit)? = null
         ) {
             Stipop.userId = userId
-            Stipop.lang = lang
-            Stipop.countryCode = countryCode
+            Stipop.lang = locale.language
+            Stipop.countryCode = locale.country
 
             if (!configRepository.isConfigured) {
                 Log.e(
                     "STIPOP-SDK",
                     "Stipop SDK connect failed. Please call Stipop.configure(context) first."
                 )
-                return
-            }
-
-            val requestBody = InitSdkBody(userId = Stipop.userId, lang = Stipop.lang)
-            scope.launch {
-                if (!isInitialized) {
-                    configRepository.postInitSdk(requestBody, onSuccess = {
-                        Stipop(activity, stipopButton, delegate).apply {
-                            connect()
-                            instance = this
-                            applicationContext = activity.applicationContext
-                        }
-                        isInitialized = true
-                    })
-                } else {
+                taskCallBack?.let { it(false) }
+            } else {
+                Log.d(
+                    "STIPOP-SDK",
+                    "Stipop SDK connect succeeded. Please call Stipop.showKeyboard() or Stipop.showSearch()"
+                )
+                applicationContext = activity.applicationContext
+                mainScope.launch {
+                    configRepository.postInitSdk(
+                        initSdkBody = InitSdkBody(
+                            userId = Stipop.userId,
+                            lang = lang
+                        )
+                    )
                     Stipop(activity, stipopButton, delegate).apply {
-                        connect()
+                        connectView()
+                        connectIcon()
+                    }.run {
                         instance = this
-                        applicationContext = activity.applicationContext
+                        taskCallBack?.let { it(true) }
                     }
                 }
             }
+        }
+
+        @Deprecated(
+            "Please use connect(activity, userId, delegate, stipopButton, locale) instead. This method will be modified soon.",
+            ReplaceWith(
+                "connect(activity, userId, delegate, stipopButton, Locale(lang, countryCode), taskCallBack)",
+                "io.stipop.Stipop.Companion.connect",
+                "java.util.Locale"
+            )
+        )
+        fun connect(
+            activity: Activity,
+            stipopButton: StipopImageView? = null,
+            userId: String,
+            lang: String,
+            countryCode: String,
+            delegate: StipopDelegate,
+            taskCallBack: ((isSuccess: Boolean) -> Unit)? = null
+        ) {
+            connect(
+                activity,
+                userId,
+                delegate,
+                stipopButton,
+                Locale(lang, countryCode),
+                taskCallBack
+            )
         }
 
         fun showSearch() = instance?.showSearch()
@@ -131,10 +143,7 @@ class Stipop(
             entrancePoint: String,
             completionHandler: (result: Boolean) -> Unit
         ) {
-            if (instance == null || instance?.isConnected == false) {
-                return
-            }
-            scope.launch {
+            mainScope.launch {
                 configRepository.postTrackUsingSticker(
                     stickerId = stickerId.toString(),
                     userId = userId,
@@ -153,134 +162,101 @@ class Stipop(
         }
     }
 
+    private val stickerPickerView: StickerPickerView by lazy { StickerPickerView(activity, this) }
     private var maxTop = 0
     private var maxBottom = 0
-    private var keyboard: KeyboardPopup? = null
     private lateinit var rootView: View
 
-    private var isConnected = false
-    private var stickerIconEnabled = false
+    private fun connectView() {
+        setSpvHeight()
+    }
 
     private fun connectIcon() {
         stipopButton?.setImageResource(Config.getStickerIconResourceId(activity))
         stipopButton?.setIconDefaultsColor()
     }
 
-    private fun connect() {
-        connectIcon()
-        rootView = activity.window.decorView.findViewById(android.R.id.content) as View
-        setSizeForSoftKeyboard()
-        isConnected = true
-    }
-
     private fun enableStickerIcon() {
-        if (isConnected) {
-            stipopButton?.setTint()
-            stickerIconEnabled = true
-        }
+        stipopButton?.setTint()
     }
 
     private fun disableStickerIcon() {
-        if (isConnected) {
-            stipopButton?.clearTint()
-        }
+        stipopButton?.clearTint()
     }
 
     private fun showSearch() {
-        if (!isConnected) {
-            return
-        }
         Intent(activity, SearchActivity::class.java).run {
             activity.startActivity(this)
         }
     }
 
     private fun showKeyboard() {
-        if (!isConnected) {
-            return
-        }
-
-        enableStickerIcon()
-
-        if (keyboard == null) {
-            keyboard = KeyboardPopup(activity)
-        }
-
-        if (keyboard!!.isShowing) {
-            keyboard!!.dismiss()
-            disableStickerIcon()
+        if (stickerPickerView.isShowing) {
+            stickerPickerView.dismiss()
         } else {
-            if (keyboardHeight == 0) {
-                Utils.showKeyboard(instance!!.activity)
+            stickerPickerView.wantShowing = true
+            if (currentKeyboardHeight == 0) {
+                StipopUtils.showKeyboard(instance!!.activity)
+            } else {
+                stickerPickerView.show()
             }
-            keyboard!!.show()
         }
     }
 
     private fun hideKeyboard() {
-        if (!isConnected) {
-            return
-        }
-        keyboard?.let {
-            if (it.isShowing) {
-                it.dismiss()
-                disableStickerIcon()
-            }
-        }
+        stickerPickerView.dismiss()
     }
 
     private fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) {
-        Utils.hideKeyboard(activity)
+        StipopUtils.hideKeyboard(activity)
         PackageDetailBottomSheetFragment.newInstance(packageId, Constants.Point.EXTERNAL)
             .showNow(fragmentManager, Constants.Tag.EXTERNAL)
     }
 
-    private fun setSizeForSoftKeyboard() {
-
+    private fun setSpvHeight() {
+        rootView = activity.window.decorView.findViewById(android.R.id.content) as View
         rootView.viewTreeObserver.addOnGlobalLayoutListener {
-
-            val visibleFrameSize = Rect()
-            rootView.getWindowVisibleDisplayFrame(visibleFrameSize)
-
-            val screenHeight = Utils.getScreenHeight(activity)
-            val visibleFrameHeight: Int = visibleFrameSize.bottom - visibleFrameSize.top
-
-            var b = 0
-            if (screenHeight < visibleFrameSize.bottom) {
-                b = visibleFrameSize.bottom - screenHeight
-            }
-
-            if (b > maxBottom) {
-                maxBottom = b
-            }
-
-            if (visibleFrameSize.top > maxTop) {
-                maxTop = visibleFrameSize.top
-            }
-
-            val heightDifference = screenHeight - maxTop - visibleFrameHeight + maxBottom
-
-            if (heightDifference > 100) {
-                keyboardHeight = heightDifference
-
-                if (keyboard != null) {
-                    val preHeight = keyboard!!.height
-                    keyboard!!.height = keyboardHeight
-
-                    if (preHeight == 0 || !keyboard!!.isShowing) {
-                        keyboard!!.show()
-                        if (keyboard!!.isShowing) {
-                            enableStickerIcon()
-                        }
+            val heightDifference = getBottomChangedHeight()
+            if (heightDifference > StipopUtils.pxToDp(100)) {
+                currentKeyboardHeight = heightDifference
+                stickerPickerView.let { spv ->
+                    if (!spv.isShowing && spv.wantShowing) {
+                        spv.height = currentKeyboardHeight
+                        spv.show()
                     }
                 }
             } else {
-                keyboardHeight = 0
-                if (keyboard != null) {
-                    keyboard!!.height = 0
-                    keyboard!!.dismiss()
-                    disableStickerIcon()
-                }
+                currentKeyboardHeight = 0
+                stickerPickerView.dismiss()
+            }
+        }
+    }
+
+    private fun getBottomChangedHeight(): Int {
+        val visibleFrameSize = Rect()
+        rootView.getWindowVisibleDisplayFrame(visibleFrameSize)
+        val screenHeight = StipopUtils.getScreenHeight(activity)
+        val visibleFrameHeight: Int = visibleFrameSize.bottom - visibleFrameSize.top
+        var b = 0
+        if (screenHeight < visibleFrameSize.bottom) {
+            b = visibleFrameSize.bottom - screenHeight
+        }
+        if (b > maxBottom) {
+            maxBottom = b
+        }
+        if (visibleFrameSize.top > maxTop) {
+            maxTop = visibleFrameSize.top
+        }
+        return screenHeight - maxTop - visibleFrameHeight + maxBottom
+    }
+
+    override fun onSpvVisibleState(isVisible: Boolean) {
+        when (isVisible) {
+            true -> {
+                enableStickerIcon()
+            }
+            false -> {
+                disableStickerIcon()
             }
         }
     }
