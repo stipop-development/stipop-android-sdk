@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.Utils
+import io.stipop.StipopUtils
 import io.stipop.custom.StipopImageView
 import io.stipop.models.SPPackage
 
@@ -34,8 +34,8 @@ internal class PopularStickerAdapter(private val dataList: ArrayList<SPPackage>,
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_popular_sticker, viewGroup, false)
-        val screenWidth = Utils.getScreenWidth(context)
-        val itemWidth = (screenWidth - Utils.dpToPx(48F) - (Utils.dpToPx(7F) * 3)) / 4
+        val screenWidth = StipopUtils.getScreenWidth(context)
+        val itemWidth = (screenWidth - StipopUtils.dpToPx(48F) - (StipopUtils.dpToPx(7F) * 3)) / 4
         val itemHeight = (75 * itemWidth) / 73
         view.layoutParams = ViewGroup.LayoutParams(itemWidth.toInt(), itemHeight.toInt())
 

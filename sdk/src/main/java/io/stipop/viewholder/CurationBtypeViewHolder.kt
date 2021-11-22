@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import io.stipop.*
 import io.stipop.Config
 import io.stipop.Constants
-import io.stipop.R
-import io.stipop.Utils
+import io.stipop.StipopUtils
 import io.stipop.databinding.ItemCuratedCardTypeBBinding
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
@@ -45,7 +45,7 @@ internal class CurationBtypeViewHolder(
             drawable.setColor(color)
             Glide.with(itemView.context)
                 .load(stickerPackage.cardImgUrl ?: stickerPackage.packageImg)
-                .transform(CenterCrop(), RoundedCorners(Utils.pxToDp(7).toInt())).into(image)
+                .transform(CenterCrop(), RoundedCorners(StipopUtils.pxToDp(7).toInt())).into(image)
         }
     }
 

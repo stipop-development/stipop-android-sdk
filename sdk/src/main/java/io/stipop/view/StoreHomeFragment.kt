@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import io.stipop.Config
 import io.stipop.Constants
-import io.stipop.Utils
+import io.stipop.StipopUtils
 import io.stipop.adapter.HomeTabAdapter
 import io.stipop.adapter.MyLoadStateAdapter
 import io.stipop.adapter.PackageVerticalAdapter
@@ -23,9 +23,9 @@ import io.stipop.base.Injection
 import io.stipop.databinding.FragmentStoreHomeBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
-import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 import io.stipop.view.viewmodel.StoreHomeViewModel
 import io.stipop.viewholder.delegates.KeywordClickDelegate
+import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -54,7 +54,7 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
         override fun handleOnBackPressed() {
             if (viewModel.isSearchView) {
                 binding?.searchEditText?.setText("")
-                Utils.hideKeyboard(requireActivity())
+                StipopUtils.hideKeyboard(requireActivity())
                 binding?.searchEditText?.clearFocus()
             } else {
                 requireActivity().finish()
@@ -93,7 +93,7 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
             allStickerRecyclerView.adapter = packageVerticalAdapter.withLoadStateFooter(MyLoadStateAdapter { packageVerticalAdapter.retry() })
             clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")
-                Utils.hideKeyboard(requireActivity())
+                StipopUtils.hideKeyboard(requireActivity())
                 binding?.searchEditText?.clearFocus()
             }
             searchEditText.addTextChangedListener { viewModel.flowQuery(it.toString().trim()) }
@@ -121,7 +121,7 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
         with(binding) {
             val drawable = this?.searchBarContainer?.background as GradientDrawable
             drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-            drawable.cornerRadius = Utils.dpToPx(Config.searchbarRadius.toFloat())
+            drawable.cornerRadius = StipopUtils.dpToPx(Config.searchbarRadius.toFloat())
             this.searchEditText.setTextColor(Config.getSearchTitleTextColor(requireContext()))
             this.searchIconIV.setImageResource(Config.getSearchbarResourceId(requireContext()))
             this.clearSearchImageView.setImageResource(Config.getEraseResourceId(requireContext()))
@@ -142,7 +142,7 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
 
     override fun onKeywordClicked(keyword: String) {
         binding?.searchEditText?.setText(keyword)
-        Utils.hideKeyboard(requireActivity())
+        StipopUtils.hideKeyboard(requireActivity())
         binding?.searchEditText?.clearFocus()
     }
 }

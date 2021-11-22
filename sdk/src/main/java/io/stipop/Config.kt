@@ -107,10 +107,10 @@ internal class Config {
         }
 
         private fun parse(context: Context, json: JSONObject) {
-            apikey = Utils.getString(json, "api_key")
+            apikey = StipopUtils.getString(json, "api_key")
 
             val theme = json.optJSONObject("Theme")
-            useLightMode = Utils.getBoolen(theme, "useLightMode", true)
+            useLightMode = StipopUtils.getBoolean(theme, "useLightMode", true)
 
             val backgroundColor = theme?.optJSONObject("backgroundColor")
             val groupedContentBackgroundColor =
@@ -124,9 +124,9 @@ internal class Config {
             val font = theme?.optJSONObject("font")
 
             // font
-            fontFamily = Utils.getString(font, "family", "system").lowercase()
-            fontWeight = Utils.getInt(font, "weight", 400)
-            fontCharacter = Utils.getFloat(font, "character")
+            fontFamily = StipopUtils.getString(font, "family", "system").lowercase()
+            fontWeight = StipopUtils.getInt(font, "weight", 400)
+            fontCharacter = StipopUtils.getFloat(font, "character")
 
             // weight
             /*
@@ -178,92 +178,92 @@ internal class Config {
 
 
 
-            stickerIconNormalName = Utils.getString(json, "StickerIcon", "ic_sticker_border_3")
+            stickerIconNormalName = StipopUtils.getString(json, "StickerIcon", "ic_sticker_border_3")
 
             val search = json.optJSONObject("Search")
 
-            searchbarRadius = Utils.getInt(search, "searchbarRadius", 10)
-            searchNumOfColumns = Utils.getInt(search, "numOfColumns", 3)
+            searchbarRadius = StipopUtils.getInt(search, "searchbarRadius", 10)
+            searchNumOfColumns = StipopUtils.getInt(search, "numOfColumns", 3)
 
-            searchbarIconName = Utils.getString(search, "searchbarIcon", "icon_search")
+            searchbarIconName = StipopUtils.getString(search, "searchbarIcon", "icon_search")
             searchbarDeleteIconName =
-                Utils.getString(search, "searchbarDeleteIcon", "ic_erase_border_3")
+                StipopUtils.getString(search, "searchbarDeleteIcon", "ic_erase_border_3")
 
             val searchTags = search?.optJSONObject("searchTags")
-            searchTagsHidden = Utils.getBoolen(searchTags, "hidden", false)
+            searchTagsHidden = StipopUtils.getBoolean(searchTags, "hidden", false)
 
             val liteStore = json.optJSONObject("LiteStore")
-            storeListType = Utils.getString(liteStore, "listType", "horizontal")
+            storeListType = StipopUtils.getString(liteStore, "listType", "horizontal")
 
             val trending = liteStore?.optJSONObject("trending")
-            storeTrendingUseBackgroundColor = Utils.getBoolen(trending, "useBackgroundColor", false)
-            storeTrendingBackgroundColor = Utils.getString(trending, "backgroundColor", "#eeeeee")
-            storeTrendingOpacity = Utils.getDouble(trending, "opacity", 0.7)
+            storeTrendingUseBackgroundColor = StipopUtils.getBoolean(trending, "useBackgroundColor", false)
+            storeTrendingBackgroundColor = StipopUtils.getString(trending, "backgroundColor", "#eeeeee")
+            storeTrendingOpacity = StipopUtils.getDouble(trending, "opacity", 0.7)
 
             storeDownloadIconName =
-                Utils.getString(liteStore, "downloadIcon", "ic_download_border_3")
+                StipopUtils.getString(liteStore, "downloadIcon", "ic_download_border_3")
             storeCompleteIconName =
-                Utils.getString(liteStore, "completeIcon", "ic_downloaded_border_3")
+                StipopUtils.getString(liteStore, "completeIcon", "ic_downloaded_border_3")
 
             storeRecommendedTagShow =
-                Utils.getString(liteStore, "bottomOfSearch", "recommendedTags") == "recommendedTags"
+                StipopUtils.getString(liteStore, "bottomOfSearch", "recommendedTags") == "recommendedTags"
 
             val mySticker = json.optJSONObject("MySticker")
 
-            orderIconName = Utils.getString(mySticker, "orderIcon", "ic_move_border_3")
-            hideIconName = Utils.getString(mySticker, "hideIcon", "ic_hide_border_3")
+            orderIconName = StipopUtils.getString(mySticker, "orderIcon", "ic_move_border_3")
+            hideIconName = StipopUtils.getString(mySticker, "hideIcon", "ic_hide_border_3")
 
             val keyboard = json.optJSONObject("Keyboard")
-            keyboardNumOfColumns = Utils.getInt(keyboard, "numOfColumns", 3)
-            keyboardStoreIconName = Utils.getString(keyboard, "liteStoreIcon", "ic_store")
+            keyboardNumOfColumns = StipopUtils.getInt(keyboard, "numOfColumns", 3)
+            keyboardStoreIconName = StipopUtils.getString(keyboard, "liteStoreIcon", "ic_store")
 
             val storePolicy = json.optJSONObject("StorePolicy")
-            allowPremium = Utils.getString(storePolicy, "allowPremium", "N")
+            allowPremium = StipopUtils.getString(storePolicy, "allowPremium", "N")
 
             val price = storePolicy?.optJSONObject("price")
-            pngPrice = Utils.getDouble(price, "png", 0.99)
-            gifPrice = Utils.getDouble(price, "gif", 1.99)
+            pngPrice = StipopUtils.getDouble(price, "png", 0.99)
+            gifPrice = StipopUtils.getDouble(price, "gif", 1.99)
 
             val sticker = json.optJSONObject("Sticker")
 
-            detailBackIconName = Utils.getString(sticker, "backIcon", "ic_back_border_3")
-            detailCloseIconName = Utils.getString(sticker, "closeIcon", "ic_close_border_3")
-            detailNumOfColumns = Utils.getInt(sticker, "numOfColumns", 3)
+            detailBackIconName = StipopUtils.getString(sticker, "backIcon", "ic_back_border_3")
+            detailCloseIconName = StipopUtils.getString(sticker, "closeIcon", "ic_close_border_3")
+            detailNumOfColumns = StipopUtils.getInt(sticker, "numOfColumns", 3)
 
             val send = json.getJSONObject("Send")
-            showPreview = Utils.getBoolen(send, "preview")
-            previewPadding = Utils.getInt(send, "previewPadding", 100)
+            showPreview = StipopUtils.getBoolean(send, "preview")
+            previewPadding = StipopUtils.getInt(send, "previewPadding", 100)
 
             val previewFavoritesOnIcon = send.getJSONObject("favoritesOnIcon")
             val previewFavoritesOffIcon = send.getJSONObject("favoritesOffIcon")
             val previewCloseIcon = send.getJSONObject("closeIcon")
 
             if (useLightMode) {
-                themeBackgroundColor = Utils.getString(backgroundColor, LIGHT_KEY, "#FFFFFF")
+                themeBackgroundColor = StipopUtils.getString(backgroundColor, LIGHT_KEY, "#FFFFFF")
                 themeGroupedContentBackgroundColor =
-                    Utils.getString(groupedContentBackgroundColor, LIGHT_KEY, "#F7F8F9")
-                themeMainColor = Utils.getString(mainColor, LIGHT_KEY, "#FF501E")
-                themeIconColor = Utils.getString(normalColor, LIGHT_KEY, "#414141")
-                themeIconTintColor = Utils.getString(tintColor, LIGHT_KEY, "#FF5D1E")
+                    StipopUtils.getString(groupedContentBackgroundColor, LIGHT_KEY, "#F7F8F9")
+                themeMainColor = StipopUtils.getString(mainColor, LIGHT_KEY, "#FF501E")
+                themeIconColor = StipopUtils.getString(normalColor, LIGHT_KEY, "#414141")
+                themeIconTintColor = StipopUtils.getString(tintColor, LIGHT_KEY, "#FF5D1E")
 
                 previewFavoritesOnIconName =
-                    Utils.getString(previewFavoritesOnIcon, LIGHT_KEY, "ic_favorites_on")
+                    StipopUtils.getString(previewFavoritesOnIcon, LIGHT_KEY, "ic_favorites_on")
                 previewFavoritesOffIconName =
-                    Utils.getString(previewFavoritesOffIcon, LIGHT_KEY, "ic_favorites_off")
-                previewCloseIconName = Utils.getString(previewCloseIcon, LIGHT_KEY, "ic_cancel")
+                    StipopUtils.getString(previewFavoritesOffIcon, LIGHT_KEY, "ic_favorites_off")
+                previewCloseIconName = StipopUtils.getString(previewCloseIcon, LIGHT_KEY, "ic_cancel")
             } else {
-                themeBackgroundColor = Utils.getString(backgroundColor, DARK_KEY, "#171B1C")
+                themeBackgroundColor = StipopUtils.getString(backgroundColor, DARK_KEY, "#171B1C")
                 themeGroupedContentBackgroundColor =
-                    Utils.getString(groupedContentBackgroundColor, DARK_KEY, "#2E363A")
-                themeMainColor = Utils.getString(mainColor, DARK_KEY, "#FF8558")
-                themeIconColor = Utils.getString(normalColor, DARK_KEY, "#646F7C")
-                themeIconTintColor = Utils.getString(tintColor, DARK_KEY, "#FF855B")
+                    StipopUtils.getString(groupedContentBackgroundColor, DARK_KEY, "#2E363A")
+                themeMainColor = StipopUtils.getString(mainColor, DARK_KEY, "#FF8558")
+                themeIconColor = StipopUtils.getString(normalColor, DARK_KEY, "#646F7C")
+                themeIconTintColor = StipopUtils.getString(tintColor, DARK_KEY, "#FF855B")
 
                 previewFavoritesOnIconName =
-                    Utils.getString(previewFavoritesOnIcon, DARK_KEY, "ic_favorites_on")
+                    StipopUtils.getString(previewFavoritesOnIcon, DARK_KEY, "ic_favorites_on")
                 previewFavoritesOffIconName =
-                    Utils.getString(previewFavoritesOffIcon, DARK_KEY, "ic_favorites_off")
-                previewCloseIconName = Utils.getString(previewCloseIcon, DARK_KEY, "ic_cancel")
+                    StipopUtils.getString(previewFavoritesOffIcon, DARK_KEY, "ic_favorites_off")
+                previewCloseIconName = StipopUtils.getString(previewCloseIcon, DARK_KEY, "ic_cancel")
             }
 
             Log.d("Configuration", "UseLightMode : $useLightMode")
@@ -271,7 +271,7 @@ internal class Config {
 
         fun getStickerIconResourceId(context: Context): Int {
             return if (stickerIconNormalName.isNotEmpty()) {
-                Utils.getResource(stickerIconNormalName, context)
+                StipopUtils.getResource(stickerIconNormalName, context)
             } else {
                 R.mipmap.ic_sticker_border_3
             }
@@ -279,7 +279,7 @@ internal class Config {
 
         fun getKeyboardStoreResourceId(context: Context): Int {
             return if (keyboardStoreIconName.isNotEmpty()) {
-                Utils.getResource(keyboardStoreIconName, context)
+                StipopUtils.getResource(keyboardStoreIconName, context)
             } else {
                 R.mipmap.ic_store
             }
@@ -287,7 +287,7 @@ internal class Config {
 
         fun getSearchbarResourceId(context: Context): Int {
             return if (searchbarIconName.isNotEmpty()) {
-                Utils.getResource(searchbarIconName, context)
+                StipopUtils.getResource(searchbarIconName, context)
             } else {
                 R.mipmap.icon_search
             }
@@ -295,7 +295,7 @@ internal class Config {
 
         fun getEraseResourceId(context: Context): Int {
             return if (searchbarDeleteIconName.isNotEmpty()) {
-                Utils.getResource(searchbarDeleteIconName, context)
+                StipopUtils.getResource(searchbarDeleteIconName, context)
             } else {
                 R.mipmap.ic_erase_border_3
             }
@@ -304,7 +304,7 @@ internal class Config {
         fun getDownloadIconResourceId(context: Context): Int {
             var imageId = R.mipmap.ic_download_border_3
             if (storeDownloadIconName.isNotEmpty()) {
-                imageId = Utils.getResource(storeDownloadIconName, context)
+                imageId = StipopUtils.getResource(storeDownloadIconName, context)
             }
             return imageId
         }
@@ -312,7 +312,7 @@ internal class Config {
         fun getCompleteIconResourceId(context: Context): Int {
             var imageId = R.mipmap.ic_downloaded_border_3
             if (storeCompleteIconName.isNotEmpty()) {
-                imageId = Utils.getResource(storeCompleteIconName, context)
+                imageId = StipopUtils.getResource(storeCompleteIconName, context)
             }
             return imageId
         }
@@ -320,7 +320,7 @@ internal class Config {
         fun getOrderIconResourceId(context: Context): Int {
             var imageId = R.mipmap.ic_move_border_3
             if (orderIconName.isNotEmpty()) {
-                imageId = Utils.getResource(orderIconName, context)
+                imageId = StipopUtils.getResource(orderIconName, context)
             }
             return imageId
         }
@@ -336,7 +336,7 @@ internal class Config {
         fun getHideIconResourceId(context: Context): Int {
             var imageId = R.mipmap.ic_hide_border_3
             if (hideIconName.isNotEmpty()) {
-                imageId = Utils.getResource(hideIconName, context)
+                imageId = StipopUtils.getResource(hideIconName, context)
             }
             return imageId
         }
@@ -344,7 +344,7 @@ internal class Config {
         fun getBackIconResourceId(context: Context): Int {
             var imageId = R.mipmap.ic_back_border_3
             if (detailBackIconName.isNotEmpty()) {
-                imageId = Utils.getResource(detailBackIconName, context)
+                imageId = StipopUtils.getResource(detailBackIconName, context)
             }
             return imageId
         }
@@ -352,7 +352,7 @@ internal class Config {
         fun getCloseIconResourceId(context: Context): Int {
             var imageId = R.mipmap.ic_close_border_3
             if (detailCloseIconName.isNotEmpty()) {
-                imageId = Utils.getResource(detailCloseIconName, context)
+                imageId = StipopUtils.getResource(detailCloseIconName, context)
             }
             return imageId
         }
@@ -360,12 +360,12 @@ internal class Config {
         fun getPreviewFavoriteResourceId(context: Context, favorite: Boolean): Int {
             var imageId = R.mipmap.ic_favorites_off
             if (previewFavoritesOffIconName.isNotEmpty()) {
-                imageId = Utils.getResource(previewFavoritesOffIconName, context)
+                imageId = StipopUtils.getResource(previewFavoritesOffIconName, context)
             }
             if (favorite) {
                 imageId = R.mipmap.ic_favorites_on
                 if (previewFavoritesOnIconName.isNotEmpty()) {
-                    imageId = Utils.getResource(previewFavoritesOnIconName, context)
+                    imageId = StipopUtils.getResource(previewFavoritesOnIconName, context)
                 }
             }
             return imageId
@@ -374,7 +374,7 @@ internal class Config {
         fun getPreviewCloseResourceId(context: Context): Int {
             var imageId = R.mipmap.ic_cancel
             if (previewCloseIconName.isNotEmpty()) {
-                imageId = Utils.getResource(previewCloseIconName, context)
+                imageId = StipopUtils.getResource(previewCloseIconName, context)
             }
             return imageId
         }

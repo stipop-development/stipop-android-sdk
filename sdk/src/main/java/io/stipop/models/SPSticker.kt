@@ -1,6 +1,6 @@
 package io.stipop.models
 
-import io.stipop.Utils
+import io.stipop.StipopUtils
 import org.json.JSONObject
 
 class SPSticker() {
@@ -27,11 +27,11 @@ class SPSticker() {
     }
 
     constructor(json: JSONObject) : this() {
-        this.packageId = Utils.getInt(json, "packageId")
-        this.stickerId = Utils.getInt(json, "stickerId")
-        this.stickerImg = Utils.getString(json, "stickerImg")
-        this.favoriteYN = Utils.getString(json, "favoriteYN")
-        this.keyword = Utils.getString(json, "keyword")
+        this.packageId = StipopUtils.getInt(json, "packageId")
+        this.stickerId = StipopUtils.getInt(json, "stickerId")
+        this.stickerImg = StipopUtils.getString(json, "stickerImg")
+        this.favoriteYN = StipopUtils.getString(json, "favoriteYN")
+        this.keyword = StipopUtils.getString(json, "keyword")
     }
 
 }

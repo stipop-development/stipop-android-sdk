@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.Utils
+import io.stipop.StipopUtils
 import org.json.JSONObject
 
 
@@ -41,7 +41,7 @@ internal class KeywordAdapter(private val dataList: ArrayList<JSONObject>):
         val drawable = holder.keywordTV.background as GradientDrawable
         drawable.setColor(Color.parseColor(Config.themeMainColor))
 
-        holder.keywordTV.text = Utils.getString(item, "keyword")
+        holder.keywordTV.text = StipopUtils.getString(item, "keyword")
         holder.keywordTV.setOnClickListener {
             if (mListener != null) {
                 mListener!!.onItemClick(position)

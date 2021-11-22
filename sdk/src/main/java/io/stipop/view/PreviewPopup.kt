@@ -64,7 +64,7 @@ internal class PreviewPopup(val activity: Activity, val keyboard: StickerPickerV
             this.rootView,
             Gravity.BOTTOM,
             0,
-            Stipop.currentKeyboardHeight + Config.previewPadding + Utils.getNavigationBarSize(this.activity).y
+            Stipop.currentKeyboardHeight + Config.previewPadding + StipopUtils.getNavigationBarSize(activity).y
         )
     }
 
@@ -98,7 +98,7 @@ internal class PreviewPopup(val activity: Activity, val keyboard: StickerPickerV
 
                 val header = response.getJSONObject("header")
 
-                if (Utils.getString(header, "status") == "success") {
+                if (StipopUtils.getString(header, "status") == "success") {
                     if (sticker.favoriteYN != "Y") {
                         sticker.favoriteYN = "Y"
                     } else {

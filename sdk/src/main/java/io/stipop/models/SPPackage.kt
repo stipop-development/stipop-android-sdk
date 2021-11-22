@@ -1,6 +1,6 @@
 package io.stipop.models
 
-import io.stipop.Utils
+import io.stipop.StipopUtils
 import org.json.JSONObject
 
 class SPPackage() {
@@ -59,19 +59,19 @@ class SPPackage() {
     }
 
     constructor(json: JSONObject) : this() {
-        this.packageId = Utils.getInt(json, "packageId")
-        this.packageName = Utils.getString(json, "packageName")
-        this.packageImg = Utils.getString(json, "packageImg")
-        this.packageCategory = Utils.getString(json, "packageCategory")
-        this.packageKeywords = Utils.getString(json, "packageKeywords")
-        this.packageAnimated = Utils.getString(json, "packageAnimated")
-        this.new = Utils.getString(json, "isNew")
-        this.artistName = Utils.getString(json, "artistName")
-        this.language = Utils.getString(json, "language")
-        this.download = Utils.getString(json, "isDownload")
-        this.wish = Utils.getString(json, "isWish")
-        this.view = Utils.getString(json, "isView")
-        this.order = Utils.getInt(json, "order")
+        this.packageId = StipopUtils.getInt(json, "packageId")
+        this.packageName = StipopUtils.getString(json, "packageName")
+        this.packageImg = StipopUtils.getString(json, "packageImg")
+        this.packageCategory = StipopUtils.getString(json, "packageCategory")
+        this.packageKeywords = StipopUtils.getString(json, "packageKeywords")
+        this.packageAnimated = StipopUtils.getString(json, "packageAnimated")
+        this.new = StipopUtils.getString(json, "isNew")
+        this.artistName = StipopUtils.getString(json, "artistName")
+        this.language = StipopUtils.getString(json, "language")
+        this.download = StipopUtils.getString(json, "isDownload")
+        this.wish = StipopUtils.getString(json, "isWish")
+        this.view = StipopUtils.getString(json, "isView")
+        this.order = StipopUtils.getInt(json, "order")
 
         if (!json.isNull("stickers")) {
             val stickers = json.getJSONArray("stickers")
