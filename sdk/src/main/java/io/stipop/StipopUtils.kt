@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Point
 import android.os.Build
@@ -323,5 +324,16 @@ internal object StipopUtils {
 
     fun dpToPx(dp: Float): Float {
         return dp * Resources.getSystem().displayMetrics.density
+    }
+
+    fun setLocale(activity: Activity, languageCode: String?) {
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        val resources: Resources = activity.resources
+        val config: Configuration = resources.configuration
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            config.setLocale(locale)
+        }
+        resources.updateConfiguration(config, resources.displayMetrics)
     }
 }

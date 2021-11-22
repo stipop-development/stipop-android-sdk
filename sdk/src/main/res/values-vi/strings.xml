@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bottom_alert_title">Ẩn gói nhãn dán này?</string>
+    <string name="bottom_alert_contents">Ẩn gói nhãn dán này? Bạn luôn có thể tải xuống lại các nhãn dán ẩn sau này.</string>
+    <string name="cancel">Hủy</string>
+    <string name="hide">Giấu</string>
+    <string name="downloaded">Tải về</string>
+    <string name="download">Tải xuống</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="all_stickers">Nhà</string>
+    <string name="news_tab">Mới</string>
+    <string name="my_stickers">Của tôi</string>
+    <string name="popular_stickers">Nhãn dán phổ biến</string>
+    <string name="recommended_tag">Thẻ được đề xuất</string>
+    <string name="view_hidden_stickers">Xem Nhãn dán Ẩn</string>
+    <string name="view_active_stickers">Xem Nhãn dán Hiện hoạt</string>
+    <string name="no_result">Không có kết quả</string>
+    <string name="trending">Nhãn dán xu hướng</string>
+    <string name="stickers">Nhãn dán</string>
+    <string name="recent_search">Tìm kiếm Gần đây</string>
+    <string name="clear">xoá</string>
+    <string name="download_done">Gói nhãn dán được tải xuống!</string>
+    <string name="can_not_download">Không thể tải xuống</string>
+    <string name="can_not_open_package">Không thể mở gói nhãn dán này</string>
+    <string name="empty_recent">Các nhãn dán được sử dụng gần đây được hiển thị.\nHãy thử gửi nhãn dán</string>
+    <string name="okay">Xác nhận</string>
+</resources>
