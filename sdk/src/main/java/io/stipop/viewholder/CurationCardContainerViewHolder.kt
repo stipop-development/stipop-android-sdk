@@ -1,8 +1,10 @@
 package io.stipop.viewholder
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.R
@@ -37,12 +39,13 @@ internal class CurationCardContainerViewHolder(
 
     fun bind(curatedCard: CuratedCard?) {
         horizontalAdapter.curatedCard = curatedCard
-        with(binding) {
-            titleTextView.text = curatedCard?.cardTitle ?: ""
-            recyclerView.adapter = horizontalAdapter
+        binding.container.isVisible = curatedCard != null
+        curatedCard?.let { card ->
+            binding.titleTextView.text = card.cardTitle
+            binding.recyclerView.adapter = horizontalAdapter
             horizontalAdapter.run {
                 clearData()
-                updateData(curatedCard?.packageList ?: emptyList())
+                updateData(card.packageList ?: emptyList())
             }
         }
     }
