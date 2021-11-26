@@ -5,6 +5,7 @@ import androidx.paging.cachedIn
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.data.SpvRepository
+import io.stipop.isNullOrNotEnough
 import io.stipop.models.SPSticker
 import io.stipop.models.Sticker
 import io.stipop.models.StickerPackage
@@ -83,7 +84,7 @@ internal class SpvModel {
     ) {
         selectedPackage = stickerPackage
         taskScope.launch {
-            when (selectedPackage?.stickers.isNullOrEmpty()) {
+            when (selectedPackage?.stickers.isNullOrNotEnough()) {
                 true -> {
                     val result = StipopApi.create()
                         .getStickerPackage(stickerPackage.packageId, Stipop.userId)

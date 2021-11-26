@@ -62,6 +62,7 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
         }
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

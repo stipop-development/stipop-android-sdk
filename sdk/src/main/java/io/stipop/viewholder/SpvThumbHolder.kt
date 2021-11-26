@@ -13,8 +13,7 @@ import io.stipop.adapter.MyPackageHorizontalAdapter
 import io.stipop.custom.StipopImageView
 import io.stipop.models.StickerPackage
 
-internal class SpvThumbHolder(view: View, val delegate: MyPackageHorizontalAdapter.OnPackageClickListener) :
-    RecyclerView.ViewHolder(view) {
+internal class SpvThumbHolder(view: View, val delegate: MyPackageHorizontalAdapter.OnPackageClickListener) : RecyclerView.ViewHolder(view) {
     private val imageIV: StipopImageView = view.findViewById(R.id.imageIV)
     private val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
     private var stickerPackage: StickerPackage? = null
@@ -27,15 +26,10 @@ internal class SpvThumbHolder(view: View, val delegate: MyPackageHorizontalAdapt
         }
     }
 
-    fun bindData(data: StickerPackage, isSelected: Boolean=false) {
+    fun bindData(data: StickerPackage, isSelected: Boolean = false) {
         stickerPackage = data
         Glide.with(itemView.context).load(stickerPackage?.packageImg).dontAnimate().into(imageIV)
         setSelectFilter(isSelected)
-//        if (stickerPackage?.packageId == -999) {
-//            containerLL.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-//            imageIV.setImageResource(R.mipmap.ic_setting)
-//            imageIV.setIconDefaultsColor()
-//        }
     }
 
     private fun setSelectFilter(isSelected: Boolean) {
