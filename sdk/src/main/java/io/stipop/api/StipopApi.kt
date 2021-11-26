@@ -187,6 +187,10 @@ internal interface StipopApi {
             .addInterceptor(Interceptor {
                 it.proceed(it.request().newBuilder().headers(headers).build())
             })
+            .addNetworkInterceptor {
+                Log.d("STIPOP-DEBUG", "${it.request().url}")
+                it.proceed(it.request())
+            }
             .build()
         fun create(): StipopApi {
             return Retrofit.Builder()
