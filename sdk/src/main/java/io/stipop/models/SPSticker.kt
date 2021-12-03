@@ -1,15 +1,23 @@
 package io.stipop.models
 
+import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 import io.stipop.StipopUtils
 import org.json.JSONObject
 
+@Keep
 class SPSticker() {
-
+    @SerializedName("packageId")
     var packageId: Int = -1
+    @SerializedName("stickerId")
     var stickerId: Int = -1
+    @SerializedName("stickerImg")
     var stickerImg: String? = null
+    @SerializedName("stickerImgLocalFilePath")
     var stickerImgLocalFilePath: String? = null
+    @SerializedName("favoriteYN")
     var favoriteYN: String = ""
+    @SerializedName("keyword")
     var keyword: String = ""
 
     constructor(

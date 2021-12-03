@@ -1,8 +1,10 @@
 package io.stipop.models
 
+import androidx.annotation.Keep
 import io.stipop.StipopUtils
 import org.json.JSONObject
 
+@Keep
 class SPPackage() {
 
     var artistName: String? = null

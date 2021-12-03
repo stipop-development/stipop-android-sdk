@@ -30,8 +30,10 @@ internal open class BaseRepository {
     ): Flow<T?> {
         return try{
             val r = call.invoke()
+            Log.e("STIPOP-DEBUG", "HERE1 : $r")
             flowOf(r)
         }catch (e:Exception){
+            Log.e("STIPOP-DEBUG", "HERE2 : $e - $call")
             flowOf(null)
         }
     }
@@ -41,7 +43,8 @@ internal open class BaseRepository {
         onCompletable: (data: T?) -> Unit,
     ) {
         try {
-            onCompletable(call.invoke())
+            val result = call.invoke()
+            onCompletable(result)
         } catch (e: Exception) {
             onCompletable(null)
         }

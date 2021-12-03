@@ -1,12 +1,17 @@
 package io.stipop.models.response
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import io.stipop.models.StickerPackage
 
+@Keep
 internal class StickerPackagesResponse(
     @SerializedName("header") val header: ResponseHeader,
-    @SerializedName("body") val body: ResponseBody,
-    val nextPage: Int? = null
-){
-    data class ResponseBody(val packageList: List<StickerPackage>, val pageMap: PageMapInfo)
+    @SerializedName("body") val body: ResponseBody?
+) {
+    @Keep
+    data class ResponseBody(
+        @SerializedName("packageList") val packageList: List<StickerPackage>? = emptyList(),
+        @SerializedName("pageMap") val pageMap: PageMapInfo
+    )
 }

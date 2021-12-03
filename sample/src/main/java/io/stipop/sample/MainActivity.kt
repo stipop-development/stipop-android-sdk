@@ -52,13 +52,12 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     private val stipopSearchImageView: StipopImageView by lazy { findViewById(R.id.stickerSearchImageView) }
     private val sendImageView: AppCompatImageView by lazy { findViewById(R.id.sendImageView) }
     private val chatsAdapter: ChatAdapter by lazy { ChatAdapter(this) }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
-        Stipop.connect(this, testUserId, this, stipopPickerImageView, taskCallBack = {
+        Stipop.connect(this, testUserId, this, stipopPickerImageView, locale = Locale.KOREA, taskCallBack = {
             Log.d(this.javaClass.name, "Use callback if you need.")
         })
 
@@ -77,7 +76,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         return true
     }
 
-    override fun onStickerPackageRequested(spPackage: SPPackage): Boolean {
+    override fun onStickerPackRequested(spPackage: SPPackage): Boolean {
         return true
     }
 

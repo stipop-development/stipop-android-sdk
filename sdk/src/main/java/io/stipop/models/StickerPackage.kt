@@ -1,38 +1,39 @@
 package io.stipop.models
 
-import com.google.gson.Gson
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
-import org.json.JSONObject
 
+@Keep
 data class StickerPackage(
     @SerializedName("packageId")
-    var packageId: Int = -1,
-    @SerializedName("artistName")
-    var artistName: String? = null,
-    @SerializedName("isDownload")
-    var download: String? = null,
-    @SerializedName("language")
-    var language: String? = null,
-    @SerializedName("isNew")
-    var new: String? = null,
-    @SerializedName("packageAnimated")
-    var packageAnimated: String? = null,
-    @SerializedName("packageCategory")
-    var packageCategory: String? = null,
-    @SerializedName("packageImg")
-    var packageImg: String? = null,
-    @SerializedName("cardImgUrl")
-    var cardImgUrl: String? = null,
-    @SerializedName("packageKeywords")
-    var packageKeywords: String? = null,
+    val packageId: Int = -1,
     @SerializedName("packageName")
-    var packageName: String? = null,
-    @SerializedName("isWish")
-    var wish: String? = null,
+    val packageName: String? = null,
+    @SerializedName("packageImg")
+    val packageImg: String? = null,
+    @SerializedName("packageCategory")
+    val packageCategory: String? = null,
+    @SerializedName("packageKeywords")
+    val packageKeywords: String? = null,
+    @SerializedName("packageAnimated")
+    val packageAnimated: String? = null,
     @SerializedName("isView")
     var view: String? = null,
     @SerializedName("order")
     var order: Int = -1,
+    @SerializedName("isNew")
+    val new: String? = null,
+    @SerializedName("artistName")
+    val artistName: String? = null,
+    @SerializedName("language")
+    val language: String? = null,
+    @SerializedName("isDownload")
+    var download: String? = null,
+    @SerializedName("isWish")
+    var wish: String? = null,
+
+    @SerializedName("cardImgUrl")
+    val cardImgUrl: String? = null,
     @SerializedName("stickers")
     var stickers: ArrayList<SPSticker> = ArrayList(),
     @SerializedName("lightBackgroundCode")

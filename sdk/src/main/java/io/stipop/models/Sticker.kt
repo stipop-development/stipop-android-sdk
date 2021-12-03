@@ -1,12 +1,16 @@
 package io.stipop.models
 
+import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
+
+@Keep
 data class Sticker(
-    val packageId: Int = -1,
-    val stickerId: Int = -1,
-    var stickerImg: String? = null,
-    var stickerImgLocalFilePath: String? = null,
-    var favoriteYN: String = "",
-    var keyword: String = "",
+    @SerializedName("packageId") val packageId: Int = -1,
+    @SerializedName("stickerId") val stickerId: Int = -1,
+    @SerializedName("stickerImg") var stickerImg: String? = null,
+    @SerializedName("stickerImgLocalFilePath") var stickerImgLocalFilePath: String? = null,
+    @SerializedName("favoriteYN") var favoriteYN: String = "",
+    @SerializedName("keyword") var keyword: String = "",
 ) {
     fun toSPSticker(): SPSticker {
         return SPSticker(
@@ -19,8 +23,15 @@ data class Sticker(
     }
 
     companion object {
-        fun fromSpSticker(spSticker: SPSticker) : Sticker{
-            return Sticker(spSticker.packageId, spSticker.stickerId, spSticker.stickerImg, spSticker.stickerImgLocalFilePath, spSticker.favoriteYN, spSticker.keyword)
+        fun fromSpSticker(spSticker: SPSticker): Sticker {
+            return Sticker(
+                spSticker.packageId,
+                spSticker.stickerId,
+                spSticker.stickerImg,
+                spSticker.stickerImgLocalFilePath,
+                spSticker.favoriteYN,
+                spSticker.keyword
+            )
         }
     }
 }
