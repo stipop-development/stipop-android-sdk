@@ -1,3 +1,10 @@
 package io.stipop.models.body
 
-internal data class OrderChangeBody(val currentOrder: Int, val newOrder: Int)
+import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
+
+@Keep
+internal data class OrderChangeBody(
+    @SerializedName("currentOrder") val currentOrder: Int,
+    @SerializedName("newOrder") val newOrder: Int
+)

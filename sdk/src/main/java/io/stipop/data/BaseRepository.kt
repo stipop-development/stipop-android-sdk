@@ -41,7 +41,8 @@ internal open class BaseRepository {
         onCompletable: (data: T?) -> Unit,
     ) {
         try {
-            onCompletable(call.invoke())
+            val result = call.invoke()
+            onCompletable(result)
         } catch (e: Exception) {
             onCompletable(null)
         }

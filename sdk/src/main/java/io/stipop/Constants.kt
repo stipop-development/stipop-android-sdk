@@ -4,21 +4,25 @@ internal object Constants {
     object KEY {
         const val ASSET_NAME = "Stipop.json"
     }
+
     object Tag {
         const val DETAIL = "PD"
         const val EXTERNAL = "EXTERNAL"
     }
+
     object IntentKey {
         const val STARTING_TAB_POSITION = "tab"
         const val PACKAGE_ID = "packageId"
         const val ENTRANCE_POINT = "entrancePoint"
     }
+
     object ApiParams {
         const val ApiKey = "apikey"
         const val SMetadata = "s_meta"
         const val Platform = "platform"
         const val SizePerPage = 20
     }
+
     object Value {
         const val IS_SANDBOX = false
         const val SANDBOX_URL = "https://sandbox.stipop.com/v1/"
@@ -26,6 +30,7 @@ internal object Constants {
         const val BASE_URL = "https://messenger.stipop.io/v1/"
         const val PLATFORM = "android-sdk"
     }
+
     object Point {
         const val DEFAULT = "default"
         const val STORE = "store"

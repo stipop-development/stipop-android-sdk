@@ -1,3 +1,10 @@
 package io.stipop.models.response
 
-internal data class StipopResponse(val header: ResponseHeader, val body: Any?)
+import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
+
+@Keep
+internal data class StipopResponse(
+    @SerializedName("header") val header: ResponseHeader,
+    @SerializedName("body") val body: Any? = null
+)

@@ -10,6 +10,7 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import kotlin.contracts.contract
 
 fun View.setStipopBackgroundColor() {
     setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
@@ -58,3 +59,10 @@ suspend fun delayedTextFlow(request: String): String =
         delay(600)
         request
     }
+
+fun <T> Collection<T>?.isNullOrNotEnough(): Boolean {
+    if (this == null) {
+        return true
+    }
+    return this.size < 5
+}

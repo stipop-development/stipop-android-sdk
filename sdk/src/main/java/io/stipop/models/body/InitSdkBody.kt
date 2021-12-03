@@ -1,3 +1,10 @@
 package io.stipop.models.body
 
-internal data class InitSdkBody(val userId: String? = "", val lang: String? = "")
+import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
+
+@Keep
+internal data class InitSdkBody(
+    @SerializedName("userId") val userId: String? = "",
+    @SerializedName("lang") val lang: String? = ""
+)

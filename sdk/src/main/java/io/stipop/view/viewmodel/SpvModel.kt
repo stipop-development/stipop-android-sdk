@@ -1,10 +1,14 @@
 package io.stipop.view.viewmodel
 
+import android.util.Log
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import io.stipop.Config
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.data.SpvRepository
+import io.stipop.isNullOrNotEnough
 import io.stipop.models.SPSticker
 import io.stipop.models.Sticker
 import io.stipop.models.StickerPackage
@@ -50,7 +54,7 @@ internal class SpvModel {
         } else {
             taskScope.launch {
                 val result = StipopApi.create().getRecentlySentStickers(Stipop.userId, 1, 20)
-                if (result.header.isSuccess() && result.body.stickerList != null) {
+                if (result.header.isSuccess() && result.body?.stickerList != null) {
                     if (recentStickers.isEmpty()) {
                         recentStickers.addAll(result.body.stickerList)
                     }
@@ -69,7 +73,7 @@ internal class SpvModel {
     fun loadFavorites(onSuccess: (data: List<Sticker>) -> Unit) {
         taskScope.launch {
             val result = StipopApi.create().getFavoriteStickers(Stipop.userId, 1, 20)
-            if (result.header.isSuccess() && result.body.stickerList != null) {
+            if (result.header.isSuccess() && result.body?.stickerList != null) {
                 launch(Dispatchers.Main) {
                     onSuccess(result.body.stickerList)
                 }
@@ -83,16 +87,16 @@ internal class SpvModel {
     ) {
         selectedPackage = stickerPackage
         taskScope.launch {
-            when (selectedPackage?.stickers.isNullOrEmpty()) {
+            when (selectedPackage?.stickers.isNullOrNotEnough()) {
                 true -> {
-                    val result = StipopApi.create()
-                        .getStickerPackage(stickerPackage.packageId, Stipop.userId)
-                    if (result.header.isSuccess()) {
-                        this@SpvModel.selectedPackage = result.body?.stickerPackage
-                        launch(Dispatchers.Main) {
-                            onSuccess(result.body?.stickerPackage)
+                    repository.getStickerPackage(stickerPackage.packageId, onSuccess = {
+                        if (it.header.isSuccess()) {
+                            this@SpvModel.selectedPackage = it.body?.stickerPackage
+                            launch(Dispatchers.Main) {
+                                onSuccess(it.body?.stickerPackage)
+                            }
                         }
-                    }
+                    })
                 }
                 false -> {
                     launch(Dispatchers.Main) {
@@ -100,7 +104,6 @@ internal class SpvModel {
                     }
                 }
             }
-
         }
     }
 }
