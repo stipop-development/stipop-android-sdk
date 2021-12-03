@@ -188,10 +188,10 @@ internal interface StipopApi {
                 it.proceed(it.request().newBuilder().headers(headers).build())
             })
             .addNetworkInterceptor {
-                Log.d("STIPOP-DEBUG", "${it.request().url}")
                 it.proceed(it.request())
             }
             .build()
+
         fun create(): StipopApi {
             return Retrofit.Builder()
                 .baseUrl(if (Constants.Value.IS_SANDBOX) Constants.Value.SANDBOX_URL else Constants.Value.BASE_URL)
