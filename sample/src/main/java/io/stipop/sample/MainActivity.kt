@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         setContentView(R.layout.activity_main)
 
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
-        Stipop.connect(this, testUserId, this, stipopPickerImageView, locale = Locale.KOREA, taskCallBack = {
+        Stipop.connect(this, testUserId, this, stipopPickerImageView, taskCallBack = {
             Log.d(this.javaClass.name, "Use callback if you need.")
         })
 
