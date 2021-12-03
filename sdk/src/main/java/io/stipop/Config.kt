@@ -122,7 +122,6 @@ internal class Config {
             val tintColor = iconColor?.optJSONObject("tintColor")
 
             val font = theme?.optJSONObject("font")
-
             // font
             fontFamily = StipopUtils.getString(font, "family", "system").lowercase()
             fontWeight = StipopUtils.getInt(font, "weight", 400)
@@ -174,9 +173,6 @@ internal class Config {
                     }
                 }
             }
-
-
-
 
             stickerIconNormalName = StipopUtils.getString(json, "StickerIcon", "ic_sticker_border_3")
 
@@ -267,6 +263,23 @@ internal class Config {
             }
 
             Log.d("Configuration", "UseLightMode : $useLightMode")
+
+            // todo REMOVE if refactoring finished
+            var assignResource = R.mipmap.ic_sticker_border_1
+            assignResource = R.mipmap.ic_sticker_border_2
+            assignResource = R.mipmap.ic_sticker_border_3
+            assignResource = R.mipmap.ic_add_border_1
+            assignResource = R.mipmap.ic_add_border_2
+            assignResource = R.mipmap.ic_add_border_3
+            assignResource = R.mipmap.ic_back_border_1
+            assignResource = R.mipmap.ic_back_border_2
+            assignResource = R.mipmap.ic_back_border_3
+            assignResource = R.mipmap.ic_cancel
+            assignResource = R.mipmap.ic_close_border_1
+            assignResource = R.mipmap.ic_close_border_2
+            assignResource = R.mipmap.ic_close_border_3
+            assignResource = R.mipmap.ic_store
+            assignResource = R.mipmap.ic_store_dark
         }
 
         fun getStickerIconResourceId(context: Context): Int {

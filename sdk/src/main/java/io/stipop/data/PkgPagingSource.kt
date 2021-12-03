@@ -61,7 +61,7 @@ internal class PkgPagingSource(
                 )
             }
 
-            val stickerPackages = response.body.packageList
+            val stickerPackages = response.body?.packageList ?: emptyList()
             val nextKey = if (stickerPackages.isNullOrEmpty()) {
                 null
             } else {

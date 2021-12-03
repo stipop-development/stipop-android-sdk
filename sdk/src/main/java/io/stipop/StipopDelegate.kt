@@ -10,8 +10,8 @@ interface StipopDelegate {
      */
     fun onStickerSelected(sticker: SPSticker): Boolean
     /**
-     * Called when 'Stipop Package Download' Clicked or Selected.
-     * Return If the selected sticker package is (not) enable to download.
+     * Called when 'Stipop Sticker Package' Clicked or Selected.
+     * Return If the selected sticker package is (not) enable to use.
      */
-    fun onStickerPackageRequested(spPackage: SPPackage): Boolean
+    fun onStickerPackRequested(spPackage: SPPackage): Boolean
 }

@@ -1,7 +1,9 @@
 package io.stipop.models
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
+@Keep
 internal data class CuratedCard(
     @SerializedName("cardId") val cardId: Int,
     @SerializedName("title") val cardTitle: String="",

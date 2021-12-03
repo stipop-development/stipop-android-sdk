@@ -1,6 +1,14 @@
 package io.stipop.models.response
 
-internal data class ResponseHeader(val code: String, val status: String, val message: String) {
+import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
+
+@Keep
+internal data class ResponseHeader(
+    @SerializedName("code") val code: String,
+    @SerializedName("status") val status: String,
+    @SerializedName("message") val message: String
+) {
     fun isSuccess(): Boolean {
         return code == "200" || status == "success"
     }

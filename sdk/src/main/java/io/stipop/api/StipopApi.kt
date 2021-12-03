@@ -2,6 +2,7 @@ package io.stipop.api
 
 import android.os.Build
 import android.util.Log
+import androidx.annotation.Keep
 import com.google.gson.Gson
 import io.stipop.BuildConfig
 import io.stipop.Config
@@ -11,19 +12,18 @@ import io.stipop.models.body.OrderChangeBody
 import io.stipop.models.body.StipopMetaHeader
 import io.stipop.models.body.UserIdBody
 import io.stipop.models.response.*
-import okhttp3.Authenticator
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import java.util.*
 
+@Keep
 internal interface StipopApi {
 
     @POST("init")

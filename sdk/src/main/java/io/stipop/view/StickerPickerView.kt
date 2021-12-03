@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.*
@@ -25,7 +26,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-internal class StickerPickerView(private val activity: Activity, private val visibleStateListener: VisibleStateListener) : PopupWindow(), MyPackageHorizontalAdapter.OnPackageClickListener, StickerGridAdapter.OnStickerClickListener {
+internal class StickerPickerView(
+    private val activity: Activity,
+    private val visibleStateListener: VisibleStateListener
+) : PopupWindow(), MyPackageHorizontalAdapter.OnPackageClickListener,
+    StickerGridAdapter.OnStickerClickListener {
 
     interface VisibleStateListener {
         fun onSpvVisibleState(isVisible: Boolean)
