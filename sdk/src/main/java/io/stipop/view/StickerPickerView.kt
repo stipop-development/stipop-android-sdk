@@ -52,6 +52,11 @@ internal class StickerPickerView(
             this
         )
     }
+
+    fun invalidate() {
+        update(this.width, this.height)
+    }
+
     private val stickerThumbnailAdapter: StickerGridAdapter by lazy { StickerGridAdapter(this) }
     private val decoration =
         HorizontalDecoration(StipopUtils.dpToPx(8F).toInt(), StipopUtils.dpToPx(8F).toInt())
