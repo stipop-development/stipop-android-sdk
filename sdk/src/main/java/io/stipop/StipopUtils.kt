@@ -6,12 +6,16 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Insets
 import android.graphics.Point
 import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
+import android.util.DisplayMetrics
 import android.view.Display
+import android.view.WindowInsets
 import android.view.WindowManager
+import android.view.WindowMetrics
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import io.stipop.Config.Companion.getErrorImage
@@ -25,6 +29,7 @@ import java.lang.reflect.InvocationTargetException
 import java.net.URL
 import java.util.*
 import kotlin.collections.ArrayList
+import androidx.annotation.NonNull
 
 
 internal object StipopUtils {
@@ -192,14 +197,29 @@ internal object StipopUtils {
         return size
     }
 
-    fun getScreenHeight(context: Context): Int {
-        var height = 0
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val display = wm.defaultDisplay
-        val size = Point()
-        display.getSize(size)
-        height = size.y
-        return height
+    fun getScreenHeight(activity: Activity): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowMetrics = activity.windowManager.currentWindowMetrics
+            val insets: Insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            windowMetrics.bounds.height() - insets.top - insets.bottom
+        } else {
+            val displayMetrics = DisplayMetrics()
+            activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+            displayMetrics.heightPixels
+        }
+    }
+
+    fun getScreenWidth(activity: Activity): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowMetrics = activity.windowManager.currentWindowMetrics
+            val insets: Insets = windowMetrics.windowInsets
+                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            windowMetrics.bounds.height() - insets.left - insets.right
+        } else {
+            val displayMetrics = DisplayMetrics()
+            activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+            displayMetrics.widthPixels
+        }
     }
 
     fun getScreenWidth(context: Context): Int {
