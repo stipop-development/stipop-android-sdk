@@ -134,7 +134,7 @@ class Stipop(
         fun setKeyboardAdditionalHeightOffset(height: Int) {
             instance?.let {
                 instance!!.spvAdditionalHeightOffset = height
-            }?: kotlin.run {
+            } ?: kotlin.run {
                 throw InstantiationException("Stipop Instance Not Connected. Please call this method in callback of Stipop.connect(), or when Stipop.connect() is completed.")
             }
         }
@@ -209,9 +209,8 @@ class Stipop(
             stickerPickerView.wantShowing = true
             if (currentKeyboardHeight == 0) {
                 StipopUtils.showKeyboard(instance!!.activity)
-            } else {
-                stickerPickerView.show()
             }
+            stickerPickerView.show()
         }
     }
 
@@ -232,12 +231,9 @@ class Stipop(
             if (heightDifference > StipopUtils.pxToDp(100)) {
                 currentKeyboardHeight = heightDifference
                 stickerPickerView.let { spv ->
+                    spv.height = currentKeyboardHeight
                     if (!spv.isShowing && spv.wantShowing) {
-                        spv.height = currentKeyboardHeight
                         spv.show()
-                    } else if (spv.isShowing && spv.wantShowing) {
-                        spv.height = currentKeyboardHeight
-                        spv.invalidate()
                     }
                 }
             } else {
