@@ -128,6 +128,17 @@ class Stipop(
             )
         }
 
+        /**
+         * Use When Sticker Picker View Height Modifying is needed.
+         */
+        fun setKeyboardAdditionalHeightOffset(height: Int) {
+            instance?.let {
+                instance!!.spvAdditionalHeightOffset = height
+            }?: kotlin.run {
+                throw InstantiationException("Stipop Instance Not Connected. Please call this method in callback of Stipop.connect(), or when Stipop.connect() is completed.")
+            }
+        }
+
         fun showSearch() = instance?.showSearch()
 
         fun showKeyboard() = instance?.showKeyboard()
@@ -137,7 +148,7 @@ class Stipop(
         fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) =
             instance?.showStickerPackage(fragmentManager, packageId)
 
-        fun send(
+        internal fun send(
             stickerId: Int,
             keyword: String,
             entrancePoint: String,
@@ -163,8 +174,9 @@ class Stipop(
     }
 
     private val stickerPickerView: StickerPickerView by lazy { StickerPickerView(activity, this) }
-    private var maxTop = 0
-    private var maxBottom = 0
+    private var spvAdditionalHeightOffset = 0
+    private var spvCalculatedMaxTop = 0
+    private var spvCalculatedMaxBottom = 0
     private lateinit var rootView: View
 
     private fun connectView() {
@@ -223,6 +235,9 @@ class Stipop(
                     if (!spv.isShowing && spv.wantShowing) {
                         spv.height = currentKeyboardHeight
                         spv.show()
+                    } else if (spv.isShowing && spv.wantShowing) {
+                        spv.height = currentKeyboardHeight
+                        spv.invalidate()
                     }
                 }
             } else {
@@ -233,21 +248,17 @@ class Stipop(
     }
 
     private fun getBottomChangedHeight(): Int {
-        val visibleFrameSize = Rect()
-        rootView.getWindowVisibleDisplayFrame(visibleFrameSize)
         val screenHeight = StipopUtils.getScreenHeight(activity)
-        val visibleFrameHeight: Int = visibleFrameSize.bottom - visibleFrameSize.top
-        var b = 0
-        if (screenHeight < visibleFrameSize.bottom) {
-            b = visibleFrameSize.bottom - screenHeight
+        val visibleFrameRect = Rect()
+        rootView.getWindowVisibleDisplayFrame(visibleFrameRect)
+        val visibleFrameHeight: Int = visibleFrameRect.bottom - visibleFrameRect.top
+        if (screenHeight < visibleFrameRect.bottom) {
+            spvCalculatedMaxBottom = visibleFrameRect.bottom - screenHeight
         }
-        if (b > maxBottom) {
-            maxBottom = b
+        if (visibleFrameRect.top > spvCalculatedMaxTop) {
+            spvCalculatedMaxTop = visibleFrameRect.top
         }
-        if (visibleFrameSize.top > maxTop) {
-            maxTop = visibleFrameSize.top
-        }
-        return screenHeight - maxTop - visibleFrameHeight + maxBottom
+        return screenHeight - visibleFrameHeight - spvCalculatedMaxTop + spvCalculatedMaxBottom + spvAdditionalHeightOffset
     }
 
     override fun onSpvVisibleState(isVisible: Boolean) {
