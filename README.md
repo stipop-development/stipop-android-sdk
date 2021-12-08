@@ -1,4 +1,5 @@
-![Android-demo image](https://user-images.githubusercontent.com/42525347/139039262-2fc7a0d2-d000-4848-b7be-eee2beede9f8.png)
+![Github_stipop_SDK](https://user-images.githubusercontent.com/42525347/145160731-acbe1005-48f5-4c9e-93b7-8ce2c7d6dcb8.png)
+
 <h1>Stipop UI SDK for Android</h1>
 
 [![](https://jitpack.io/v/stipop-development/stipop-android-sdk.svg)](https://jitpack.io/#stipop-development/stipop-android-sdk)
