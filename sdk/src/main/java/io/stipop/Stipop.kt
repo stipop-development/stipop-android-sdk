@@ -68,8 +68,10 @@ class Stipop(
             taskCallBack: ((isSuccess: Boolean) -> Unit)? = null
         ) {
             Stipop.userId = userId
-            Stipop.lang = locale.language
-            Stipop.countryCode = locale.country
+            StipopUtils.controlLocale(locale).let {
+                lang = it.language
+                countryCode = it.country
+            }
 
             if (!configRepository.isConfigured) {
                 Log.e(

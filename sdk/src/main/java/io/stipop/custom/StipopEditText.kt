@@ -19,12 +19,12 @@ class StipopEditText : AppCompatEditText {
     }
 
     private fun setFont() {
-        if (Config.fontFace != null) {
-            this.typeface = Config.fontFace
+        if (Config.FontStyle.fontFace != null) {
+            this.typeface = Config.FontStyle.fontFace
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            this.letterSpacing = Config.fontCharacter
+            this.letterSpacing = Config.FontStyle.fontCharacter
         }
     }
 }

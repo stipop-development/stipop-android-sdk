@@ -57,7 +57,7 @@ internal class APIClient {
 
                 val huc = url.openConnection() as HttpURLConnection
                 huc.requestMethod = "GET"
-                huc.setRequestProperty("apikey", Config.apikey)
+                huc.setRequestProperty("apikey", Config.stipopConfigData.apiKey)
 
 
                 val buffered = if (huc.responseCode in 100..399) {
@@ -120,7 +120,7 @@ internal class APIClient {
                 huc.doOutput = true
                 huc.doInput = true
 
-                huc.setRequestProperty("apikey", Config.apikey)
+                huc.setRequestProperty("apikey", Config.stipopConfigData.apiKey)
                 huc.setRequestProperty("Content-Type", "application/json;charset=utf-8");
                 huc.setRequestProperty("Accept", "application/json");
 

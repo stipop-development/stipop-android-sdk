@@ -168,7 +168,7 @@ internal interface StipopApi {
                 Constants.ApiParams.ApiKey, if (Constants.Value.IS_SANDBOX) {
                     Constants.Value.SANDBOX_APIKEY
                 } else {
-                    Config.apikey
+                    Config.stipopConfigData.apiKey
                 }
             )
             .add(

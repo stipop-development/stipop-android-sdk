@@ -15,10 +15,7 @@ import android.util.DisplayMetrics
 import android.view.Display
 import android.view.WindowInsets
 import android.view.WindowManager
-import android.view.WindowMetrics
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat
-import io.stipop.Config.Companion.getErrorImage
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import org.json.JSONException
@@ -29,10 +26,23 @@ import java.lang.reflect.InvocationTargetException
 import java.net.URL
 import java.util.*
 import kotlin.collections.ArrayList
-import androidx.annotation.NonNull
 
 
 internal object StipopUtils {
+
+    fun controlLocale(locale: Locale): Locale {
+        return when (locale) {
+            Locale.SIMPLIFIED_CHINESE -> {
+                Locale("zh-cn", locale.country)
+            }
+            Locale.TRADITIONAL_CHINESE -> {
+                Locale("zh-tw", locale.country)
+            }
+            else -> {
+                locale
+            }
+        }
+    }
 
     fun pxToDp(px: Long): Float {
         return px * Resources.getSystem().displayMetrics.density
@@ -200,7 +210,8 @@ internal object StipopUtils {
     fun getScreenHeight(activity: Activity): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowMetrics = activity.windowManager.currentWindowMetrics
-            val insets: Insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val insets: Insets =
+                windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             windowMetrics.bounds.height() - insets.top - insets.bottom
         } else {
             val displayMetrics = DisplayMetrics()
@@ -325,7 +336,7 @@ internal object StipopUtils {
         if (id < 1) {
             id = context.resources.getIdentifier(imageName, "drawable", context.packageName)
             if (id < 1) {
-                id = getErrorImage()
+                id = Config.getErrorImage()
             }
         }
         return id

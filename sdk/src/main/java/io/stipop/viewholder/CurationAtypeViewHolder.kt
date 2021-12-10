@@ -31,7 +31,7 @@ internal class CurationAtypeViewHolder(
     fun bind(stickerPackage: StickerPackage) {
         this.stickerPackage = stickerPackage
         with(binding) {
-            val colorCode = if (Config.useLightMode) {
+            val colorCode = if (Config.themeUseLightMode) {
                 stickerPackage.lightBackgroundCode
             } else {
                 stickerPackage.darkBackgroundCode
