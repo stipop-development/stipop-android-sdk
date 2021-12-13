@@ -3,7 +3,6 @@ package io.stipop.viewholder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import io.stipop.R
 import io.stipop.adapter.StickerGridAdapter
 import io.stipop.databinding.ItemStickerThumbBinding
@@ -28,10 +27,7 @@ internal class StickerThumbViewHolder(
 
     fun bind(sticker: SPSticker) {
         spSticker = sticker
-        with(binding) {
-            Glide.with(itemView.context).load(sticker.stickerImgLocalFilePath ?: sticker.stickerImg)
-                .into(imageView)
-        }
+        binding.imageView.loadImage(sticker.stickerImgLocalFilePath?:sticker.stickerImg, false)
     }
 
     companion object {

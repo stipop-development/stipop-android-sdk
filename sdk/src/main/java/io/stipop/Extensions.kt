@@ -10,7 +10,6 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import kotlin.contracts.contract
 
 fun View.setStipopBackgroundColor() {
     setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
@@ -20,7 +19,7 @@ fun View.setStipopUnderlineColor() {
     setBackgroundColor(
         ContextCompat.getColor(
             context,
-            if (Config.useLightMode) io.stipop.R.color.c_f7f8f9 else io.stipop.R.color.c_2e363a
+            if (Config.themeUseLightMode) io.stipop.R.color.c_f7f8f9 else io.stipop.R.color.c_2e363a
         )
     )
 }
@@ -33,11 +32,11 @@ fun TabLayout.setTabLayoutStyle() {
             intArrayOf(-R.attr.state_selected),
         ),
         intArrayOf(
-            if (Config.useLightMode) ContextCompat.getColor(
+            if (Config.themeUseLightMode) ContextCompat.getColor(
                 context,
                 io.stipop.R.color.c_374553
             ) else ContextCompat.getColor(context, io.stipop.R.color.c_f3f4f5),
-            if (Config.useLightMode) ContextCompat.getColor(
+            if (Config.themeUseLightMode) ContextCompat.getColor(
                 context,
                 io.stipop.R.color.c_c6c8cf
             ) else ContextCompat.getColor(context, io.stipop.R.color.c_646f7c)
@@ -46,7 +45,7 @@ fun TabLayout.setTabLayoutStyle() {
         tabTextColors = it
     }
     setSelectedTabIndicatorColor(
-        if (Config.useLightMode) ContextCompat.getColor(
+        if (Config.themeUseLightMode) ContextCompat.getColor(
             context,
             io.stipop.R.color.c_292929
         ) else ContextCompat.getColor(context, io.stipop.R.color.c_f7f8f9)
