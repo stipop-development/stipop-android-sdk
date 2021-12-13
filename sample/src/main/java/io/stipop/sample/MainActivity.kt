@@ -10,6 +10,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -46,6 +47,8 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     // This Code below is used to configure the sample app, so you can ignore it.
     private val toolBar: Toolbar by lazy { findViewById(R.id.toolBar) }
     private val profileImageView: AppCompatImageView by lazy { findViewById(R.id.profileImageView) }
+    private val nameTextView: AppCompatTextView by lazy { findViewById(R.id.nameTextView) }
+    private val statusTextView: AppCompatTextView by lazy { findViewById(R.id.statusTextView) }
     private val chatInputEditText: AppCompatEditText by lazy { findViewById(R.id.chatInputEditText) }
     private val chatRecyclerview: RecyclerView by lazy { findViewById(R.id.chatRecyclerView) }
     private val stipopPickerImageView: StipopImageView by lazy { findViewById(R.id.stickerPickerImageView) }
@@ -58,7 +61,10 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
 
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
         Stipop.connect(this, testUserId, this, stipopPickerImageView, taskCallBack = {
-            Log.d(this.javaClass.name, "If you need additional settings, please call it in callback scope.")
+            Log.d(
+                this.javaClass.name,
+                "If you need additional settings, please call it in callback scope."
+            )
         })
 
         stipopPickerImageView.setOnClickListener {
@@ -83,10 +89,14 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     //
     // The code below is used to configure the sample app, so you can ignore it.
     //
+    @SuppressLint("SetTextI18n")
     private fun initSampleUi() {
 
         setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        nameTextView.text = "Test User Id : $testUserId"
+        statusTextView.text = "Language : ${Locale.getDefault().language} / Country : ${Locale.getDefault().country}"
 
         Glide.with(this).load(R.drawable.img_profile).apply(RequestOptions().circleCrop())
             .into(profileImageView)
@@ -99,9 +109,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
             addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
                 if (bottom < oldBottom) {
                     chatRecyclerview.postDelayed({
-                        chatRecyclerview.smoothScrollToPosition(
-                            chatsAdapter.itemCount - 1
-                        )
+                        chatRecyclerview.smoothScrollToPosition(chatsAdapter.itemCount - 1)
                     }, 100)
                 }
             }
