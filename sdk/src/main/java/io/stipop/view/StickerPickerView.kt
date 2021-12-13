@@ -8,6 +8,8 @@ import android.os.Build
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.*
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
@@ -53,10 +55,6 @@ internal class StickerPickerView(
         )
     }
 
-    fun invalidate() {
-        update(this.width, this.height)
-    }
-
     private val stickerThumbnailAdapter: StickerGridAdapter by lazy { StickerGridAdapter(this) }
     private val decoration =
         HorizontalDecoration(StipopUtils.dpToPx(8F).toInt(), StipopUtils.dpToPx(8F).toInt())
@@ -65,6 +63,16 @@ internal class StickerPickerView(
         contentView = binding.root
         width = LinearLayout.LayoutParams.MATCH_PARENT
         height = Stipop.currentKeyboardHeight
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            setIsClippedToScreen(true)
+        } else {
+            isClippingEnabled = false
+        }
+        softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
+        inputMethodMode = INPUT_METHOD_FROM_FOCUSABLE
+
         keyboardViewModel = SpvModel()
         applyTheme()
         with(binding) {
@@ -102,7 +110,7 @@ internal class StickerPickerView(
         })
     }
 
-    internal fun show() {
+    internal fun show(y: Int) {
         if (isShowing) {
             return
         }
@@ -110,9 +118,9 @@ internal class StickerPickerView(
             refreshData()
             showAtLocation(
                 activity.window.decorView.findViewById(android.R.id.content) as View,
-                Gravity.BOTTOM,
+                Gravity.TOP,
                 0,
-                0
+                y
             )
             visibleStateListener.onSpvVisibleState(true)
             keyboardViewModel.trackSpv()

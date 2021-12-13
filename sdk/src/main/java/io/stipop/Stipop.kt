@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.util.Log
-import android.view.View
+import android.view.*
 import androidx.fragment.app.FragmentManager
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.*
+
 
 class Stipop(
     private val activity: Activity,
@@ -47,6 +48,9 @@ class Stipop(
             private set
 
         internal var currentKeyboardHeight = 0
+            private set
+
+        internal var fromTopToVisibleFramePx = 0
             private set
 
         fun configure(context: Context, callback: ((isSuccess: Boolean) -> Unit)? = null) {
@@ -176,9 +180,8 @@ class Stipop(
     }
 
     private val stickerPickerView: StickerPickerView by lazy { StickerPickerView(activity, this) }
+
     private var spvAdditionalHeightOffset = 0
-    private var spvCalculatedMaxTop = 0
-    private var spvCalculatedMaxBottom = 0
     private lateinit var rootView: View
 
     private fun connectView() {
@@ -212,7 +215,7 @@ class Stipop(
             if (currentKeyboardHeight == 0) {
                 StipopUtils.showKeyboard(instance!!.activity)
             }
-            stickerPickerView.show()
+            stickerPickerView.show(fromTopToVisibleFramePx)
         }
     }
 
@@ -229,13 +232,19 @@ class Stipop(
     private fun setSpvHeight() {
         rootView = activity.window.decorView.findViewById(android.R.id.content) as View
         rootView.viewTreeObserver.addOnGlobalLayoutListener {
-            val heightDifference = getBottomChangedHeight()
+            val fullSizeHeight = StipopUtils.getScreenHeight(activity)
+            val visibleFrameRect = Rect()
+            rootView.getWindowVisibleDisplayFrame(visibleFrameRect)
+            fromTopToVisibleFramePx = visibleFrameRect.bottom
+
+
+            val heightDifference = fullSizeHeight - fromTopToVisibleFramePx + spvAdditionalHeightOffset
             if (heightDifference > StipopUtils.pxToDp(100)) {
                 currentKeyboardHeight = heightDifference
                 stickerPickerView.let { spv ->
                     spv.height = currentKeyboardHeight
                     if (!spv.isShowing && spv.wantShowing) {
-                        spv.show()
+                        spv.show(fromTopToVisibleFramePx)
                     }
                 }
             } else {
@@ -243,20 +252,6 @@ class Stipop(
                 stickerPickerView.dismiss()
             }
         }
-    }
-
-    private fun getBottomChangedHeight(): Int {
-        val screenHeight = StipopUtils.getScreenHeight(activity)
-        val visibleFrameRect = Rect()
-        rootView.getWindowVisibleDisplayFrame(visibleFrameRect)
-        val visibleFrameHeight: Int = visibleFrameRect.bottom - visibleFrameRect.top
-        if (screenHeight < visibleFrameRect.bottom) {
-            spvCalculatedMaxBottom = visibleFrameRect.bottom - screenHeight
-        }
-        if (visibleFrameRect.top > spvCalculatedMaxTop) {
-            spvCalculatedMaxTop = visibleFrameRect.top
-        }
-        return screenHeight - visibleFrameHeight - spvCalculatedMaxTop + spvCalculatedMaxBottom + spvAdditionalHeightOffset
     }
 
     override fun onSpvVisibleState(isVisible: Boolean) {
@@ -269,5 +264,4 @@ class Stipop(
             }
         }
     }
-
 }

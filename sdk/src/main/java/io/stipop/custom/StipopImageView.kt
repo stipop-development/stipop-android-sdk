@@ -2,21 +2,26 @@ package io.stipop.custom
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
+import android.util.Log
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import io.stipop.Config
 import io.stipop.R
+import io.stipop.models.SPSticker
 
 class StipopImageView : AppCompatImageView {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init(attrs)
-    }
-
-    enum class Density(val density: String?) {
-        DEFAULT(null), SMALL("100x100")
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
@@ -94,6 +99,33 @@ class StipopImageView : AppCompatImageView {
         Glide.with(context)
             .load(resUrl)
             .placeholder(if (usePlaceHolder) R.color.b0_c7c7c7 else R.color.transparent).into(this)
+    }
+
+    fun loadStickerAsThumbnail(resPath: String?, resUrl: String? = null) {
+        Glide.with(context)
+            .load(resPath ?: "$resUrl${SPSticker.Density.STICKER_THUMB.type}")
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    Handler(Looper.myLooper()!!).post {
+                        Glide.with(context).load(resUrl).into(this@StipopImageView)
+                    }
+                    return true
+                }
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
+            }).into(this)
     }
 
     override fun setImageResource(resId: Int) {

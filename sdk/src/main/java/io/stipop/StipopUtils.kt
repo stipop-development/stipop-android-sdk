@@ -187,10 +187,8 @@ internal object StipopUtils {
             display.getRealSize(size)
         } else {
             try {
-                size.x =
-                    (Display::class.java.getMethod("getRawWidth").invoke(display) as Int)
-                size.y =
-                    (Display::class.java.getMethod("getRawHeight").invoke(display) as Int)
+                size.x = (Display::class.java.getMethod("getRawWidth").invoke(display) as Int)
+                size.y = (Display::class.java.getMethod("getRawHeight").invoke(display) as Int)
             } catch (ignored: IllegalAccessException) {
             } catch (ignored: InvocationTargetException) {
             } catch (ignored: NoSuchMethodException) {
@@ -208,23 +206,29 @@ internal object StipopUtils {
     }
 
     fun getScreenHeight(activity: Activity): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val windowMetrics = activity.windowManager.currentWindowMetrics
-            val insets: Insets =
-                windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-            windowMetrics.bounds.height() - insets.top - insets.bottom
-        } else {
-            val displayMetrics = DisplayMetrics()
-            activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
-            displayMetrics.heightPixels
+        return when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                val windowMetrics = activity.windowManager.currentWindowMetrics
+                val insets: Insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars())
+                windowMetrics.bounds.height() - insets.top - insets.bottom
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 -> {
+                val displayMetrics = DisplayMetrics()
+                activity.windowManager.defaultDisplay.getRealMetrics(displayMetrics)
+                displayMetrics.heightPixels
+            }
+            else -> {
+                val displayMetrics = DisplayMetrics()
+                activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+                displayMetrics.heightPixels
+            }
         }
     }
 
     fun getScreenWidth(activity: Activity): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowMetrics = activity.windowManager.currentWindowMetrics
-            val insets: Insets = windowMetrics.windowInsets
-                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val insets: Insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             windowMetrics.bounds.height() - insets.left - insets.right
         } else {
             val displayMetrics = DisplayMetrics()
