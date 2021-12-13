@@ -42,4 +42,11 @@ class SPSticker() {
         this.keyword = StipopUtils.getString(json, "keyword")
     }
 
+    enum class Density(val type: String?) {
+        NONE(""), STICKER_THUMB("?w=350")
+    }
+
+    fun getStickerThumbUrl(): String?{
+        return "$stickerImg${Density.STICKER_THUMB}"
+    }
 }

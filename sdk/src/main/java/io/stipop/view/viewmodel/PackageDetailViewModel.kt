@@ -42,8 +42,10 @@ internal class PackageDetailViewModel(private val repository: StickerDetailRepos
             stickerPackage.value?.let { stickerPackage ->
                 if (!stickerPackage.isDownloaded()) {
                     repository.postDownloadStickers(stickerPackage) {
-                        StipopUtils.downloadAtLocal(stickerPackage) {
-                            PackageDownloadEvent.publishEvent(stickerPackage.packageId)
+                        it?.let { response ->
+                            if (response.header.isSuccess()) {
+                                PackageDownloadEvent.publishEvent(stickerPackage.packageId)
+                            }
                         }
                     }
                 }
