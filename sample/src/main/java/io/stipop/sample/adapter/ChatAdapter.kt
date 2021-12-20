@@ -28,8 +28,7 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
         const val TYPE_INTRO = 1000
         const val TYPE_MESSAGE_MINE = 1001
         const val TYPE_STICKER_MINE = 1002
-        const val SAMPLE_STICKER =
-            "https://img.stipop.io/2020/3/31/1585719674256_CookieArrow_size.gif"
+        const val SAMPLE_STICKER = "https://img.stipop.io/2020/3/31/1585719674256_CookieArrow_size.gif"
     }
 
     interface GuideDelegate {
