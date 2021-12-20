@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Display
 import android.view.WindowInsets
 import android.view.WindowManager
@@ -31,11 +32,11 @@ import kotlin.collections.ArrayList
 internal object StipopUtils {
 
     fun controlLocale(locale: Locale): Locale {
-        return when (locale) {
-            Locale.SIMPLIFIED_CHINESE -> {
+        return when (locale.isO3Country) {
+            Locale.SIMPLIFIED_CHINESE.isO3Country -> {
                 Locale("zh-cn", locale.country)
             }
-            Locale.TRADITIONAL_CHINESE -> {
+            Locale.TRADITIONAL_CHINESE.isO3Country -> {
                 Locale("zh-tw", locale.country)
             }
             else -> {
@@ -209,7 +210,8 @@ internal object StipopUtils {
         return when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                 val windowMetrics = activity.windowManager.currentWindowMetrics
-                val insets: Insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars())
+                val insets: Insets =
+                    windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars())
                 windowMetrics.bounds.height() - insets.top - insets.bottom
             }
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 -> {
@@ -228,7 +230,8 @@ internal object StipopUtils {
     fun getScreenWidth(activity: Activity): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowMetrics = activity.windowManager.currentWindowMetrics
-            val insets: Insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val insets: Insets =
+                windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             windowMetrics.bounds.height() - insets.left - insets.right
         } else {
             val displayMetrics = DisplayMetrics()

@@ -121,8 +121,8 @@ internal class APIClient {
                 huc.doInput = true
 
                 huc.setRequestProperty("apikey", Config.stipopConfigData.apiKey)
-                huc.setRequestProperty("Content-Type", "application/json;charset=utf-8");
-                huc.setRequestProperty("Accept", "application/json");
+                huc.setRequestProperty("Content-Type", "application/json;charset=utf-8")
+                huc.setRequestProperty("Accept", "application/json")
 
 
                 val writer = OutputStreamWriter(huc.outputStream)

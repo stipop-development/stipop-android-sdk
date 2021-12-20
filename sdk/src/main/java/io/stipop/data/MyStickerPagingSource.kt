@@ -40,7 +40,7 @@ internal class MyStickerPagingSource(private val apiService: StipopApi, private 
                 limit = limit,
                 pageNumber = pageNumber
             )
-            val myStickers = response.body.packageList ?: emptyList()
+            val myStickers = response.body.packageList
             val nextKey = if (myStickers.isNullOrEmpty()) {
                 null
             } else {
