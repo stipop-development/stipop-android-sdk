@@ -92,8 +92,7 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
 
         with(binding!!) {
             homeRecyclerView.adapter = homeTabAdapter
-            allStickerRecyclerView.adapter =
-                pagingPackageAdapter.withLoadStateFooter(MyLoadStateAdapter { pagingPackageAdapter.retry() })
+            allStickerRecyclerView.adapter = pagingPackageAdapter.withLoadStateFooter(MyLoadStateAdapter { pagingPackageAdapter.retry() })
             clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")
                 StipopUtils.hideKeyboard(requireActivity())

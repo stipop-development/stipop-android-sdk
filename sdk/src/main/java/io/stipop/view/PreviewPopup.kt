@@ -30,7 +30,7 @@ internal class PreviewPopup(val activity: Activity, val keyboard: StickerPickerV
             return
         }
 
-        val view = View.inflate(this.activity, R.layout.activity_preview,null)
+        val view = View.inflate(this.activity, R.layout.view_preview,null)
 
         popupWindow = PopupWindow(
             view,
