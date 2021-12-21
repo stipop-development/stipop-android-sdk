@@ -8,11 +8,14 @@ import androidx.savedstate.SavedStateRegistryOwner
 import io.stipop.api.StipopApi
 import io.stipop.data.PkgRepository
 import io.stipop.data.MyStickerRepository
+import io.stipop.data.SearchingRepository
 import io.stipop.data.StickerDetailRepository
-import io.stipop.view.viewmodel.StoreHomeViewModel
+import io.stipop.view.viewmodel.*
 import io.stipop.view.viewmodel.MyStickerViewModel
 import io.stipop.view.viewmodel.NewStickerViewModel
 import io.stipop.view.viewmodel.PackageDetailViewModel
+import io.stipop.view.viewmodel.SsvModel
+import io.stipop.view.viewmodel.StoreHomeViewModel
 
 internal object Injection {
 
@@ -28,6 +31,10 @@ internal object Injection {
 
     private fun provideStickerDetailRepository(): StickerDetailRepository {
         return StickerDetailRepository(stipopApi)
+    }
+
+    private fun provideSearchingRepository(): SearchingRepository {
+        return SearchingRepository(stipopApi)
     }
 
     fun provideViewModelFactory(owner: SavedStateRegistryOwner): ViewModelProvider.Factory {
@@ -49,8 +56,10 @@ internal object Injection {
                 return StoreHomeViewModel(providePackageRepository()) as T
             } else if (modelClass.isAssignableFrom(NewStickerViewModel::class.java)) {
                 return NewStickerViewModel(providePackageRepository()) as T
-            }  else if (modelClass.isAssignableFrom(PackageDetailViewModel::class.java)) {
+            } else if (modelClass.isAssignableFrom(PackageDetailViewModel::class.java)) {
                 return PackageDetailViewModel(provideStickerDetailRepository()) as T
+            } else if (modelClass.isAssignableFrom(SsvModel::class.java)) {
+                return SsvModel(provideSearchingRepository()) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

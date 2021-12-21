@@ -104,6 +104,16 @@ internal interface StipopApi {
         @Query("q") query: String? = null
     ): StickerPackagesResponse
 
+    @GET("search")
+    suspend fun getStickers(
+        @Query("userId") userId: String,
+        @Query("lang") lang: String,
+        @Query("countryCode") countryCode: String,
+        @Query("pageNumber") pageNumber: Int,
+        @Query("limit") limit: Int,
+        @Query("q") query: String? = null
+    ): StickersResponse
+
     @GET("package/new")
     suspend fun getNewStickerPackages(
         @Query("userId") userId: String,

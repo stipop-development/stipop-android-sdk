@@ -8,6 +8,7 @@ internal object Constants {
     object Tag {
         const val DETAIL = "PD"
         const val EXTERNAL = "EXTERNAL"
+        const val SSV = "SEARCH"
     }
 
     object IntentKey {

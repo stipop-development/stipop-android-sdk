@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.R
-import io.stipop.adapter.StickerGridAdapter
+import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.databinding.ItemStickerThumbBinding
 import io.stipop.models.SPSticker
 
 internal class StickerThumbViewHolder(
     private val binding: ItemStickerThumbBinding,
-    val delegate: StickerGridAdapter.OnStickerClickListener? = null
+    val delegate: StickerDefaultAdapter.OnStickerClickListener? = null
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
@@ -33,7 +33,7 @@ internal class StickerThumbViewHolder(
     companion object {
         fun create(
             parent: ViewGroup,
-            delegate: StickerGridAdapter.OnStickerClickListener? = null
+            delegate: StickerDefaultAdapter.OnStickerClickListener? = null
         ): StickerThumbViewHolder {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_sticker_thumb, parent, false)

@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,19 +19,23 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
-import io.stipop.adapter.StickerGridAdapter
+import io.stipop.StipopUtils
+import io.stipop.adapter.HomeTabAdapter
+import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentStickerPackageBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.PackageDetailViewModel
+import io.stipop.viewholder.delegates.KeywordClickDelegate
 import kotlinx.coroutines.launch
 
-class PackageDetailBottomSheetFragment : BottomSheetDialogFragment() {
+class PackageDetailBottomSheetFragment : BottomSheetDialogFragment(){
 
     private var binding: FragmentStickerPackageBinding? = null
     private lateinit var viewModel: PackageDetailViewModel
-    private val gridAdapter: StickerGridAdapter by lazy { StickerGridAdapter() }
+
+    private val gridAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter() }
 
     companion object {
         fun newInstance(packageId: Int, entrancePoint: String) =
@@ -54,8 +57,7 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
-        val bottomSheet: FrameLayout =
-            bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet) as FrameLayout
+        val bottomSheet: FrameLayout = bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet) as FrameLayout
         val behavior: BottomSheetBehavior<*> = BottomSheetBehavior.from<View>(bottomSheet)
         val layoutParams: ViewGroup.LayoutParams = bottomSheet.layoutParams
         layoutParams.height = getBottomSheetDialogDefaultHeight()
@@ -82,13 +84,7 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun getBottomSheetDialogDefaultHeight(): Int {
-        return getWindowHeight() * 90 / 100
-    }
-
-    private fun getWindowHeight(): Int {
-        val displayMetrics = DisplayMetrics()
-        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-        return displayMetrics.heightPixels
+        return StipopUtils.getScreenHeight(requireActivity()) * 90 / 100
     }
 
     override fun onCreateView(

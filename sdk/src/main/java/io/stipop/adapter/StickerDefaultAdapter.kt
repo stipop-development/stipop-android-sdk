@@ -8,7 +8,7 @@ import io.stipop.models.Sticker
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.StickerThumbViewHolder
 
-internal class StickerGridAdapter(
+internal class StickerDefaultAdapter(
     val delegate: OnStickerClickListener? = null,
     private val dataSet: ArrayList<SPSticker> = ArrayList()
 ) :

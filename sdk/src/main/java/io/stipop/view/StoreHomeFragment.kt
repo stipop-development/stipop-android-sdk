@@ -42,7 +42,7 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
     private var binding: FragmentStoreHomeBinding? = null
     private lateinit var viewModel: StoreHomeViewModel
 
-    private val homeTabTabAdapter: HomeTabAdapter by lazy { HomeTabAdapter(this, this) }
+    private val homeTabAdapter: HomeTabAdapter by lazy { HomeTabAdapter(this, this) }
     private val packageVerticalAdapter: PackageVerticalAdapter by lazy {
         PackageVerticalAdapter(
             this,
@@ -90,7 +90,7 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
         )
 
         with(binding!!) {
-            homeRecyclerView.adapter = homeTabTabAdapter
+            homeRecyclerView.adapter = homeTabAdapter
             allStickerRecyclerView.adapter = packageVerticalAdapter.withLoadStateFooter(MyLoadStateAdapter { packageVerticalAdapter.retry() })
             clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")
@@ -101,7 +101,7 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
         }
         lifecycleScope.launch { viewModel.emittedQuery.collect { value -> refreshList(value) } }
         viewModel.getHomeSources()
-        viewModel.homeDataFlow.observeForever { homeTabTabAdapter.setInitData(it) }
+        viewModel.homeDataFlow.observeForever { homeTabAdapter.setInitData(it) }
         viewModel.uiState.observeForever { isSearchView ->
             binding!!.homeRecyclerView.isVisible = !isSearchView
         }

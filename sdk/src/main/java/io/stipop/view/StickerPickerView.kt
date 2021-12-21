@@ -5,10 +5,8 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
-import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
 import androidx.core.view.isVisible
@@ -16,7 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
 import io.stipop.adapter.MyPackageHorizontalAdapter
-import io.stipop.adapter.StickerGridAdapter
+import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.custom.HorizontalDecoration
 import io.stipop.databinding.ViewKeyboardPopupBinding
 import io.stipop.models.SPSticker
@@ -32,7 +30,7 @@ internal class StickerPickerView(
     private val activity: Activity,
     private val visibleStateListener: VisibleStateListener
 ) : PopupWindow(), MyPackageHorizontalAdapter.OnPackageClickListener,
-    StickerGridAdapter.OnStickerClickListener {
+    StickerDefaultAdapter.OnStickerClickListener {
 
     interface VisibleStateListener {
         fun onSpvVisibleState(isVisible: Boolean)
@@ -55,7 +53,7 @@ internal class StickerPickerView(
         )
     }
 
-    private val stickerThumbnailAdapter: StickerGridAdapter by lazy { StickerGridAdapter(this) }
+    private val stickerThumbnailAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter(this) }
     private val decoration =
         HorizontalDecoration(StipopUtils.dpToPx(8F).toInt(), StipopUtils.dpToPx(8F).toInt())
 
