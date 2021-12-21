@@ -118,8 +118,7 @@ internal object Config {
 
             theme.let {
                 themeBackgroundColor = it.backgroundColor.getDayNightKey(themeUseLightMode)
-                themeGroupedContentBackgroundColor =
-                    it.groupedContentBackgroundColor.getDayNightKey(themeUseLightMode)
+                themeGroupedContentBackgroundColor = it.groupedContentBackgroundColor.getDayNightKey(themeUseLightMode)
                 themeMainColor = it.mainColor.getDayNightKey(themeUseLightMode)
                 themeIconColor = it.iconColor.normalColor.getDayNightKey(themeUseLightMode)
                 themeIconTintColor = it.iconColor.tintColor.getDayNightKey(themeUseLightMode)

@@ -12,12 +12,13 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.PagingData
 import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.StipopUtils
 import io.stipop.adapter.HomeTabAdapter
 import io.stipop.adapter.MyLoadStateAdapter
-import io.stipop.adapter.PackageVerticalAdapter
+import io.stipop.adapter.PagingPackageAdapter
 import io.stipop.base.BaseFragment
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentStoreHomeBinding
@@ -43,8 +44,8 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
     private lateinit var viewModel: StoreHomeViewModel
 
     private val homeTabAdapter: HomeTabAdapter by lazy { HomeTabAdapter(this, this) }
-    private val packageVerticalAdapter: PackageVerticalAdapter by lazy {
-        PackageVerticalAdapter(
+    private val pagingPackageAdapter: PagingPackageAdapter by lazy {
+        PagingPackageAdapter(
             this,
             Constants.Point.TREND
         )
@@ -91,7 +92,8 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
 
         with(binding!!) {
             homeRecyclerView.adapter = homeTabAdapter
-            allStickerRecyclerView.adapter = packageVerticalAdapter.withLoadStateFooter(MyLoadStateAdapter { packageVerticalAdapter.retry() })
+            allStickerRecyclerView.adapter =
+                pagingPackageAdapter.withLoadStateFooter(MyLoadStateAdapter { pagingPackageAdapter.retry() })
             clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")
                 StipopUtils.hideKeyboard(requireActivity())
@@ -106,14 +108,15 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
             binding!!.homeRecyclerView.isVisible = !isSearchView
         }
         refreshList()
-        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) { packageVerticalAdapter.refresh() }
+        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) { pagingPackageAdapter.refresh() }
     }
 
     private fun refreshList(query: String? = null) {
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
+            pagingPackageAdapter.submitData(PagingData.empty())
             viewModel.loadsPackages(query).collectLatest {
-                packageVerticalAdapter.submitData(it)
+                pagingPackageAdapter.submitData(it)
             }
         }
     }

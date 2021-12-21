@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.stipop.Constants
 import io.stipop.adapter.MyLoadStateAdapter
-import io.stipop.adapter.PackageVerticalAdapter
+import io.stipop.adapter.PagingPackageAdapter
 import io.stipop.base.BaseFragment
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentNewStickerBinding
@@ -28,7 +28,7 @@ internal class NewStickerFragment : BaseFragment(), StickerPackageClickDelegate 
 
     private var binding: FragmentNewStickerBinding? = null
     private lateinit var viewModel: NewStickerViewModel
-    private val packageVerticalAdapter: PackageVerticalAdapter by lazy { PackageVerticalAdapter(this, Constants.Point.NEW) }
+    private val pagingPackageAdapter: PagingPackageAdapter by lazy { PagingPackageAdapter(this, Constants.Point.NEW) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,16 +53,16 @@ internal class NewStickerFragment : BaseFragment(), StickerPackageClickDelegate 
         with(binding!!) {
             recyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter = packageVerticalAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { packageVerticalAdapter.retry() })
+                adapter = pagingPackageAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { pagingPackageAdapter.retry() })
             }
         }
         lifecycleScope.launch {
             viewModel.loadsPackages().collectLatest {
-                packageVerticalAdapter.submitData(it)
+                pagingPackageAdapter.submitData(it)
             }
         }
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
-            packageVerticalAdapter.refresh()
+            pagingPackageAdapter.refresh()
         }
     }
 

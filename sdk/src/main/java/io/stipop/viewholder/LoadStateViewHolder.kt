@@ -1,10 +1,16 @@
 package io.stipop.viewholder
 
+import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
+import io.stipop.Config
 import io.stipop.R
 import io.stipop.databinding.ItemLoadStateFooterViewBinding
 
@@ -15,6 +21,7 @@ internal class LoadStateViewHolder(
 
     init {
         binding.retryButton.setOnClickListener { retry.invoke() }
+//        binding.progressBar.indeterminateDrawable.colorFilter = PorterDuffColorFilter(Color.parseColor(Config.themeMainColor), PorterDuff.Mode.ADD)
     }
     fun bind(loadState: LoadState) {
         binding.progressBar.isVisible = loadState is LoadState.Loading

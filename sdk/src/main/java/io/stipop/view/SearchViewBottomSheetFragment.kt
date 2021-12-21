@@ -13,6 +13,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -25,7 +26,7 @@ import io.stipop.StipopUtils
 import io.stipop.adapter.HomeTabAdapter
 import io.stipop.adapter.MyLoadStateAdapter
 import io.stipop.adapter.StickerDefaultAdapter
-import io.stipop.adapter.StickerPagingAdapter
+import io.stipop.adapter.PagingStickerAdapter
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentSearchViewBinding
 import io.stipop.models.SPSticker
@@ -43,7 +44,7 @@ class SearchViewBottomSheetFragment : BottomSheetDialogFragment(),
     private var binding: FragmentSearchViewBinding? = null
     private lateinit var viewModel: SsvModel
     private var searchJob: Job? = null
-    private val stickerAdapter: StickerPagingAdapter by lazy { StickerPagingAdapter(this) }
+    private val stickerAdapter: PagingStickerAdapter by lazy { PagingStickerAdapter(this) }
     private val keywordsAdapter: HomeTabAdapter by lazy { HomeTabAdapter(null, this) }
 
     companion object {
@@ -70,8 +71,7 @@ class SearchViewBottomSheetFragment : BottomSheetDialogFragment(),
             }
             recyclerView.apply {
                 layoutManager = GridLayoutManager(context, Config.searchNumOfColumns)
-                adapter =
-                    stickerAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { stickerAdapter.retry() })
+                adapter = stickerAdapter
             }
             clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")

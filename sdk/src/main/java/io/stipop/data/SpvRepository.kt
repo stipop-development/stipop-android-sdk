@@ -6,7 +6,6 @@ import androidx.paging.PagingData
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
-import io.stipop.models.body.UserIdBody
 import io.stipop.models.response.StickerPackageResponse
 import kotlinx.coroutines.flow.Flow
 
@@ -16,7 +15,7 @@ internal class SpvRepository(private val apiService: StipopApi): BaseRepository(
             config = PagingConfig(
                 pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
-            ), pagingSourceFactory = { MyStickerPagingSource(apiService, true) }).flow
+            ), pagingSourceFactory = { PagingMyPackSource(apiService, true) }).flow
     }
 
     suspend fun getStickerPackage(

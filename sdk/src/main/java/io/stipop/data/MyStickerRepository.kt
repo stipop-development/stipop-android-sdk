@@ -22,7 +22,7 @@ internal class MyStickerRepository(private val apiService: StipopApi): BaseRepos
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
-            ), pagingSourceFactory = { MyStickerPagingSource(apiService, wantVisibleSticker) }).flow
+            ), pagingSourceFactory = { PagingMyPackSource(apiService, wantVisibleSticker) }).flow
     }
 
     suspend fun request(fromStickerPackage: StickerPackage, toStickerPackage: StickerPackage) {

@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import io.stipop.Config
@@ -33,6 +34,7 @@ internal class KeywordTagViewHolder(
                 isCheckable = true
                 isCheckedIconVisible = false
                 chipBackgroundColor = ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
+                setTextColor(Color.WHITE)
             }.run {
                 binding.chipGroup.addView(this)
             }

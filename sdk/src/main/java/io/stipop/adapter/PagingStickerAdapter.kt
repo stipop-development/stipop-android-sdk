@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import io.stipop.models.Sticker
 import io.stipop.viewholder.StickerThumbViewHolder
 
-internal class StickerPagingAdapter(private val delegate: StickerDefaultAdapter.OnStickerClickListener) : PagingDataAdapter<Sticker, StickerThumbViewHolder>(REPO_COMPARATOR){
+internal class PagingStickerAdapter(private val delegate: StickerDefaultAdapter.OnStickerClickListener) : PagingDataAdapter<Sticker, StickerThumbViewHolder>(REPO_COMPARATOR){
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

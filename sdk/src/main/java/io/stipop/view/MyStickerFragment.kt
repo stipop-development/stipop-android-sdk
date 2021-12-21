@@ -19,7 +19,7 @@ import io.stipop.databinding.FragmentMyStickerBinding
 import io.stipop.viewholder.delegates.MyStickerClickDelegate
 import io.stipop.custom.DragAndDropHelperCallback
 import io.stipop.models.StickerPackage
-import io.stipop.adapter.MyPackageVerticalAdapter
+import io.stipop.adapter.PagingMyPackAdapter
 import io.stipop.adapter.MyLoadStateAdapter
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.event.PackageVisibilityChangeEvent
@@ -40,8 +40,8 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
     private var binding: FragmentMyStickerBinding? = null
     private lateinit var viewModel: MyStickerViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
-    private val myPackageVerticalAdapter: MyPackageVerticalAdapter by lazy {
-        MyPackageVerticalAdapter(
+    private val pagingMyPackAdapter: PagingMyPackAdapter by lazy {
+        PagingMyPackAdapter(
             this
         )
     }
@@ -69,7 +69,7 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
 
         myStickersRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = myPackageVerticalAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { myPackageVerticalAdapter.retry() })
+            adapter = pagingMyPackAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { pagingMyPackAdapter.retry() })
         }
 
         val wantVisibleSticker = savedInstanceState?.getBoolean(LAST_VISIBLE_SETTING) ?: DEFAULT_VISIBLE
@@ -77,17 +77,17 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
         initRequest(wantVisibleSticker)
 
         itemTouchHelper =
-            ItemTouchHelper(DragAndDropHelperCallback(myPackageVerticalAdapter)).apply {
+            ItemTouchHelper(DragAndDropHelperCallback(pagingMyPackAdapter)).apply {
                 attachToRecyclerView(myStickersRecyclerView)
             }
 
         viewModel.packageVisibilityChanged.observeForever {
-            myPackageVerticalAdapter.refresh()
+            pagingMyPackAdapter.refresh()
             PackageVisibilityChangeEvent.publishEvent(it.second)
         }
 
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
-            myPackageVerticalAdapter.refresh()
+            pagingMyPackAdapter.refresh()
             binding?.myStickersRecyclerView?.scrollToPosition(0)
         }
     }
@@ -109,7 +109,7 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
             viewModel.loadsPackages(wantVisibleSticker).collectLatest {
-                myPackageVerticalAdapter.submitData(it)
+                pagingMyPackAdapter.submitData(it)
             }
         }
     }
@@ -176,7 +176,7 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
     }
 
     private fun setNoResultView() {
-        if (myPackageVerticalAdapter.itemCount > 0) {
+        if (pagingMyPackAdapter.itemCount > 0) {
             listLL.visibility = View.VISIBLE
             emptyTextView.visibility = View.GONE
         } else {

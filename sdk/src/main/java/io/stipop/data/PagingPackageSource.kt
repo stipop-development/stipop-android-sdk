@@ -9,7 +9,7 @@ import io.stipop.models.response.StickerPackagesResponse
 import retrofit2.HttpException
 import java.io.IOException
 
-internal class PkgPagingSource(
+internal class PagingPackageSource(
     private val apiService: StipopApi,
     private val query: String? = null,
     private val newOrder: Boolean = false
@@ -49,7 +49,7 @@ internal class PkgPagingSource(
                     pageNumber = pageNumber,
                     countryCode = Stipop.countryCode,
                     lang = Stipop.lang,
-                    query = currentQuery
+                    query = query
                 )
                 false -> response = apiService.getTrendingStickerPackages(
                     userId = userId,
@@ -57,7 +57,7 @@ internal class PkgPagingSource(
                     pageNumber = pageNumber,
                     countryCode = Stipop.countryCode,
                     lang = Stipop.lang,
-                    query = currentQuery
+                    query = query
                 )
             }
 

@@ -24,7 +24,7 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                PkgPagingSource(
+                PagingPackageSource(
                     apiService,
                     query = query,
                     newOrder = false
@@ -37,7 +37,7 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
             config = PagingConfig(
                 pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
-            ), pagingSourceFactory = { PkgPagingSource(apiService, newOrder = true) }).flow
+            ), pagingSourceFactory = { PagingPackageSource(apiService, newOrder = true) }).flow
     }
 
     suspend fun getCurationPackagesAsFlow(type: String): Flow<CurationPackageResponse?> {

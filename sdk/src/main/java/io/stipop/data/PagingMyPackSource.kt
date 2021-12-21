@@ -1,25 +1,23 @@
 package io.stipop.data
 
 import android.util.Log
-import androidx.paging.Pager
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import io.stipop.Config
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
-import io.stipop.models.Sticker
-import io.stipop.models.response.StickersResponse
+import io.stipop.models.StickerPackage
 import retrofit2.HttpException
 import java.io.IOException
 
-internal class StickerPagingSource(private val apiService: StipopApi, private val query: String? = null) : PagingSource<Int, Sticker>() {
+internal class PagingMyPackSource(private val apiService: StipopApi, private val wantVisibleSticker: Boolean) : PagingSource<Int, StickerPackage>() {
 
     private val STARTING_PAGE_INDEX = 1
-    private val ITEM_PER_PAGE = 12
-    private var currentQuery: String? = null
+    private var currentVisibleSetting = true
 
-    override fun getRefreshKey(state: PagingState<Int, Sticker>): Int? {
-        if (query != currentQuery) {
-            currentQuery = query
+    override fun getRefreshKey(state: PagingState<Int, StickerPackage>): Int? {
+        if (wantVisibleSticker != currentVisibleSetting) {
+            currentVisibleSetting = wantVisibleSticker
             return null
         }
         return state.anchorPosition?.let { anchorPosition ->
@@ -28,32 +26,36 @@ internal class StickerPagingSource(private val apiService: StipopApi, private va
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Sticker> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, StickerPackage> {
         val pageNumber = params.key ?: STARTING_PAGE_INDEX
         val userId = Stipop.userId
+        val limit = 20
         return try {
-            val response: StickersResponse = apiService.getStickers(
+            val response = if (wantVisibleSticker) apiService.getMyStickers(
                 userId = userId,
-                limit = ITEM_PER_PAGE,
-                pageNumber = pageNumber,
-                countryCode = Stipop.countryCode,
-                lang = Stipop.lang,
-                query = query
+                limit = limit,
+                pageNumber = pageNumber
+            ) else apiService.getMyHiddenStickers(
+                userId = userId,
+                limit = limit,
+                pageNumber = pageNumber
             )
-            val stickerPackages = response.body?.stickerList ?: emptyList()
-            val nextKey = if (stickerPackages.isNullOrEmpty()) {
+            val myStickers = response.body.packageList
+            val nextKey = if (myStickers.isNullOrEmpty()) {
                 null
             } else {
                 pageNumber + 1
             }
             LoadResult.Page(
-                data = stickerPackages,
+                data = myStickers,
                 prevKey = if (pageNumber == STARTING_PAGE_INDEX) null else pageNumber - 1,
                 nextKey = nextKey
             )
         } catch (exception: IOException) {
             return LoadResult.Error(exception)
         } catch (exception: HttpException) {
+            return LoadResult.Error(exception)
+        } catch (exception: Exception){
             return LoadResult.Error(exception)
         }
     }

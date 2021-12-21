@@ -1,6 +1,5 @@
 package io.stipop.data
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -19,7 +18,7 @@ internal class SearchingRepository(private val apiService: StipopApi) : BaseRepo
     fun getStickersStream(query: String? = null): Flow<PagingData<Sticker>> {
         return Pager(
             config = PagingConfig(pageSize = NETWORK_PAGE_SIZE, enablePlaceholders = false),
-            pagingSourceFactory = { StickerPagingSource(apiService, query) }).flow
+            pagingSourceFactory = { PagingStickerSource(apiService, query) }).flow
     }
 
     suspend fun getRecommendQueryAsFlow(): Flow<KeywordListResponse?> {

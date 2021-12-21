@@ -13,7 +13,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
-import io.stipop.adapter.MyPackageHorizontalAdapter
+import io.stipop.adapter.PagingSpvAdapter
 import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.custom.HorizontalDecoration
 import io.stipop.databinding.ViewKeyboardPopupBinding
@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 internal class StickerPickerView(
     private val activity: Activity,
     private val visibleStateListener: VisibleStateListener
-) : PopupWindow(), MyPackageHorizontalAdapter.OnPackageClickListener,
+) : PopupWindow(), PagingSpvAdapter.OnPackageClickListener,
     StickerDefaultAdapter.OnStickerClickListener {
 
     interface VisibleStateListener {
@@ -47,8 +47,8 @@ internal class StickerPickerView(
     private val ioScope = CoroutineScope(Job() + Dispatchers.IO)
     private var binding: ViewKeyboardPopupBinding =
         ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
-    private val packageThumbnailHorizontalAdapter: MyPackageHorizontalAdapter by lazy {
-        MyPackageHorizontalAdapter(
+    private val packageThumbnailHorizontalAdapter: PagingSpvAdapter by lazy {
+        PagingSpvAdapter(
             this
         )
     }

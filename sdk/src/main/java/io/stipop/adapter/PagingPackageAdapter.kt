@@ -7,7 +7,7 @@ import io.stipop.models.StickerPackage
 import io.stipop.viewholder.VerticalStickerThumbViewHolder
 import io.stipop.viewholder.delegates.StickerPackageClickDelegate
 
-internal class PackageVerticalAdapter(private val delegate: StickerPackageClickDelegate, private val clickPoint: String) :
+internal class PagingPackageAdapter(private val delegate: StickerPackageClickDelegate, private val clickPoint: String) :
     PagingDataAdapter<StickerPackage, VerticalStickerThumbViewHolder>(REPO_COMPARATOR){
 
     override fun onCreateViewHolder(

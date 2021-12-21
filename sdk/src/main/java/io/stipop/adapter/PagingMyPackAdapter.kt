@@ -8,7 +8,7 @@ import io.stipop.models.StickerPackage
 import io.stipop.viewholder.delegates.MyStickerClickDelegate
 import io.stipop.viewholder.MyStickerPackageViewHolder
 
-internal class MyPackageVerticalAdapter(private val delegate: MyStickerClickDelegate) :
+internal class PagingMyPackAdapter(private val delegate: MyStickerClickDelegate) :
     PagingDataAdapter<StickerPackage, MyStickerPackageViewHolder>(REPO_COMPARATOR),
     DragAndDropDelegate {
 
