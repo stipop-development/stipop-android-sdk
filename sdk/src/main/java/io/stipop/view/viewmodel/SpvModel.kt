@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import io.stipop.Config
 import io.stipop.Stipop
+import io.stipop.StipopUtils
 import io.stipop.api.StipopApi
 import io.stipop.data.SpvRepository
 import io.stipop.isNullOrNotEnough
@@ -72,12 +73,31 @@ internal class SpvModel {
 
     fun loadFavorites(onSuccess: (data: List<Sticker>) -> Unit) {
         taskScope.launch {
-            val result = StipopApi.create().getFavoriteStickers(Stipop.userId, 1, 20)
-            if (result.header.isSuccess() && result.body?.stickerList != null) {
+            repository.getFavorites { result ->
+                Log.d("STIPOP-DEBUG", "GETS : $result")
                 launch(Dispatchers.Main) {
-                    onSuccess(result.body.stickerList)
+                    if (result.header.isSuccess() && result.body?.stickerList != null) {
+                        onSuccess(result.body.stickerList)
+                    }
                 }
             }
+        }
+    }
+
+    fun putFavorites(spSticker: SPSticker, onSuccess: (data: SPSticker) -> Unit) {
+        taskScope.launch {
+            repository.putFavorite(spSticker, onSuccess = {
+                if (it.header.isSuccess()) {
+                    if (spSticker.favoriteYN != "Y") {
+                        spSticker.favoriteYN = "Y"
+                    } else {
+                        spSticker.favoriteYN = "N"
+                    }
+                }
+                launch(Dispatchers.Main) {
+                    onSuccess(spSticker)
+                }
+            })
         }
     }
 

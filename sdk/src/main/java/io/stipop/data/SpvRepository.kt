@@ -4,12 +4,18 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import io.stipop.Stipop
+import io.stipop.StipopUtils
 import io.stipop.api.StipopApi
+import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
+import io.stipop.models.body.FavoriteBody
+import io.stipop.models.response.FavoriteListResponse
+import io.stipop.models.response.StickerListResponse
 import io.stipop.models.response.StickerPackageResponse
+import io.stipop.models.response.StipopResponse
 import kotlinx.coroutines.flow.Flow
 
-internal class SpvRepository(private val apiService: StipopApi): BaseRepository() {
+internal class SpvRepository(private val apiService: StipopApi) : BaseRepository() {
     fun getMyStickerStream(): Flow<PagingData<StickerPackage>> {
         return Pager(
             config = PagingConfig(
@@ -27,5 +33,27 @@ internal class SpvRepository(private val apiService: StipopApi): BaseRepository(
             onCompletable = {
                 it?.let(onSuccess)
             })
+    }
+
+    suspend fun putFavorite(spSticker: SPSticker, onSuccess: (data: StipopResponse) -> Unit) {
+        safeCall(
+            call = {
+                apiService.putMyStickerFavorite(
+                    Stipop.userId,
+                    FavoriteBody(spSticker.stickerId)
+                )
+            },
+            onCompletable = {
+                it?.let(onSuccess)
+            })
+    }
+
+    suspend fun getFavorites(onSuccess: (data: FavoriteListResponse) -> Unit) {
+        safeCall(
+            call = { apiService.getFavoriteStickers(Stipop.userId, 1, 24) },
+            onCompletable = {
+                it?.let(onSuccess)
+            }
+        )
     }
 }

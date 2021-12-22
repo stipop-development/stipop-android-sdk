@@ -13,6 +13,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -92,6 +93,7 @@ class SearchViewBottomSheetFragment : BottomSheetDialogFragment(),
     private fun refreshList(query: String? = null) {
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
+            stickerAdapter.submitData(PagingData.empty())
             viewModel.loadStickers(query).collectLatest {
                 stickerAdapter.submitData(it)
             }

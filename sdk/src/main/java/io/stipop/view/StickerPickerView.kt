@@ -38,13 +38,8 @@ internal class StickerPickerView(
     }
 
     var wantShowing: Boolean = false
-    private var keyboardViewModel: SpvModel
-    private val spvPreview: SpvPreview by lazy {
-        SpvPreview(
-            activity,
-            this@StickerPickerView
-        )
-    }
+    private val keyboardViewModel: SpvModel = SpvModel()
+    private val spvPreview: SpvPreview by lazy { SpvPreview(activity, this@StickerPickerView, keyboardViewModel) }
     private val ioScope = CoroutineScope(Job() + Dispatchers.IO)
     private var binding: ViewKeyboardPopupBinding =
         ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
@@ -71,7 +66,6 @@ internal class StickerPickerView(
         softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
         inputMethodMode = INPUT_METHOD_FROM_FOCUSABLE
 
-        keyboardViewModel = SpvModel()
         applyTheme()
         with(binding) {
             packageThumbRecyclerView.run {
@@ -242,7 +236,7 @@ internal class StickerPickerView(
 
     override fun onStickerClick(position: Int, spSticker: SPSticker) {
         if (Config.showPreview) {
-            spvPreview.showOrRefresh(spSticker)
+            spvPreview.showOrUpdate(spSticker)
         } else {
             sendSticker(spSticker)
         }

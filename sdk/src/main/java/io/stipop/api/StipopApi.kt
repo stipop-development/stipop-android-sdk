@@ -1,16 +1,12 @@
 package io.stipop.api
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.Keep
 import com.google.gson.Gson
 import io.stipop.BuildConfig
 import io.stipop.Config
 import io.stipop.Constants
-import io.stipop.models.body.InitSdkBody
-import io.stipop.models.body.OrderChangeBody
-import io.stipop.models.body.StipopMetaHeader
-import io.stipop.models.body.UserIdBody
+import io.stipop.models.body.*
 import io.stipop.models.response.*
 import okhttp3.Headers
 import okhttp3.Interceptor
@@ -66,7 +62,7 @@ internal interface StipopApi {
         @Path("userId") userId: String,
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int
-    ): StickerListResponse
+    ): FavoriteListResponse
 
     @GET("mysticker/{userId}")
     suspend fun getMyStickers(
@@ -81,6 +77,12 @@ internal interface StipopApi {
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int
     ): MyStickerResponse
+
+    @PUT("mysticker/favorite/{userId}")
+    suspend fun putMyStickerFavorite(
+        @Path("userId") userId: String,
+        @Body favoriteBody: FavoriteBody
+    ): StipopResponse
 
     @PUT("mysticker/order/{userId}")
     suspend fun putMyStickerOrders(
@@ -172,7 +174,7 @@ internal interface StipopApi {
     ): StipopResponse
 
     companion object {
-        private val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BASIC }
+        private val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BODY }
         private val headers = Headers.Builder()
             .add(
                 Constants.ApiParams.ApiKey, if (Constants.Value.IS_SANDBOX) {

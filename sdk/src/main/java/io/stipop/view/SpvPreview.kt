@@ -2,6 +2,7 @@ package io.stipop.view
 
 import android.app.Activity
 import android.os.Build
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
@@ -12,19 +13,25 @@ import io.stipop.StipopUtils
 import io.stipop.databinding.ViewPreviewBinding
 import io.stipop.delegates.PreviewDelegate
 import io.stipop.models.SPSticker
+import io.stipop.view.viewmodel.SpvModel
 
-internal class SpvPreview(private val activity: Activity, private val delegate: PreviewDelegate) :
+internal class SpvPreview(
+    private val activity: Activity,
+    private val delegate: PreviewDelegate,
+    private val spvModel: SpvModel
+) :
     PopupWindow() {
 
     private val binding: ViewPreviewBinding = ViewPreviewBinding.inflate(activity.layoutInflater)
-    private val rootView: View = activity.window.decorView.findViewById(android.R.id.content) as View
+    private val rootView: View =
+        activity.window.decorView.findViewById(android.R.id.content) as View
     private var currentSticker: SPSticker? = null
-    var spvTopCoordinate : Int = 0
+    var spvTopCoordinate: Int = 0
 
     init {
         contentView = binding.root
         width = LinearLayout.LayoutParams.MATCH_PARENT
-        height = StipopUtils.dpToPx(170f) .toInt()
+        height = StipopUtils.dpToPx(170f).toInt()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             setIsClippedToScreen(true)
@@ -41,7 +48,7 @@ internal class SpvPreview(private val activity: Activity, private val delegate: 
                 dismiss()
             }
             favoriteImageView.setOnClickListener {
-                toggleFavorite()
+                updateFavorite()
             }
             stickerImageView.setOnClickListener {
                 dismiss()
@@ -52,10 +59,8 @@ internal class SpvPreview(private val activity: Activity, private val delegate: 
         }
     }
 
-    fun showOrRefresh(spSticker: SPSticker) {
-
+    fun showOrUpdate(spSticker: SPSticker) {
         currentSticker = spSticker
-
         if (!isShowing) {
             showAtLocation(
                 rootView,
@@ -64,51 +69,27 @@ internal class SpvPreview(private val activity: Activity, private val delegate: 
                 Stipop.fromTopToVisibleFramePx - height + Config.previewPadding
             )
         }
-        setSticker()
-        setFavoriteState()
+        setStickerUi()
+        setFavoriteUi()
     }
 
-    private fun setSticker() {
-        binding.stickerImageView.loadImage(currentSticker?.stickerImgLocalFilePath ?: currentSticker?.stickerImg, false)
+    private fun setStickerUi() {
+        binding.stickerImageView.loadImage(
+            currentSticker?.stickerImgLocalFilePath ?: currentSticker?.stickerImg, false
+        )
     }
 
-    private fun setFavoriteState() {
-        Config.getPreviewFavoriteResourceId(activity, currentSticker?.favoriteYN == "Y")
+    private fun setFavoriteUi() {
+        binding.favoriteImageView.setImageResource(Config.getPreviewFavoriteResourceId(activity, currentSticker?.favoriteYN == "Y"))
     }
 
-    private fun toggleFavorite() {
-//
-//        val params = JSONObject()
-//        params.put("stickerId", currentSticker.stickerId)
-//
-//        APIClient.put(this.activity, APIClient.APIPath.MY_STICKER_FAVORITE.rawValue + "/${Stipop.userId}", params) { response: JSONObject?, e: IOException? ->
-//            // println(response)
-//
-//            if (null != response) {
-//
-//                val header = response.getJSONObject("header")
-//
-//                if (StipopUtils.getString(header, "status") == "success") {
-//                    if (currentSticker.favoriteYN != "Y") {
-//                        currentSticker.favoriteYN = "Y"
-//                    } else {
-//                        currentSticker.favoriteYN = "N"
-//                    }
-//
-//                    setFavoriteState()
-//
-//
-//                    delegate.onFavoriteChanged(currentSticker)
-//
-//                } else {
-//                    // println("ERROR!")
-//                }
-//
-//            } else {
-//
-//            }
-//        }
+    private fun updateFavorite() {
+        currentSticker?.let {
+            spvModel.putFavorites(it, onSuccess = {
+                activity.runOnUiThread {
+                    setFavoriteUi()
+                }
+            })
+        }
     }
-
-
 }
