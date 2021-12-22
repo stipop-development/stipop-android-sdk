@@ -40,7 +40,7 @@
                 android:src="@mipmap/ic_recents_active" />
 
             <io.stipop.custom.StipopImageView
-                android:id="@+id/favoriteIV"
+                android:id="@+id/favoriteImageView"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:layout_alignParentRight="true"

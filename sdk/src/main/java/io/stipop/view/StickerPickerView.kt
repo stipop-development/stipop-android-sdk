@@ -17,6 +17,7 @@ import io.stipop.adapter.PagingSpvAdapter
 import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.custom.HorizontalDecoration
 import io.stipop.databinding.ViewKeyboardPopupBinding
+import io.stipop.delegates.PreviewDelegate
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.SpvModel
@@ -30,7 +31,7 @@ internal class StickerPickerView(
     private val activity: Activity,
     private val visibleStateListener: VisibleStateListener
 ) : PopupWindow(), PagingSpvAdapter.OnPackageClickListener,
-    StickerDefaultAdapter.OnStickerClickListener {
+    StickerDefaultAdapter.OnStickerClickListener, PreviewDelegate {
 
     interface VisibleStateListener {
         fun onSpvVisibleState(isVisible: Boolean)
@@ -38,8 +39,8 @@ internal class StickerPickerView(
 
     var wantShowing: Boolean = false
     private var keyboardViewModel: SpvModel
-    private val previewPopup: PreviewPopup by lazy {
-        PreviewPopup(
+    private val spvPreview: SpvPreview by lazy {
+        SpvPreview(
             activity,
             this@StickerPickerView
         )
@@ -54,8 +55,7 @@ internal class StickerPickerView(
     }
 
     private val stickerThumbnailAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter(this) }
-    private val decoration =
-        HorizontalDecoration(StipopUtils.dpToPx(8F).toInt(), StipopUtils.dpToPx(8F).toInt())
+    private val decoration = HorizontalDecoration(StipopUtils.dpToPx(8F).toInt(), StipopUtils.dpToPx(8F).toInt())
 
     init {
         contentView = binding.root
@@ -122,11 +122,13 @@ internal class StickerPickerView(
             )
             visibleStateListener.onSpvVisibleState(true)
             keyboardViewModel.trackSpv()
+            spvPreview.spvTopCoordinate = height
         }
     }
 
     override fun dismiss() {
         wantShowing = false
+        spvPreview.dismiss()
         super.dismiss()
         packageThumbnailHorizontalAdapter.updateSelected()
         visibleStateListener.onSpvVisibleState(false)
@@ -144,11 +146,11 @@ internal class StickerPickerView(
             when (Config.showPreview) {
                 true -> {
                     if (recentFavoriteContainer.tag == 1) {
-                        favoriteIV.setIconDefaultsColor()
+                        favoriteImageView.setIconDefaultsColor()
                         recentlyIV.setIconDefaultsColor40Opacity()
                     } else {
                         recentlyIV.setIconDefaultsColor()
-                        favoriteIV.setIconDefaultsColor40Opacity()
+                        favoriteImageView.setIconDefaultsColor40Opacity()
                     }
                 }
                 false -> {
@@ -239,24 +241,10 @@ internal class StickerPickerView(
     }
 
     override fun onStickerClick(position: Int, spSticker: SPSticker) {
-        Stipop.send(
-            spSticker.stickerId,
-            spSticker.keyword,
-            Constants.Point.PICKER_VIEW
-        ) { result ->
-            if (result) {
-                if (Config.showPreview) {
-                    previewPopup.sticker = spSticker
-                    if (previewPopup.windowIsShowing()) {
-                        previewPopup.setStickerView()
-                    } else {
-                        previewPopup.show()
-                    }
-                } else {
-                    keyboardViewModel.saveRecent(spSticker)
-                    Stipop.instance?.delegate?.onStickerSelected(spSticker)
-                }
-            }
+        if (Config.showPreview) {
+            spvPreview.showOrRefresh(spSticker)
+        } else {
+            sendSticker(spSticker)
         }
     }
 
@@ -279,19 +267,19 @@ internal class StickerPickerView(
             packageListHeader.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
             storeImageView.setImageResource(Config.getKeyboardStoreResourceId(activity))
             storeImageView.setIconDefaultsColor()
-            favoriteIV.setImageResource(R.mipmap.ic_favorites_active)
+            favoriteImageView.setImageResource(R.mipmap.ic_favorites_active)
             recentlyIV.setImageResource(R.mipmap.ic_recents_active)
             recentFavoriteContainer.tag = 0
             when (Config.showPreview) {
                 true -> {
                     recentStickerImageView.visibility = View.GONE
                     recentlyIV.visibility = View.VISIBLE
-                    favoriteIV.visibility = View.VISIBLE
+                    favoriteImageView.visibility = View.VISIBLE
                 }
                 false -> {
                     recentStickerImageView.visibility = View.VISIBLE
                     recentlyIV.visibility = View.GONE
-                    favoriteIV.visibility = View.GONE
+                    favoriteImageView.visibility = View.GONE
                 }
             }
             stickerRecyclerView.layoutManager =
@@ -306,6 +294,27 @@ internal class StickerPickerView(
                 packageThumbnailHorizontalAdapter.getItemByPosition(0)?.let {
                     onPackageClick(0, it)
                 }
+            }
+        }
+    }
+
+    override fun onPreviewFavoriteChanged(sticker: SPSticker) {
+        //
+    }
+
+    override fun onPreviewStickerClicked(sticker: SPSticker) {
+        sendSticker(sticker)
+    }
+
+    private fun sendSticker(spSticker: SPSticker) {
+        Stipop.send(
+            spSticker.stickerId,
+            spSticker.keyword,
+            Constants.Point.PICKER_VIEW
+        ) { result ->
+            if (result) {
+                keyboardViewModel.saveRecent(spSticker)
+                Stipop.instance?.delegate?.onStickerSelected(spSticker)
             }
         }
     }

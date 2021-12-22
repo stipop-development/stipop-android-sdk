@@ -16,7 +16,7 @@ import io.stipop.R
 import io.stipop.base.Injection
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.FragmentMyStickerBinding
-import io.stipop.viewholder.delegates.MyStickerClickDelegate
+import io.stipop.delegates.MyStickerClickDelegate
 import io.stipop.custom.DragAndDropHelperCallback
 import io.stipop.models.StickerPackage
 import io.stipop.adapter.PagingMyPackAdapter

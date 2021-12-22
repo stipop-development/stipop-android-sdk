@@ -11,7 +11,7 @@ import io.stipop.Constants
 import io.stipop.StipopUtils
 import io.stipop.databinding.ItemHorizontalStickerThumbBinding
 import io.stipop.models.StickerPackage
-import io.stipop.viewholder.delegates.StickerPackageClickDelegate
+import io.stipop.delegates.StickerPackageClickDelegate
 
 internal class HorizontalStickerThumbViewHolder(private val binding: ItemHorizontalStickerThumbBinding, val delegate: StickerPackageClickDelegate?) :
     RecyclerView.ViewHolder(binding.root) {

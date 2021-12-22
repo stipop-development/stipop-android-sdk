@@ -13,7 +13,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -24,14 +23,13 @@ import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.StipopUtils
 import io.stipop.adapter.HomeTabAdapter
-import io.stipop.adapter.MyLoadStateAdapter
 import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.adapter.PagingStickerAdapter
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentSearchViewBinding
 import io.stipop.models.SPSticker
 import io.stipop.view.viewmodel.SsvModel
-import io.stipop.viewholder.delegates.KeywordClickDelegate
+import io.stipop.delegates.KeywordClickDelegate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest

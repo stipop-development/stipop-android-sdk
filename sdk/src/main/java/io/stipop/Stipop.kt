@@ -234,7 +234,6 @@ class Stipop(
             rootView.getWindowVisibleDisplayFrame(visibleFrameRect)
             fromTopToVisibleFramePx = visibleFrameRect.bottom
 
-
             val heightDifference = fullSizeHeight - fromTopToVisibleFramePx + spvAdditionalHeightOffset
             if (heightDifference > StipopUtils.pxToDp(100)) {
                 currentKeyboardHeight = heightDifference

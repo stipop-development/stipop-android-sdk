@@ -4,14 +4,13 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import io.stipop.Config
 import io.stipop.R
 import io.stipop.databinding.ItemChipKeywordsBinding
 import io.stipop.models.response.KeywordListResponse
-import io.stipop.viewholder.delegates.KeywordClickDelegate
+import io.stipop.delegates.KeywordClickDelegate
 
 internal class KeywordTagViewHolder(
     private val binding: ItemChipKeywordsBinding,

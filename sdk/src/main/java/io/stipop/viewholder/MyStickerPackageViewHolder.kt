@@ -15,7 +15,7 @@ import io.stipop.Constants
 import io.stipop.R
 import io.stipop.custom.StipopImageView
 import io.stipop.models.StickerPackage
-import io.stipop.viewholder.delegates.MyStickerClickDelegate
+import io.stipop.delegates.MyStickerClickDelegate
 
 internal class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerClickDelegate?) :
     RecyclerView.ViewHolder(view) {

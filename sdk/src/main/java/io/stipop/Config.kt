@@ -75,7 +75,7 @@ internal object Config {
     private var detailCloseIconName = "ic_close_border_3"
     var detailNumOfColumns = 3
     var showPreview = false
-    var previewPadding = 44
+    var previewPadding = 0
     private var previewFavoritesOnIconName = ""
     private var previewFavoritesOffIconName = ""
     private var previewCloseIconName = ""

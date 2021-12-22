@@ -16,7 +16,7 @@ import io.stipop.databinding.FragmentNewStickerBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.NewStickerViewModel
-import io.stipop.viewholder.delegates.StickerPackageClickDelegate
+import io.stipop.delegates.StickerPackageClickDelegate
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package io.stipop.viewholder.delegates
+package io.stipop.delegates
 
 import androidx.recyclerview.widget.RecyclerView
 

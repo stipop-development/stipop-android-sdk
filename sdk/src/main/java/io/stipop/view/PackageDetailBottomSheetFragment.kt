@@ -20,14 +20,12 @@ import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
 import io.stipop.StipopUtils
-import io.stipop.adapter.HomeTabAdapter
 import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentStickerPackageBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.PackageDetailViewModel
-import io.stipop.viewholder.delegates.KeywordClickDelegate
 import kotlinx.coroutines.launch
 
 class PackageDetailBottomSheetFragment : BottomSheetDialogFragment(){
@@ -141,7 +139,7 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment(){
             backIV.setOnClickListener {
                 dismiss()
             }
-            closeIV.setOnClickListener {
+            closeImageView.setOnClickListener {
                 dismiss()
             }
             downloadTV.setOnClickListener {
@@ -162,9 +160,9 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment(){
             contentsRL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
             packageNameTV.setTextColor(Config.getDetailPackageNameTextColor(requireContext()))
             backIV.setImageResource(Config.getBackIconResourceId(requireContext()))
-            closeIV.setImageResource(Config.getCloseIconResourceId(requireContext()))
+            closeImageView.setImageResource(Config.getCloseIconResourceId(requireContext()))
             backIV.setIconDefaultsColor()
-            closeIV.setIconDefaultsColor()
+            closeImageView.setIconDefaultsColor()
         }
     }
 

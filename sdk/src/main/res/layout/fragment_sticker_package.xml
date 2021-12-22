@@ -41,7 +41,7 @@
             android:gravity="center">
 
             <io.stipop.custom.StipopImageView
-                android:id="@+id/closeIV"
+                android:id="@+id/closeImageView"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@mipmap/ic_close_border_3" />

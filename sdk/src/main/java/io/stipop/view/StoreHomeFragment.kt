@@ -25,8 +25,8 @@ import io.stipop.databinding.FragmentStoreHomeBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.StoreHomeViewModel
-import io.stipop.viewholder.delegates.KeywordClickDelegate
-import io.stipop.viewholder.delegates.StickerPackageClickDelegate
+import io.stipop.delegates.KeywordClickDelegate
+import io.stipop.delegates.StickerPackageClickDelegate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
