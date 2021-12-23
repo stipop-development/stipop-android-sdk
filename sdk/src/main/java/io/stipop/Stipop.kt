@@ -112,7 +112,7 @@ class Stipop(
         }
 
         @Deprecated(
-            "Please use connect(activity, userId, delegate, stipopButton, locale) instead. This method will be modified soon.",
+            "Please use connect(activity, userId, delegate, stipopButton, locale) instead. This method will be removed at SDK 1.0.0",
             ReplaceWith(
                 "connect(activity, userId, delegate, stipopButton, Locale(lang, countryCode), taskCallBack)",
                 "io.stipop.Stipop.Companion.connect",
