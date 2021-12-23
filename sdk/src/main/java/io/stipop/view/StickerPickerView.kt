@@ -25,11 +25,8 @@ import io.stipop.event.PreviewDelegate
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.SpvModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 internal class StickerPickerView(
     private val activity: Activity,
@@ -41,16 +38,22 @@ internal class StickerPickerView(
         fun onSpvVisibleState(isVisible: Boolean)
     }
 
-    private var binding: ViewKeyboardPopupBinding = ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
-
+    private var binding: ViewKeyboardPopupBinding =
+        ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
     var wantShowing: Boolean = false
-    private val keyboardViewModel: SpvModel = SpvModel()
+    private val keyboardViewModel: SpvModel by lazy { SpvModel() }
     private val spvPreview: SpvPreview by lazy { SpvPreview(activity, this, keyboardViewModel) }
     private val ioScope = CoroutineScope(Job() + Dispatchers.IO)
-    private val packAdapter: PagingMyPackAdapter by lazy { PagingMyPackAdapter(PagingMyPackAdapter.ViewType.SPV, this) }
+    private val packAdapter: PagingMyPackAdapter by lazy {
+        PagingMyPackAdapter(
+            PagingMyPackAdapter.ViewType.SPV,
+            this
+        )
+    }
     private val itemTouchHelper: ItemTouchHelper
     private val stickerAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter(this) }
-    private val decoration = HorizontalDecoration(StipopUtils.dpToPx(8F).toInt(), StipopUtils.dpToPx(8F).toInt())
+    private val decoration =
+        HorizontalDecoration(StipopUtils.dpToPx(8F).toInt(), StipopUtils.dpToPx(8F).toInt())
 
     init {
         contentView = binding.root
@@ -80,7 +83,7 @@ internal class StickerPickerView(
                 adapter = stickerAdapter
             }
             recentFavoriteContainer.setOnClickListener {
-                onRecentFavoriteClick()
+                onRecentFavoriteClick(!packAdapter.isSelectedItemExist())
             }
             storeImageView.setOnClickListener {
                 showStore(0)
@@ -113,7 +116,12 @@ internal class StickerPickerView(
         }
         if (Stipop.currentKeyboardHeight > 0) {
             refreshData()
-            showAtLocation(activity.window.decorView.findViewById(android.R.id.content) as View, Gravity.TOP, 0, y)
+            showAtLocation(
+                activity.window.decorView.findViewById(android.R.id.content) as View,
+                Gravity.TOP,
+                0,
+                y
+            )
             keyboardViewModel.trackSpv()
             spvPreview.spvTopCoordinate = height
             visibleDelegate.onSpvVisibleState(true)
@@ -139,7 +147,7 @@ internal class StickerPickerView(
             recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
             when (Config.showPreview) {
                 true -> {
-                    if (recentFavoriteContainer.tag ==Constants.Tag.RECENT) {
+                    if (recentFavoriteContainer.tag == Constants.Tag.RECENT) {
                         smallRecently.setIconDefaultsColor40Opacity()
                         smallFavorite.setIconDefaultsColor()
                     } else {
@@ -157,26 +165,25 @@ internal class StickerPickerView(
     private fun showStickers(selectedPackage: StickerPackage) {
         binding.emptyListTextView.isVisible = false
         binding.progressBar.isVisible = false
-        StipopUtils.getStickersFromLocal(activity, selectedPackage.packageId).let {
-            stickerList->
+        StipopUtils.getStickersFromLocal(activity, selectedPackage.packageId).let { stickerList ->
             stickerAdapter.updateData(if (stickerList.isEmpty()) selectedPackage.stickers else stickerList)
             if (stickerList.isEmpty()) {
-                ioScope.launch {
-                    StipopUtils.downloadAtLocal(selectedPackage) { }
-                }
+                StipopUtils.downloadAtLocal(selectedPackage)
             }
         }
     }
 
-    private fun onRecentFavoriteClick() {
+    private fun onRecentFavoriteClick(hasFocus: Boolean) {
         packAdapter.updateSelected()
         binding.progressBar.isVisible = true
         applyRecentFavoriteTheme()
         if (Config.showPreview) {
-            if (binding.recentFavoriteContainer.tag == Constants.Tag.RECENT) {
-                binding.recentFavoriteContainer.tag = Constants.Tag.FAVORITE
-            } else {
-                binding.recentFavoriteContainer.tag = Constants.Tag.RECENT
+            if(hasFocus){
+                if (binding.recentFavoriteContainer.tag == Constants.Tag.RECENT) {
+                    binding.recentFavoriteContainer.tag = Constants.Tag.FAVORITE
+                } else {
+                    binding.recentFavoriteContainer.tag = Constants.Tag.RECENT
+                }
             }
         } else {
             binding.recentFavoriteContainer.tag = Constants.Tag.RECENT
@@ -219,7 +226,6 @@ internal class StickerPickerView(
     }
 
 
-
     private fun showStore(startingPosition: Int) {
         dismiss()
         Intent(activity, StoreActivity::class.java).apply {
@@ -232,7 +238,8 @@ internal class StickerPickerView(
     private fun applyTheme() {
         with(binding) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                progressBar.indeterminateTintList = ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
+                progressBar.indeterminateTintList =
+                    ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
             }
             containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
             packageListHeader.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
@@ -244,7 +251,8 @@ internal class StickerPickerView(
             recentStickerImageView.isVisible = !Config.showPreview
             smallRecently.isVisible = Config.showPreview
             smallFavorite.isVisible = Config.showPreview
-            stickerRecyclerView.layoutManager = GridLayoutManager(activity, Config.keyboardNumOfColumns)
+            stickerRecyclerView.layoutManager =
+                GridLayoutManager(activity, Config.keyboardNumOfColumns)
         }
         applyRecentFavoriteTheme()
     }
@@ -290,7 +298,7 @@ internal class StickerPickerView(
     override fun onStickerClick(position: Int, spSticker: SPSticker) {
         if (Config.showPreview) {
             val isSame = spvPreview.showOrUpdate(spSticker)
-            if(isSame){
+            if (isSame) {
                 sendSticker(spSticker)
             }
         } else {

@@ -22,22 +22,22 @@ import io.stipop.R
 import io.stipop.StipopUtils
 import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.base.Injection
-import io.stipop.databinding.FragmentStickerPackageBinding
+import io.stipop.databinding.FragmentPackDetailBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.PackDetailViewModel
 import kotlinx.coroutines.launch
 
-class PackageDetailBottomSheetFragment : BottomSheetDialogFragment(){
+class PackDetailFragment : BottomSheetDialogFragment() {
 
-    private var binding: FragmentStickerPackageBinding? = null
+    private var binding: FragmentPackDetailBinding? = null
     private lateinit var viewModel: PackDetailViewModel
 
     private val gridAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter() }
 
     companion object {
         fun newInstance(packageId: Int, entrancePoint: String) =
-            PackageDetailBottomSheetFragment().apply {
+            PackDetailFragment().apply {
                 arguments = Bundle().apply {
                     putInt(Constants.IntentKey.PACKAGE_ID, packageId)
                     putString(Constants.IntentKey.ENTRANCE_POINT, entrancePoint)
@@ -55,7 +55,8 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment(){
     }
 
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
-        val bottomSheet: FrameLayout = bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet) as FrameLayout
+        val bottomSheet: FrameLayout =
+            bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet) as FrameLayout
         val behavior: BottomSheetBehavior<*> = BottomSheetBehavior.from<View>(bottomSheet)
         val layoutParams: ViewGroup.LayoutParams = bottomSheet.layoutParams
         layoutParams.height = getBottomSheetDialogDefaultHeight()
@@ -90,7 +91,7 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentStickerPackageBinding.inflate(inflater, container, false)
+        binding = FragmentPackDetailBinding.inflate(inflater, container, false)
         return binding!!.root
     }
 

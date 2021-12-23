@@ -112,7 +112,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
     }
 
     override fun onItemClicked(packageId: Int, entrancePoint: String) {
-        PackageDetailBottomSheetFragment.newInstance(packageId, entrancePoint).showNow(parentFragmentManager, Constants.Tag.DETAIL)
+        PackDetailFragment.newInstance(packageId, entrancePoint).showNow(parentFragmentManager, Constants.Tag.DETAIL)
     }
 
     override fun onItemLongClicked(position: Int) {

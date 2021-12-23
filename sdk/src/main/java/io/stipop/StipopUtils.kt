@@ -19,6 +19,9 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
@@ -63,14 +66,15 @@ internal object StipopUtils {
         imm.hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
     }
 
-    fun downloadAtLocal(stickerPackage: StickerPackage, responseCallback: () -> Unit) {
-        val stickers = stickerPackage.stickers
-        for (sticker in stickers) {
-            val packageId = sticker.packageId
-            val stickerImg = sticker.stickerImg
-            downloadImage(packageId, stickerImg, sticker)
+    fun downloadAtLocal(stickerPackage: StickerPackage) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val stickers = stickerPackage.stickers
+            for (sticker in stickers) {
+                val packageId = sticker.packageId
+                val stickerImg = sticker.stickerImg
+                downloadImage(packageId, stickerImg, sticker)
+            }
         }
-        responseCallback()
     }
 
     private fun downloadImage(packageId: Int, encodedString: String?, sticker: SPSticker) {

@@ -29,7 +29,7 @@ internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewM
 
     @ExperimentalCoroutinesApi
     @FlowPreview
-    val emittedQuery: Flow<String> = typedQuery.debounce(300).mapLatest {
+    val emittedQuery: Flow<String> = typedQuery.debounce(200).mapLatest {
         if (it.isEmpty()) {
             return@mapLatest ""
         } else {

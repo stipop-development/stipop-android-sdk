@@ -138,7 +138,7 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
     }
 
     override fun onPackageDetailClicked(packageId: Int, entrancePoint: String) {
-        PackageDetailBottomSheetFragment.newInstance(packageId, entrancePoint)
+        PackDetailFragment.newInstance(packageId, entrancePoint)
             .showNow(parentFragmentManager, Constants.Tag.DETAIL)
     }
 
