@@ -36,7 +36,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class SearchViewBottomSheetFragment : BottomSheetDialogFragment(),
+class StickerSearchView : BottomSheetDialogFragment(),
     StickerDefaultAdapter.OnStickerClickListener,
     KeywordClickDelegate {
 
@@ -47,7 +47,7 @@ class SearchViewBottomSheetFragment : BottomSheetDialogFragment(),
     private val keywordsAdapter: HomeTabAdapter by lazy { HomeTabAdapter(null, this) }
 
     companion object {
-        fun newInstance() = SearchViewBottomSheetFragment()
+        fun newInstance() = StickerSearchView()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

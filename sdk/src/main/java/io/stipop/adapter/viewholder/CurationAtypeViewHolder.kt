@@ -1,23 +1,19 @@
-package io.stipop.viewholder
+package io.stipop.adapter.viewholder
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import io.stipop.*
 import io.stipop.Config
 import io.stipop.Constants
-import io.stipop.StipopUtils
-import io.stipop.databinding.ItemCuratedCardTypeBBinding
+import io.stipop.R
+import io.stipop.databinding.ItemCuratedCardTypeABinding
 import io.stipop.models.StickerPackage
 import io.stipop.event.PackClickDelegate
 
-internal class CurationBtypeViewHolder(
-    private val binding: ItemCuratedCardTypeBBinding,
+internal class CurationAtypeViewHolder(
+    private val binding: ItemCuratedCardTypeABinding,
     val delegate: PackClickDelegate?
 ) :
     RecyclerView.ViewHolder(binding.root) {
@@ -27,7 +23,7 @@ internal class CurationBtypeViewHolder(
     init {
         itemView.setOnClickListener {
             stickerPackage?.packageId?.let {
-                delegate?.onPackageDetailClicked(it, Constants.Point.CURATE_B)
+                delegate?.onPackageDetailClicked(it, Constants.Point.CURATE_A)
             }
         }
     }
@@ -40,12 +36,10 @@ internal class CurationBtypeViewHolder(
             } else {
                 stickerPackage.darkBackgroundCode
             }
-            val color = Color.parseColor(colorCode ?: Config.themeMainColor)
-            val drawable = frame.background as GradientDrawable
+            val color = Color.parseColor(colorCode ?: Config.themeGroupedContentBackgroundColor)
+            val drawable = container.background as GradientDrawable
             drawable.setColor(color)
-            Glide.with(itemView.context)
-                .load(stickerPackage.cardImgUrl ?: stickerPackage.packageImg)
-                .transform(CenterCrop(), RoundedCorners(StipopUtils.pxToDp(7).toInt())).into(image)
+            image.loadImage(stickerPackage.packageImg, false)
         }
     }
 
@@ -53,11 +47,11 @@ internal class CurationBtypeViewHolder(
         fun create(
             parent: ViewGroup,
             delegate: PackClickDelegate?
-        ): CurationBtypeViewHolder {
+        ): CurationAtypeViewHolder {
             val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_curated_card_type_b, parent, false)
-            val binding = ItemCuratedCardTypeBBinding.bind(view)
-            return CurationBtypeViewHolder(binding, delegate)
+                .inflate(R.layout.item_curated_card_type_a, parent, false)
+            val binding = ItemCuratedCardTypeABinding.bind(view)
+            return CurationAtypeViewHolder(binding, delegate)
         }
     }
 }

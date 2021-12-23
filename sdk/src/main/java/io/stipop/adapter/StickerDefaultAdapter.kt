@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.stipop.models.SPSticker
 import io.stipop.models.Sticker
 import io.stipop.models.StickerPackage
-import io.stipop.viewholder.StickerThumbViewHolder
+import io.stipop.adapter.viewholder.StickerThumbViewHolder
 
 internal class StickerDefaultAdapter(
     val delegate: OnStickerClickListener? = null,
@@ -37,13 +37,13 @@ internal class StickerDefaultAdapter(
         notifyDataSetChanged()
     }
 
-    fun updateDatas(stickerPackage: StickerPackage) {
+    fun updateData(stickerPackage: StickerPackage) {
         val prevCount = itemCount
         dataSet.addAll(stickerPackage.stickers)
         notifyItemRangeInserted(prevCount, itemCount)
     }
 
-    fun updateDatas(stickers: List<SPSticker>) {
+    fun updateData(stickers: List<SPSticker>) {
         val prevCount = itemCount
         dataSet.addAll(stickers)
         notifyItemRangeInserted(prevCount, itemCount)

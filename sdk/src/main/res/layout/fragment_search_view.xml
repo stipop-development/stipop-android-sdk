@@ -37,8 +37,10 @@
             android:layout_weight="1"
             android:background="@null"
             android:hint="@string/search"
-            android:imeOptions="actionSearch"
+            android:imeOptions="actionDone"
             android:maxLines="1"
+            android:inputType="text"
+            android:textSize="14sp"
             android:gravity="center_vertical"
             android:textColorHint="#646f7c" />
 

@@ -3,7 +3,7 @@ package io.stipop.adapter
 import android.view.ViewGroup
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
-import io.stipop.viewholder.LoadStateViewHolder
+import io.stipop.adapter.viewholder.LoadStateViewHolder
 
 internal class MyLoadStateAdapter(private val retry: () -> Unit) : LoadStateAdapter<LoadStateViewHolder>() {
     override fun onBindViewHolder(holder: LoadStateViewHolder, loadState: LoadState) {

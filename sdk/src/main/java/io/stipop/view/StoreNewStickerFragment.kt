@@ -15,19 +15,19 @@ import io.stipop.base.Injection
 import io.stipop.databinding.FragmentNewStickerBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
-import io.stipop.view.viewmodel.NewStickerViewModel
+import io.stipop.view.viewmodel.StoreNewsViewModel
 import io.stipop.event.PackClickDelegate
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-internal class NewStickerFragment : BaseFragment(), PackClickDelegate {
+internal class StoreNewStickerFragment : BaseFragment(), PackClickDelegate {
 
     companion object {
-        fun newInstance() = NewStickerFragment()
+        fun newInstance() = StoreNewStickerFragment()
     }
 
     private var binding: FragmentNewStickerBinding? = null
-    private lateinit var viewModel: NewStickerViewModel
+    private lateinit var viewModel: StoreNewsViewModel
     private val pagingPackageAdapter: PagingPackageAdapter by lazy { PagingPackageAdapter(this, Constants.Point.NEW) }
 
     override fun onCreateView(
@@ -48,7 +48,7 @@ internal class NewStickerFragment : BaseFragment(), PackClickDelegate {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
-            NewStickerViewModel::class.java
+            StoreNewsViewModel::class.java
         )
         with(binding!!) {
             recyclerView.apply {

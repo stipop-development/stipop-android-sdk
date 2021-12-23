@@ -25,13 +25,13 @@ import io.stipop.base.Injection
 import io.stipop.databinding.FragmentStickerPackageBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
-import io.stipop.view.viewmodel.PackageDetailViewModel
+import io.stipop.view.viewmodel.PackDetailViewModel
 import kotlinx.coroutines.launch
 
 class PackageDetailBottomSheetFragment : BottomSheetDialogFragment(){
 
     private var binding: FragmentStickerPackageBinding? = null
-    private lateinit var viewModel: PackageDetailViewModel
+    private lateinit var viewModel: PackDetailViewModel
 
     private val gridAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter() }
 
@@ -97,13 +97,13 @@ class PackageDetailBottomSheetFragment : BottomSheetDialogFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
-            PackageDetailViewModel::class.java
+            PackDetailViewModel::class.java
         )
         viewModel.stickerPackage.observeForever { stickerPackage ->
             stickerPackage?.let {
                 updateUi(it)
                 gridAdapter.clearData()
-                gridAdapter.updateDatas(it)
+                gridAdapter.updateData(it)
             } ?: run {
                 Toast.makeText(
                     context,

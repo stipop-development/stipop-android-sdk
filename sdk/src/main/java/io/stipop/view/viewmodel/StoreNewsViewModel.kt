@@ -10,7 +10,7 @@ import io.stipop.models.StickerPackage
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-internal class NewStickerViewModel(private val repository: PkgRepository) : ViewModel() {
+internal class StoreNewsViewModel(private val repository: PkgRepository) : ViewModel() {
 
     fun requestDownloadPackage(stickerPackage: StickerPackage) {
         viewModelScope.launch {

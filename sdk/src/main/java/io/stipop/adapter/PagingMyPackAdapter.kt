@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import io.stipop.custom.DragAndDropDelegate
 import io.stipop.event.MyPackEventDelegate
 import io.stipop.models.StickerPackage
-import io.stipop.viewholder.MyPackFullWidthViewHolder
-import io.stipop.viewholder.MyPackThumbViewHolder
+import io.stipop.adapter.viewholder.MyPackFullWidthViewHolder
+import io.stipop.adapter.viewholder.MyPackThumbViewHolder
 
 internal class PagingMyPackAdapter(private val type: ViewType, private val delegate: MyPackEventDelegate) : PagingDataAdapter<StickerPackage, RecyclerView.ViewHolder>(REPO_COMPARATOR), DragAndDropDelegate {
 

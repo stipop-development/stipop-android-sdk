@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import io.stipop.models.Sticker
-import io.stipop.viewholder.StickerThumbViewHolder
+import io.stipop.adapter.viewholder.StickerThumbViewHolder
 
 internal class PagingStickerAdapter(private val delegate: StickerDefaultAdapter.OnStickerClickListener) : PagingDataAdapter<Sticker, StickerThumbViewHolder>(REPO_COMPARATOR){
 

@@ -10,10 +10,9 @@ import io.stipop.data.PkgRepository
 import io.stipop.data.MyStickerRepository
 import io.stipop.data.SearchingRepository
 import io.stipop.data.StickerDetailRepository
-import io.stipop.view.viewmodel.*
-import io.stipop.view.viewmodel.MyStickerViewModel
-import io.stipop.view.viewmodel.NewStickerViewModel
-import io.stipop.view.viewmodel.PackageDetailViewModel
+import io.stipop.view.viewmodel.StoreMyStickerViewModel
+import io.stipop.view.viewmodel.StoreNewsViewModel
+import io.stipop.view.viewmodel.PackDetailViewModel
 import io.stipop.view.viewmodel.SsvModel
 import io.stipop.view.viewmodel.StoreHomeViewModel
 
@@ -50,14 +49,14 @@ internal object Injection {
             modelClass: Class<T>,
             handle: SavedStateHandle
         ): T {
-            if (modelClass.isAssignableFrom(MyStickerViewModel::class.java)) {
-                return MyStickerViewModel(provideMyStickerRepository()) as T
+            if (modelClass.isAssignableFrom(StoreMyStickerViewModel::class.java)) {
+                return StoreMyStickerViewModel(provideMyStickerRepository()) as T
             } else if (modelClass.isAssignableFrom(StoreHomeViewModel::class.java)) {
                 return StoreHomeViewModel(providePackageRepository()) as T
-            } else if (modelClass.isAssignableFrom(NewStickerViewModel::class.java)) {
-                return NewStickerViewModel(providePackageRepository()) as T
-            } else if (modelClass.isAssignableFrom(PackageDetailViewModel::class.java)) {
-                return PackageDetailViewModel(provideStickerDetailRepository()) as T
+            } else if (modelClass.isAssignableFrom(StoreNewsViewModel::class.java)) {
+                return StoreNewsViewModel(providePackageRepository()) as T
+            } else if (modelClass.isAssignableFrom(PackDetailViewModel::class.java)) {
+                return PackDetailViewModel(provideStickerDetailRepository()) as T
             } else if (modelClass.isAssignableFrom(SsvModel::class.java)) {
                 return SsvModel(provideSearchingRepository()) as T
             }

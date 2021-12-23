@@ -98,10 +98,9 @@ internal object StipopUtils {
         }
     }
 
-    fun getStickersFromLocal(activity: Activity, packageId: Int): ArrayList<SPSticker> {
+    fun getStickersFromLocal(context: Context, packageId: Int): ArrayList<SPSticker> {
         val stickerList = ArrayList<SPSticker>()
-
-        val filePath = File(activity.filesDir, "stipop/$packageId")
+        val filePath = File(context.filesDir, "stipop/$packageId")
         if (filePath.exists()) {
             filePath.walkTopDown().forEach {
                 if (it.isFile) {
@@ -118,7 +117,7 @@ internal object StipopUtils {
                         val jsonFileName = fileNames[0]
 
                         val file =
-                            File(activity.filesDir, "stipop/$packageId/$jsonFileName.json")
+                            File(context.filesDir, "stipop/$packageId/$jsonFileName.json")
                         if (file.isFile) {
                             val json = JSONObject(file.readText())
                             sticker.stickerId = getInt(json, "stickerId")

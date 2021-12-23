@@ -25,7 +25,6 @@ import io.stipop.event.PreviewDelegate
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.SpvModel
-import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -34,7 +33,7 @@ import kotlinx.coroutines.launch
 
 internal class StickerPickerView(
     private val activity: Activity,
-    private val visibleStateListener: VisibleStateListener
+    private val visibleDelegate: VisibleStateListener
 ) : PopupWindow(), MyPackEventDelegate,
     StickerDefaultAdapter.OnStickerClickListener, PreviewDelegate {
 
@@ -117,7 +116,7 @@ internal class StickerPickerView(
             showAtLocation(activity.window.decorView.findViewById(android.R.id.content) as View, Gravity.TOP, 0, y)
             keyboardViewModel.trackSpv()
             spvPreview.spvTopCoordinate = height
-            visibleStateListener.onSpvVisibleState(true)
+            visibleDelegate.onSpvVisibleState(true)
         }
     }
 
@@ -126,7 +125,7 @@ internal class StickerPickerView(
         spvPreview.dismiss()
         super.dismiss()
         packAdapter.updateSelected()
-        visibleStateListener.onSpvVisibleState(false)
+        visibleDelegate.onSpvVisibleState(false)
     }
 
     private fun refreshData() {
@@ -141,11 +140,11 @@ internal class StickerPickerView(
             when (Config.showPreview) {
                 true -> {
                     if (recentFavoriteContainer.tag ==Constants.Tag.RECENT) {
-                        recentlyIV.setIconDefaultsColor40Opacity()
-                        favoriteImageView.setIconDefaultsColor()
+                        smallRecently.setIconDefaultsColor40Opacity()
+                        smallFavorite.setIconDefaultsColor()
                     } else {
-                        recentlyIV.setIconDefaultsColor()
-                        favoriteImageView.setIconDefaultsColor40Opacity()
+                        smallRecently.setIconDefaultsColor()
+                        smallFavorite.setIconDefaultsColor40Opacity()
                     }
                 }
                 false -> {
@@ -158,11 +157,13 @@ internal class StickerPickerView(
     private fun showStickers(selectedPackage: StickerPackage) {
         binding.emptyListTextView.isVisible = false
         binding.progressBar.isVisible = false
-        val stickerList = StipopUtils.getStickersFromLocal(activity, selectedPackage.packageId)
-        stickerAdapter.updateDatas(if (stickerList.isEmpty()) selectedPackage.stickers else stickerList)
-        if (stickerList.isEmpty()) {
-            ioScope.launch {
-                StipopUtils.downloadAtLocal(selectedPackage) { }
+        StipopUtils.getStickersFromLocal(activity, selectedPackage.packageId).let {
+            stickerList->
+            stickerAdapter.updateData(if (stickerList.isEmpty()) selectedPackage.stickers else stickerList)
+            if (stickerList.isEmpty()) {
+                ioScope.launch {
+                    StipopUtils.downloadAtLocal(selectedPackage) { }
+                }
             }
         }
     }
@@ -231,30 +232,19 @@ internal class StickerPickerView(
     private fun applyTheme() {
         with(binding) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                progressBar.indeterminateTintList =
-                    ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
+                progressBar.indeterminateTintList = ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
             }
             containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
             packageListHeader.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
             storeImageView.setImageResource(Config.getKeyboardStoreResourceId(activity))
             storeImageView.setIconDefaultsColor()
-            favoriteImageView.setImageResource(R.mipmap.ic_favorites_active)
-            recentlyIV.setImageResource(R.mipmap.ic_recents_active)
+            smallFavorite.setImageResource(R.mipmap.ic_favorites_active)
+            smallRecently.setImageResource(R.mipmap.ic_recents_active)
             recentFavoriteContainer.tag = Constants.Tag.RECENT
-            when (Config.showPreview) {
-                true -> {
-                    recentStickerImageView.visibility = View.GONE
-                    recentlyIV.visibility = View.VISIBLE
-                    favoriteImageView.visibility = View.VISIBLE
-                }
-                false -> {
-                    recentStickerImageView.visibility = View.VISIBLE
-                    recentlyIV.visibility = View.GONE
-                    favoriteImageView.visibility = View.GONE
-                }
-            }
-            stickerRecyclerView.layoutManager =
-                GridLayoutManager(activity, Config.keyboardNumOfColumns)
+            recentStickerImageView.isVisible = !Config.showPreview
+            smallRecently.isVisible = Config.showPreview
+            smallFavorite.isVisible = Config.showPreview
+            stickerRecyclerView.layoutManager = GridLayoutManager(activity, Config.keyboardNumOfColumns)
         }
         applyRecentFavoriteTheme()
     }
@@ -289,6 +279,8 @@ internal class StickerPickerView(
             progressBar.isVisible = true
             recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
             recentStickerImageView.clearTint()
+            smallRecently.clearTint()
+            smallFavorite.clearTint()
         }
         packAdapter.updateSelected(position)
         stickerAdapter.clearData()

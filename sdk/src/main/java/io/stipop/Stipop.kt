@@ -12,7 +12,7 @@ import io.stipop.custom.StipopImageView
 import io.stipop.data.ConfigRepository
 import io.stipop.models.body.InitSdkBody
 import io.stipop.view.PackageDetailBottomSheetFragment
-import io.stipop.view.SearchViewBottomSheetFragment
+import io.stipop.view.StickerSearchView
 import io.stipop.view.StickerPickerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -201,7 +201,7 @@ class Stipop(
     }
 
     private fun showSearch() {
-        SearchViewBottomSheetFragment.newInstance().showNow(activity.supportFragmentManager, Constants.Tag.SSV)
+        StickerSearchView.newInstance().showNow(activity.supportFragmentManager, Constants.Tag.SSV)
     }
 
     private fun showKeyboard() {

@@ -12,7 +12,7 @@ import io.stipop.models.StickerPackage
 import io.stipop.models.body.UserIdBody
 import kotlinx.coroutines.launch
 
-internal class PackageDetailViewModel(private val repository: StickerDetailRepository) :
+internal class PackDetailViewModel(private val repository: StickerDetailRepository) :
     ViewModel() {
 
     var stickerPackage: MutableLiveData<StickerPackage?> = MutableLiveData()

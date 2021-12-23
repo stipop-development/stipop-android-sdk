@@ -23,22 +23,22 @@ import io.stipop.adapter.PagingMyPackAdapter
 import io.stipop.adapter.MyLoadStateAdapter
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.event.PackageVisibilityChangeEvent
-import io.stipop.view.viewmodel.MyStickerViewModel
+import io.stipop.view.viewmodel.StoreMyStickerViewModel
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-internal class MyStickerFragment : BaseFragment(), MyPackEventDelegate {
+internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
 
     companion object {
-        fun newInstance() = Bundle().let { MyStickerFragment().apply { arguments = it } }
+        fun newInstance() = Bundle().let { StoreMyStickerFragment().apply { arguments = it } }
         private const val LAST_VISIBLE_SETTING: String = "last_visible_setting"
         private const val DEFAULT_VISIBLE = true
     }
 
     private var binding: FragmentMyStickerBinding? = null
-    private lateinit var viewModel: MyStickerViewModel
+    private lateinit var viewModelStore: StoreMyStickerViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
     private val pagingMyPackAdapter: PagingMyPackAdapter by lazy { PagingMyPackAdapter(PagingMyPackAdapter.ViewType.STORE, this) }
     private var searchJob: Job? = null
@@ -59,8 +59,8 @@ internal class MyStickerFragment : BaseFragment(), MyPackEventDelegate {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
-            MyStickerViewModel::class.java
+        viewModelStore = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
+            StoreMyStickerViewModel::class.java
         )
 
         myStickersRecyclerView.apply {
@@ -74,7 +74,7 @@ internal class MyStickerFragment : BaseFragment(), MyPackEventDelegate {
 
         itemTouchHelper = ItemTouchHelper(DragAndDropHelperCallback(pagingMyPackAdapter)).apply { attachToRecyclerView(myStickersRecyclerView) }
 
-        viewModel.packageVisibilityChanged.observeForever {
+        viewModelStore.packageVisibilityChanged.observeForever {
             pagingMyPackAdapter.refresh()
             PackageVisibilityChangeEvent.publishEvent(it.second)
         }
@@ -101,7 +101,7 @@ internal class MyStickerFragment : BaseFragment(), MyPackEventDelegate {
     private fun toggleMyStickers(wantVisibleSticker: Boolean) {
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
-            viewModel.loadsPackages(wantVisibleSticker).collectLatest {
+            viewModelStore.loadsPackages(wantVisibleSticker).collectLatest {
                 pagingMyPackAdapter.submitData(it)
             }
         }
@@ -120,7 +120,7 @@ internal class MyStickerFragment : BaseFragment(), MyPackEventDelegate {
     }
 
     override fun onVisibilityClicked(wantToVisible: Boolean, packageId: Int, position: Int) {
-        viewModel.hideOrRecoverPackage(packageId, position)
+        viewModelStore.hideOrRecoverPackage(packageId, position)
     }
 
     override fun onDragStarted(viewHolder: RecyclerView.ViewHolder) {
@@ -128,7 +128,7 @@ internal class MyStickerFragment : BaseFragment(), MyPackEventDelegate {
     }
 
     override fun onDragCompleted(fromData: Any, toData: Any) {
-        viewModel.changePackageOrder(fromData as StickerPackage, toData as StickerPackage)
+        viewModelStore.changePackageOrder(fromData as StickerPackage, toData as StickerPackage)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

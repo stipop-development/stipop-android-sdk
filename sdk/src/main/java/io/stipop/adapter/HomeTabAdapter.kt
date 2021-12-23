@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.models.CuratedCard
 import io.stipop.models.response.KeywordListResponse
-import io.stipop.viewholder.CurationCardContainerViewHolder
-import io.stipop.viewholder.KeywordTagViewHolder
+import io.stipop.adapter.viewholder.CurationCardContainerViewHolder
+import io.stipop.adapter.viewholder.KeywordTagViewHolder
 import io.stipop.event.KeywordClickDelegate
 import io.stipop.event.PackClickDelegate
 
