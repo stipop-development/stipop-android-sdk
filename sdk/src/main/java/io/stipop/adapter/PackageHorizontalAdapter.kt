@@ -7,7 +7,7 @@ import io.stipop.models.StickerPackage
 import io.stipop.viewholder.CurationAtypeViewHolder
 import io.stipop.viewholder.CurationBtypeViewHolder
 import io.stipop.viewholder.HorizontalStickerThumbViewHolder
-import io.stipop.delegates.StickerPackageClickDelegate
+import io.stipop.event.StickerPackageClickDelegate
 
 internal class PackageHorizontalAdapter(
     private val dataSet: ArrayList<StickerPackage> = ArrayList(),

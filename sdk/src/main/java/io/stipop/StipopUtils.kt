@@ -89,11 +89,12 @@ internal object StipopUtils {
         val policy = ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
+        sticker.packageId = packageId
         URL(encodedString).openStream().use { input ->
             FileOutputStream(filePath).use { output ->
                 input.copyTo(output)
             }
-            saveStickerAsJson(Stipop.applicationContext, sticker, packageId)
+            saveStickerAsJson(Stipop.applicationContext, sticker)
         }
     }
 
@@ -137,9 +138,9 @@ internal object StipopUtils {
         return stickerList
     }
 
-    fun saveStickerAsJson(context: Context, sticker: SPSticker, packageId: Int) {
+    fun saveStickerAsJson(context: Context, savingSticker: SPSticker) {
 
-        val fileName = sticker.stickerImg!!.split(File.separator).last()
+        val fileName = savingSticker.stickerImg!!.split(File.separator).last()
 
         val fileNames = fileName.split(".")
 
@@ -148,13 +149,13 @@ internal object StipopUtils {
             jsonFileName = fileNames[0]
         }
 
-        val filePath = File(context.filesDir, "stipop/$packageId/$jsonFileName.json")
+        val filePath = File(context.filesDir, "stipop/${savingSticker.packageId}/$jsonFileName.json")
 
         val json = JSONObject()
-        json.put("stickerId", sticker.stickerId)
-        json.put("stickerImg", sticker.stickerImg)
-        json.put("favoriteYN", sticker.favoriteYN)
-        json.put("keyword", sticker.keyword)
+        json.put("stickerId", savingSticker.stickerId)
+        json.put("stickerImg", savingSticker.stickerImg)
+        json.put("favoriteYN", savingSticker.favoriteYN)
+        json.put("keyword", savingSticker.keyword)
 
         val policy = ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)

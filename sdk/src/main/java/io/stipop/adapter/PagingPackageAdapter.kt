@@ -5,7 +5,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import io.stipop.models.StickerPackage
 import io.stipop.viewholder.VerticalStickerThumbViewHolder
-import io.stipop.delegates.StickerPackageClickDelegate
+import io.stipop.event.StickerPackageClickDelegate
 
 internal class PagingPackageAdapter(private val delegate: StickerPackageClickDelegate, private val clickPoint: String) :
     PagingDataAdapter<StickerPackage, VerticalStickerThumbViewHolder>(REPO_COMPARATOR){

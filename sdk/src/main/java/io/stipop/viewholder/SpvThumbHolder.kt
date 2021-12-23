@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.adapter.PagingSpvAdapter
 import io.stipop.custom.StipopImageView
+import io.stipop.event.MyStickerClickDelegate
 import io.stipop.models.StickerPackage
 
-internal class SpvThumbHolder(view: View, val delegate: PagingSpvAdapter.OnPackageClickListener) : RecyclerView.ViewHolder(view) {
+internal class SpvThumbHolder(view: View, val delegate: MyStickerClickDelegate) : RecyclerView.ViewHolder(view) {
     private val imageIV: StipopImageView = view.findViewById(R.id.imageIV)
     private val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
     private var stickerPackage: StickerPackage? = null
@@ -26,7 +26,7 @@ internal class SpvThumbHolder(view: View, val delegate: PagingSpvAdapter.OnPacka
         }
     }
 
-    fun bindData(data: StickerPackage, isSelected: Boolean = false) {
+    fun bindData(data: StickerPackage?, isSelected: Boolean = false) {
         stickerPackage = data
         Glide.with(itemView.context).load(stickerPackage?.packageImg).dontAnimate().into(imageIV)
         setSelectFilter(isSelected)

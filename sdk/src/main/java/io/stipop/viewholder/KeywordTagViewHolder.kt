@@ -10,7 +10,7 @@ import io.stipop.Config
 import io.stipop.R
 import io.stipop.databinding.ItemChipKeywordsBinding
 import io.stipop.models.response.KeywordListResponse
-import io.stipop.delegates.KeywordClickDelegate
+import io.stipop.event.KeywordClickDelegate
 
 internal class KeywordTagViewHolder(
     private val binding: ItemChipKeywordsBinding,

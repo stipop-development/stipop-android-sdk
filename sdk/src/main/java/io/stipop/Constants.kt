@@ -9,6 +9,8 @@ internal object Constants {
         const val DETAIL = "PD"
         const val EXTERNAL = "EXTERNAL"
         const val SSV = "SEARCH"
+        const val RECENT = "RECENT"
+        const val FAVORITE = "FAVORITE"
     }
 
     object IntentKey {

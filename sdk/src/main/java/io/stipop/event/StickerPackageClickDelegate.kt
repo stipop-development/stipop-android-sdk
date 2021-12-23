@@ -1,4 +1,4 @@
-package io.stipop.delegates
+package io.stipop.event
 
 import io.stipop.models.StickerPackage
 

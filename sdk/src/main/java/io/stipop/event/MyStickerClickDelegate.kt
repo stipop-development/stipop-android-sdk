@@ -1,8 +1,10 @@
-package io.stipop.delegates
+package io.stipop.event
 
 import androidx.recyclerview.widget.RecyclerView
+import io.stipop.models.StickerPackage
 
 internal interface MyStickerClickDelegate {
+    fun onPackageClick(position: Int, stickerPackage: StickerPackage)
     fun onItemClicked(packageId: Int, entrancePoint: String)
     fun onItemLongClicked(position: Int)
     fun onVisibilityClicked(wantToVisible: Boolean, packageId: Int, position: Int)

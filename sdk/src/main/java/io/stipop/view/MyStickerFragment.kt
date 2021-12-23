@@ -16,7 +16,7 @@ import io.stipop.R
 import io.stipop.base.Injection
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.FragmentMyStickerBinding
-import io.stipop.delegates.MyStickerClickDelegate
+import io.stipop.event.MyStickerClickDelegate
 import io.stipop.custom.DragAndDropHelperCallback
 import io.stipop.models.StickerPackage
 import io.stipop.adapter.PagingMyPackAdapter
@@ -40,11 +40,7 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
     private var binding: FragmentMyStickerBinding? = null
     private lateinit var viewModel: MyStickerViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
-    private val pagingMyPackAdapter: PagingMyPackAdapter by lazy {
-        PagingMyPackAdapter(
-            this
-        )
-    }
+    private val pagingMyPackAdapter: PagingMyPackAdapter by lazy { PagingMyPackAdapter(PagingMyPackAdapter.ViewType.STORE, this) }
     private var searchJob: Job? = null
 
     override fun onCreateView(
@@ -114,9 +110,12 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
         }
     }
 
+    override fun onPackageClick(position: Int, stickerPackage: StickerPackage) {
+        //
+    }
+
     override fun onItemClicked(packageId: Int, entrancePoint: String) {
-        PackageDetailBottomSheetFragment.newInstance(packageId, entrancePoint)
-            .showNow(parentFragmentManager, Constants.Tag.DETAIL)
+        PackageDetailBottomSheetFragment.newInstance(packageId, entrancePoint).showNow(parentFragmentManager, Constants.Tag.DETAIL)
     }
 
     override fun onItemLongClicked(position: Int) {

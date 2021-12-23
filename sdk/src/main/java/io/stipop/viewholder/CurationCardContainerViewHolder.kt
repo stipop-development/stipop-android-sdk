@@ -13,7 +13,7 @@ import io.stipop.custom.HorizontalDecoration
 import io.stipop.databinding.ItemHorizontalStickerThumbContainerBinding
 import io.stipop.models.CuratedCard
 import io.stipop.setStipopUnderlineColor
-import io.stipop.delegates.StickerPackageClickDelegate
+import io.stipop.event.StickerPackageClickDelegate
 
 internal class CurationCardContainerViewHolder(
     private val binding: ItemHorizontalStickerThumbContainerBinding,

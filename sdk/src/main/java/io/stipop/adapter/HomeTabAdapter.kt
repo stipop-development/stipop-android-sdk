@@ -7,8 +7,8 @@ import io.stipop.models.CuratedCard
 import io.stipop.models.response.KeywordListResponse
 import io.stipop.viewholder.CurationCardContainerViewHolder
 import io.stipop.viewholder.KeywordTagViewHolder
-import io.stipop.delegates.KeywordClickDelegate
-import io.stipop.delegates.StickerPackageClickDelegate
+import io.stipop.event.KeywordClickDelegate
+import io.stipop.event.StickerPackageClickDelegate
 
 internal class HomeTabAdapter(
     private val stickerPackageClickDelegate: StickerPackageClickDelegate? = null,

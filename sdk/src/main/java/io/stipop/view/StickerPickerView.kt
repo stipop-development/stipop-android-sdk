@@ -8,48 +8,45 @@ import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import android.widget.*
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
-import io.stipop.adapter.PagingSpvAdapter
+import io.stipop.adapter.PagingMyPackAdapter
 import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.custom.HorizontalDecoration
 import io.stipop.databinding.ViewKeyboardPopupBinding
-import io.stipop.delegates.PreviewDelegate
+import io.stipop.event.MyStickerClickDelegate
+import io.stipop.event.PreviewDelegate
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.SpvModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 internal class StickerPickerView(
     private val activity: Activity,
     private val visibleStateListener: VisibleStateListener
-) : PopupWindow(), PagingSpvAdapter.OnPackageClickListener,
+) : PopupWindow(), MyStickerClickDelegate,
     StickerDefaultAdapter.OnStickerClickListener, PreviewDelegate {
 
     interface VisibleStateListener {
         fun onSpvVisibleState(isVisible: Boolean)
     }
 
+    private var binding: ViewKeyboardPopupBinding = ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
+
     var wantShowing: Boolean = false
     private val keyboardViewModel: SpvModel = SpvModel()
-    private val spvPreview: SpvPreview by lazy { SpvPreview(activity, this@StickerPickerView, keyboardViewModel) }
+    private val spvPreview: SpvPreview by lazy { SpvPreview(activity, this, keyboardViewModel) }
     private val ioScope = CoroutineScope(Job() + Dispatchers.IO)
-    private var binding: ViewKeyboardPopupBinding =
-        ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
-    private val packageThumbnailHorizontalAdapter: PagingSpvAdapter by lazy {
-        PagingSpvAdapter(
-            this
-        )
-    }
-
-    private val stickerThumbnailAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter(this) }
+    private val packAdapter: PagingMyPackAdapter by lazy { PagingMyPackAdapter(PagingMyPackAdapter.ViewType.SPV, this) }
+    private val stickerAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter(this) }
     private val decoration = HorizontalDecoration(StipopUtils.dpToPx(8F).toInt(), StipopUtils.dpToPx(8F).toInt())
 
     init {
@@ -57,26 +54,27 @@ internal class StickerPickerView(
         width = LinearLayout.LayoutParams.MATCH_PARENT
         height = Stipop.currentKeyboardHeight
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             setIsClippedToScreen(true)
         } else {
             isClippingEnabled = false
         }
+
         softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
         inputMethodMode = INPUT_METHOD_FROM_FOCUSABLE
 
         applyTheme()
+
         with(binding) {
             packageThumbRecyclerView.run {
                 setHasFixedSize(true)
                 setItemViewCacheSize(20)
-                adapter = packageThumbnailHorizontalAdapter
+                adapter = packAdapter
             }
             stickerRecyclerView.run {
                 addItemDecoration(decoration)
                 setHasFixedSize(true)
-                adapter = stickerThumbnailAdapter
+                adapter = stickerAdapter
             }
             recentFavoriteContainer.setOnClickListener {
                 onRecentFavoriteClick()
@@ -88,12 +86,11 @@ internal class StickerPickerView(
         ioScope.launch {
             keyboardViewModel.loadMyPackages().collectLatest {
                 launch(Dispatchers.Main) {
-                    packageThumbnailHorizontalAdapter.submitData(it)
+                    packAdapter.submitData(it)
                 }
             }
         }
-        packageThumbnailHorizontalAdapter.registerAdapterDataObserver(object :
-            RecyclerView.AdapterDataObserver() {
+        packAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
                 initialize(positionStart == 0)
@@ -108,15 +105,10 @@ internal class StickerPickerView(
         }
         if (Stipop.currentKeyboardHeight > 0) {
             refreshData()
-            showAtLocation(
-                activity.window.decorView.findViewById(android.R.id.content) as View,
-                Gravity.TOP,
-                0,
-                y
-            )
-            visibleStateListener.onSpvVisibleState(true)
+            showAtLocation(activity.window.decorView.findViewById(android.R.id.content) as View, Gravity.TOP, 0, y)
             keyboardViewModel.trackSpv()
             spvPreview.spvTopCoordinate = height
+            visibleStateListener.onSpvVisibleState(true)
         }
     }
 
@@ -124,14 +116,14 @@ internal class StickerPickerView(
         wantShowing = false
         spvPreview.dismiss()
         super.dismiss()
-        packageThumbnailHorizontalAdapter.updateSelected()
+        packAdapter.updateSelected()
         visibleStateListener.onSpvVisibleState(false)
     }
 
     private fun refreshData() {
-        loadRecentOrFavorite(false)
-        packageThumbnailHorizontalAdapter.updateSelected()
-        packageThumbnailHorizontalAdapter.refresh()
+        getRecentFavorite(false)
+        packAdapter.updateSelected()
+        packAdapter.refresh()
     }
 
     private fun applyRecentFavoriteTheme() {
@@ -154,17 +146,11 @@ internal class StickerPickerView(
         }
     }
 
-    internal fun changeFavorite(stickerId: Int, favoriteYN: String, packageId: Int) {
-        stickerThumbnailAdapter.updateFavorite(stickerId, favoriteYN)?.let {
-            StipopUtils.saveStickerAsJson(activity, it, packageId)
-        }
-    }
-
     private fun showStickers(selectedPackage: StickerPackage) {
         binding.emptyListTextView.isVisible = false
         binding.progressBar.isVisible = false
         val stickerList = StipopUtils.getStickersFromLocal(activity, selectedPackage.packageId)
-        stickerThumbnailAdapter.updateDatas(if (stickerList.isEmpty()) selectedPackage.stickers else stickerList)
+        stickerAdapter.updateDatas(if (stickerList.isEmpty()) selectedPackage.stickers else stickerList)
         if (stickerList.isEmpty()) {
             ioScope.launch {
                 StipopUtils.downloadAtLocal(selectedPackage) { }
@@ -173,48 +159,52 @@ internal class StickerPickerView(
     }
 
     private fun onRecentFavoriteClick() {
-        packageThumbnailHorizontalAdapter.updateSelected()
+        packAdapter.updateSelected()
         binding.progressBar.isVisible = true
         applyRecentFavoriteTheme()
         if (Config.showPreview) {
-            if (binding.recentFavoriteContainer.tag == 0) {
-                binding.recentFavoriteContainer.tag = 1
+            if (binding.recentFavoriteContainer.tag == Constants.Tag.RECENT) {
+                binding.recentFavoriteContainer.tag = Constants.Tag.FAVORITE
             } else {
-                binding.recentFavoriteContainer.tag = 0
+                binding.recentFavoriteContainer.tag = Constants.Tag.RECENT
             }
         } else {
-            binding.recentFavoriteContainer.tag = 0
+            binding.recentFavoriteContainer.tag = Constants.Tag.RECENT
         }
-        loadRecentOrFavorite(true)
+        getRecentFavorite(true)
     }
 
-    private fun loadRecentOrFavorite(isClicked: Boolean) {
-        stickerThumbnailAdapter.clearData()
-        if (binding.recentFavoriteContainer.tag == 1) {
-            keyboardViewModel.loadFavorites(onSuccess = {
-                binding.progressBar.isVisible = false
-                if (it.isEmpty()) {
-                    initialize(!isClicked)
-                } else {
-                    applyRecentFavoriteTheme()
-                    it.forEach {
-                        stickerThumbnailAdapter.updateData(it)
+    private fun getRecentFavorite(isClickedRequest: Boolean) {
+        binding.progressBar.isVisible = false
+        stickerAdapter.clearData()
+        when (binding.recentFavoriteContainer.tag) {
+            Constants.Tag.RECENT -> {
+                keyboardViewModel.loadRecent(onSuccess = {
+                    binding.progressBar.isVisible = false
+                    if (it.isEmpty()) {
+                        binding.emptyListTextView.isVisible = true
+                        initialize(!isClickedRequest)
+                    } else {
+                        applyRecentFavoriteTheme()
+                        it.forEach {
+                            stickerAdapter.updateData(it)
+                        }
                     }
-                }
-            })
-        } else {
-            keyboardViewModel.loadRecent(onSuccess = {
-                binding.progressBar.isVisible = false
-                if (it.isEmpty()) {
-                    binding.emptyListTextView.isVisible = true
-                    initialize(!isClicked)
-                } else {
-                    applyRecentFavoriteTheme()
-                    it.forEach {
-                        stickerThumbnailAdapter.updateData(it)
+                })
+            }
+            Constants.Tag.FAVORITE -> {
+                keyboardViewModel.loadFavorites(onSuccess = {
+                    binding.progressBar.isVisible = false
+                    if (it.isEmpty()) {
+                        initialize(!isClickedRequest)
+                    } else {
+                        applyRecentFavoriteTheme()
+                        it.forEach {
+                            stickerAdapter.updateData(it)
+                        }
                     }
-                }
-            })
+                })
+            }
         }
     }
 
@@ -225,21 +215,13 @@ internal class StickerPickerView(
             recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
             recentStickerImageView.clearTint()
         }
-        packageThumbnailHorizontalAdapter.updateSelected(position)
-        stickerThumbnailAdapter.clearData()
+        packAdapter.updateSelected(position)
+        stickerAdapter.clearData()
         keyboardViewModel.loadStickerPackage(stickerPackage, onSuccess = {
             it?.let {
                 showStickers(it)
             }
         })
-    }
-
-    override fun onStickerClick(position: Int, spSticker: SPSticker) {
-        if (Config.showPreview) {
-            spvPreview.showOrUpdate(spSticker)
-        } else {
-            sendSticker(spSticker)
-        }
     }
 
     private fun showStore(startingPosition: Int) {
@@ -284,16 +266,29 @@ internal class StickerPickerView(
 
     private fun initialize(isFirst: Boolean? = false) {
         if (isFirst == true) {
-            if (keyboardViewModel.recentStickers.isEmpty() && !packageThumbnailHorizontalAdapter.isSelectedItemExist()) {
-                packageThumbnailHorizontalAdapter.getItemByPosition(0)?.let {
+            if (keyboardViewModel.recentStickers.isEmpty() && !packAdapter.isSelectedItemExist()) {
+                packAdapter.getItemByPosition(0)?.let {
                     onPackageClick(0, it)
                 }
             }
         }
     }
 
+    override fun onStickerClick(position: Int, spSticker: SPSticker) {
+        if (Config.showPreview) {
+            val isSame = spvPreview.showOrUpdate(spSticker)
+            if(isSame){
+                sendSticker(spSticker)
+            }
+        } else {
+            sendSticker(spSticker)
+        }
+    }
+
     override fun onPreviewFavoriteChanged(sticker: SPSticker) {
-        //
+        stickerAdapter.updateFavorite(sticker)?.let {
+            StipopUtils.saveStickerAsJson(activity, it)
+        }
     }
 
     override fun onPreviewStickerClicked(sticker: SPSticker) {
@@ -307,9 +302,30 @@ internal class StickerPickerView(
             Constants.Point.PICKER_VIEW
         ) { result ->
             if (result) {
-                keyboardViewModel.saveRecent(spSticker)
                 Stipop.instance?.delegate?.onStickerSelected(spSticker)
+                keyboardViewModel.saveRecent(spSticker)
+                spvPreview.dismiss()
             }
         }
+    }
+
+    override fun onItemClicked(packageId: Int, entrancePoint: String) {
+        //
+    }
+
+    override fun onItemLongClicked(position: Int) {
+        //
+    }
+
+    override fun onVisibilityClicked(wantToVisible: Boolean, packageId: Int, position: Int) {
+        //
+    }
+
+    override fun onDragStarted(viewHolder: RecyclerView.ViewHolder) {
+        //
+    }
+
+    override fun onDragCompleted(fromData: Any, toData: Any) {
+        //
     }
 }

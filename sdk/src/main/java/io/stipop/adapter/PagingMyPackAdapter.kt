@@ -1,28 +1,55 @@
 package io.stipop.adapter
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
+import io.stipop.R
 import io.stipop.custom.DragAndDropDelegate
 import io.stipop.models.StickerPackage
-import io.stipop.delegates.MyStickerClickDelegate
+import io.stipop.event.MyStickerClickDelegate
 import io.stipop.viewholder.MyStickerPackageViewHolder
+import io.stipop.viewholder.SpvThumbHolder
 
-internal class PagingMyPackAdapter(private val delegate: MyStickerClickDelegate) :
-    PagingDataAdapter<StickerPackage, MyStickerPackageViewHolder>(REPO_COMPARATOR),
-    DragAndDropDelegate {
+internal class PagingMyPackAdapter(private val type: ViewType, private val delegate: MyStickerClickDelegate) : PagingDataAdapter<StickerPackage, RecyclerView.ViewHolder>(REPO_COMPARATOR), DragAndDropDelegate {
 
-    var fromData: StickerPackage? = null
-    var toData: StickerPackage? = null
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyStickerPackageViewHolder {
-        return MyStickerPackageViewHolder.create(parent, delegate)
+    enum class ViewType(val typeNum: Int) {
+        SPV(1000), STORE(1001), ERROR(0)
     }
 
-    override fun onBindViewHolder(holder: MyStickerPackageViewHolder, position: Int) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when(viewType){
+            ViewType.SPV.typeNum->{
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_keyboard_package, parent, false)
+                SpvThumbHolder(view, delegate)
+            }
+            else->{
+                MyStickerPackageViewHolder.create(parent, delegate)
+            }
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val repoItem = getItem(position)
-        if (repoItem != null) {
-            holder.bind(repoItem)
+        when(type){
+            ViewType.SPV -> {
+                (holder as SpvThumbHolder).bindData(repoItem, position == prevSelectedPosition)
+            }
+            ViewType.STORE -> {
+                (holder as MyStickerPackageViewHolder).bind(repoItem)
+            }
+            else -> {
+                //
+            }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when(type){
+            ViewType.SPV -> ViewType.SPV.typeNum
+            ViewType.STORE -> ViewType.STORE.typeNum
+            else -> ViewType.ERROR.typeNum
         }
     }
 
@@ -40,6 +67,26 @@ internal class PagingMyPackAdapter(private val delegate: MyStickerClickDelegate)
             ): Boolean =
                 oldItem == newItem
         }
+    }
+
+    fun isSelectedItemExist() = prevSelectedPosition != -1
+    var prevSelectedPosition = -1
+    var fromData: StickerPackage? = null
+    var toData: StickerPackage? = null
+
+    fun getItemByPosition(position: Int): StickerPackage? {
+        return if (itemCount > position)
+            getItem(position)
+        else
+            null
+    }
+
+    fun updateSelected(position: Int = -1) {
+        if (prevSelectedPosition >= 0 && prevSelectedPosition != position) {
+            notifyItemChanged(prevSelectedPosition, Unit)
+        }
+        prevSelectedPosition = position
+        notifyItemChanged(prevSelectedPosition, Unit)
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {

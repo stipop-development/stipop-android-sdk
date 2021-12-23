@@ -25,6 +25,6 @@ internal class NewStickerViewModel(private val repository: PkgRepository) : View
     }
 
     fun loadsPackages(): Flow<PagingData<StickerPackage>> {
-        return repository.getNewStickerPackageStream().cachedIn(viewModelScope)
+        return repository.getNewPackStream().cachedIn(viewModelScope)
     }
 }

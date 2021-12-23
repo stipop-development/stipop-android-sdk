@@ -55,12 +55,12 @@ internal class StickerDefaultAdapter(
         notifyItemRangeInserted(prevCount, itemCount)
     }
 
-    fun updateFavorite(stickerId: Int, favoriteYN: String): SPSticker? {
+    fun updateFavorite(updatedSticker: SPSticker): SPSticker? {
         var target: SPSticker? = null
         run loop@{
             dataSet.forEachIndexed { index, spSticker ->
-                if (spSticker.stickerId == stickerId) {
-                    spSticker.favoriteYN = favoriteYN
+                if (spSticker.stickerId == updatedSticker.stickerId) {
+                    spSticker.favoriteYN = updatedSticker.favoriteYN
                     dataSet[index] = spSticker
                     notifyItemChanged(index)
                     target = spSticker

@@ -30,7 +30,7 @@ import io.stipop.base.Injection
 import io.stipop.databinding.FragmentSearchViewBinding
 import io.stipop.models.SPSticker
 import io.stipop.view.viewmodel.SsvModel
-import io.stipop.delegates.KeywordClickDelegate
+import io.stipop.event.KeywordClickDelegate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest

@@ -54,7 +54,7 @@ internal class SpvModel {
             onSuccess(recentStickers)
         } else {
             taskScope.launch {
-                val result = StipopApi.create().getRecentlySentStickers(Stipop.userId, 1, 20)
+                val result = StipopApi.create().getRecentlySentStickers(Stipop.userId, 1, 24)
                 if (result.header.isSuccess() && result.body?.stickerList != null) {
                     if (recentStickers.isEmpty()) {
                         recentStickers.addAll(result.body.stickerList)
@@ -74,7 +74,6 @@ internal class SpvModel {
     fun loadFavorites(onSuccess: (data: List<Sticker>) -> Unit) {
         taskScope.launch {
             repository.getFavorites { result ->
-                Log.d("STIPOP-DEBUG", "GETS : $result")
                 launch(Dispatchers.Main) {
                     if (result.header.isSuccess() && result.body?.stickerList != null) {
                         onSuccess(result.body.stickerList)

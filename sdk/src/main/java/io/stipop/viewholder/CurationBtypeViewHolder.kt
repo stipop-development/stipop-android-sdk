@@ -14,7 +14,7 @@ import io.stipop.Constants
 import io.stipop.StipopUtils
 import io.stipop.databinding.ItemCuratedCardTypeBBinding
 import io.stipop.models.StickerPackage
-import io.stipop.delegates.StickerPackageClickDelegate
+import io.stipop.event.StickerPackageClickDelegate
 
 internal class CurationBtypeViewHolder(
     private val binding: ItemCuratedCardTypeBBinding,

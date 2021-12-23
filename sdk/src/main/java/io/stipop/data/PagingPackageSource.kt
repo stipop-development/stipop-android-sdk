@@ -13,8 +13,7 @@ internal class PagingPackageSource(
     private val apiService: StipopApi,
     private val query: String? = null,
     private val newOrder: Boolean = false
-) :
-    PagingSource<Int, StickerPackage>() {
+) : PagingSource<Int, StickerPackage>() {
 
     private val STARTING_PAGE_INDEX = 1
     private var currentQuery: String? = null
@@ -29,10 +28,7 @@ internal class PagingPackageSource(
             currentOrder = newOrder
             return null
         }
-        return state.anchorPosition?.let { anchorPosition ->
-            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
-                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
-        }
+        return state.anchorPosition?.let { anchorPosition -> state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1) ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1) }
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, StickerPackage> {
@@ -40,7 +36,6 @@ internal class PagingPackageSource(
         val userId = Stipop.userId
         val limit = 20
         return try {
-
             val response: StickerPackagesResponse
             when (newOrder) {
                 true -> response = apiService.getNewStickerPackages(
@@ -60,7 +55,6 @@ internal class PagingPackageSource(
                     query = query
                 )
             }
-
             val stickerPackages = response.body?.packageList ?: emptyList()
             val nextKey = if (stickerPackages.isNullOrEmpty()) {
                 null

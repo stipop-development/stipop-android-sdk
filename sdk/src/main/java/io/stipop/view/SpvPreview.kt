@@ -2,7 +2,6 @@ package io.stipop.view
 
 import android.app.Activity
 import android.os.Build
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
@@ -11,7 +10,7 @@ import io.stipop.Config
 import io.stipop.Stipop
 import io.stipop.StipopUtils
 import io.stipop.databinding.ViewPreviewBinding
-import io.stipop.delegates.PreviewDelegate
+import io.stipop.event.PreviewDelegate
 import io.stipop.models.SPSticker
 import io.stipop.view.viewmodel.SpvModel
 
@@ -59,7 +58,8 @@ internal class SpvPreview(
         }
     }
 
-    fun showOrUpdate(spSticker: SPSticker) {
+    fun showOrUpdate(spSticker: SPSticker): Boolean {
+        val isSame = currentSticker == spSticker
         currentSticker = spSticker
         if (!isShowing) {
             showAtLocation(
@@ -71,6 +71,7 @@ internal class SpvPreview(
         }
         setStickerUi()
         setFavoriteUi()
+        return isShowing && isSame
     }
 
     private fun setStickerUi() {
@@ -85,10 +86,11 @@ internal class SpvPreview(
 
     private fun updateFavorite() {
         currentSticker?.let {
-            spvModel.putFavorites(it, onSuccess = {
+            spvModel.putFavorites(it, onSuccess = { spSticker ->
                 activity.runOnUiThread {
                     setFavoriteUi()
                 }
+                delegate.onPreviewFavoriteChanged(spSticker)
             })
         }
     }
