@@ -13,7 +13,7 @@ internal class RecyclerDecoration(private val divHeight: Int): RecyclerView.Item
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-        if (parent.getChildAdapterPosition(view) != parent.getAdapter()!!.getItemCount() - 1)
+        if (parent.getChildAdapterPosition(view) != parent.adapter!!.itemCount - 1)
             outRect.right = divHeight
     }
 

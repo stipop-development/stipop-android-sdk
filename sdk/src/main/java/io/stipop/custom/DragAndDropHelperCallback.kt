@@ -18,7 +18,12 @@ internal class DragAndDropHelperCallback(val delegate: DragAndDropDelegate) : It
         val dragFlags: Int
         val swipeFlags: Int
         if (recyclerView.layoutManager is LinearLayoutManager) {
-            dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
+            val manager = recyclerView.layoutManager as LinearLayoutManager
+            if(manager.orientation == LinearLayoutManager.VERTICAL){
+                dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
+            }else{
+                dragFlags = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+            }
             swipeFlags = 0
         } else {
             dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN

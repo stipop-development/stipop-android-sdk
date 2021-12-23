@@ -17,22 +17,22 @@ import io.stipop.Constants
 import io.stipop.StipopUtils
 import io.stipop.adapter.HomeTabAdapter
 import io.stipop.adapter.MyLoadStateAdapter
-import io.stipop.adapter.PackageVerticalAdapter
+import io.stipop.adapter.PagingPackageAdapter
 import io.stipop.base.BaseFragment
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentStoreHomeBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.StoreHomeViewModel
-import io.stipop.viewholder.delegates.KeywordClickDelegate
-import io.stipop.viewholder.delegates.StickerPackageClickDelegate
+import io.stipop.event.KeywordClickDelegate
+import io.stipop.event.PackClickDelegate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
-internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
+internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
     KeywordClickDelegate {
 
     companion object {
@@ -42,9 +42,9 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
     private var binding: FragmentStoreHomeBinding? = null
     private lateinit var viewModel: StoreHomeViewModel
 
-    private val homeTabTabAdapter: HomeTabAdapter by lazy { HomeTabAdapter(this, this) }
-    private val packageVerticalAdapter: PackageVerticalAdapter by lazy {
-        PackageVerticalAdapter(
+    private val homeTabAdapter: HomeTabAdapter by lazy { HomeTabAdapter(this, this) }
+    private val pagingPackageAdapter: PagingPackageAdapter by lazy {
+        PagingPackageAdapter(
             this,
             Constants.Point.TREND
         )
@@ -52,9 +52,9 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
     private var searchJob: Job? = null
     private var backPressCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (viewModel.isSearchView) {
-                binding?.searchEditText?.setText("")
+            if (viewModel.uiState.isSearchingState) {
                 StipopUtils.hideKeyboard(requireActivity())
+                binding?.searchEditText?.setText("")
                 binding?.searchEditText?.clearFocus()
             } else {
                 requireActivity().finish()
@@ -90,8 +90,9 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
         )
 
         with(binding!!) {
-            homeRecyclerView.adapter = homeTabTabAdapter
-            allStickerRecyclerView.adapter = packageVerticalAdapter.withLoadStateFooter(MyLoadStateAdapter { packageVerticalAdapter.retry() })
+            bannerRecyclerView.adapter = homeTabAdapter
+            allStickerRecyclerView.adapter =
+                pagingPackageAdapter.withLoadStateFooter(MyLoadStateAdapter { pagingPackageAdapter.retry() })
             clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")
                 StipopUtils.hideKeyboard(requireActivity())
@@ -100,29 +101,34 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
             searchEditText.addTextChangedListener { viewModel.flowQuery(it.toString().trim()) }
         }
         lifecycleScope.launch { viewModel.emittedQuery.collect { value -> refreshList(value) } }
-        viewModel.getHomeSources()
-        viewModel.homeDataFlow.observeForever { homeTabTabAdapter.setInitData(it) }
-        viewModel.uiState.observeForever { isSearchView ->
-            binding!!.homeRecyclerView.isVisible = !isSearchView
+
+        viewModel.run {
+            getHomeSources()
+            homeDataFlow.observeForever { homeTabAdapter.setInitData(it) }
+            uiStateFlow.observeForever { uiState ->
+                binding!!.bannerRecyclerView.isVisible = !uiState.isSearchingState
+            }
         }
-        refreshList()
-        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) { packageVerticalAdapter.refresh() }
+        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
+            pagingPackageAdapter.refresh()
+        }
     }
 
     private fun refreshList(query: String? = null) {
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
             viewModel.loadsPackages(query).collectLatest {
-                packageVerticalAdapter.submitData(it)
+                pagingPackageAdapter.submitData(it)
             }
         }
     }
 
     override fun applyTheme() {
         with(binding) {
-            val drawable = this?.searchBarContainer?.background as GradientDrawable
-            drawable.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-            drawable.cornerRadius = StipopUtils.dpToPx(Config.searchbarRadius.toFloat())
+            (this?.searchBarContainer?.background as GradientDrawable).apply {
+                setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
+                cornerRadius = StipopUtils.dpToPx(Config.searchbarRadius.toFloat())
+            }
             this.searchEditText.setTextColor(Config.getSearchTitleTextColor(requireContext()))
             this.searchIconIV.setImageResource(Config.getSearchbarResourceId(requireContext()))
             this.clearSearchImageView.setImageResource(Config.getEraseResourceId(requireContext()))
@@ -132,7 +138,7 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
     }
 
     override fun onPackageDetailClicked(packageId: Int, entrancePoint: String) {
-        PackageDetailBottomSheetFragment.newInstance(packageId, entrancePoint)
+        PackDetailFragment.newInstance(packageId, entrancePoint)
             .showNow(parentFragmentManager, Constants.Tag.DETAIL)
     }
 
@@ -142,8 +148,10 @@ internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
 
 
     override fun onKeywordClicked(keyword: String) {
-        binding?.searchEditText?.setText(keyword)
         StipopUtils.hideKeyboard(requireActivity())
-        binding?.searchEditText?.clearFocus()
+        binding?.searchEditText?.apply {
+            setText(keyword)
+            clearFocus()
+        }
     }
 }

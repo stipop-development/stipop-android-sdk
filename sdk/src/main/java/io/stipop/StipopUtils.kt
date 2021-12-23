@@ -12,12 +12,16 @@ import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Display
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
@@ -31,11 +35,11 @@ import kotlin.collections.ArrayList
 internal object StipopUtils {
 
     fun controlLocale(locale: Locale): Locale {
-        return when (locale) {
-            Locale.SIMPLIFIED_CHINESE -> {
+        return when (locale.isO3Country) {
+            Locale.SIMPLIFIED_CHINESE.isO3Country -> {
                 Locale("zh-cn", locale.country)
             }
-            Locale.TRADITIONAL_CHINESE -> {
+            Locale.TRADITIONAL_CHINESE.isO3Country -> {
                 Locale("zh-tw", locale.country)
             }
             else -> {
@@ -62,14 +66,15 @@ internal object StipopUtils {
         imm.hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
     }
 
-    fun downloadAtLocal(stickerPackage: StickerPackage, responseCallback: () -> Unit) {
-        val stickers = stickerPackage.stickers
-        for (sticker in stickers) {
-            val packageId = sticker.packageId
-            val stickerImg = sticker.stickerImg
-            downloadImage(packageId, stickerImg, sticker)
+    fun downloadAtLocal(stickerPackage: StickerPackage) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val stickers = stickerPackage.stickers
+            for (sticker in stickers) {
+                val packageId = sticker.packageId
+                val stickerImg = sticker.stickerImg
+                downloadImage(packageId, stickerImg, sticker)
+            }
         }
-        responseCallback()
     }
 
     private fun downloadImage(packageId: Int, encodedString: String?, sticker: SPSticker) {
@@ -88,18 +93,18 @@ internal object StipopUtils {
         val policy = ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
+        sticker.packageId = packageId
         URL(encodedString).openStream().use { input ->
             FileOutputStream(filePath).use { output ->
                 input.copyTo(output)
             }
-            saveStickerAsJson(Stipop.applicationContext, sticker, packageId)
+            saveStickerAsJson(Stipop.applicationContext, sticker)
         }
     }
 
-    fun getStickersFromLocal(activity: Activity, packageId: Int): ArrayList<SPSticker> {
+    fun getStickersFromLocal(context: Context, packageId: Int): ArrayList<SPSticker> {
         val stickerList = ArrayList<SPSticker>()
-
-        val filePath = File(activity.filesDir, "stipop/$packageId")
+        val filePath = File(context.filesDir, "stipop/$packageId")
         if (filePath.exists()) {
             filePath.walkTopDown().forEach {
                 if (it.isFile) {
@@ -116,7 +121,7 @@ internal object StipopUtils {
                         val jsonFileName = fileNames[0]
 
                         val file =
-                            File(activity.filesDir, "stipop/$packageId/$jsonFileName.json")
+                            File(context.filesDir, "stipop/$packageId/$jsonFileName.json")
                         if (file.isFile) {
                             val json = JSONObject(file.readText())
                             sticker.stickerId = getInt(json, "stickerId")
@@ -136,9 +141,9 @@ internal object StipopUtils {
         return stickerList
     }
 
-    fun saveStickerAsJson(context: Context, sticker: SPSticker, packageId: Int) {
+    fun saveStickerAsJson(context: Context, savingSticker: SPSticker) {
 
-        val fileName = sticker.stickerImg!!.split(File.separator).last()
+        val fileName = savingSticker.stickerImg!!.split(File.separator).last()
 
         val fileNames = fileName.split(".")
 
@@ -147,13 +152,13 @@ internal object StipopUtils {
             jsonFileName = fileNames[0]
         }
 
-        val filePath = File(context.filesDir, "stipop/$packageId/$jsonFileName.json")
+        val filePath = File(context.filesDir, "stipop/${savingSticker.packageId}/$jsonFileName.json")
 
         val json = JSONObject()
-        json.put("stickerId", sticker.stickerId)
-        json.put("stickerImg", sticker.stickerImg)
-        json.put("favoriteYN", sticker.favoriteYN)
-        json.put("keyword", sticker.keyword)
+        json.put("stickerId", savingSticker.stickerId)
+        json.put("stickerImg", savingSticker.stickerImg)
+        json.put("favoriteYN", savingSticker.favoriteYN)
+        json.put("keyword", savingSticker.keyword)
 
         val policy = ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
@@ -209,7 +214,8 @@ internal object StipopUtils {
         return when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                 val windowMetrics = activity.windowManager.currentWindowMetrics
-                val insets: Insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars())
+                val insets: Insets =
+                    windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars())
                 windowMetrics.bounds.height() - insets.top - insets.bottom
             }
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 -> {
@@ -228,7 +234,8 @@ internal object StipopUtils {
     fun getScreenWidth(activity: Activity): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowMetrics = activity.windowManager.currentWindowMetrics
-            val insets: Insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val insets: Insets =
+                windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             windowMetrics.bounds.height() - insets.left - insets.right
         } else {
             val displayMetrics = DisplayMetrics()

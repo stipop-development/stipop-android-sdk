@@ -67,7 +67,7 @@
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/homeRecyclerView"
+                    android:id="@+id/banner_recycler_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:overScrollMode="never"

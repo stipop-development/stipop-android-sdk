@@ -25,12 +25,6 @@
         </provider>
 
         <activity
-            android:name=".view.SearchActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.Stipop"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-
-        <activity
             android:name=".view.StoreActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Stipop"

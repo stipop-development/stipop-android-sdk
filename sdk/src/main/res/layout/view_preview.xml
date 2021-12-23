@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="170dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="9dp"
+            android:paddingHorizontal="12dp"
+            android:gravity="end"
+            android:background="#000000"
+            android:alpha="0.5">
+
+            <io.stipop.custom.StipopImageView
+                android:id="@+id/favoriteImageView"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@mipmap/ic_favorites_off"/>
+
+            <io.stipop.custom.StipopImageView
+                android:id="@+id/closeImageView"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@mipmap/ic_cancel"/>
+
+        </LinearLayout>
+
+        <io.stipop.custom.StipopImageView
+            android:id="@+id/stickerImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:padding="15dp"
+            tools:src="@tools:sample/avatars" />
+
+    </RelativeLayout>
+
+</LinearLayout>

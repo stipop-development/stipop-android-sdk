@@ -1,5 +1,6 @@
 package io.stipop.data
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -17,14 +18,14 @@ import kotlinx.coroutines.flow.Flow
 
 internal class PkgRepository(private val apiService: StipopApi) : BaseRepository() {
 
-    fun getHomeStickerPackageStream(query: String? = null): Flow<PagingData<StickerPackage>> {
+    fun getSearchingPackStream(query: String? = null): Flow<PagingData<StickerPackage>> {
         return Pager(
             config = PagingConfig(
                 pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                PkgPagingSource(
+                PagingPackageSource(
                     apiService,
                     query = query,
                     newOrder = false
@@ -32,12 +33,12 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
             }).flow
     }
 
-    fun getNewStickerPackageStream(): Flow<PagingData<StickerPackage>> {
+    fun getNewPackStream(): Flow<PagingData<StickerPackage>> {
         return Pager(
             config = PagingConfig(
                 pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
-            ), pagingSourceFactory = { PkgPagingSource(apiService, newOrder = true) }).flow
+            ), pagingSourceFactory = { PagingPackageSource(apiService, newOrder = true) }).flow
     }
 
     suspend fun getCurationPackagesAsFlow(type: String): Flow<CurationPackageResponse?> {

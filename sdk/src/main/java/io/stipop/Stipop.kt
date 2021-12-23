@@ -1,20 +1,19 @@
 package io.stipop
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.graphics.Rect
 import android.util.Log
-import android.view.*
+import android.view.View
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
 import io.stipop.data.ConfigRepository
 import io.stipop.models.body.InitSdkBody
+import io.stipop.view.PackDetailFragment
+import io.stipop.view.StickerSearchView
 import io.stipop.view.StickerPickerView
-import io.stipop.view.PackageDetailBottomSheetFragment
-import io.stipop.view.SearchActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -23,7 +22,7 @@ import java.util.*
 
 
 class Stipop(
-    private val activity: Activity,
+    private val activity: FragmentActivity,
     private var stipopButton: StipopImageView? = null,
     val delegate: StipopDelegate
 ) : StickerPickerView.VisibleStateListener {
@@ -63,8 +62,10 @@ class Stipop(
             })
         }
 
+        var canRetryIfConnectFailed = true
+
         fun connect(
-            activity: Activity,
+            activity: FragmentActivity,
             userId: String,
             delegate: StipopDelegate,
             stipopButton: StipopImageView? = null,
@@ -76,18 +77,21 @@ class Stipop(
                 lang = it.language
                 countryCode = it.country
             }
-
             if (!configRepository.isConfigured) {
-                Log.e(
-                    "STIPOP-SDK",
-                    "Stipop SDK connect failed. Please call Stipop.configure(context) first."
-                )
-                taskCallBack?.let { it(false) }
+                if(canRetryIfConnectFailed){
+                    Log.w("STIPOP-SDK", "Stipop SDK not connected. Because 'canRetryIfConnectFailed' is True, SDK calls 'configure(context)' automatically just once.")
+                    configure(activity, callback = {
+                        if(it) connect(activity, userId, delegate, stipopButton, locale, taskCallBack)
+                        canRetryIfConnectFailed = false
+                    })
+                }else{
+                    Log.e("STIPOP-SDK", "Stipop SDK connect failed. Please call Stipop.configure(context) first.")
+                    taskCallBack?.let {
+                        it(false)
+                    }
+                }
             } else {
-                Log.d(
-                    "STIPOP-SDK",
-                    "Stipop SDK connect succeeded. Please call Stipop.showKeyboard() or Stipop.showSearch()"
-                )
+                Log.v("STIPOP-SDK", "Stipop SDK connect succeeded. You can use SDK by calling Stipop.showKeyboard() or Stipop.showSearch() and implementing StipopDelegate interface.")
                 applicationContext = activity.applicationContext
                 mainScope.launch {
                     configRepository.postInitSdk(
@@ -108,7 +112,7 @@ class Stipop(
         }
 
         @Deprecated(
-            "Please use connect(activity, userId, delegate, stipopButton, locale) instead. This method will be modified soon.",
+            "Please use connect(activity, userId, delegate, stipopButton, locale) instead. This method will be removed at SDK 1.0.0",
             ReplaceWith(
                 "connect(activity, userId, delegate, stipopButton, Locale(lang, countryCode), taskCallBack)",
                 "io.stipop.Stipop.Companion.connect",
@@ -116,7 +120,7 @@ class Stipop(
             )
         )
         fun connect(
-            activity: Activity,
+            activity: FragmentActivity,
             stipopButton: StipopImageView? = null,
             userId: String,
             lang: String,
@@ -202,9 +206,7 @@ class Stipop(
     }
 
     private fun showSearch() {
-        Intent(activity, SearchActivity::class.java).run {
-            activity.startActivity(this)
-        }
+        StickerSearchView.newInstance().showNow(activity.supportFragmentManager, Constants.Tag.SSV)
     }
 
     private fun showKeyboard() {
@@ -225,7 +227,7 @@ class Stipop(
 
     private fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) {
         StipopUtils.hideKeyboard(activity)
-        PackageDetailBottomSheetFragment.newInstance(packageId, Constants.Point.EXTERNAL)
+        PackDetailFragment.newInstance(packageId, Constants.Point.EXTERNAL)
             .showNow(fragmentManager, Constants.Tag.EXTERNAL)
     }
 
@@ -237,13 +239,13 @@ class Stipop(
             rootView.getWindowVisibleDisplayFrame(visibleFrameRect)
             fromTopToVisibleFramePx = visibleFrameRect.bottom
 
-
-            val heightDifference = fullSizeHeight - fromTopToVisibleFramePx + spvAdditionalHeightOffset
+            val heightDifference =
+                fullSizeHeight - fromTopToVisibleFramePx + spvAdditionalHeightOffset
             if (heightDifference > StipopUtils.pxToDp(100)) {
                 currentKeyboardHeight = heightDifference
                 stickerPickerView.let { spv ->
                     spv.height = currentKeyboardHeight
-                    if (!spv.isShowing && spv.wantShowing) {
+                    if (spv.wantShowing && !spv.isShowing) {
                         spv.show(fromTopToVisibleFramePx)
                     }
                 }

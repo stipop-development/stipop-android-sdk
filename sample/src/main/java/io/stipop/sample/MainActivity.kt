@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         stipopSearchImageView.setOnClickListener {
             Stipop.showSearch()
         }
+
         initSampleUi()
     }
 
@@ -98,8 +99,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         nameTextView.text = "Test User Id : $testUserId"
         statusTextView.text = "Language : ${Locale.getDefault().language} / Country : ${Locale.getDefault().country}"
 
-        Glide.with(this).load(R.drawable.img_profile).apply(RequestOptions().circleCrop())
-            .into(profileImageView)
+        Glide.with(this).load(R.drawable.img_profile).apply(RequestOptions().circleCrop()).into(profileImageView)
 
         chatRecyclerview.apply {
             chatsAdapter.setHasStableIds(true)
