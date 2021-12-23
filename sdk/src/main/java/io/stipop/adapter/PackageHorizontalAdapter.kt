@@ -7,11 +7,11 @@ import io.stipop.models.StickerPackage
 import io.stipop.viewholder.CurationAtypeViewHolder
 import io.stipop.viewholder.CurationBtypeViewHolder
 import io.stipop.viewholder.HorizontalStickerThumbViewHolder
-import io.stipop.event.StickerPackageClickDelegate
+import io.stipop.event.PackClickDelegate
 
 internal class PackageHorizontalAdapter(
     private val dataSet: ArrayList<StickerPackage> = ArrayList(),
-    val delegate: StickerPackageClickDelegate?
+    val delegate: PackClickDelegate?
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

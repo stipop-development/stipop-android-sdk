@@ -8,10 +8,10 @@ import io.stipop.models.response.KeywordListResponse
 import io.stipop.viewholder.CurationCardContainerViewHolder
 import io.stipop.viewholder.KeywordTagViewHolder
 import io.stipop.event.KeywordClickDelegate
-import io.stipop.event.StickerPackageClickDelegate
+import io.stipop.event.PackClickDelegate
 
 internal class HomeTabAdapter(
-    private val stickerPackageClickDelegate: StickerPackageClickDelegate? = null,
+    private val packClickDelegate: PackClickDelegate? = null,
     private val keywordClickDelegate: KeywordClickDelegate? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -23,7 +23,7 @@ internal class HomeTabAdapter(
                 KeywordTagViewHolder.create(parent, keywordClickDelegate)
             }
             else -> {
-                CurationCardContainerViewHolder.create(parent, stickerPackageClickDelegate)
+                CurationCardContainerViewHolder.create(parent, packClickDelegate)
             }
         }
     }

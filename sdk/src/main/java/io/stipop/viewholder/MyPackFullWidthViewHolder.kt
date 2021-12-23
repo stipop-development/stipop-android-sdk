@@ -15,9 +15,9 @@ import io.stipop.Constants
 import io.stipop.R
 import io.stipop.custom.StipopImageView
 import io.stipop.models.StickerPackage
-import io.stipop.event.MyStickerClickDelegate
+import io.stipop.event.MyPackEventDelegate
 
-internal class MyStickerPackageViewHolder(view: View, private val delegate: MyStickerClickDelegate?) : RecyclerView.ViewHolder(view) {
+internal class MyPackFullWidthViewHolder(view: View, private val delegate: MyPackEventDelegate?) : RecyclerView.ViewHolder(view) {
 
     val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
     val packageIV: StipopImageView = view.findViewById(R.id.packageIV)
@@ -107,11 +107,11 @@ internal class MyStickerPackageViewHolder(view: View, private val delegate: MySt
     companion object {
         fun create(
             parent: ViewGroup,
-            delegate: MyStickerClickDelegate?
-        ): MyStickerPackageViewHolder {
+            delegate: MyPackEventDelegate?
+        ): MyPackFullWidthViewHolder {
             val view =
-                LayoutInflater.from(parent.context).inflate(R.layout.item_my_sticker, parent, false)
-            return MyStickerPackageViewHolder(view, delegate)
+                LayoutInflater.from(parent.context).inflate(R.layout.item_my_pack_full_width, parent, false)
+            return MyPackFullWidthViewHolder(view, delegate)
         }
     }
 }

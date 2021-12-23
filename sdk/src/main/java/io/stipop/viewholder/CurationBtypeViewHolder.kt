@@ -14,11 +14,11 @@ import io.stipop.Constants
 import io.stipop.StipopUtils
 import io.stipop.databinding.ItemCuratedCardTypeBBinding
 import io.stipop.models.StickerPackage
-import io.stipop.event.StickerPackageClickDelegate
+import io.stipop.event.PackClickDelegate
 
 internal class CurationBtypeViewHolder(
     private val binding: ItemCuratedCardTypeBBinding,
-    val delegate: StickerPackageClickDelegate?
+    val delegate: PackClickDelegate?
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
@@ -52,7 +52,7 @@ internal class CurationBtypeViewHolder(
     companion object {
         fun create(
             parent: ViewGroup,
-            delegate: StickerPackageClickDelegate?
+            delegate: PackClickDelegate?
         ): CurationBtypeViewHolder {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_curated_card_type_b, parent, false)

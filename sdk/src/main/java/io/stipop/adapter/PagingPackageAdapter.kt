@@ -4,20 +4,20 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import io.stipop.models.StickerPackage
-import io.stipop.viewholder.VerticalStickerThumbViewHolder
-import io.stipop.event.StickerPackageClickDelegate
+import io.stipop.viewholder.PackFullWidthViewHolder
+import io.stipop.event.PackClickDelegate
 
-internal class PagingPackageAdapter(private val delegate: StickerPackageClickDelegate, private val clickPoint: String) :
-    PagingDataAdapter<StickerPackage, VerticalStickerThumbViewHolder>(REPO_COMPARATOR){
+internal class PagingPackageAdapter(private val delegate: PackClickDelegate, private val clickPoint: String) :
+    PagingDataAdapter<StickerPackage, PackFullWidthViewHolder>(REPO_COMPARATOR){
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): VerticalStickerThumbViewHolder {
-        return VerticalStickerThumbViewHolder.create(parent, delegate, clickPoint)
+    ): PackFullWidthViewHolder {
+        return PackFullWidthViewHolder.create(parent, delegate, clickPoint)
     }
 
-    override fun onBindViewHolder(holder: VerticalStickerThumbViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PackFullWidthViewHolder, position: Int) {
         val repoItem = getItem(position)
         if (repoItem != null) {
             holder.bind(repoItem)

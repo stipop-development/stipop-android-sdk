@@ -25,14 +25,14 @@ import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.StoreHomeViewModel
 import io.stipop.event.KeywordClickDelegate
-import io.stipop.event.StickerPackageClickDelegate
+import io.stipop.event.PackClickDelegate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
-internal class StoreHomeFragment : BaseFragment(), StickerPackageClickDelegate,
+internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
     KeywordClickDelegate {
 
     companion object {

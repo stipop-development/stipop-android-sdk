@@ -50,10 +50,10 @@ internal class SpvPreview(
                 updateFavorite()
             }
             stickerImageView.setOnClickListener {
-                dismiss()
                 currentSticker?.let {
                     delegate.onPreviewStickerClicked(it)
                 }
+                dismiss()
             }
         }
     }
@@ -81,7 +81,12 @@ internal class SpvPreview(
     }
 
     private fun setFavoriteUi() {
-        binding.favoriteImageView.setImageResource(Config.getPreviewFavoriteResourceId(activity, currentSticker?.favoriteYN == "Y"))
+        binding.favoriteImageView.setImageResource(
+            Config.getPreviewFavoriteResourceId(
+                activity,
+                currentSticker?.favoriteYN == "Y"
+            )
+        )
     }
 
     private fun updateFavorite() {
@@ -93,5 +98,10 @@ internal class SpvPreview(
                 delegate.onPreviewFavoriteChanged(spSticker)
             })
         }
+    }
+
+    override fun dismiss() {
+        super.dismiss()
+        currentSticker = null
     }
 }

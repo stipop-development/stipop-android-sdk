@@ -13,11 +13,11 @@ import io.stipop.custom.HorizontalDecoration
 import io.stipop.databinding.ItemHorizontalStickerThumbContainerBinding
 import io.stipop.models.CuratedCard
 import io.stipop.setStipopUnderlineColor
-import io.stipop.event.StickerPackageClickDelegate
+import io.stipop.event.PackClickDelegate
 
 internal class CurationCardContainerViewHolder(
     private val binding: ItemHorizontalStickerThumbContainerBinding,
-    val delegate: StickerPackageClickDelegate?
+    val delegate: PackClickDelegate?
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
@@ -52,7 +52,7 @@ internal class CurationCardContainerViewHolder(
     companion object {
         fun create(
             parent: ViewGroup,
-            delegate: StickerPackageClickDelegate?
+            delegate: PackClickDelegate?
         ): CurationCardContainerViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_horizontal_sticker_thumb_container, parent, false)
             val binding = ItemHorizontalStickerThumbContainerBinding.bind(view)

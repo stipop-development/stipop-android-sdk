@@ -12,17 +12,20 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
 import io.stipop.adapter.PagingMyPackAdapter
 import io.stipop.adapter.StickerDefaultAdapter
+import io.stipop.custom.DragAndDropHelperCallback
 import io.stipop.custom.HorizontalDecoration
 import io.stipop.databinding.ViewKeyboardPopupBinding
-import io.stipop.event.MyStickerClickDelegate
+import io.stipop.event.MyPackEventDelegate
 import io.stipop.event.PreviewDelegate
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.SpvModel
+import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -32,7 +35,7 @@ import kotlinx.coroutines.launch
 internal class StickerPickerView(
     private val activity: Activity,
     private val visibleStateListener: VisibleStateListener
-) : PopupWindow(), MyStickerClickDelegate,
+) : PopupWindow(), MyPackEventDelegate,
     StickerDefaultAdapter.OnStickerClickListener, PreviewDelegate {
 
     interface VisibleStateListener {
@@ -46,6 +49,7 @@ internal class StickerPickerView(
     private val spvPreview: SpvPreview by lazy { SpvPreview(activity, this, keyboardViewModel) }
     private val ioScope = CoroutineScope(Job() + Dispatchers.IO)
     private val packAdapter: PagingMyPackAdapter by lazy { PagingMyPackAdapter(PagingMyPackAdapter.ViewType.SPV, this) }
+    private val itemTouchHelper: ItemTouchHelper
     private val stickerAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter(this) }
     private val decoration = HorizontalDecoration(StipopUtils.dpToPx(8F).toInt(), StipopUtils.dpToPx(8F).toInt())
 
@@ -97,6 +101,11 @@ internal class StickerPickerView(
                 binding.packageThumbRecyclerView.scrollToPosition(0)
             }
         })
+
+        itemTouchHelper =
+            ItemTouchHelper(DragAndDropHelperCallback(packAdapter)).apply {
+                attachToRecyclerView(binding.packageThumbRecyclerView)
+            }
     }
 
     internal fun show(y: Int) {
@@ -131,9 +140,9 @@ internal class StickerPickerView(
             recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
             when (Config.showPreview) {
                 true -> {
-                    if (recentFavoriteContainer.tag == 1) {
-                        favoriteImageView.setIconDefaultsColor()
+                    if (recentFavoriteContainer.tag ==Constants.Tag.RECENT) {
                         recentlyIV.setIconDefaultsColor40Opacity()
+                        favoriteImageView.setIconDefaultsColor()
                     } else {
                         recentlyIV.setIconDefaultsColor()
                         favoriteImageView.setIconDefaultsColor40Opacity()
@@ -208,21 +217,7 @@ internal class StickerPickerView(
         }
     }
 
-    override fun onPackageClick(position: Int, stickerPackage: StickerPackage) {
-        with(binding) {
-            emptyListTextView.isVisible = false
-            progressBar.isVisible = true
-            recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-            recentStickerImageView.clearTint()
-        }
-        packAdapter.updateSelected(position)
-        stickerAdapter.clearData()
-        keyboardViewModel.loadStickerPackage(stickerPackage, onSuccess = {
-            it?.let {
-                showStickers(it)
-            }
-        })
-    }
+
 
     private fun showStore(startingPosition: Int) {
         dismiss()
@@ -245,7 +240,7 @@ internal class StickerPickerView(
             storeImageView.setIconDefaultsColor()
             favoriteImageView.setImageResource(R.mipmap.ic_favorites_active)
             recentlyIV.setImageResource(R.mipmap.ic_recents_active)
-            recentFavoriteContainer.tag = 0
+            recentFavoriteContainer.tag = Constants.Tag.RECENT
             when (Config.showPreview) {
                 true -> {
                     recentStickerImageView.visibility = View.GONE
@@ -274,6 +269,32 @@ internal class StickerPickerView(
         }
     }
 
+    private fun sendSticker(spSticker: SPSticker) {
+        Stipop.send(
+            spSticker.stickerId,
+            spSticker.keyword,
+            Constants.Point.PICKER_VIEW
+        ) { result ->
+            if (result) {
+                Stipop.instance?.delegate?.onStickerSelected(spSticker)
+                keyboardViewModel.saveRecent(spSticker)
+                spvPreview.dismiss()
+            }
+        }
+    }
+
+    override fun onPackageClick(position: Int, stickerPackage: StickerPackage) {
+        with(binding) {
+            emptyListTextView.isVisible = false
+            progressBar.isVisible = true
+            recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
+            recentStickerImageView.clearTint()
+        }
+        packAdapter.updateSelected(position)
+        stickerAdapter.clearData()
+        keyboardViewModel.loadStickerPackage(stickerPackage, onSuccess = { showStickers(it) })
+    }
+
     override fun onStickerClick(position: Int, spSticker: SPSticker) {
         if (Config.showPreview) {
             val isSame = spvPreview.showOrUpdate(spSticker)
@@ -295,20 +316,6 @@ internal class StickerPickerView(
         sendSticker(sticker)
     }
 
-    private fun sendSticker(spSticker: SPSticker) {
-        Stipop.send(
-            spSticker.stickerId,
-            spSticker.keyword,
-            Constants.Point.PICKER_VIEW
-        ) { result ->
-            if (result) {
-                Stipop.instance?.delegate?.onStickerSelected(spSticker)
-                keyboardViewModel.saveRecent(spSticker)
-                spvPreview.dismiss()
-            }
-        }
-    }
-
     override fun onItemClicked(packageId: Int, entrancePoint: String) {
         //
     }
@@ -322,10 +329,10 @@ internal class StickerPickerView(
     }
 
     override fun onDragStarted(viewHolder: RecyclerView.ViewHolder) {
-        //
+        itemTouchHelper.startDrag(viewHolder)
     }
 
     override fun onDragCompleted(fromData: Any, toData: Any) {
-        //
+        keyboardViewModel.changePackageOrder(fromData as StickerPackage, toData as StickerPackage)
     }
 }

@@ -33,7 +33,7 @@ internal class MyStickerViewModel(private val repository: MyStickerRepository) :
 
     fun changePackageOrder(fromStickerPackage: StickerPackage, toStickerPackage: StickerPackage) =
         viewModelScope.launch {
-            repository.request(fromStickerPackage, toStickerPackage)
+            repository.requestChangePackOrder(fromStickerPackage, toStickerPackage)
         }
 
     fun hideOrRecoverPackage(packageId: Int, position: Int) = viewModelScope.launch {

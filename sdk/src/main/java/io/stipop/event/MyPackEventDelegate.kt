@@ -3,7 +3,7 @@ package io.stipop.event
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.models.StickerPackage
 
-internal interface MyStickerClickDelegate {
+internal interface MyPackEventDelegate {
     fun onPackageClick(position: Int, stickerPackage: StickerPackage)
     fun onItemClicked(packageId: Int, entrancePoint: String)
     fun onItemLongClicked(position: Int)

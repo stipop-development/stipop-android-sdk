@@ -16,7 +16,7 @@ import io.stipop.R
 import io.stipop.base.Injection
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.FragmentMyStickerBinding
-import io.stipop.event.MyStickerClickDelegate
+import io.stipop.event.MyPackEventDelegate
 import io.stipop.custom.DragAndDropHelperCallback
 import io.stipop.models.StickerPackage
 import io.stipop.adapter.PagingMyPackAdapter
@@ -29,7 +29,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
+internal class MyStickerFragment : BaseFragment(), MyPackEventDelegate {
 
     companion object {
         fun newInstance() = Bundle().let { MyStickerFragment().apply { arguments = it } }
@@ -72,10 +72,7 @@ internal class MyStickerFragment : BaseFragment(), MyStickerClickDelegate {
         toggleMyStickers(wantVisibleSticker)
         initRequest(wantVisibleSticker)
 
-        itemTouchHelper =
-            ItemTouchHelper(DragAndDropHelperCallback(pagingMyPackAdapter)).apply {
-                attachToRecyclerView(myStickersRecyclerView)
-            }
+        itemTouchHelper = ItemTouchHelper(DragAndDropHelperCallback(pagingMyPackAdapter)).apply { attachToRecyclerView(myStickersRecyclerView) }
 
         viewModel.packageVisibilityChanged.observeForever {
             pagingMyPackAdapter.refresh()

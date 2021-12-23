@@ -3,17 +3,19 @@ package io.stipop.viewholder
 import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import io.stipop.Config
 import io.stipop.R
 import io.stipop.custom.StipopImageView
-import io.stipop.event.MyStickerClickDelegate
+import io.stipop.event.MyPackEventDelegate
 import io.stipop.models.StickerPackage
 
-internal class SpvThumbHolder(view: View, val delegate: MyStickerClickDelegate) : RecyclerView.ViewHolder(view) {
+internal class MyPackThumbViewHolder(view: View, val delegate: MyPackEventDelegate?) : RecyclerView.ViewHolder(view) {
     private val imageIV: StipopImageView = view.findViewById(R.id.imageIV)
     private val containerLL: LinearLayout = view.findViewById(R.id.containerLL)
     private var stickerPackage: StickerPackage? = null
@@ -21,9 +23,13 @@ internal class SpvThumbHolder(view: View, val delegate: MyStickerClickDelegate) 
     init {
         itemView.setOnClickListener {
             stickerPackage?.let {
-                delegate.onPackageClick(bindingAdapterPosition, it)
+                delegate?.onPackageClick(bindingAdapterPosition, it)
             }
         }
+//        itemView.setOnLongClickListener {
+//            delegate?.onDragStarted(this)
+//            return@setOnLongClickListener true
+//        }
     }
 
     fun bindData(data: StickerPackage?, isSelected: Boolean = false) {
@@ -45,5 +51,15 @@ internal class SpvThumbHolder(view: View, val delegate: MyStickerClickDelegate) 
             }
         }
         imageIV.colorFilter = ColorMatrixColorFilter(matrix)
+    }
+
+    companion object {
+        fun create(
+            parent: ViewGroup,
+            delegate: MyPackEventDelegate?
+        ): MyPackThumbViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_my_pack_thumb, parent, false)
+            return MyPackThumbViewHolder(view, delegate)
+        }
     }
 }

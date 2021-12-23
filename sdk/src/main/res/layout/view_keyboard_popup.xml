@@ -75,7 +75,7 @@
             android:overScrollMode="never"
             android:scrollbars="none"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_keyboard_package" />
+            tools:listitem="@layout/item_my_pack_thumb" />
 
         <io.stipop.custom.StipopImageView
             android:id="@+id/storeImageView"

@@ -25,7 +25,7 @@ internal class MyStickerRepository(private val apiService: StipopApi): BaseRepos
             ), pagingSourceFactory = { PagingMyPackSource(apiService, wantVisibleSticker) }).flow
     }
 
-    suspend fun request(fromStickerPackage: StickerPackage, toStickerPackage: StickerPackage) {
+    suspend fun requestChangePackOrder(fromStickerPackage: StickerPackage, toStickerPackage: StickerPackage) {
         val userId = Stipop.userId
         val fromOrder = fromStickerPackage.order
         val toOrder = toStickerPackage.order

@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
-import io.stipop.databinding.ItemVerticalStickerThumbBinding
+import io.stipop.databinding.ItemPackageFullWidthBinding
+import io.stipop.event.PackClickDelegate
 import io.stipop.models.StickerPackage
-import io.stipop.event.StickerPackageClickDelegate
 
-internal class VerticalStickerThumbViewHolder(private val binding: ItemVerticalStickerThumbBinding, private val delegate: StickerPackageClickDelegate?, private val point: String) :
+internal class PackFullWidthViewHolder(private val binding: ItemPackageFullWidthBinding, private val delegate: PackClickDelegate?, private val point: String) :
     RecyclerView.ViewHolder(binding.root) {
 
     private var stickerPackage: StickerPackage? = null
@@ -56,10 +56,10 @@ internal class VerticalStickerThumbViewHolder(private val binding: ItemVerticalS
     }
 
     companion object {
-        fun create(parent: ViewGroup, stickerPackageClickDelegate: StickerPackageClickDelegate?, clickPoint: String): VerticalStickerThumbViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_vertical_sticker_thumb, parent, false)
-            val binding = ItemVerticalStickerThumbBinding.bind(view)
-            return VerticalStickerThumbViewHolder(binding, stickerPackageClickDelegate, clickPoint)
+        fun create(parent: ViewGroup, packClickDelegate: PackClickDelegate?, clickPoint: String): PackFullWidthViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_package_full_width, parent, false)
+            val binding = ItemPackageFullWidthBinding.bind(view)
+            return PackFullWidthViewHolder(binding, packClickDelegate, clickPoint)
         }
     }
 }

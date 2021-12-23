@@ -1,18 +1,16 @@
 package io.stipop.adapter
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import io.stipop.R
 import io.stipop.custom.DragAndDropDelegate
+import io.stipop.event.MyPackEventDelegate
 import io.stipop.models.StickerPackage
-import io.stipop.event.MyStickerClickDelegate
-import io.stipop.viewholder.MyStickerPackageViewHolder
-import io.stipop.viewholder.SpvThumbHolder
+import io.stipop.viewholder.MyPackFullWidthViewHolder
+import io.stipop.viewholder.MyPackThumbViewHolder
 
-internal class PagingMyPackAdapter(private val type: ViewType, private val delegate: MyStickerClickDelegate) : PagingDataAdapter<StickerPackage, RecyclerView.ViewHolder>(REPO_COMPARATOR), DragAndDropDelegate {
+internal class PagingMyPackAdapter(private val type: ViewType, private val delegate: MyPackEventDelegate) : PagingDataAdapter<StickerPackage, RecyclerView.ViewHolder>(REPO_COMPARATOR), DragAndDropDelegate {
 
     enum class ViewType(val typeNum: Int) {
         SPV(1000), STORE(1001), ERROR(0)
@@ -21,11 +19,10 @@ internal class PagingMyPackAdapter(private val type: ViewType, private val deleg
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
             ViewType.SPV.typeNum->{
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_keyboard_package, parent, false)
-                SpvThumbHolder(view, delegate)
+                MyPackThumbViewHolder.create(parent, delegate)
             }
             else->{
-                MyStickerPackageViewHolder.create(parent, delegate)
+                MyPackFullWidthViewHolder.create(parent, delegate)
             }
         }
     }
@@ -34,10 +31,10 @@ internal class PagingMyPackAdapter(private val type: ViewType, private val deleg
         val repoItem = getItem(position)
         when(type){
             ViewType.SPV -> {
-                (holder as SpvThumbHolder).bindData(repoItem, position == prevSelectedPosition)
+                (holder as MyPackThumbViewHolder).bindData(repoItem, position == prevSelectedPosition)
             }
             ViewType.STORE -> {
-                (holder as MyStickerPackageViewHolder).bind(repoItem)
+                (holder as MyPackFullWidthViewHolder).bind(repoItem)
             }
             else -> {
                 //

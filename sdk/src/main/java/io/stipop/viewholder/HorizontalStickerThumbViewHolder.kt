@@ -11,9 +11,9 @@ import io.stipop.Constants
 import io.stipop.StipopUtils
 import io.stipop.databinding.ItemHorizontalStickerThumbBinding
 import io.stipop.models.StickerPackage
-import io.stipop.event.StickerPackageClickDelegate
+import io.stipop.event.PackClickDelegate
 
-internal class HorizontalStickerThumbViewHolder(private val binding: ItemHorizontalStickerThumbBinding, val delegate: StickerPackageClickDelegate?) :
+internal class HorizontalStickerThumbViewHolder(private val binding: ItemHorizontalStickerThumbBinding, val delegate: PackClickDelegate?) :
     RecyclerView.ViewHolder(binding.root) {
 
     private var stickerPackage: StickerPackage? = null
@@ -39,7 +39,7 @@ internal class HorizontalStickerThumbViewHolder(private val binding: ItemHorizon
     }
 
     companion object {
-        fun create(parent: ViewGroup, delegate: StickerPackageClickDelegate?): HorizontalStickerThumbViewHolder {
+        fun create(parent: ViewGroup, delegate: PackClickDelegate?): HorizontalStickerThumbViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_horizontal_sticker_thumb, parent, false)
             val screenWidth = StipopUtils.getScreenWidth(parent.context)
             val itemWidth = (screenWidth - StipopUtils.dpToPx(48F) - (StipopUtils.dpToPx(7F) * 3)) / 4

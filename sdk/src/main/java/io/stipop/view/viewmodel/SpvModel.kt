@@ -100,9 +100,14 @@ internal class SpvModel {
         }
     }
 
+    fun changePackageOrder(fromStickerPackage: StickerPackage, toStickerPackage: StickerPackage) =
+        taskScope.launch {
+            repository.requestChangePackOrder(fromStickerPackage, toStickerPackage)
+        }
+
     fun loadStickerPackage(
         stickerPackage: StickerPackage,
-        onSuccess: (data: StickerPackage?) -> Unit
+        onSuccess: (data: StickerPackage) -> Unit
     ) {
         selectedPackage = stickerPackage
         taskScope.launch {
@@ -110,16 +115,18 @@ internal class SpvModel {
                 true -> {
                     repository.getStickerPackage(stickerPackage.packageId, onSuccess = {
                         if (it.header.isSuccess()) {
-                            this@SpvModel.selectedPackage = it.body?.stickerPackage
+                            it.body?.stickerPackage?.let{
+                                selectedPackage = it
+                            }
                             launch(Dispatchers.Main) {
-                                onSuccess(it.body?.stickerPackage)
+                                onSuccess(selectedPackage!!)
                             }
                         }
                     })
                 }
                 false -> {
                     launch(Dispatchers.Main) {
-                        onSuccess(selectedPackage)
+                        onSuccess(selectedPackage!!)
                     }
                 }
             }

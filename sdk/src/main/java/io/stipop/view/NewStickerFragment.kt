@@ -16,11 +16,11 @@ import io.stipop.databinding.FragmentNewStickerBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.NewStickerViewModel
-import io.stipop.event.StickerPackageClickDelegate
+import io.stipop.event.PackClickDelegate
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-internal class NewStickerFragment : BaseFragment(), StickerPackageClickDelegate {
+internal class NewStickerFragment : BaseFragment(), PackClickDelegate {
 
     companion object {
         fun newInstance() = NewStickerFragment()
