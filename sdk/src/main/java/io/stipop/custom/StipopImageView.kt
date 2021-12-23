@@ -95,10 +95,12 @@ class StipopImageView : AppCompatImageView {
         return false
     }
 
-    fun loadImage(resUrl: String?, usePlaceHolder: Boolean = true) {
-        Glide.with(context)
-            .load(resUrl)
-            .placeholder(if (usePlaceHolder) R.color.b0_c7c7c7 else R.color.transparent).into(this)
+    fun loadImage(resUrl: String?, usePlaceHolder: Boolean = false) {
+        when(usePlaceHolder){
+            true -> Glide.with(context).load(resUrl).placeholder(R.color.b0_c7c7c7).into(this)
+            false -> Glide.with(context).load(resUrl).into(this)
+        }
+
     }
 
     fun loadStickerAsThumbnail(resPath: String?, resUrl: String? = null) {

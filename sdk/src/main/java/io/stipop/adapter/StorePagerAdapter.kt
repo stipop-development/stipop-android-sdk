@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.stipop.view.StoreHomeFragment
-import io.stipop.view.MyStickerFragment
-import io.stipop.view.NewStickerFragment
+import io.stipop.view.StoreMyStickerFragment
+import io.stipop.view.StoreNewStickerFragment
 
 internal class StorePagerAdapter(fragmentActivity: FragmentActivity) :
     FragmentStateAdapter(fragmentActivity) {
@@ -21,11 +21,11 @@ internal class StorePagerAdapter(fragmentActivity: FragmentActivity) :
             )
             put(
                 POSITION_NEW_STICKERS,
-                NewStickerFragment.newInstance()
+                StoreNewStickerFragment.newInstance()
             )
             put(
                 POSITION_MY_STICKERS,
-                MyStickerFragment.newInstance()
+                StoreMyStickerFragment.newInstance()
             )
         }
     }

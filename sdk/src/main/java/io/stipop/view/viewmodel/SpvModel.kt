@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import io.stipop.Config
 import io.stipop.Stipop
+import io.stipop.StipopUtils
 import io.stipop.api.StipopApi
 import io.stipop.data.SpvRepository
 import io.stipop.isNullOrNotEnough
@@ -53,7 +54,7 @@ internal class SpvModel {
             onSuccess(recentStickers)
         } else {
             taskScope.launch {
-                val result = StipopApi.create().getRecentlySentStickers(Stipop.userId, 1, 20)
+                val result = StipopApi.create().getRecentlySentStickers(Stipop.userId, 1, 24)
                 if (result.header.isSuccess() && result.body?.stickerList != null) {
                     if (recentStickers.isEmpty()) {
                         recentStickers.addAll(result.body.stickerList)
@@ -72,18 +73,41 @@ internal class SpvModel {
 
     fun loadFavorites(onSuccess: (data: List<Sticker>) -> Unit) {
         taskScope.launch {
-            val result = StipopApi.create().getFavoriteStickers(Stipop.userId, 1, 20)
-            if (result.header.isSuccess() && result.body?.stickerList != null) {
+            repository.getFavorites { result ->
                 launch(Dispatchers.Main) {
-                    onSuccess(result.body.stickerList)
+                    if (result.header.isSuccess() && result.body?.stickerList != null) {
+                        onSuccess(result.body.stickerList)
+                    }
                 }
             }
         }
     }
 
+    fun putFavorites(spSticker: SPSticker, onSuccess: (data: SPSticker) -> Unit) {
+        taskScope.launch {
+            repository.putFavorite(spSticker, onSuccess = {
+                if (it.header.isSuccess()) {
+                    if (spSticker.favoriteYN != "Y") {
+                        spSticker.favoriteYN = "Y"
+                    } else {
+                        spSticker.favoriteYN = "N"
+                    }
+                }
+                launch(Dispatchers.Main) {
+                    onSuccess(spSticker)
+                }
+            })
+        }
+    }
+
+    fun changePackageOrder(fromStickerPackage: StickerPackage, toStickerPackage: StickerPackage) =
+        taskScope.launch {
+            repository.requestChangePackOrder(fromStickerPackage, toStickerPackage)
+        }
+
     fun loadStickerPackage(
         stickerPackage: StickerPackage,
-        onSuccess: (data: StickerPackage?) -> Unit
+        onSuccess: (data: StickerPackage) -> Unit
     ) {
         selectedPackage = stickerPackage
         taskScope.launch {
@@ -91,16 +115,18 @@ internal class SpvModel {
                 true -> {
                     repository.getStickerPackage(stickerPackage.packageId, onSuccess = {
                         if (it.header.isSuccess()) {
-                            this@SpvModel.selectedPackage = it.body?.stickerPackage
+                            it.body?.stickerPackage?.let{
+                                selectedPackage = it
+                            }
                             launch(Dispatchers.Main) {
-                                onSuccess(it.body?.stickerPackage)
+                                onSuccess(selectedPackage!!)
                             }
                         }
                     })
                 }
                 false -> {
                     launch(Dispatchers.Main) {
-                        onSuccess(selectedPackage)
+                        onSuccess(selectedPackage!!)
                     }
                 }
             }

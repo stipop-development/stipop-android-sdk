@@ -28,7 +28,7 @@
             android:layout_height="match_parent">
 
             <io.stipop.custom.StipopImageView
-                android:id="@+id/recentlyIV"
+                android:id="@+id/smallRecently"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:layout_marginStart="4dp"
@@ -40,7 +40,7 @@
                 android:src="@mipmap/ic_recents_active" />
 
             <io.stipop.custom.StipopImageView
-                android:id="@+id/favoriteIV"
+                android:id="@+id/smallFavorite"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:layout_alignParentRight="true"
@@ -75,7 +75,7 @@
             android:overScrollMode="never"
             android:scrollbars="none"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_keyboard_package" />
+            tools:listitem="@layout/item_my_pack_thumb" />
 
         <io.stipop.custom.StipopImageView
             android:id="@+id/storeImageView"

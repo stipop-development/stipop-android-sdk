@@ -1,6 +1,5 @@
 package io.stipop.view.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,23 +16,30 @@ import kotlinx.coroutines.launch
 
 internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewModel() {
 
-    private val typedQuery = MutableStateFlow("")
-    var isSearchView = false
+    inner class UiState{
+        var isLoadingState = false
+        var isSearchingState = false
+    }
+
+    var homeDataFlow: MutableLiveData<ArrayList<Any?>> = MutableLiveData()
+    var uiStateFlow: MutableLiveData<UiState> = MutableLiveData()
+
+    val typedQuery = MutableStateFlow("")
+    val uiState = UiState()
 
     @ExperimentalCoroutinesApi
     @FlowPreview
-    val emittedQuery: Flow<String> = typedQuery.debounce(300).mapLatest {
+    val emittedQuery: Flow<String> = typedQuery.debounce(200).mapLatest {
         if (it.isEmpty()) {
             return@mapLatest ""
         } else {
             return@mapLatest delayedTextFlow(it)
         }
     }
-    var homeDataFlow: MutableLiveData<ArrayList<Any?>> = MutableLiveData()
-    var uiState: MutableLiveData<Boolean> = MutableLiveData()
+
 
     fun flowQuery(keyword: String) {
-        isSearchView = keyword.isNotEmpty()
+        uiState.isSearchingState = keyword.isNotEmpty()
         typedQuery.value = keyword
     }
 
@@ -47,10 +53,19 @@ internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewM
                 arrayListOf(value1?.body?.keywordList, value2?.body?.card, value3?.body?.card).run {
                     emit(this)
                 }
-            }.collect {
+            }.collectLatest {
                 homeDataFlow.postValue(it)
             }
         }
+    }
+
+    fun loadsPackages(query: String? = null): Flow<PagingData<StickerPackage>> {
+        uiState.apply {
+            isSearchingState = !query.isNullOrEmpty()
+        }.let {
+            uiStateFlow.postValue(it)
+        }
+        return repository.getSearchingPackStream(query).cachedIn(viewModelScope)
     }
 
     fun requestDownloadPackage(stickerPackage: StickerPackage) {
@@ -64,11 +79,4 @@ internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewM
             }
         }
     }
-
-    fun loadsPackages(query: String? = null): Flow<PagingData<StickerPackage>> {
-        uiState.postValue(!query.isNullOrEmpty())
-        return repository.getHomeStickerPackageStream(query).cachedIn(viewModelScope)
-    }
-
-
 }
