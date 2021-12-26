@@ -9,7 +9,6 @@ Stipop SDK provides over 150,000 .png and .gif stickers that can be easily integ
 Environments
 -------------------
 - Support AndroidX only
-- Kotlin based
 - Android 4.1 (API level 16) or higher
 - Java 7 or higher
 - Gradle 3.4.0 or higher
