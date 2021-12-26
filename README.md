@@ -6,12 +6,12 @@
 <a href="https://android-arsenal.com/api?level=16"><img alt="AndroidMinApi" src="https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat"/></a></br>
 Stipop SDK provides over 150,000 .png and .gif stickers that can be easily integrated into mobile app chats, comment sections, live streams, video calls, and other features. Bring fun to your mobile app with stickers loved by millions of users worldwide.
 
-Requirements
+Environments
 -------------------
-- Kotlin
-- Android + (API level 16) or higher
+- Support AndroidX only
+- Kotlin based
+- Android 4.1 (API level 16) or higher
 - Java 7 or higher
-- Support androidx only
 - Gradle 3.4.0 or higher
 
 Getting Started
