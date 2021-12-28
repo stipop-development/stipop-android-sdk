@@ -42,7 +42,7 @@ internal class PagingRecyclerView : RecyclerView {
                 super.onScrolled(recyclerView, dx, dy)
                 val totalItemCount = layoutManager.itemCount
                 val visibleItemCount = layoutManager.childCount
-                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+//                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
                 val lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition()
 //                val isShouldFetchMore = lastVisibleItemPosition + 1 == totalItemCount
                 val isShouldFetchMore =
