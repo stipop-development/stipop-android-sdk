@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -13,18 +12,17 @@ import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
-import io.stipop.base.Injection
+import io.stipop.adapter.MyLoadStateAdapter
+import io.stipop.adapter.PagingMyPackAdapter
 import io.stipop.base.BaseFragment
+import io.stipop.base.Injection
+import io.stipop.custom.DragAndDropHelperCallback
 import io.stipop.databinding.FragmentMyStickerBinding
 import io.stipop.event.MyPackEventDelegate
-import io.stipop.custom.DragAndDropHelperCallback
-import io.stipop.models.StickerPackage
-import io.stipop.adapter.PagingMyPackAdapter
-import io.stipop.adapter.MyLoadStateAdapter
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.event.PackageVisibilityChangeEvent
+import io.stipop.models.StickerPackage
 import io.stipop.view.viewmodel.StoreMyStickerViewModel
-import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -40,7 +38,12 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
     private var binding: FragmentMyStickerBinding? = null
     private lateinit var viewModelStore: StoreMyStickerViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
-    private val pagingMyPackAdapter: PagingMyPackAdapter by lazy { PagingMyPackAdapter(PagingMyPackAdapter.ViewType.STORE, this) }
+    private val pagingMyPackAdapter: PagingMyPackAdapter by lazy {
+        PagingMyPackAdapter(
+            PagingMyPackAdapter.ViewType.STORE,
+            this
+        )
+    }
     private var searchJob: Job? = null
 
     override fun onCreateView(
@@ -59,20 +62,27 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModelStore = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
-            StoreMyStickerViewModel::class.java
-        )
+        viewModelStore =
+            ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
+                StoreMyStickerViewModel::class.java
+            )
 
-        myStickersRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = pagingMyPackAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { pagingMyPackAdapter.retry() })
+        with(binding!!) {
+            myStickersRecyclerView.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter =
+                    pagingMyPackAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { pagingMyPackAdapter.retry() })
+            }
+            itemTouchHelper =
+                ItemTouchHelper(DragAndDropHelperCallback(pagingMyPackAdapter)).apply {
+                    attachToRecyclerView(myStickersRecyclerView)
+                }
         }
 
-        val wantVisibleSticker = savedInstanceState?.getBoolean(LAST_VISIBLE_SETTING) ?: DEFAULT_VISIBLE
+        val wantVisibleSticker =
+            savedInstanceState?.getBoolean(LAST_VISIBLE_SETTING) ?: DEFAULT_VISIBLE
         toggleMyStickers(wantVisibleSticker)
         initRequest(wantVisibleSticker)
-
-        itemTouchHelper = ItemTouchHelper(DragAndDropHelperCallback(pagingMyPackAdapter)).apply { attachToRecyclerView(myStickersRecyclerView) }
 
         viewModelStore.packageVisibilityChanged.observeForever {
             pagingMyPackAdapter.refresh()
@@ -86,12 +96,12 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
     }
 
     override fun applyTheme() {
-        stickerVisibleToggleTextView.setTextColor(
+        binding?.stickerVisibleToggleTextView?.setTextColor(
             Config.getActiveHiddenStickerTextColor(
                 requireContext()
             )
         )
-        stickerVisibleToggleTextView.setBackgroundColor(
+        binding?.stickerVisibleToggleTextView?.setBackgroundColor(
             Config.getHiddenStickerBackgroundColor(
                 requireContext()
             )
@@ -112,7 +122,8 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
     }
 
     override fun onItemClicked(packageId: Int, entrancePoint: String) {
-        PackDetailFragment.newInstance(packageId, entrancePoint).showNow(parentFragmentManager, Constants.Tag.DETAIL)
+        PackDetailFragment.newInstance(packageId, entrancePoint)
+            .showNow(parentFragmentManager, Constants.Tag.DETAIL)
     }
 
     override fun onItemLongClicked(position: Int) {
@@ -140,44 +151,33 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
     }
 
     private fun initRequest(wantVisibleSticker: Boolean) {
-        stickerVisibleToggleTextView.isSelected = wantVisibleSticker
+        with(binding) {
 
-        stickerVisibleToggleTextView.setOnClickListener {
-            stickerVisibleToggleTextView.isSelected = !stickerVisibleToggleTextView.isSelected
-            when (stickerVisibleToggleTextView.isSelected) {
+        }
+        binding?.stickerVisibleToggleTextView?.isSelected = wantVisibleSticker
+
+        binding?.stickerVisibleToggleTextView?.setOnClickListener {
+            binding?.stickerVisibleToggleTextView?.isSelected =
+                (binding?.stickerVisibleToggleTextView?.isSelected == false)
+            when (binding?.stickerVisibleToggleTextView?.isSelected) {
                 true -> {
-                    stickerVisibleToggleTextView.text = getString(R.string.view_hidden_stickers)
-                    stickerVisibleToggleTextView.setBackgroundColor(
+                    binding?.stickerVisibleToggleTextView?.text =
+                        getString(R.string.view_hidden_stickers)
+                    binding?.stickerVisibleToggleTextView?.setBackgroundColor(
                         Config.getHiddenStickerBackgroundColor(
                             requireContext()
                         )
                     )
                 }
                 false -> {
-                    stickerVisibleToggleTextView.text = getString(R.string.view_active_stickers)
-                    stickerVisibleToggleTextView.setBackgroundColor(
-                        Config.getActiveStickerBackgroundColor(
-                            requireContext()
-                        )
+                    binding?.stickerVisibleToggleTextView?.text =
+                        getString(R.string.view_active_stickers)
+                    binding?.stickerVisibleToggleTextView?.setBackgroundColor(
+                        Config.getActiveStickerBackgroundColor()
                     )
                 }
             }
-            toggleMyStickers(stickerVisibleToggleTextView.isSelected)
-        }
-    }
-
-    private fun showEmptyList(show: Boolean) {
-        emptyTextView.isVisible = show
-        myStickersRecyclerView.isVisible = !show
-    }
-
-    private fun setNoResultView() {
-        if (pagingMyPackAdapter.itemCount > 0) {
-            listLL.visibility = View.VISIBLE
-            emptyTextView.visibility = View.GONE
-        } else {
-            listLL.visibility = View.GONE
-            emptyTextView.visibility = View.VISIBLE
+            toggleMyStickers(binding?.stickerVisibleToggleTextView?.isSelected == true)
         }
     }
 }

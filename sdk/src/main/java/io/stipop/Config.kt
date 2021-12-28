@@ -85,7 +85,7 @@ internal object Config {
         try {
             val json = JSONObject(jsonString)
             stipopConfigData = Gson().fromJson(jsonString, StipopConfigData::class.java)
-            parse(context, json)
+            parse(context)
             callback(true)
             Log.d("STIPOP-SDK", "Stipop.json configuration completed.")
         } catch (e: JSONException) {
@@ -110,7 +110,7 @@ internal object Config {
         return jsonString
     }
 
-    private fun parse(context: Context, json: JSONObject) {
+    private fun parse(context: Context) {
         stickerIconNormalName = stipopConfigData.spvIcon
         themeUseLightMode = stipopConfigData.theme.useLightMode
 
@@ -359,7 +359,7 @@ internal object Config {
         return color
     }
 
-    fun getActiveStickerBackgroundColor(context: Context): Int {
+    fun getActiveStickerBackgroundColor(): Int {
         var color = Color.parseColor(themeMainColor)
         if (themeUseLightMode) {
             val mainColor = themeMainColor.replace("#", "")
