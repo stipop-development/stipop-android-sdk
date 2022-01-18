@@ -55,8 +55,7 @@ class PackDetailFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
-        val bottomSheet: FrameLayout =
-            bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet) as FrameLayout
+        val bottomSheet: FrameLayout = bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet) as FrameLayout
         val behavior: BottomSheetBehavior<*> = BottomSheetBehavior.from<View>(bottomSheet)
         val layoutParams: ViewGroup.LayoutParams = bottomSheet.layoutParams
         layoutParams.height = getBottomSheetDialogDefaultHeight()

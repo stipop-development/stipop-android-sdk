@@ -38,11 +38,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
     private var binding: FragmentMyStickerBinding? = null
     private lateinit var viewModelStore: StoreMyStickerViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
-    private val pagingMyPackAdapter: PagingMyPackAdapter by lazy {
-        PagingMyPackAdapter(
-            PagingMyPackAdapter.ViewType.STORE,
-            this
-        )
+    private val pagingMyPackAdapter: PagingMyPackAdapter by lazy { PagingMyPackAdapter(PagingMyPackAdapter.ViewType.STORE, this)
     }
     private var searchJob: Job? = null
 
@@ -151,18 +147,13 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
     }
 
     private fun initRequest(wantVisibleSticker: Boolean) {
-        with(binding) {
-
-        }
         binding?.stickerVisibleToggleTextView?.isSelected = wantVisibleSticker
-
         binding?.stickerVisibleToggleTextView?.setOnClickListener {
             binding?.stickerVisibleToggleTextView?.isSelected =
                 (binding?.stickerVisibleToggleTextView?.isSelected == false)
             when (binding?.stickerVisibleToggleTextView?.isSelected) {
                 true -> {
-                    binding?.stickerVisibleToggleTextView?.text =
-                        getString(R.string.view_hidden_stickers)
+                    binding?.stickerVisibleToggleTextView?.text = getString(R.string.view_hidden_stickers)
                     binding?.stickerVisibleToggleTextView?.setBackgroundColor(
                         Config.getHiddenStickerBackgroundColor(
                             requireContext()
@@ -170,8 +161,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
                     )
                 }
                 false -> {
-                    binding?.stickerVisibleToggleTextView?.text =
-                        getString(R.string.view_active_stickers)
+                    binding?.stickerVisibleToggleTextView?.text = getString(R.string.view_active_stickers)
                     binding?.stickerVisibleToggleTextView?.setBackgroundColor(
                         Config.getActiveStickerBackgroundColor()
                     )
