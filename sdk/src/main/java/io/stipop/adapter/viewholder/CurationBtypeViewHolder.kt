@@ -43,9 +43,7 @@ internal class CurationBtypeViewHolder(
             val color = Color.parseColor(colorCode ?: Config.themeMainColor)
             val drawable = frame.background as GradientDrawable
             drawable.setColor(color)
-            Glide.with(itemView.context)
-                .load(stickerPackage.cardImgUrl ?: stickerPackage.packageImg)
-                .transform(CenterCrop(), RoundedCorners(StipopUtils.pxToDp(7).toInt())).into(image)
+            Glide.with(itemView.context).load(stickerPackage.cardImgUrl ?: stickerPackage.packageImg).transform(CenterCrop(), RoundedCorners(StipopUtils.pxToDp(7).toInt())).into(image)
         }
     }
 
@@ -54,8 +52,7 @@ internal class CurationBtypeViewHolder(
             parent: ViewGroup,
             delegate: PackClickDelegate?
         ): CurationBtypeViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_curated_card_type_b, parent, false)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_curated_card_type_b, parent, false)
             val binding = ItemCuratedCardTypeBBinding.bind(view)
             return CurationBtypeViewHolder(binding, delegate)
         }

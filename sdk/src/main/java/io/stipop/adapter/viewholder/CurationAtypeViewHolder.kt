@@ -39,7 +39,7 @@ internal class CurationAtypeViewHolder(
             val color = Color.parseColor(colorCode ?: Config.themeGroupedContentBackgroundColor)
             val drawable = container.background as GradientDrawable
             drawable.setColor(color)
-            image.loadImage(stickerPackage.cardImgUrl ?: stickerPackage.packageImg, false)
+            image.loadImage(stickerPackage.stickerImg ?: stickerPackage.cardImgUrl ?: stickerPackage.packageImg, false)
         }
     }
 

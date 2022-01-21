@@ -32,14 +32,16 @@ data class StickerPackage(
     @SerializedName("isWish")
     var wish: String? = null,
 
-    @SerializedName("cardImgUrl")
-    val cardImgUrl: String? = null,
     @SerializedName("stickers")
     var stickers: ArrayList<SPSticker> = ArrayList(),
+    @SerializedName("stickerImg")
+    internal val stickerImg: String? = null,
+    @SerializedName("cardImgUrl")
+    internal val cardImgUrl: String? = null,
     @SerializedName("lightBackgroundCode")
-    val lightBackgroundCode: String? = null,
+    internal val lightBackgroundCode: String? = null,
     @SerializedName("darkBackgroundCode")
-    val darkBackgroundCode: String? = null
+    internal val darkBackgroundCode: String? = null
 ) {
     fun getIsNew(): Boolean {
         return this.new == "Y"
