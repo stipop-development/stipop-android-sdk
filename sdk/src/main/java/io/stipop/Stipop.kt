@@ -222,7 +222,9 @@ class Stipop(
             if (currentKeyboardHeight == 0) {
                 StipopUtils.showKeyboard(instance!!.activity)
             }
-            stickerPickerView.show(fromTopToVisibleFramePx)
+            if (stickerPickerView.height > 0){
+                stickerPickerView.show(fromTopToVisibleFramePx)
+            }
         }
     }
 
@@ -248,8 +250,7 @@ class Stipop(
             rootView.getWindowVisibleDisplayFrame(visibleFrameRect)
             fromTopToVisibleFramePx = visibleFrameRect.bottom
 
-            val heightDifference =
-                fullSizeHeight - fromTopToVisibleFramePx + spvAdditionalHeightOffset
+            val heightDifference = fullSizeHeight - fromTopToVisibleFramePx + spvAdditionalHeightOffset
             if (heightDifference > StipopUtils.pxToDp(100)) {
                 currentKeyboardHeight = heightDifference
                 stickerPickerView.let { spv ->

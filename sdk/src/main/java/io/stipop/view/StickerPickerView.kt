@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -133,7 +134,7 @@ internal class StickerPickerView(
     }
 
     override fun dismiss() {
-        wantShowing = false
+        if (isShowing) wantShowing = false
         spvPreview.dismiss()
         super.dismiss()
         packAdapter.updateSelected()
