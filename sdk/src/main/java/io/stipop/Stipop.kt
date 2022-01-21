@@ -149,6 +149,11 @@ class Stipop(
             }
         }
 
+        /**
+         *
+         */
+        fun setVisibleStoreAtKeyboard(isStoreVisible: Boolean) = instance?.setVisibleStore(isStoreVisible)
+
         fun showSearch() = instance?.showSearch()
 
         fun showKeyboard() = instance?.showKeyboard()
@@ -223,6 +228,10 @@ class Stipop(
 
     private fun hideKeyboard() {
         stickerPickerView.dismiss()
+    }
+
+    private fun setVisibleStore(isStoreVisible: Boolean) {
+        stickerPickerView.enableStore(isStoreVisible)
     }
 
     private fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) {

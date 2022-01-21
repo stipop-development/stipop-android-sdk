@@ -128,6 +128,10 @@ internal class StickerPickerView(
         }
     }
 
+    internal fun enableStore(isStoreVisible: Boolean){
+        binding.storeImageView.isVisible = isStoreVisible
+    }
+
     override fun dismiss() {
         wantShowing = false
         spvPreview.dismiss()
