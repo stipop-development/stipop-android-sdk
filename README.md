@@ -44,7 +44,7 @@ allprojects {
 }
 
 dependencies {
-  // like 0.2.2. Please check latest release!
+  // like 0.5.0. Please check latest release!
   implementation 'com.github.stipop-development:stipop-android-sdk:{latest_version}' 
 }
 ```
