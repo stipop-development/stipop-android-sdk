@@ -80,9 +80,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     }
 
     override fun onStickerSelected(sticker: SPSticker): Boolean {
-
         Toast.makeText(applicationContext, "Clicked on the Sticker", Toast.LENGTH_SHORT).show()
-
         return true
     }
 
