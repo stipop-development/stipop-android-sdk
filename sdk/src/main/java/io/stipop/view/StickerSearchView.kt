@@ -191,6 +191,19 @@ class StickerSearchView : BottomSheetDialogFragment(),
         }
     }
 
+    override fun onStickerDoubleTap(position: Int, spSticker: SPSticker) {
+        Stipop.send(
+            spSticker.stickerId,
+            spSticker.keyword,
+            Constants.Point.SEARCH_VIEW
+        ) { result ->
+            if (result) {
+                Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker)
+                dismiss()
+            }
+        }
+    }
+
     override fun onKeywordClicked(keyword: String) {
         binding?.searchEditText?.setText(keyword)
         StipopUtils.hideKeyboard(requireActivity())
