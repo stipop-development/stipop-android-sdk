@@ -306,10 +306,6 @@ internal class StickerPickerView(
         }
     }
 
-    override fun onStickerDoubleTap(position: Int, spSticker: SPSticker) {
-        Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker)
-    }
-
     override fun onPreviewFavoriteChanged(sticker: SPSticker) {
         stickerAdapter.updateFavorite(sticker)?.let {
             StipopUtils.saveStickerAsJson(activity, it)

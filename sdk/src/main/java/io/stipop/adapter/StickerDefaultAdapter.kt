@@ -16,7 +16,6 @@ internal class StickerDefaultAdapter(
 
     interface OnStickerClickListener {
         fun onStickerClick(position: Int, spSticker: SPSticker)
-        fun onStickerDoubleTap(position: Int, spSticker: SPSticker)
     }
 
     override fun onCreateViewHolder(

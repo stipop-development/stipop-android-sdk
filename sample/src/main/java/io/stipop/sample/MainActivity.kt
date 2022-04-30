@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
@@ -80,13 +79,6 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     }
 
     override fun onStickerSelected(sticker: SPSticker): Boolean {
-
-        Toast.makeText(applicationContext, "Clicked on the Sticker", Toast.LENGTH_SHORT).show()
-
-        return true
-    }
-
-    override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {
         sendSticker(sticker)
         return true
     }
