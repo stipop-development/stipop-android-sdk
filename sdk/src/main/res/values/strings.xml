@@ -24,4 +24,5 @@
     <string name="can_not_open_package">Can not open this sticker package.</string>
     <string name="empty_recent">The recently used stickers are displayed.\nTry send the stickers!</string>
     <string name="okay">OK</string>
+    <string name="sticker_cannot_download_msg">This sticker set can not be downloaded. :(</string>
 </resources>

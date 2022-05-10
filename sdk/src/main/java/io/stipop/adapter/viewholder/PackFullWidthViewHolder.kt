@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.*
+import io.stipop.Stipop.Companion.applicationContext
 import io.stipop.databinding.ItemPackageFullWidthBinding
 import io.stipop.event.PackClickDelegate
 import io.stipop.models.StickerPackage
@@ -30,7 +31,7 @@ internal class PackFullWidthViewHolder(private val binding: ItemPackageFullWidth
                     if (Stipop.instance!!.delegate.onStickerPackRequested(stickerPackage!!.toSPPackage())) {
                         delegate?.onDownloadClicked(bindingAdapterPosition, stickerPackage!!)
                     } else {
-                        StipopUtils.alert(itemView.context, "This sticker set can not download now. :(")
+                        StipopUtils.alert(itemView.context, itemView.context.getString(R.string.sticker_cannot_download_msg))
                     }
                 }
             }
