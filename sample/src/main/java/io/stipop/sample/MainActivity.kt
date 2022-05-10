@@ -38,11 +38,13 @@ import java.util.*
  *
  * The received sticker can be handled through StipopDelegate Interface.
  */
+
 class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDelegate {
 
     // IMPORTANT :: The downloaded sticker is saved according to the user ID.
     @SuppressLint("SimpleDateFormat")
     private val testUserId = SimpleDateFormat("yyyyMMdd").format(Date())
+    private val TAG: String = "MainActivity"
 
     // This Code below is used to configure the sample app, so you can ignore it.
     private val toolBar: Toolbar by lazy { findViewById(R.id.toolBar) }
@@ -78,18 +80,33 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         initSampleUi()
     }
 
+    /**
+     * onStickerPackRequested
+     * @param sticker: the SPSticker item on clicked to be Downloaded
+     * @return true : if the sticker item was clicked
+     *         false: if the sticker is not enabled to perform select operation
+     *
+     */
     override fun onStickerSelected(sticker: SPSticker): Boolean {
         sendSticker(sticker)
         return true
     }
 
+    /**
+     * onStickerPackRequested
+     * @param spPackage: the package to be Downloaded
+     * @return true : if the package can be
+     *         false: if the package can't be requested to download
+     */
     override fun onStickerPackRequested(spPackage: SPPackage): Boolean {
+        Log.d(TAG, spPackage.toString());
         return true
     }
 
-    //
-    // The code below is used to configure the sample app, so you can ignore it.
-    //
+    /**
+     * initSampleUi
+     * @sample configure the sample app
+     */
     @SuppressLint("SetTextI18n")
     private fun initSampleUi() {
 
