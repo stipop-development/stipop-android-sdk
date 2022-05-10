@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     // IMPORTANT :: The downloaded sticker is saved according to the user ID.
     @SuppressLint("SimpleDateFormat")
     private val testUserId = SimpleDateFormat("yyyyMMdd").format(Date())
+
     private val TAG: String = "MainActivity"
 
     // This Code below is used to configure the sample app, so you can ignore it.
