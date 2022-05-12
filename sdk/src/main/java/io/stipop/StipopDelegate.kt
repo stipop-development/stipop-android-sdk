@@ -14,6 +14,7 @@ interface StipopDelegate {
      */
     fun onStickerSelected(sticker: SPSticker): Boolean
 
+
     /**
      * @author Stipop
      *

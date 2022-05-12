@@ -34,16 +34,21 @@ import java.util.*
  * @see GlobalApplication
  * @see assets/Stipop.json
  *
+ *
  * Before looking at this code, make sure that Stipop.json file is in the asset folder
- * and that Stipop.configure method is called in the your application class.
+ * and that Stipop.configure() method is called in  your application class.
+ *
+ * Please make sure, that the themes-replace snippet is enabled in AndroidManifest.xml
  *
  * The received sticker can be handled through StipopDelegate Interface.
  */
+
 class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDelegate {
 
-    // IMPORTANT :: The downloaded sticker is saved according to the user ID.
     @SuppressLint("SimpleDateFormat")
     private val testUserId = SimpleDateFormat("yyyyMMdd").format(Date())
+
+    private val TAG: String = "MainActivity"
 
     // This Code below is used to configure the sample app, so you can ignore it.
     private val toolBar: Toolbar by lazy { findViewById(R.id.toolBar) }
@@ -79,6 +84,13 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         initSampleUi()
     }
 
+    /**
+     * onStickerPackRequested
+     * @param sticker: the SPSticker item on clicked to be Downloaded
+     * @return true : if the sticker item was clicked
+     *         false: if the sticker is not enabled to perform select operation
+     *
+     */
     override fun onStickerSelected(sticker: SPSticker): Boolean {
         Toast.makeText(applicationContext, "Clicked on the Sticker", Toast.LENGTH_SHORT).show()
         return true
@@ -89,13 +101,23 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         return true
     }
 
+    /**
+     * onStickerPackRequested
+     * @param spPackage: the package to be Downloaded
+     * @return true : if the package can be
+     *         false: if the package can't be requested to download
+     *
+     *         The downloaded sticker package is saved according to the user ID.
+     */
     override fun onStickerPackRequested(spPackage: SPPackage): Boolean {
+        Log.d(TAG, spPackage.toString());
         return true
     }
 
-    //
-    // The code below is used to configure the sample app, so you can ignore it.
-    //
+    /**
+     * initSampleUi
+     * @sample configure the sample app
+     */
     @SuppressLint("SetTextI18n")
     private fun initSampleUi() {
 
