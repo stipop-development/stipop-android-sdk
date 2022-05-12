@@ -98,6 +98,12 @@ class YourActivity : Activity(), StipopDelegate {
         // false -> the sticker package can't be downloaded
         return true
     }
+
+
+    override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {
+        // listener for double tap on the sticker
+        return true
+    }
 }
 ```
 
@@ -125,6 +131,19 @@ class YourActivity : Activity(), StipopDelegate {
       // Sticker will be received here.
       return true
     }
+
+    override fun onStickerPackRequested(spPackage: SPPackage): Boolean {
+        // IMPORTANT
+        // true -> the sticker package can be downloaded
+        // false -> the sticker package can't be downloaded
+        return true
+    }
+
+    override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {
+       // listener for double tap on the sticker
+        return true
+    }
+
 }
 ```
 <br/>
