@@ -51,6 +51,7 @@ dependencies {
 
 How do I use Stipop SDK?
 -------------------
+
 1. Move **Stipop.json** into the assets folder you created. 
 2. Make or update your application class. (This operation initializes the SDK from 'Stipop.json' file)
 ```kotlin
@@ -62,8 +63,9 @@ class MyApplication : Application() {
 }
 ```
 3. Update your 'AndroidManifest.xml' to specify application class.<br>
-   Check your applicatin include 'INTERNET' permission to perform network operations.<br>
+   Check your application include 'INTERNET' permission to perform network operations.<br>
    Please put 'tools:replace="android:theme" to avoid conflict theme file in the application setting area.
+
 ```xml
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -80,17 +82,28 @@ class YourActivity : Activity(), StipopDelegate {
         super.onCreate()
         Stipop.connect(activity = this, userId = "userId", delegate = this)
     }
-    ...
+    
+    
     override fun onStickerSelected(sticker: SPSticker): Boolean {
       // Sticker will be received here.
       // sendSticker(sticker.stickerImg)
       return true
     }
+    
+   
+    override fun onStickerPackRequested(spPackage: SPPackage): Boolean {
+        // IMPORTANT
+        // true -> the sticker package can be downloaded
+        // false -> the sticker package can't be downloaded
+        return true
+    }
 }
 ```
+
 5. Choose one of the two supported UI components.
       a. Stipop.showKeyboard() : Sticker Picker View
       b. Stipop.showSearch() : Sticker Search View
+   
 ```kotlin
 class YourActivity : Activity(), StipopDelegate {
 
@@ -103,7 +116,7 @@ class YourActivity : Activity(), StipopDelegate {
     fun setListener() {
       button.onClick {
         Stipop.showKeyboard() // Use Sticker SDK in keyboard
-        // Stipop.showSearch() // Use Sticker SDK in dialog
+        // Stipop.showSearch() // Use Sticker SDK in dialog with keyword search
       }
     }
     

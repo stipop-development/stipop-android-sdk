@@ -183,7 +183,7 @@ internal class StickerPickerView(
         binding.progressBar.isVisible = true
         applyRecentFavoriteTheme()
         if (Config.showPreview) {
-            if(hasFocus){
+            if (hasFocus) {
                 if (binding.recentFavoriteContainer.tag == Constants.Tag.RECENT) {
                     binding.recentFavoriteContainer.tag = Constants.Tag.FAVORITE
                 } else {
@@ -309,6 +309,10 @@ internal class StickerPickerView(
         } else {
             sendSticker(spSticker)
         }
+    }
+
+    override fun onStickerDoubleTap(position: Int, spSticker: SPSticker) {
+        Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker)
     }
 
     override fun onPreviewFavoriteChanged(sticker: SPSticker) {

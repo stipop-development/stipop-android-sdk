@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="bottom_alert_title">Hide this sticker pack?</string>
     <string name="bottom_alert_contents">Do you want to hide the sticker pack? You can always re-download hidden stickers later.</string>
@@ -23,4 +24,5 @@
     <string name="can_not_open_package">Can not open this sticker package.</string>
     <string name="empty_recent">The recently used stickers are displayed.\nTry send the stickers!</string>
     <string name="okay">OK</string>
+    <string name="sticker_cannot_download_msg">This sticker set can not be downloaded. :(</string>
 </resources>
