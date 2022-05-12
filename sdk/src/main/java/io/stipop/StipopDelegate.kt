@@ -14,6 +14,17 @@ interface StipopDelegate {
      */
     fun onStickerSelected(sticker: SPSticker): Boolean
 
+
+    /**
+     * @author Stipop
+     *
+     * @param sticker: the sticker item to be double tapped
+     *
+     * @return if the sticker item was double tapped was not
+     */
+    fun onStickerDoubleTapped(sticker: SPSticker): Boolean
+
+
     /**
      * @author Stipop
      *
