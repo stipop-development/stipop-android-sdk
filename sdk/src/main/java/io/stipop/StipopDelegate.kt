@@ -6,21 +6,30 @@ import io.stipop.models.SPSticker
 interface StipopDelegate {
 
     /**
-     * Called when 'Stipop Sticker' Clicked or Selected.
-     * Return If the selected sticker is (not) enable to use.
+     * @author Stipop
+     *
+     * @param sticker: the sticker item to be clicked
+     *
+     * @return if the sticker item was selected or not (not enabled to use)
      */
     fun onStickerSelected(sticker: SPSticker): Boolean
 
     /**
-     * Called when 'Stipop Sticker' is double clicked or tapped.
-     * Return If the selected sticker is (not) enable to use.
+     * @author Stipop
+     *
+     * @param sticker: the sticker item to be double tapped
+     *
+     * @return if the sticker item was double tapped was not
      */
     fun onStickerDoubleTapped(sticker: SPSticker): Boolean
 
 
     /**
-     * Called when 'Stipop Sticker Package' Clicked or Selected.
-     * Return If the selected sticker package is (not) enable to use.
+     * @author Stipop
+     *
+     * @param spPackage: the sticker package requested to download
+     *
+     * @return if the sticker package is available or has permission to download
      */
     fun onStickerPackRequested(spPackage: SPPackage): Boolean
 }
