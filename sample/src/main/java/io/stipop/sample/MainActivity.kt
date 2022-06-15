@@ -46,7 +46,7 @@ import java.util.*
 class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDelegate {
 
     @SuppressLint("SimpleDateFormat")
-    private val testUserId = SimpleDateFormat("yyyyMMdd").format(Date())
+    private lateinit var userID: String
 
     private val TAG: String = "MainActivity"
 
@@ -58,15 +58,16 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     private val chatInputEditText: AppCompatEditText by lazy { findViewById(R.id.chatInputEditText) }
     private val chatRecyclerview: RecyclerView by lazy { findViewById(R.id.chatRecyclerView) }
     private val stipopPickerImageView: StipopImageView by lazy { findViewById(R.id.stickerPickerImageView) }
-    private val stipopSearchImageView: StipopImageView by lazy { findViewById(R.id.stickerSearchImageView) }
     private val sendImageView: AppCompatImageView by lazy { findViewById(R.id.sendImageView) }
     private val chatsAdapter: ChatAdapter by lazy { ChatAdapter(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        userIDSetup()
+
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
-        Stipop.connect(this, testUserId, this, stipopPickerImageView, taskCallBack = {
+        Stipop.connect(this, userID, this, stipopPickerImageView, taskCallBack = {
             Log.d(
                 this.javaClass.name,
                 "If you need additional settings, please call it in callback scope."
@@ -77,11 +78,13 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
             Stipop.showKeyboard()
         }
 
-        stipopSearchImageView.setOnClickListener {
-            Stipop.showSearch()
-        }
-
         initSampleUi()
+    }
+    private fun userIDSetup(){
+        val bundle = intent.extras
+
+         userID = bundle!!.getString("user_id", "someone_user_id")
+
     }
 
     /**
@@ -91,7 +94,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
      *         false: if the sticker is not enabled to perform select operation
      *
      */
-    override fun onStickerSelected(sticker: SPSticker): Boolean {
+    override fun onStickerSingleTapped(sticker: SPSticker): Boolean {
         Toast.makeText(applicationContext, "Clicked on the Sticker", Toast.LENGTH_SHORT).show()
         return true
     }
@@ -124,8 +127,10 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        nameTextView.text = "Test User Id : $testUserId"
-        statusTextView.text = "Language : ${Locale.getDefault().language} / Country : ${Locale.getDefault().country}"
+        when(userID){
+            "someone_user_id" -> nameTextView.text = "Common user"
+            else -> nameTextView.text = "Random user"
+        }
 
         Glide.with(this).load(R.drawable.img_profile).apply(RequestOptions().circleCrop()).into(profileImageView)
 

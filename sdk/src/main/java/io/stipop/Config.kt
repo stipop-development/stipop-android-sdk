@@ -1,6 +1,7 @@
 package io.stipop
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
@@ -112,7 +113,13 @@ internal object Config {
 
     private fun parse(context: Context, json: JSONObject) {
         stickerIconNormalName = stipopConfigData.spvIcon
-        themeUseLightMode = stipopConfigData.theme.useLightMode
+
+         val currentNightMode = context.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)
+         when(currentNightMode){
+             Configuration.UI_MODE_NIGHT_YES -> themeUseLightMode = false
+
+             Configuration.UI_MODE_NIGHT_NO -> themeUseLightMode = true
+         }
 
         with(stipopConfigData) {
 

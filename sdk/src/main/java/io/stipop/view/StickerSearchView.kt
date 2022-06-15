@@ -185,7 +185,7 @@ class StickerSearchView : BottomSheetDialogFragment(),
             Constants.Point.SEARCH_VIEW
         ) { result ->
             if (result) {
-                Stipop.instance?.delegate?.onStickerSelected(spSticker)
+                Stipop.instance?.delegate?.onStickerSingleTapped(spSticker)
                 dismiss()
             }
         }

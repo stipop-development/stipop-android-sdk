@@ -44,7 +44,7 @@ allprojects {
 }
 
 dependencies {
-  // like 0.2.2. Please check latest release!
+  // like 0.5.3. Please check latest release!
   implementation 'com.github.stipop-development:stipop-android-sdk:{latest_version}' 
 }
 ```
@@ -85,7 +85,7 @@ class YourActivity : Activity(), StipopDelegate {
     }
     
     
-    override fun onStickerSelected(sticker: SPSticker): Boolean {
+    override fun onStickerSingleTapped(sticker: SPSticker): Boolean {
       // Sticker will be received here.
       // sendSticker(sticker.stickerImg)
       return true
@@ -127,7 +127,7 @@ class YourActivity : Activity(), StipopDelegate {
       }
     }
     
-    override fun onStickerSelected(sticker: SPSticker): Boolean {
+    override fun onStickerSingleTapped(sticker: SPSticker): Boolean {
       // Sticker will be received here.
       return true
     }

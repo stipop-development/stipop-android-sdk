@@ -12,7 +12,7 @@
         android:allowBackup="true"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true">
-
+<!--
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -23,7 +23,7 @@
                 android:resource="@xml/provider_paths"
                 tools:replace="android:resource" />
         </provider>
-
+-->
         <activity
             android:name=".view.StoreActivity"
             android:screenOrientation="portrait"

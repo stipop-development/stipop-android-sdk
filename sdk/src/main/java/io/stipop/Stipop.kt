@@ -1,6 +1,7 @@
 package io.stipop
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
 import android.util.Log
@@ -46,7 +47,7 @@ class Stipop(
         var countryCode = "US"
             private set
 
-        internal var currentKeyboardHeight = 0
+        var currentKeyboardHeight = 0
             private set
 
         internal var fromTopToVisibleFramePx = 0

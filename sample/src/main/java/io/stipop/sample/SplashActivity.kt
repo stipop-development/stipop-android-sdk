@@ -5,18 +5,36 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.widget.AppCompatEditText
+import java.util.*
 
 class SplashActivity : AppCompatActivity() {
 
-    private val startButtonView: View by lazy { findViewById(R.id.startSampleButtonView) }
+    private val newUserLoginView: View by lazy { findViewById(R.id.new_user_login_view) }
+    private val commonUserLoginView: View by lazy { findViewById(R.id.common_user_login_view) }
     private val goToDocsTextView: View by lazy { findViewById(R.id.goToDocsTextView) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        startButtonView.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+        newUserLoginView.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+
+            val bundle = Bundle()
+
+            val randomUUID = UUID.randomUUID()
+            bundle.putString("user_id", randomUUID.toString())
+            intent.putExtras(bundle)
+
+            startActivity(intent)
+        }
+        commonUserLoginView.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+
+            val bundle = Bundle()
+            bundle.putString("user_id", "someone_user_id")
+            intent.putExtras(bundle)
+
+            startActivity(intent)
         }
         goToDocsTextView.setOnClickListener {
             Intent(

@@ -12,7 +12,7 @@ interface StipopDelegate {
      *
      * @return if the sticker item was selected or not (not enabled to use)
      */
-    fun onStickerSelected(sticker: SPSticker): Boolean
+    fun onStickerSingleTapped(sticker: SPSticker): Boolean
 
 
     /**

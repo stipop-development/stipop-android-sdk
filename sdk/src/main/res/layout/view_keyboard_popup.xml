@@ -64,11 +64,27 @@
 
         </RelativeLayout>
 
+        <io.stipop.custom.StipopImageView
+            android:id="@+id/search_image_view"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:padding="5dp"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/icon_search" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            >
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/packageThumbRecyclerView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:animateLayoutChanges="false"
             android:layoutAnimation="@null"
             android:orientation="horizontal"
@@ -76,6 +92,16 @@
             android:scrollbars="none"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_my_pack_thumb" />
+
+        <io.stipop.custom.StipopImageView
+            android:id="@+id/settingImageView"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:padding="8dp"
+            android:src="@mipmap/ic_setting" />
+
+        </LinearLayout>
 
         <io.stipop.custom.StipopImageView
             android:id="@+id/storeImageView"

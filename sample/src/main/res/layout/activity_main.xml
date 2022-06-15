@@ -9,7 +9,9 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize">
+        android:layout_height="?actionBarSize"
+        android:background="@color/primary"
+        >
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolBar"
@@ -57,7 +59,7 @@
                     android:id="@+id/statusTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:text="Active now"
                     android:textColor="#FFB590"
                     android:textSize="11sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -85,8 +87,7 @@
         android:layout_height="?actionBarSize"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp">
+        >
 
         <io.stipop.custom.StipopImageView
             android:id="@+id/stickerPickerImageView"
@@ -94,22 +95,15 @@
             android:layout_height="32dp"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/ic_sticker_normal"
-            app:tint="#908D8D" />
-
-        <io.stipop.custom.StipopImageView
-            android:id="@+id/stickerSearchImageView"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:scaleType="centerInside"
-            app:srcCompat="@drawable/ic_sticker_add"
+            android:layout_marginStart="12dp"
             app:tint="#908D8D" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="36dp"
             android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="12dp"
             android:background="@drawable/bg_edittext">
 
             <androidx.appcompat.widget.AppCompatEditText

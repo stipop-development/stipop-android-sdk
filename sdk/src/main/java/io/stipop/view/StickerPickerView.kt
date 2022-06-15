@@ -108,6 +108,13 @@ internal class StickerPickerView(
             ItemTouchHelper(DragAndDropHelperCallback(packAdapter)).apply {
                 attachToRecyclerView(binding.packageThumbRecyclerView)
             }
+
+        binding.settingImageView.setOnClickListener{
+            showStore(2)
+        }
+        binding.searchImageView.setOnClickListener {
+        Stipop.showSearch()
+        }
     }
 
     internal fun show(y: Int) {
@@ -243,10 +250,11 @@ internal class StickerPickerView(
             }
             containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
             packageListHeader.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
+            settingImageView.setIconDefaultsColor()
             storeImageView.setImageResource(Config.getKeyboardStoreResourceId(activity))
             storeImageView.setIconDefaultsColor()
-            smallFavorite.setImageResource(R.mipmap.ic_favorites_active)
-            smallRecently.setImageResource(R.mipmap.ic_recents_active)
+//            smallFavorite.setImageResource(R.mipmap.ic_favorites_active)
+//            smallRecently.setImageResource(R.mipmap.ic_recents_active)
             recentFavoriteContainer.tag = Constants.Tag.RECENT
             recentStickerImageView.isVisible = !Config.showPreview
             smallRecently.isVisible = Config.showPreview
@@ -274,7 +282,7 @@ internal class StickerPickerView(
             Constants.Point.PICKER_VIEW
         ) { result ->
             if (result) {
-                Stipop.instance?.delegate?.onStickerSelected(spSticker)
+                Stipop.instance?.delegate?.onStickerSingleTapped(spSticker)
                 keyboardViewModel.saveRecent(spSticker)
                 spvPreview.dismiss()
             }
