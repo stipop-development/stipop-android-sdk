@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -115,6 +116,11 @@ internal class StickerPickerView(
         binding.searchImageView.setOnClickListener {
         Stipop.showSearch()
         }
+        when(Config.pickerViewSearchIsActive){
+            true -> binding.searchImageView.visibility = View.VISIBLE
+            false -> binding.searchImageView.visibility = View.GONE
+        }
+
     }
 
     internal fun show(y: Int) {
@@ -303,7 +309,7 @@ internal class StickerPickerView(
         keyboardViewModel.loadStickerPackage(stickerPackage, onSuccess = { showStickers(it) })
     }
 
-    override fun onStickerClick(position: Int, spSticker: SPSticker) {
+    override fun onStickerSingleTap(position: Int, spSticker: SPSticker) {
         if (Config.showPreview) {
             val isSame = spvPreview.showOrUpdate(spSticker)
             if (isSame) {

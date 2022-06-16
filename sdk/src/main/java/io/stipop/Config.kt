@@ -72,6 +72,8 @@ internal object Config {
     lateinit var allowPremium: String
     var pngPrice: Double = 0.0
     var gifPrice: Double = 0.0
+    var stickerDoubleTap = false
+    var pickerViewSearchIsActive = true
     private var detailBackIconName = "ic_back_border_3"
     private var detailCloseIconName = "ic_close_border_3"
     var detailNumOfColumns = 3
@@ -196,6 +198,12 @@ internal object Config {
                 gifPrice = it.price.gif
             }
 
+            functionConfig.let {
+                stickerDoubleTap = it.sticker.doubleTap
+            }
+            iconConfig.let {
+                pickerViewSearchIsActive = it.pickerView.search.isActive
+            }
             Log.d("StipopSdk", "Resources Size : ${resourceLists.size}")
         }
     }

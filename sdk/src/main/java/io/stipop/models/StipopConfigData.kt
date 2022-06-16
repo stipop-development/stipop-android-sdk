@@ -14,7 +14,9 @@ data class StipopConfigData(
     @SerializedName("Keyboard") var keyboardConfig: KeyboardConfig = KeyboardConfig(),
     @SerializedName("StorePolicy") var policyConfig: StorePolicyConfig = StorePolicyConfig(),
     @SerializedName("Sticker") var stickerConfig: StickerConfig = StickerConfig(),
-    @SerializedName("Send") var previewConfig: PreviewConfig = PreviewConfig()
+    @SerializedName("Send") var previewConfig: PreviewConfig = PreviewConfig(),
+    @SerializedName("Function") var functionConfig: FunctionConfig = FunctionConfig(),
+    @SerializedName("Icon") var iconConfig: IconConfig = IconConfig()
 ) {
     @Keep
     data class Theme(
@@ -161,4 +163,31 @@ data class StipopConfigData(
             dark = "ic_cancel"
         ),
     )
+
+    @Keep
+    data class FunctionConfig(
+        @SerializedName("Sticker") var sticker: StickerConfig = StickerConfig(
+            doubleTap = false
+        )
+    ) {
+        @Keep
+        data class StickerConfig(
+            @SerializedName("doubleTap") var doubleTap: Boolean = false
+        )
+    }
+
+    @Keep
+    data class IconConfig(
+        @SerializedName("SPPickerView") var pickerView: PickerViewConfig = PickerViewConfig()
+    ) {
+        @Keep
+        data class PickerViewConfig(
+            @SerializedName("Search") var search: SearchConfig = SearchConfig()
+            ) {
+            @Keep
+            data class SearchConfig(
+                @SerializedName("isActive") var isActive: Boolean = false
+            )
+        }
+    }
 }

@@ -44,7 +44,7 @@ allprojects {
 }
 
 dependencies {
-  // like 0.5.3. Please check latest release!
+  // like 0.6.0. Please check latest release!
   implementation 'com.github.stipop-development:stipop-android-sdk:{latest_version}' 
 }
 ```
@@ -90,20 +90,20 @@ class YourActivity : Activity(), StipopDelegate {
       // sendSticker(sticker.stickerImg)
       return true
     }
+
+    override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {
+        // Sticker will be received here.
+        // sendSticker(sticker.stickerImg)
+        return true
+    }
     
-   
     override fun onStickerPackRequested(spPackage: SPPackage): Boolean {
         // IMPORTANT
         // true -> the sticker package can be downloaded
         // false -> the sticker package can't be downloaded
         return true
     }
-
-
-    override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {
-        // listener for double tap on the sticker
-        return true
-    }
+    
 }
 ```
 
@@ -121,10 +121,15 @@ class YourActivity : Activity(), StipopDelegate {
     }
     
     fun setListener() {
-      button.onClick {
+    
+      firstButton.setOnClickListener {
         Stipop.showKeyboard() // Use Sticker SDK in keyboard
-        // Stipop.showSearch() // Use Sticker SDK in dialog with keyword search
       }
+      
+        secondButton.setOnClickListener {
+        Stipop.showSearch() // Use Sticker SDK in dialog with keyword search
+      }
+      
     }
     
     override fun onStickerSingleTapped(sticker: SPSticker): Boolean {
@@ -132,6 +137,11 @@ class YourActivity : Activity(), StipopDelegate {
       return true
     }
 
+    override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {
+        // Sticker will be received here.
+        return true
+    }
+    
     override fun onStickerPackRequested(spPackage: SPPackage): Boolean {
         // IMPORTANT
         // true -> the sticker package can be downloaded
@@ -139,10 +149,7 @@ class YourActivity : Activity(), StipopDelegate {
         return true
     }
 
-    override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {
-       // listener for double tap on the sticker
-        return true
-    }
+ 
 
 }
 ```

@@ -2,9 +2,11 @@ package io.stipop.adapter.viewholder
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import io.stipop.Config
 import io.stipop.R
 import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.databinding.ItemStickerThumbBinding
@@ -19,6 +21,19 @@ internal class StickerThumbViewHolder(
     private var spSticker: SPSticker? = null
 
     init {
+        when(Config.stickerDoubleTap){
+            true -> doubleTapSetup()
+            false -> singleTapSetup()
+        }
+    }
+    private fun singleTapSetup(){
+        itemView.setOnClickListener {
+            spSticker?.let {
+                delegate?.onStickerSingleTap(absoluteAdapterPosition, it)
+            }
+        }
+    }
+    private fun doubleTapSetup(){
         var i: Int = 0
         var singleCount: Int = 0
         var doubleCount: Int = 0
@@ -44,7 +59,7 @@ internal class StickerThumbViewHolder(
                 if (singleTap) {
                     if (singleCount % 3 == 0) {
                         spSticker?.let {
-                            delegate?.onStickerClick(absoluteAdapterPosition, it)
+                            delegate?.onStickerSingleTap(absoluteAdapterPosition, it)
                         }
                     } else {
                         singleCount += 1
@@ -60,9 +75,8 @@ internal class StickerThumbViewHolder(
                     }
                 }
                 i = 0
-            }, 300)
+            }, 200)
         }
-
     }
 
     fun bind(sticker: SPSticker) {

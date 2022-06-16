@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -178,7 +179,7 @@ class StickerSearchView : BottomSheetDialogFragment(),
         }
     }
 
-    override fun onStickerClick(position: Int, spSticker: SPSticker) {
+    override fun onStickerSingleTap(position: Int, spSticker: SPSticker) {
         Stipop.send(
             spSticker.stickerId,
             spSticker.keyword,

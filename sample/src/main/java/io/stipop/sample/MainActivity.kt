@@ -88,19 +88,27 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     }
 
     /**
-     * onStickerPackRequested
+     * onStickerSingleTapped
      * @param sticker: the SPSticker item on clicked to be Downloaded
-     * @return true : if the sticker item was clicked
+     * @return true : if the sticker item was once clicked
      *         false: if the sticker is not enabled to perform select operation
      *
      */
     override fun onStickerSingleTapped(sticker: SPSticker): Boolean {
-        Toast.makeText(applicationContext, "Clicked on the Sticker", Toast.LENGTH_SHORT).show()
+        sendSticker(sticker)
         return true
     }
 
+    /**
+     * onStickerDoubleTapped
+     * @param sticker: the SPSticker item on clicked to be Downloaded
+     * @return true : if the sticker item was twice clicked
+     *         false: if the sticker is not enabled to perform select operation
+     *
+     */
+
     override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {
-        sendSticker(sticker)
+        Toast.makeText(applicationContext, "Sticker is double tapped", Toast.LENGTH_SHORT).show()
         return true
     }
 
@@ -207,14 +215,8 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         }
     }
 
-    override fun onStickerSearchViewClick() {
-        sendMessage("Let me try Sticker Search View! \uD83D\uDD0D")
+    override fun tryStickerFeatureClick() {
         Stipop.showSearch()
-    }
-
-    override fun onStickerPickerViewClick() {
-        sendMessage("Let me try Sticker Keyboard Picker View! \uD83D\uDE00")
-        Stipop.showKeyboard()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

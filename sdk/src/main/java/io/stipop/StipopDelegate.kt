@@ -8,7 +8,7 @@ interface StipopDelegate {
     /**
      * @author Stipop
      *
-     * @param sticker: the sticker item to be clicked
+     * @param sticker: the sticker item to be single tapped
      *
      * @return if the sticker item was selected or not (not enabled to use)
      */
@@ -20,7 +20,7 @@ interface StipopDelegate {
      *
      * @param sticker: the sticker item to be double tapped
      *
-     * @return if the sticker item was double tapped was not
+     * @return if the sticker item was selected or not (not enabled to use)
      */
     fun onStickerDoubleTapped(sticker: SPSticker): Boolean
 

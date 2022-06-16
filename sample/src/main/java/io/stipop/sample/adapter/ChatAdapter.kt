@@ -13,9 +13,12 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.*
 import com.bumptech.glide.Glide
+import io.stipop.Stipop
 import io.stipop.sample.R
 import io.stipop.sample.models.ChatItem
 import java.text.SimpleDateFormat
@@ -29,11 +32,22 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
         const val TYPE_MESSAGE_MINE = 1001
         const val TYPE_STICKER_MINE = 1002
         const val SAMPLE_STICKER = "https://img.stipop.io/2020/3/31/1585719674256_CookieArrow_size.gif"
+        /* Sample sticker's Model is
+        ChatItem = (
+        message = null,
+            spSticker = (
+            packageId = 3887,
+            stickerId = 80664,
+            stickerImg = "https://img.stipop.io/2020/3/31/1585719674256_CookieArrow_size.gif",
+            favoriteYN = "N",
+            Keyword = ""
+            )
+        )
+         */
     }
 
     interface GuideDelegate {
-        fun onStickerSearchViewClick()
-        fun onStickerPickerViewClick()
+        fun tryStickerFeatureClick()
         fun onSentStickerClick(packageId: Int?)
     }
 
@@ -146,7 +160,6 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
                         super.onTransitionEnd(transition)
                         TransitionManager.beginDelayedTransition(viewGroup3, transitionSet3)
                         searchViewTextView.isVisible = true
-                        pickerViewTextView.isVisible = true
                     }
                 })
         private val transitionSet3 =
@@ -155,7 +168,6 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
                     override fun onTransitionEnd(transition: Transition) {
                         super.onTransitionEnd(transition)
                         searchViewTextView.startAnimation(focusAnimation)
-                        pickerViewTextView.startAnimation(focusAnimation)
                     }
                 })
 
@@ -169,16 +181,15 @@ class ChatAdapter(val guideDelegate: GuideDelegate) :
         private val guideTextView2: AppCompatTextView = itemView.findViewById(R.id.guideTextView2)
         private val guideTextView4: AppCompatTextView = itemView.findViewById(R.id.guideTextView4)
         private val searchViewTextView: AppCompatTextView = itemView.findViewById(R.id.guideTextView5)
-        private val pickerViewTextView: AppCompatTextView = itemView.findViewById(R.id.guideTextView6)
 
         init {
-            dateTimeTextView.text = SimpleDateFormat("a h:mm").format(Date())
+            dateTimeTextView.text = SimpleDateFormat("HH:mm").format(Date())
             Glide.with(itemView).load(SAMPLE_STICKER).into(sampleStickerImageView)
-            searchViewTextView.setOnClickListener {
-                guideDelegate.onStickerSearchViewClick()
+            sampleStickerImageView.setOnClickListener {
+                    Stipop.showStickerPackage((itemView.context as FragmentActivity).supportFragmentManager, 3887)  // 3887 is "tubby" sticker's packageID.
             }
-            pickerViewTextView.setOnClickListener {
-                guideDelegate.onStickerPickerViewClick()
+            searchViewTextView.setOnClickListener {
+                guideDelegate.tryStickerFeatureClick()
             }
             viewGroup1.post {
                 TransitionManager.beginDelayedTransition(viewGroup1, transitionSet)
