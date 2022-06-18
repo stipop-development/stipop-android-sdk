@@ -91,6 +91,7 @@ class YourActivity : Activity(), StipopDelegate {
       return true
     }
 
+    /* If you want to use double tap feature, change the json file and implement this function. */
     override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {
         // Sticker will be received here.
         // sendSticker(sticker.stickerImg)
@@ -137,6 +138,7 @@ class YourActivity : Activity(), StipopDelegate {
       return true
     }
 
+    /* If you want to use double tap feature, change the json file and implement this function. */
     override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {
         // Sticker will be received here.
         return true

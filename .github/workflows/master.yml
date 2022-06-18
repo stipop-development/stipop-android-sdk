@@ -38,11 +38,3 @@ jobs:
           release_name: ${{ steps.get_release.outputs.name }}
           draft: false
           prerelease: false
-
-      - name: Merge master into develop
-        uses: devmasx/merge-branch@v1.1.0
-        with:
-          type: now
-          target_branch: 'develop'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
