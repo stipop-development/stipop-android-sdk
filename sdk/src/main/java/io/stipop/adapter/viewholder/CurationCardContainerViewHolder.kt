@@ -1,5 +1,6 @@
 package io.stipop.adapter.viewholder
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
@@ -31,7 +32,6 @@ internal class CurationCardContainerViewHolder(
             recyclerView.apply {
                 removeItemDecoration(decoration)
                 addItemDecoration(decoration)
-                addOnItemTouchListener(listener)
             }
         }
     }
@@ -57,21 +57,6 @@ internal class CurationCardContainerViewHolder(
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_horizontal_sticker_thumb_container, parent, false)
             val binding = ItemHorizontalStickerThumbContainerBinding.bind(view)
             return CurationCardContainerViewHolder(binding, delegate)
-        }
-
-        val listener = object : RecyclerView.OnItemTouchListener {
-            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                rv.parent.requestDisallowInterceptTouchEvent(true)
-                return false
-            }
-
-            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-                //
-            }
-
-            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-                //
-            }
         }
     }
 }

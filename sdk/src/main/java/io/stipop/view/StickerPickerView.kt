@@ -1,17 +1,17 @@
 package io.stipop.view
 
 import android.app.Activity
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
-import android.util.Log
+import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -39,8 +39,7 @@ internal class StickerPickerView(
         fun onSpvVisibleState(isVisible: Boolean)
     }
 
-    private var binding: ViewKeyboardPopupBinding =
-        ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
+    private var binding: ViewKeyboardPopupBinding = ViewKeyboardPopupBinding.inflate(activity.layoutInflater)
     var wantShowing: Boolean = false
     private val keyboardViewModel: SpvModel by lazy { SpvModel() }
     private val spvPreview: SpvPreview by lazy { SpvPreview(activity, this, keyboardViewModel) }
@@ -241,11 +240,14 @@ internal class StickerPickerView(
 
     private fun showStore(startingPosition: Int) {
         dismiss()
-        Intent(activity, StoreActivity::class.java).apply {
-            putExtra(Constants.IntentKey.STARTING_TAB_POSITION, startingPosition)
-        }.run {
-            activity.startActivity(this)
-        }
+        StipopUtils.hideKeyboard(activity)
+        val bundle = Bundle()
+        bundle.putInt("index", startingPosition)
+
+        val storeView = StoreView.newInstance()
+        storeView.arguments = bundle
+
+        storeView.showNow((activity as FragmentActivity).supportFragmentManager, Constants.Tag.STORE)
     }
 
     private fun applyTheme() {

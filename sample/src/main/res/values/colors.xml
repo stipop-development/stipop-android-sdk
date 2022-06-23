@@ -8,4 +8,7 @@
     <color name="chat_background">#F5F8F8</color>
     <color name="stipop_b3b3b3">#B3B3B3</color>
     <color name="stipop_6e6e6e">#6E6E6E</color>
+    <color name="stipop_typing_view_layout_background">#FFFFFF</color>
+    <color name="stipop_editText_background">#FFFFFF</color>
+    <color name="stipop_editText_background_stroke">#D3D3D3</color>
 </resources>

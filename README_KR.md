@@ -10,7 +10,7 @@ Stipop SDK는 총 두 종류의 View를 제공합니다.
   - <a href="https://dashboard.stipop.io/" target="_blank">스티팝 대시보드</a> 혹은 이메일을 통해 받은 **Stipop.json** 파일을 **app > src > main > assets**에 추가해주세요.
   - assets 폴더가 없으면 새로 생성해야합니다.
   - Stipop.json 파일에는 API key, custom 설정 값들이 저장되어 있습니다.
-  - 더 자세한 가이드는 <a href="https://docs.stipop.io/en/sdk/android/get-started/quick-start/" target="_blank">스티팝 개발 문서</a>를 확인해주세요.
+  - 더 자세한 가이드는 <a href="https://docs.stipop.io/en/sdk/android/get-started/before-you-begin/" target="_blank">스티팝 개발 문서</a>를 확인해주세요.
 <br/>
 
 2. 코드를 실행해 디폴트로 설정되어 있는 Search View를 테스트해보세요.

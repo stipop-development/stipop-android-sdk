@@ -116,12 +116,13 @@ internal object Config {
     private fun parse(context: Context, json: JSONObject) {
         stickerIconNormalName = stipopConfigData.spvIcon
 
-         val currentNightMode = context.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)
-         when(currentNightMode){
-             Configuration.UI_MODE_NIGHT_YES -> themeUseLightMode = false
+        val deviceDarkMode = context.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)
 
-             Configuration.UI_MODE_NIGHT_NO -> themeUseLightMode = true
-         }
+        when(deviceDarkMode){
+            Configuration.UI_MODE_NIGHT_YES -> themeUseLightMode = false
+
+            Configuration.UI_MODE_NIGHT_NO -> themeUseLightMode = true
+        }
 
         with(stipopConfigData) {
 

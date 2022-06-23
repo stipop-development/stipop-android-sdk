@@ -1,6 +1,7 @@
 package io.stipop.api
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.Keep
 import com.google.gson.Gson
 import io.stipop.BuildConfig
@@ -18,6 +19,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Keep
 internal interface StipopApi {
@@ -195,6 +197,9 @@ internal interface StipopApi {
             )
             .build()
         private val client = OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.MINUTES)
+            .readTimeout(10, TimeUnit.MINUTES)
+            .writeTimeout(10, TimeUnit.MINUTES)
             .addInterceptor(loggingInterceptor)
             .addInterceptor(Interceptor {
                 it.proceed(it.request().newBuilder().headers(headers).build())

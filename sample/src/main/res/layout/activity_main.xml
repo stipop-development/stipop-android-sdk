@@ -78,7 +78,7 @@
         android:background="@color/chat_background" />
 
     <LinearLayout
-        android:background="@color/white"
+        android:background="@color/stipop_typing_view_layout_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -119,7 +119,6 @@
                 android:padding="2dp"
                 android:textColorHint="#cfcfcf"
                 android:textSize="14sp"
-                android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/sendImageView"
                 app:layout_constraintStart_toStartOf="parent"

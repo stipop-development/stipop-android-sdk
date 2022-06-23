@@ -48,7 +48,6 @@ internal class HomeTabAdapter(
                 (holder as CurationCardContainerViewHolder).bind(data)
             }
         }
-
     }
 
     @SuppressLint("NotifyDataSetChanged")

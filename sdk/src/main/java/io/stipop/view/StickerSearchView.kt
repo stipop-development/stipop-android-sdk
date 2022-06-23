@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,23 +20,22 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.stipop.*
-import io.stipop.Config
-import io.stipop.Constants
-import io.stipop.StipopUtils
 import io.stipop.adapter.HomeTabAdapter
-import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.adapter.PagingStickerAdapter
+import io.stipop.adapter.StickerDefaultAdapter
+import io.stipop.base.BaseBottomSheetDialogFragment
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentSearchViewBinding
+import io.stipop.event.KeywordClickDelegate
 import io.stipop.models.SPSticker
 import io.stipop.view.viewmodel.SsvModel
-import io.stipop.event.KeywordClickDelegate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class StickerSearchView : BottomSheetDialogFragment(),
+
+internal class StickerSearchView : BaseBottomSheetDialogFragment(),
     StickerDefaultAdapter.OnStickerClickListener,
     KeywordClickDelegate {
 
@@ -51,6 +49,49 @@ class StickerSearchView : BottomSheetDialogFragment(),
         fun newInstance() = StickerSearchView()
     }
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheetDialog: BottomSheetDialog = dialogInterface as BottomSheetDialog
+            setupRatio(bottomSheetDialog)
+        }
+        return dialog
+    }
+
+    private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
+        val bottomSheet: FrameLayout =
+            bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet) as FrameLayout
+
+        val behavior: BottomSheetBehavior<*> = BottomSheetBehavior.from<View>(bottomSheet)
+        val layoutParams: ViewGroup.LayoutParams = bottomSheet.layoutParams
+        layoutParams.height = getBottomSheetDialogDefaultHeight()
+        bottomSheet.layoutParams = layoutParams
+//        behavior.isDraggable = false
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        behavior.peekHeight = getBottomSheetDialogDefaultHeight()
+        behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_EXPANDED -> bottomSheet.layoutParams.height =
+                        behavior.peekHeight
+                    BottomSheetBehavior.STATE_COLLAPSED -> bottomSheet.layoutParams.height =
+                        behavior.peekHeight
+                    BottomSheetBehavior.STATE_HIDDEN -> dismiss()
+                    else -> {
+
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            }
+        })
+    }
+
+    private fun getBottomSheetDialogDefaultHeight(): Int {
+        return StipopUtils.getScreenHeight(requireActivity()) * 90 / 100
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NORMAL, R.style.StipopBottomSheetTheme)
@@ -58,7 +99,8 @@ class StickerSearchView : BottomSheetDialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        applyTheme()
+
+        frameInit()
         viewModel = ViewModelProvider(
             this,
             Injection.provideViewModelFactory(owner = this)
@@ -89,6 +131,19 @@ class StickerSearchView : BottomSheetDialogFragment(),
         if (!Config.searchTagsHidden) {
             viewModel.getKeywords()
         }
+
+        StipopUtils.hideKeyboard(requireActivity())
+
+    }
+
+
+    private fun frameInit(){
+        val offsetFromTop = Constants.Value.BOTTOM_SHEET_TOP_OFFSET
+        (dialog as? BottomSheetDialog)?.behavior?.apply {
+            isFitToContents = false
+            expandedOffset = offsetFromTop
+            state = BottomSheetBehavior.STATE_EXPANDED
+        }
     }
 
     private fun refreshList(query: String? = null) {
@@ -115,53 +170,10 @@ class StickerSearchView : BottomSheetDialogFragment(),
         binding = null
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setOnShowListener { dialogInterface ->
-            val bottomSheetDialog: BottomSheetDialog = dialogInterface as BottomSheetDialog
-            setupRatio(bottomSheetDialog)
-        }
-        return dialog
-    }
-
-    private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
-        val bottomSheet: FrameLayout =
-            bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet) as FrameLayout
-        val behavior: BottomSheetBehavior<*> = BottomSheetBehavior.from<View>(bottomSheet)
-        val layoutParams: ViewGroup.LayoutParams = bottomSheet.layoutParams
-        layoutParams.height = getBottomSheetDialogDefaultHeight()
-        bottomSheet.layoutParams = layoutParams
-        behavior.isDraggable = false
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        behavior.peekHeight = getBottomSheetDialogDefaultHeight()
-        behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> bottomSheet.layoutParams.height =
-                        behavior.peekHeight
-                    BottomSheetBehavior.STATE_COLLAPSED -> bottomSheet.layoutParams.height =
-                        behavior.peekHeight
-                    BottomSheetBehavior.STATE_HIDDEN -> dismiss()
-                    else -> {
-
-                    }
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            }
-        })
-    }
-
-    private fun getBottomSheetDialogDefaultHeight(): Int {
-        return StipopUtils.getScreenHeight(requireActivity()) * 90 / 100
-    }
-
-
-    private fun applyTheme() {
+    override fun applyTheme() {
         with(binding!!) {
-            val drawable = containerLL.background as GradientDrawable
-            drawable.setColor(Color.parseColor(Config.themeBackgroundColor))
+
+            containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
             val drawable2 = searchBarContainer.background as GradientDrawable
             drawable2.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color

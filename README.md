@@ -162,4 +162,4 @@ class YourActivity : Activity(), StipopDelegate {
 - For more information, visit [Stipop Documentation][1].
 - Email us at tech-support@stipop.io if you need our help.
 
-[1]: https://docs.stipop.io/en/sdk/android/get-started/quick-start
+[1]: https://docs.stipop.io/en/sdk/android/get-started/before-you-begin

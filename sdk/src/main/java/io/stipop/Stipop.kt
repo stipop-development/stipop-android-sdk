@@ -213,6 +213,7 @@ class Stipop(
     private fun showKeyboard() {
         if (stickerPickerView.isShowing) {
             stickerPickerView.dismiss()
+            StipopUtils.hideKeyboard(activity)
         } else {
             stickerPickerView.wantShowing = true
             if (currentKeyboardHeight == 0) {

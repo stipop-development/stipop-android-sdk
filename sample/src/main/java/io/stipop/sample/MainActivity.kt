@@ -2,11 +2,16 @@ package io.stipop.sample
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
@@ -26,7 +31,6 @@ import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.sample.adapter.ChatAdapter
 import io.stipop.sample.models.ChatItem
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -60,12 +64,26 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     private val stipopPickerImageView: StipopImageView by lazy { findViewById(R.id.stickerPickerImageView) }
     private val sendImageView: AppCompatImageView by lazy { findViewById(R.id.sendImageView) }
     private val chatsAdapter: ChatAdapter by lazy { ChatAdapter(this) }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        userIDSetup()
+        bundleInit()
+        stipopInit()
+        uiInit()
+        listenerInit()
+    }
 
+    private fun bundleInit(){
+        val bundle = intent.extras
+
+        userID = bundle!!.getString("user_id", "someone_user_id")
+
+    }
+
+    private fun stipopInit(){
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
         Stipop.connect(this, userID, this, stipopPickerImageView, taskCallBack = {
             Log.d(
@@ -77,14 +95,6 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         stipopPickerImageView.setOnClickListener {
             Stipop.showKeyboard()
         }
-
-        initSampleUi()
-    }
-    private fun userIDSetup(){
-        val bundle = intent.extras
-
-         userID = bundle!!.getString("user_id", "someone_user_id")
-
     }
 
     /**
@@ -106,7 +116,6 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
      *         false: if the sticker is not enabled to perform select operation
      *
      */
-
     override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {
         Toast.makeText(applicationContext, "Sticker is double tapped", Toast.LENGTH_SHORT).show()
         return true
@@ -130,7 +139,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
      * @sample configure the sample app
      */
     @SuppressLint("SetTextI18n")
-    private fun initSampleUi() {
+    private fun uiInit() {
 
         setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -142,6 +151,10 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
 
         Glide.with(this).load(R.drawable.img_profile).apply(RequestOptions().circleCrop()).into(profileImageView)
 
+        recyclerViewInit()
+    }
+
+    private fun recyclerViewInit(){
         chatRecyclerview.apply {
             chatsAdapter.setHasStableIds(true)
             adapter = chatsAdapter
@@ -155,9 +168,14 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
                 }
             }
         }
+    }
 
-        chatInputEditText.setOnClickListener {
-            Stipop.hideKeyboard()
+    private fun listenerInit(){
+        chatInputEditText.setOnTouchListener { view, motionEvent ->
+            when(motionEvent.action){
+                MotionEvent.ACTION_DOWN -> Stipop.hideKeyboard()
+            }
+            false
         }
 
         chatInputEditText.addTextChangedListener {
@@ -173,6 +191,12 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         chatInputEditText.setOnEditorActionListener { _, _, _ ->
             sendMessage()
             true
+        }
+
+        chatRecyclerview.setOnTouchListener { p0, p1 ->
+            val input = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            input.hideSoftInputFromWindow(p0?.windowToken, 0)
+            false
         }
     }
 
@@ -216,7 +240,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     }
 
     override fun tryStickerFeatureClick() {
-        Stipop.showSearch()
+        Stipop.showKeyboard()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -244,4 +268,5 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         }
         return super.onOptionsItemSelected(item)
     }
+
 }

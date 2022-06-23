@@ -39,7 +39,7 @@ class SplashActivity : AppCompatActivity() {
         goToDocsTextView.setOnClickListener {
             Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://docs.stipop.io/en/sdk/android/get-started/quick-start")
+                Uri.parse("https://docs.stipop.io/en/sdk/android/get-started/before-you-begin")
             ).run { startActivity(this) }
         }
     }

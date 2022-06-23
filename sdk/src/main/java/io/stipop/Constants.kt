@@ -9,6 +9,7 @@ internal object Constants {
         const val DETAIL = "PD"
         const val EXTERNAL = "EXTERNAL"
         const val SSV = "SEARCH"
+        const val STORE = "STORE"
         const val RECENT = "RECENT"
         const val FAVORITE = "FAVORITE"
     }
@@ -32,6 +33,7 @@ internal object Constants {
         const val SANDBOX_APIKEY = "a3e68b6c54d8132f6879d5bc2c49708d"
         const val BASE_URL = "https://messenger.stipop.io/v1/"
         const val PLATFORM = "android-sdk"
+        const val BOTTOM_SHEET_TOP_OFFSET = 200
     }
 
     object Point {

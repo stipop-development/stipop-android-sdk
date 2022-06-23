@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="stipop_typing_view_layout_background">#171B1C</color>
+    <color name="stipop_editText_background">#2E363A</color>
+    <color name="stipop_editText_background_stroke">#2E363A</color>
+</resources>
