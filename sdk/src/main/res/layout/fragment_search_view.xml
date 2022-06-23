@@ -42,7 +42,7 @@
             android:inputType="text"
             android:textSize="14sp"
             android:gravity="center_vertical"
-            android:textColorHint="#646f7c" />
+            />
 
         <LinearLayout
             android:id="@+id/clearTextLL"

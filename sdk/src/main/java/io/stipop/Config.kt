@@ -360,9 +360,9 @@ internal object Config {
     }
 
     fun getMyStickerHiddenPackageNameTextColor(context: Context): Int {
-        var color = ContextCompat.getColor(context, R.color.c_000000)
+        var color = ContextCompat.getColor(context, R.color.black)
         if (!themeUseLightMode) {
-            color = ContextCompat.getColor(context, R.color.c_646f7c)
+            color = ContextCompat.getColor(context, R.color.black)
         }
         return color
     }
@@ -396,13 +396,13 @@ internal object Config {
     fun getActiveHiddenStickerTextColor(context: Context): Int {
         var color = ContextCompat.getColor(context, R.color.c_374553)
         if (!themeUseLightMode) {
-            color = ContextCompat.getColor(context, R.color.c_ffffff)
+            color = ContextCompat.getColor(context, R.color.white)
         }
         return color
     }
 
     fun getDetailPackageNameTextColor(context: Context): Int {
-        var color = ContextCompat.getColor(context, R.color.c_000000)
+        var color = ContextCompat.getColor(context, R.color.black)
         if (!themeUseLightMode) {
             color = ContextCompat.getColor(context, R.color.c_f7f8f9)
         }

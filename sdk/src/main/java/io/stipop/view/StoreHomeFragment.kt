@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.isVisible
@@ -59,7 +60,7 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
     private var backPressCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             if (viewModel.uiState.isSearchingState) {
-                StipopUtils.hideKeyboard(requireActivity())
+                StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
                 binding?.searchEditText?.setText("")
                 binding?.searchEditText?.clearFocus()
             } else {
@@ -100,40 +101,34 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
             allStickerRecyclerView.adapter = pagingPackageAdapter.withLoadStateFooter(MyLoadStateAdapter { pagingPackageAdapter.retry() })
             clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")
-                hideKeyboard()
+                StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
             }
             searchEditText.addTextChangedListener { viewModel.flowQuery(it.toString().trim()) }
         }
 
         lifecycleScope.launch { viewModel.emittedQuery.collect { value -> refreshList(value) } }
 
-              viewModel.run {
-                  getHomeSources()
-                  homeDataFlow.observeForever { homeTabAdapter.setInitData(it) }
-                  uiStateFlow.observeForever { uiState ->
-                      binding?.bannerRecyclerView?.isVisible = !uiState.isSearchingState
-                  }
-              }
-              PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
-                  pagingPackageAdapter.refresh()
-              }
+        viewModel.run {
+            getHomeSources()
+            homeDataFlow.observeForever { homeTabAdapter.setInitData(it) }
+            uiStateFlow.observeForever { uiState ->
+                binding?.bannerRecyclerView?.isVisible = !uiState.isSearchingState
+            }
+        }
+        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
+            pagingPackageAdapter.refresh()
+        }
 
-                 binding!!.layout.setOnTouchListener { view, motionEvent ->
-                     hideKeyboard()
-                  false
-              }
-
-        binding!!.bannerRecyclerView.setOnTouchListener { view, motionEvent ->
+        binding!!.layout.setOnTouchListener { view, motionEvent ->
+            StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
             false
         }
 
-    }
-    private fun hideKeyboard(){
-        binding!!.searchEditText?.let {
-            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        binding!!.searchEditText.setTextColor(Config.getSearchTitleTextColor(requireContext()))
 
-            it.clearFocus()
+        binding!!.allStickerRecyclerView.setOnTouchListener { view, motionEvent ->
+            StipopUtils.hideKeyboard(requireActivity(), binding!!.searchEditText)
+            false
         }
     }
 
@@ -171,7 +166,9 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
 
 
     override fun onKeywordClicked(keyword: String) {
-        hideKeyboard()
+
+        StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
+
         binding?.searchEditText?.apply {
             setText(keyword)
             clearFocus()

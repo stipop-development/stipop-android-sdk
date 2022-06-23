@@ -55,7 +55,6 @@
                         android:imeOptions="actionSearch"
                         android:inputType="text"
                         android:maxLines="1"
-                        android:textColorHint="#646f7c"
                         android:hint="Search..."
                         android:textSize="16sp" />
 

@@ -1,12 +1,16 @@
 package io.stipop.view
 
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -117,7 +121,7 @@ internal class StickerSearchView : BaseBottomSheetDialogFragment(),
             }
             clearSearchImageView.setOnClickListener {
                 searchEditText.setText("")
-                StipopUtils.hideKeyboard(requireActivity())
+                StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
                 binding?.searchEditText?.clearFocus()
             }
             searchEditText.addTextChangedListener { viewModel.flowQuery(it.toString().trim()) }
@@ -134,8 +138,11 @@ internal class StickerSearchView : BaseBottomSheetDialogFragment(),
 
         StipopUtils.hideKeyboard(requireActivity())
 
+        binding!!.recyclerView.setOnTouchListener { view, motionEvent ->
+            StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
+            false
+        }
     }
-
 
     private fun frameInit(){
         val offsetFromTop = Constants.Value.BOTTOM_SHEET_TOP_OFFSET
@@ -218,8 +225,12 @@ internal class StickerSearchView : BaseBottomSheetDialogFragment(),
     }
 
     override fun onKeywordClicked(keyword: String) {
-        binding?.searchEditText?.setText(keyword)
-        StipopUtils.hideKeyboard(requireActivity())
-        binding?.searchEditText?.clearFocus()
+
+        StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
+
+        binding?.searchEditText?.apply {
+            setText(keyword)
+            clearFocus()
+        }
     }
 }

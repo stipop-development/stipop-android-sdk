@@ -17,6 +17,7 @@ import android.view.Display
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import kotlinx.coroutines.CoroutineScope
@@ -61,9 +62,24 @@ internal object StipopUtils {
         )
     }
 
-    fun hideKeyboard(activity: Activity) {
+    fun hideKeyboard(activity: Activity, editText: EditText? = null) {
+
         val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
+
+        val keyboardHeight = Stipop.currentKeyboardHeight
+
+        if(keyboardHeight > 0){
+            when(editText){
+                null -> {
+                    imm.hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
+                    activity.window.decorView.clearFocus()
+                }
+                else -> {
+                    imm.hideSoftInputFromWindow(editText.windowToken, 0)
+                    editText.clearFocus()
+                }
+            }
+        }
     }
 
     fun downloadAtLocal(stickerPackage: StickerPackage) {
