@@ -16,7 +16,8 @@ data class StipopConfigData(
     @SerializedName("Sticker") var stickerConfig: StickerConfig = StickerConfig(),
     @SerializedName("Send") var previewConfig: PreviewConfig = PreviewConfig(),
     @SerializedName("Function") var functionConfig: FunctionConfig = FunctionConfig(),
-    @SerializedName("Icon") var iconConfig: IconConfig = IconConfig()
+    @SerializedName("Icon") var iconConfig: IconConfig = IconConfig(),
+    @SerializedName("Layout") var layoutConfig: LayoutConfig = LayoutConfig()
 ) {
     @Keep
     data class Theme(
@@ -189,5 +190,15 @@ data class StipopConfigData(
                 @SerializedName("isActive") var isActive: Boolean = false
             )
         }
+    }
+
+    @Keep
+    data class LayoutConfig(
+        @SerializedName("SPPickerView") var pickerView: PickerViewConfig = PickerViewConfig()
+    ) {
+        @Keep
+        data class PickerViewConfig(
+            @SerializedName("onKeyboard") var onKeyboard: Boolean = true
+        )
     }
 }

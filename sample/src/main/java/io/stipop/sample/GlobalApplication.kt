@@ -49,7 +49,7 @@ class GlobalApplication : MultiDexApplication(),
     private fun hideKeyboard(){
         val keyboardPickerViewHeight = Stipop.currentKeyboardHeight
         if(keyboardPickerViewHeight != 0) {
-            Stipop.hideKeyboard()
+            Stipop.hide()
         }
     }
 }

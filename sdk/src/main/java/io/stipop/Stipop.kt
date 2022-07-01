@@ -1,7 +1,6 @@
 package io.stipop
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
 import android.util.Log
@@ -14,7 +13,9 @@ import io.stipop.data.ConfigRepository
 import io.stipop.models.body.InitSdkBody
 import io.stipop.view.PackDetailFragment
 import io.stipop.view.StickerSearchView
-import io.stipop.view.StickerPickerView
+import io.stipop.view.pickerview.StickerPickerCustomFragment
+import io.stipop.view.pickerview.StickerPickerKeyboardView
+import io.stipop.view.pickerview.listener.VisibleStateListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -26,7 +27,7 @@ class Stipop(
     private val activity: FragmentActivity,
     private var stipopButton: StipopImageView? = null,
     val delegate: StipopDelegate
-) : StickerPickerView.VisibleStateListener {
+) : VisibleStateListener {
     companion object {
 
         private val mainScope = CoroutineScope(Job() + Dispatchers.Main)
@@ -70,6 +71,7 @@ class Stipop(
             userId: String,
             delegate: StipopDelegate,
             stipopButton: StipopImageView? = null,
+            stickerPickerCustomFragment: StickerPickerCustomFragment? = null,
             locale: Locale = Locale.getDefault(),
             taskCallBack: ((isSuccess: Boolean) -> Unit)? = null
         ) {
@@ -82,7 +84,7 @@ class Stipop(
                 if(canRetryIfConnectFailed){
                     Log.w("STIPOP-SDK", "Stipop SDK not connected. Because 'canRetryIfConnectFailed' is True, SDK calls 'configure(context)' automatically just once.")
                     configure(activity, callback = {
-                        if(it) connect(activity, userId, delegate, stipopButton, locale, taskCallBack)
+                        if(it) connect(activity, userId, delegate, stipopButton, stickerPickerCustomFragment, locale, taskCallBack)
                         canRetryIfConnectFailed = false
                     })
                 }else{
@@ -102,7 +104,18 @@ class Stipop(
                         )
                     )
                     Stipop(activity, stipopButton, delegate).apply {
-                        connectView()
+                        when(Config.pickerViewLayoutOnKeyboard){
+                            true -> {
+                                stickerPickerKeyboardView = StickerPickerKeyboardView(activity)
+                                stickerPickerKeyboardView?.setDelegate(this)
+                                getStickerPickerKeyboardViewHeight()
+                            }
+                            false -> {
+                                this.stickerPickerCustomFragment = stickerPickerCustomFragment
+//                                this.stickerPickerCustomFragment.binding.containerLL.
+                                this.stickerPickerCustomFragment?.setDelegate(this)
+                            }
+                        }
                         connectIcon()
                     }.run {
                         instance = this
@@ -110,33 +123,6 @@ class Stipop(
                     }
                 }
             }
-        }
-
-        @Deprecated(
-            "Please use connect(activity, userId, delegate, stipopButton, locale) instead. This method will be removed at SDK 1.0.0",
-            ReplaceWith(
-                "connect(activity, userId, delegate, stipopButton, Locale(lang, countryCode), taskCallBack)",
-                "io.stipop.Stipop.Companion.connect",
-                "java.util.Locale"
-            )
-        )
-        fun connect(
-            activity: FragmentActivity,
-            stipopButton: StipopImageView? = null,
-            userId: String,
-            lang: String,
-            countryCode: String,
-            delegate: StipopDelegate,
-            taskCallBack: ((isSuccess: Boolean) -> Unit)? = null
-        ) {
-            connect(
-                activity,
-                userId,
-                delegate,
-                stipopButton,
-                Locale(lang, countryCode),
-                taskCallBack
-            )
         }
 
         /**
@@ -152,9 +138,9 @@ class Stipop(
 
         fun showSearch() = instance?.showSearch()
 
-        fun showKeyboard() = instance?.showKeyboard()
+        fun show() = instance?.showPickerView()
 
-        fun hideKeyboard() = instance?.hideKeyboard()
+        fun hide() = instance?.hidePickerView()
 
         fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) =
             instance?.showStickerPackage(fragmentManager, packageId)
@@ -184,14 +170,11 @@ class Stipop(
         }
     }
 
-    private val stickerPickerView: StickerPickerView by lazy { StickerPickerView(activity, this) }
+    private var stickerPickerKeyboardView: StickerPickerKeyboardView? = null
+    private var stickerPickerCustomFragment: StickerPickerCustomFragment? = null
 
     private var spvAdditionalHeightOffset = 0
     private lateinit var rootView: View
-
-    private fun connectView() {
-        setSpvHeight()
-    }
 
     private fun connectIcon() {
         stipopButton?.setImageResource(Config.getStickerIconResourceId(activity))
@@ -210,21 +193,52 @@ class Stipop(
         StickerSearchView.newInstance().showNow(activity.supportFragmentManager, Constants.Tag.SSV)
     }
 
-    private fun showKeyboard() {
-        if (stickerPickerView.isShowing) {
-            stickerPickerView.dismiss()
-            StipopUtils.hideKeyboard(activity)
-        } else {
-            stickerPickerView.wantShowing = true
-            if (currentKeyboardHeight == 0) {
-                StipopUtils.showKeyboard(instance!!.activity)
+    private fun showPickerView() {
+      when(Config.pickerViewLayoutOnKeyboard){
+          true -> showPickerKeyboardView()
+          false -> showPickerCustomView()
+      }
+    }
+    private fun showPickerKeyboardView(){
+        when(stickerPickerKeyboardView?.isShowing){
+            true -> {
+                stickerPickerKeyboardView?.dismiss()
+                StipopUtils.hideKeyboard(activity)
             }
-            stickerPickerView.show(fromTopToVisibleFramePx)
+            false -> {
+                stickerPickerKeyboardView?.wantShowing = true
+                if (currentKeyboardHeight == 0) {
+                    StipopUtils.showKeyboard(instance!!.activity)
+                }
+                stickerPickerKeyboardView?.show(fromTopToVisibleFramePx)
+            }
         }
     }
 
-    private fun hideKeyboard() {
-        stickerPickerView.dismiss()
+    private fun showPickerCustomView(){
+        when(stickerPickerCustomFragment?.isShowing()){
+            true -> {
+                stickerPickerCustomFragment?.dismiss()
+            }
+            false -> {
+                stickerPickerCustomFragment?.show()
+            }
+        }
+    }
+
+    private fun hidePickerView() {
+        when(Config.pickerViewLayoutOnKeyboard){
+            true -> hidePickerKeyboardView()
+            false -> hidePickerCustomView()
+        }
+    }
+
+    private fun hidePickerKeyboardView(){
+        stickerPickerKeyboardView?.dismiss()
+    }
+
+    private fun hidePickerCustomView(){
+        stickerPickerCustomFragment?.dismiss()
     }
 
     private fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) {
@@ -233,7 +247,7 @@ class Stipop(
             .showNow(fragmentManager, Constants.Tag.EXTERNAL)
     }
 
-    private fun setSpvHeight() {
+    private fun getStickerPickerKeyboardViewHeight() {
         rootView = activity.window.decorView.findViewById(android.R.id.content) as View
         rootView.viewTreeObserver.addOnGlobalLayoutListener {
             val fullSizeHeight = StipopUtils.getScreenHeight(activity)
@@ -245,15 +259,17 @@ class Stipop(
                 fullSizeHeight - fromTopToVisibleFramePx + spvAdditionalHeightOffset
             if (heightDifference > StipopUtils.pxToDp(100)) {
                 currentKeyboardHeight = heightDifference
-                stickerPickerView.let { spv ->
-                    spv.height = currentKeyboardHeight
-                    if (spv.wantShowing && !spv.isShowing) {
-                        spv.show(fromTopToVisibleFramePx)
+                stickerPickerKeyboardView.let { spv ->
+                    spv?.let {
+                        it.height = currentKeyboardHeight
+                        if (it.wantShowing && !it.isShowing) {
+                            it.show(fromTopToVisibleFramePx)
+                        }
                     }
                 }
             } else {
                 currentKeyboardHeight = 0
-                stickerPickerView.dismiss()
+                stickerPickerKeyboardView?.dismiss()
             }
         }
     }

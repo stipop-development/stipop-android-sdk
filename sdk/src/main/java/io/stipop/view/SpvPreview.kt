@@ -12,12 +12,12 @@ import io.stipop.StipopUtils
 import io.stipop.databinding.ViewPreviewBinding
 import io.stipop.event.PreviewDelegate
 import io.stipop.models.SPSticker
-import io.stipop.view.viewmodel.SpvModel
+import io.stipop.view.viewmodel.StickerPickerViewModel
 
 internal class SpvPreview(
     private val activity: Activity,
     private val delegate: PreviewDelegate,
-    private val spvModel: SpvModel
+    private val stickerPickerViewModel: StickerPickerViewModel
 ) :
     PopupWindow() {
 
@@ -91,7 +91,7 @@ internal class SpvPreview(
 
     private fun updateFavorite() {
         currentSticker?.let {
-            spvModel.putFavorites(it, onSuccess = { spSticker ->
+            stickerPickerViewModel.putFavorites(it, onSuccess = { spSticker ->
                 activity.runOnUiThread {
                     setFavoriteUi()
                 }

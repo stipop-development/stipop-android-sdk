@@ -74,6 +74,7 @@ internal object Config {
     var gifPrice: Double = 0.0
     var stickerDoubleTap = false
     var pickerViewSearchIsActive = true
+    var pickerViewLayoutOnKeyboard = true
     private var detailBackIconName = "ic_back_border_3"
     private var detailCloseIconName = "ic_close_border_3"
     var detailNumOfColumns = 3
@@ -204,6 +205,9 @@ internal object Config {
             }
             iconConfig.let {
                 pickerViewSearchIsActive = it.pickerView.search.isActive
+            }
+            layoutConfig.let {
+                pickerViewLayoutOnKeyboard = it.pickerView.onKeyboard
             }
             Log.d("StipopSdk", "Resources Size : ${resourceLists.size}")
         }

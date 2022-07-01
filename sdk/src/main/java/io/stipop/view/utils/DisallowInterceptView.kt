@@ -1,4 +1,4 @@
-package io.stipop.view
+package io.stipop.view.utils
 
 import android.content.Context
 import android.util.AttributeSet

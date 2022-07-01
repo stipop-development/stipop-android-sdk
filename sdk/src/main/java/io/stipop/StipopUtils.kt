@@ -53,7 +53,6 @@ internal object StipopUtils {
         return px * Resources.getSystem().displayMetrics.density
     }
 
-    // 키보드 보이기
     fun showKeyboard(context: Context) {
         val immhide = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         immhide.toggleSoftInput(

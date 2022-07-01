@@ -2,8 +2,6 @@ package io.stipop.sample
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.res.Configuration
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +9,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
@@ -31,6 +28,7 @@ import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.sample.adapter.ChatAdapter
 import io.stipop.sample.models.ChatItem
+import io.stipop.view.pickerview.StickerPickerCustomFragment
 import java.util.*
 
 /**
@@ -85,7 +83,9 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
 
     private fun stipopInit(){
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
-        Stipop.connect(this, userID, this, stipopPickerImageView, taskCallBack = {
+        val fragment = supportFragmentManager.findFragmentById(R.id.map) as StickerPickerCustomFragment
+
+        Stipop.connect(this, userID, this, stipopPickerImageView, fragment, taskCallBack = {
             Log.d(
                 this.javaClass.name,
                 "If you need additional settings, please call it in callback scope."
@@ -93,8 +93,9 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         })
 
         stipopPickerImageView.setOnClickListener {
-            Stipop.showKeyboard()
+            Stipop.show()
         }
+
     }
 
     /**
@@ -173,7 +174,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     private fun listenerInit(){
         chatInputEditText.setOnTouchListener { view, motionEvent ->
             when(motionEvent.action){
-                MotionEvent.ACTION_DOWN -> Stipop.hideKeyboard()
+                MotionEvent.ACTION_DOWN -> Stipop.hide()
             }
             false
         }
@@ -240,7 +241,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     }
 
     override fun tryStickerFeatureClick() {
-        Stipop.showKeyboard()
+        Stipop.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

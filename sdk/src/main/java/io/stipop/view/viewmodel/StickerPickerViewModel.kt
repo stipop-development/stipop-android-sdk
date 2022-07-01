@@ -20,7 +20,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-internal class SpvModel {
+internal class StickerPickerViewModel {
 
     private val taskScope = CoroutineScope(Job() + Dispatchers.IO)
     private val repository = SpvRepository(StipopApi.create())
