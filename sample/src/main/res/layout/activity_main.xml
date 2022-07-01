@@ -70,20 +70,19 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <fragment
+        android:id="@+id/picker_view_fragment"
+        android:name="io.stipop.view.pickerview.StickerPickerCustomFragment"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
         android:background="@color/chat_background" />
-
-    <fragment
-        android:id="@+id/map"
-        android:name="io.stipop.view.pickerview.StickerPickerCustomFragment"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginBottom="100dp"
-        />
 
     <LinearLayout
         android:background="@color/stipop_typing_view_layout_background"

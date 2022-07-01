@@ -83,14 +83,21 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
 
     private fun stipopInit(){
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
-        val fragment = supportFragmentManager.findFragmentById(R.id.map) as StickerPickerCustomFragment
 
-        Stipop.connect(this, userID, this, stipopPickerImageView, fragment, taskCallBack = {
-            Log.d(
-                this.javaClass.name,
-                "If you need additional settings, please call it in callback scope."
-            )
-        })
+        // If you want to custom your PickerView's position, add StickerPickerCustomFragment. or not, set stickerPickerCustomFragment to null.
+        val fragment = supportFragmentManager.findFragmentById(R.id.picker_view_fragment) as StickerPickerCustomFragment
+        Stipop.connect(
+            activity = this,
+            userId = userID,
+            delegate = this,
+            stipopButton = stipopPickerImageView,
+            stickerPickerCustomFragment = fragment,
+            taskCallBack = {
+                Log.d(
+                    this.javaClass.name,
+                    "If you need additional settings, please call it in callback scope."
+                )
+            })
 
         stipopPickerImageView.setOnClickListener {
             Stipop.show()

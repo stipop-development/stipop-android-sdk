@@ -79,9 +79,20 @@ class MyApplication : Application() {
 ```kotlin
 class YourActivity : Activity(), StipopDelegate {
 
+    val stipopPickerImageView: StipopImageView by lazy { findViewById(R.id.stickerPickerImageView) }
+    
     override fun onCreate() {
         super.onCreate()
-        Stipop.connect(activity = this, userId = "userId", delegate = this)
+
+        // If you want to custom your PickerView's position, add StickerPickerCustomFragment. or not, set stickerPickerCustomFragment to null.
+        val fragment = supportFragmentManager.findFragmentById(R.id.picker_view_fragment) as StickerPickerCustomFragment
+        Stipop.connect(
+            activity = this, 
+            userId = "userID", 
+            delegate = this, 
+            stipopButton = stipopPickerImageView, 
+            stickerPickerCustomFragment = fragment
+        )
     }
     
     
@@ -109,22 +120,34 @@ class YourActivity : Activity(), StipopDelegate {
 ```
 
 5. Choose one of the two supported UI components.
-      a. Stipop.showKeyboard() : Sticker Picker View
+      a. Stipop.show() : Sticker Picker View
       b. Stipop.showSearch() : Sticker Search View
    
 ```kotlin
 class YourActivity : Activity(), StipopDelegate {
 
+    val stipopPickerImageView: StipopImageView by lazy { findViewById(R.id.stickerPickerImageView) }
+        
     override fun onCreate() {
         super.onCreate()
-        Stipop.connect(activity = this, userId = "userId", delegate = this)
+              
+        // If you want to custom your PickerView's position, add StickerPickerCustomFragment. or not, set stickerPickerCustomFragment to null.
+        val fragment = supportFragmentManager.findFragmentById(R.id.picker_view_fragment) as StickerPickerCustomFragment
+        Stipop.connect(
+            activity = this, 
+            userId = "userID", 
+            delegate = this, 
+            stipopButton = stipopPickerImageView, 
+            stickerPickerCustomFragment = fragment
+        )
+        
         setListener()
     }
     
     fun setListener() {
     
       firstButton.setOnClickListener {
-        Stipop.showKeyboard() // Use Sticker SDK in keyboard
+        Stipop.show() // Use Sticker SDK in keyboard
       }
       
         secondButton.setOnClickListener {
