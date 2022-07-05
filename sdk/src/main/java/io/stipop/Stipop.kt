@@ -112,7 +112,6 @@ class Stipop(
                             }
                             false -> {
                                 this.stickerPickerCustomFragment = stickerPickerCustomFragment
-//                                this.stickerPickerCustomFragment.binding.containerLL.
                                 this.stickerPickerCustomFragment?.setDelegate(this)
                             }
                         }
@@ -202,8 +201,7 @@ class Stipop(
     private fun showPickerKeyboardView(){
         when(stickerPickerKeyboardView?.isShowing){
             true -> {
-                stickerPickerKeyboardView?.dismiss()
-                StipopUtils.hideKeyboard(activity)
+                hidePickerKeyboardView()
             }
             false -> {
                 stickerPickerKeyboardView?.wantShowing = true
@@ -234,6 +232,7 @@ class Stipop(
     }
 
     private fun hidePickerKeyboardView(){
+        StipopUtils.hideKeyboard(activity)
         stickerPickerKeyboardView?.dismiss()
     }
 
@@ -268,8 +267,10 @@ class Stipop(
                     }
                 }
             } else {
+                Log.e("QWEQWE_","HEIGHT = 0")
                 currentKeyboardHeight = 0
-                stickerPickerKeyboardView?.dismiss()
+                hidePickerKeyboardView()
+//                stickerPickerKeyboardView?.dismiss()
             }
         }
     }
