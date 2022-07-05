@@ -24,6 +24,6 @@ task clean(type: Delete) {
 }
 
 ext {
-    sdkVersionCode = 30
-    sdkVersionName = "0.7.1"
+    sdkVersionCode = 31
+    sdkVersionName = "0.7.2"
 }
