@@ -48,7 +48,7 @@ class Stipop(
         var countryCode = "US"
             private set
 
-        var currentKeyboardHeight = 0
+        internal var currentKeyboardHeight = 0
             private set
 
         internal var fromTopToVisibleFramePx = 0
@@ -167,6 +167,10 @@ class Stipop(
                     })
             }
         }
+
+        fun getCurrentKeyboardHeight(): Int{
+            return currentKeyboardHeight
+        }
     }
 
     private var stickerPickerKeyboardView: StickerPickerKeyboardView? = null
@@ -283,4 +287,5 @@ class Stipop(
             }
         }
     }
+
 }

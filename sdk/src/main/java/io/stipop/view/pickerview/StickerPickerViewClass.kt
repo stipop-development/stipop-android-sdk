@@ -1,6 +1,7 @@
 package io.stipop.view.pickerview
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
@@ -29,7 +30,7 @@ import io.stipop.event.PreviewDelegate
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import io.stipop.view.SpvPreview
-import io.stipop.view.StoreView
+import io.stipop.view.StoreActivity
 import io.stipop.view.pickerview.listener.VisibleStateListener
 import io.stipop.view.viewmodel.StickerPickerViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -350,20 +351,13 @@ internal class StickerPickerViewClass(
             }
         }
     }
-
     private fun showStore(startingPosition: Int) {
-        when(type){
-            PickerViewType.CUSTOM -> {}
-            PickerViewType.ON_KEYBOARD -> stickerPickerKeyboardView?.dismiss()
+        dismiss()
+        Intent(activity, StoreActivity::class.java).apply {
+            putExtra(Constants.IntentKey.STARTING_TAB_POSITION, startingPosition)
+        }.run {
+            activity.startActivity(this)
         }
-        StipopUtils.hideKeyboard(activity)
-        val bundle = Bundle()
-        bundle.putInt("index", startingPosition)
-
-        val storeView = StoreView.newInstance()
-        storeView.arguments = bundle
-
-        storeView.showNow((activity as FragmentActivity).supportFragmentManager, Constants.Tag.STORE)
     }
 
     override fun onStickerSingleTap(position: Int, spSticker: SPSticker) {

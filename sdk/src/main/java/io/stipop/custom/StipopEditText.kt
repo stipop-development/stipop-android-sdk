@@ -25,7 +25,9 @@ class StipopEditText : AppCompatEditText {
 
         setHintTextColor(ContextCompat.getColor(context, R.color.edittext_hint))
 
-        setTextCursorDrawable(R.drawable.edittext_cursor)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            setTextCursorDrawable(R.drawable.edittext_cursor)
+        }
 
         if (Config.FontStyle.fontFace != null) {
             this.typeface = Config.FontStyle.fontFace

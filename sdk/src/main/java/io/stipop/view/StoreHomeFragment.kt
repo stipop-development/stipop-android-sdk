@@ -112,7 +112,7 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
             getHomeSources()
             homeDataFlow.observeForever { homeTabAdapter.setInitData(it) }
             uiStateFlow.observeForever { uiState ->
-                binding?.bannerRecyclerView?.isVisible = !uiState.isSearchingState
+                binding!!.bannerRecyclerView.isVisible = !uiState.isSearchingState
             }
         }
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {

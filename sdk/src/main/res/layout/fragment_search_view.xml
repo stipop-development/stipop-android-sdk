@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="20dp"
-    android:background="@color/black"
     android:orientation="vertical">
 
     <LinearLayout
@@ -42,7 +41,7 @@
             android:inputType="text"
             android:textSize="14sp"
             android:gravity="center_vertical"
-            />
+            android:textColorHint="#646f7c" />
 
         <LinearLayout
             android:id="@+id/clearTextLL"
@@ -66,19 +65,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"/>
 
-    <io.stipop.view.utils.DisallowInterceptView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="12dp"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="3" />
-
-    </io.stipop.view.utils.DisallowInterceptView>
+        android:layout_marginHorizontal="12dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="3" />
 
 </LinearLayout>
