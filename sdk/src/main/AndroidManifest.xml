@@ -11,6 +11,7 @@
     <application
         android:allowBackup="true"
         android:requestLegacyExternalStorage="true"
+        android:largeHeap="true"
         android:supportsRtl="true">
 
         <provider
