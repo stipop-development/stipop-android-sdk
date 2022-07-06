@@ -45,6 +45,7 @@ allprojects {
 
 dependencies {
   // like 0.6.0. Please check latest release!
+  /* If your application's min API level is under 21, use 0.7.4 version. */
   implementation 'com.github.stipop-development:stipop-android-sdk:{latest_version}' 
 }
 ```
