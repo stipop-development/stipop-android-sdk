@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
 import io.stipop.data.ConfigRepository
+import io.stipop.data.SAuthRepository
 import io.stipop.models.body.InitSdkBody
 import io.stipop.view.PackDetailFragment
 import io.stipop.view.StickerSearchView
@@ -54,8 +55,13 @@ class Stipop(
         internal var fromTopToVisibleFramePx = 0
             private set
 
+        internal var sAuthAccessToken = ""
+        internal var sAuthAccessTokenUserId = ""
+        internal var sAuthAccessTokenExpiryTimeMillis = 0L
+
         fun configure(context: Context, callback: ((isSuccess: Boolean) -> Unit)? = null) {
             mainScope.launch {
+                getAccessTokenIfOverExpiryTime()
                 configRepository.postConfigSdk()
             }
             Config.configure(context, callback = { result ->
@@ -64,7 +70,7 @@ class Stipop(
             })
         }
 
-        var canRetryIfConnectFailed = true
+        private var canRetryIfConnectFailed = true
 
         fun connect(
             activity: FragmentActivity,
@@ -97,6 +103,7 @@ class Stipop(
                 Log.v("STIPOP-SDK", "Stipop SDK connect succeeded. You can use SDK by calling Stipop.showKeyboard() or Stipop.showSearch() and implementing StipopDelegate interface.")
                 applicationContext = activity.applicationContext
                 mainScope.launch {
+                    getAccessTokenIfOverExpiryTime()
                     configRepository.postInitSdk(
                         initSdkBody = InitSdkBody(
                             userId = Stipop.userId,
@@ -120,6 +127,17 @@ class Stipop(
                         instance = this
                         taskCallBack?.let { it(true) }
                     }
+                }
+            }
+        }
+        internal suspend fun getAccessTokenIfOverExpiryTime(){
+            val currentTimeMillis = System.currentTimeMillis()
+
+            if(userId != "-1") {
+                if (sAuthAccessTokenUserId != userId) {
+                    SAuthRepository.getAccessToken()
+                } else if (currentTimeMillis >= sAuthAccessTokenExpiryTimeMillis) {
+                    SAuthRepository.getAccessToken()
                 }
             }
         }
@@ -193,14 +211,21 @@ class Stipop(
     }
 
     private fun showSearch() {
-        StickerSearchView.newInstance().showNow(activity.supportFragmentManager, Constants.Tag.SSV)
+        mainScope.launch {
+            getAccessTokenIfOverExpiryTime()
+            StickerSearchView.newInstance()
+                .showNow(activity.supportFragmentManager, Constants.Tag.SSV)
+        }
     }
 
     private fun showPickerView() {
-      when(Config.pickerViewLayoutOnKeyboard){
-          true -> showPickerKeyboardView()
-          false -> showPickerCustomView()
-      }
+        mainScope.launch {
+            getAccessTokenIfOverExpiryTime()
+            when (Config.pickerViewLayoutOnKeyboard) {
+                true -> showPickerKeyboardView()
+                false -> showPickerCustomView()
+            }
+        }
     }
     private fun showPickerKeyboardView(){
         when(stickerPickerKeyboardView?.isShowing){
@@ -287,5 +312,4 @@ class Stipop(
             }
         }
     }
-
 }

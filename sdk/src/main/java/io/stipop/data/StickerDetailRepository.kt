@@ -14,8 +14,7 @@ internal class StickerDetailRepository(private val apiService: StipopApi) : Base
         packageId: Int,
         onSuccess: (data: StickerPackageResponse) -> Unit
     ) {
-        safeCall(
-            call = { apiService.getStickerPackage(packageId, Stipop.userId) },
+        safeCall(call = { apiService.getStickerPackage(packageId, Stipop.userId) },
             onCompletable = {
                 it?.let(onSuccess)
             })
@@ -35,18 +34,18 @@ internal class StickerDetailRepository(private val apiService: StipopApi) : Base
             }
         }
         safeCall(call = {
-            apiService.postDownloadStickers(
-                packageId = stickerPackage.packageId,
-                isPurchase = Config.allowPremium,
-                userId = Stipop.userId,
-                lang = Stipop.lang,
-                countryCode = Stipop.countryCode,
-                price = price,
-                entrancePoint = Constants.Point.STORE,
-                eventPoint = Constants.Point.STORE
-            )
-        }, onCompletable = {
-            onSuccess(it)
-        })
+                apiService.postDownloadStickers(
+                    packageId = stickerPackage.packageId,
+                    isPurchase = Config.allowPremium,
+                    userId = Stipop.userId,
+                    lang = Stipop.lang,
+                    countryCode = Stipop.countryCode,
+                    price = price,
+                    entrancePoint = Constants.Point.STORE,
+                    eventPoint = Constants.Point.STORE
+                )
+            }, onCompletable = {
+                onSuccess(it)
+            })
     }
 }

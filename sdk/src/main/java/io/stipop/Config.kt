@@ -75,6 +75,12 @@ internal object Config {
     var stickerDoubleTap = false
     var pickerViewSearchIsActive = true
     var pickerViewLayoutOnKeyboard = true
+    var sAuthIsActive = false
+    var sAuthAppId = ""
+    var sAuthClientId = ""
+    var sAuthClientSecret = ""
+    var sAuthRefreshToken = ""
+    var sAuthExpiryTimeSeconds = 60
     private var detailBackIconName = "ic_back_border_3"
     private var detailCloseIconName = "ic_close_border_3"
     var detailNumOfColumns = 3
@@ -92,8 +98,8 @@ internal object Config {
             parse(context, json)
             callback(true)
             Log.d("STIPOP-SDK", "Stipop.json configuration completed.")
-        } catch (e: JSONException) {
-            e.printStackTrace()
+        } catch (exception: JSONException) {
+            exception.printStackTrace()
             callback(false)
             Log.e(
                 "STIPOP-SDK",
@@ -146,8 +152,8 @@ internal object Config {
                     } else {
                         return@let
                     }
-                } catch (e: Exception) {
-                    Log.e("StipopSDK", "${e.message}")
+                } catch (exception: Exception) {
+                    Log.e("StipopSDK", "${exception.message}")
                 }
             }
 
@@ -208,6 +214,14 @@ internal object Config {
             }
             layoutConfig.let {
                 pickerViewLayoutOnKeyboard = it.pickerView.onKeyboard
+            }
+            sAuthConfig.let {
+                sAuthIsActive = it.isActive
+                sAuthAppId = it.appId
+                sAuthClientId = it.clientId
+                sAuthClientSecret = it.clientSecret
+                sAuthRefreshToken = it.refreshToken
+                sAuthExpiryTimeSeconds = it.expiryTime
             }
             Log.d("StipopSdk", "Resources Size : ${resourceLists.size}")
         }

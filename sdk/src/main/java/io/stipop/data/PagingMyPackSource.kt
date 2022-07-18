@@ -1,12 +1,11 @@
 package io.stipop.data
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import io.stipop.Config
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
+import io.stipop.models.response.MyStickerResponse
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -31,23 +30,48 @@ internal class PagingMyPackSource(private val apiService: StipopApi, private val
         val userId = Stipop.userId
         val limit = 20
         return try {
-            val response = if (wantVisibleSticker) apiService.getMyStickers(
-                userId = userId,
-                limit = limit,
-                pageNumber = pageNumber
-            ) else apiService.getMyHiddenStickers(
-                userId = userId,
-                limit = limit,
-                pageNumber = pageNumber
-            )
-            val myStickers = response.body.packageList
+            var response: MyStickerResponse? = null
+            if (wantVisibleSticker) {
+                try {
+                    response = apiService.getMyStickers(
+                        userId = userId,
+                        userIdQuery = userId,
+                        limit = limit,
+                        pageNumber = pageNumber
+                    )
+                }catch(exception: HttpException){
+                    SAuthRepository.getAccessToken()
+                    response = apiService.getMyStickers(
+                        userId = userId,
+                        userIdQuery = userId,
+                        limit = limit,
+                        pageNumber = pageNumber
+                    )
+                }
+            } else {
+                try {
+                    response = apiService.getMyHiddenStickers(
+                        userId = userId,
+                        limit = limit,
+                        pageNumber = pageNumber
+                    )
+                }catch(exception: HttpException){
+                    SAuthRepository.getAccessToken()
+                    response = apiService.getMyHiddenStickers(
+                        userId = userId,
+                        limit = limit,
+                        pageNumber = pageNumber
+                    )
+                }
+            }
+            val myStickers = response?.body?.packageList
             val nextKey = if (myStickers.isNullOrEmpty()) {
                 null
             } else {
                 pageNumber + 1
             }
             LoadResult.Page(
-                data = myStickers,
+                data = myStickers!!,
                 prevKey = if (pageNumber == STARTING_PAGE_INDEX) null else pageNumber - 1,
                 nextKey = nextKey
             )

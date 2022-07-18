@@ -1,6 +1,5 @@
 package io.stipop.data
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -42,38 +41,41 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
     }
 
     suspend fun getCurationPackagesAsFlow(type: String): Flow<CurationPackageResponse?> {
-        return safeCallAsFlow(call = {
-            apiService.getCurationPackages(
-                curationType = type,
-                userId = Stipop.userId,
-                lang = Stipop.lang,
-                countryCode = Stipop.countryCode,
-            )
-        })
+        return safeCallAsFlow(
+            call = {
+                apiService.getCurationPackages(
+                    curationType = type,
+                    userId = Stipop.userId,
+                    lang = Stipop.lang,
+                    countryCode = Stipop.countryCode,
+                )
+            })
     }
 
     @FlowPreview
     suspend fun getPackagesAsFlow(page: Int): Flow<StickerPackagesResponse?> {
-        return safeCallAsFlow(call = {
-            apiService.getTrendingStickerPackages(
-                userId = Stipop.userId,
-                lang = Stipop.lang,
-                countryCode = Stipop.countryCode,
-                pageNumber = page,
-                limit = Constants.ApiParams.SizePerPage,
-                query = null
-            )
-        })
+        return safeCallAsFlow(
+            call = {
+                apiService.getTrendingStickerPackages(
+                    userId = Stipop.userId,
+                    lang = Stipop.lang,
+                    countryCode = Stipop.countryCode,
+                    pageNumber = page,
+                    limit = Constants.ApiParams.SizePerPage,
+                    query = null
+                )
+            })
     }
 
     suspend fun getRecommendQueryAsFlow(): Flow<KeywordListResponse?> {
-        return safeCallAsFlow(call = {
-            apiService.getRecommendedKeywords(
-                userId = Stipop.userId,
-                lang = Stipop.lang,
-                countryCode = Stipop.countryCode,
-            )
-        })
+        return safeCallAsFlow(
+            call = {
+                apiService.getRecommendedKeywords(
+                    userId = Stipop.userId,
+                    lang = Stipop.lang,
+                    countryCode = Stipop.countryCode,
+                )
+            })
     }
 
     suspend fun postDownloadStickers(
@@ -89,18 +91,18 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
             }
         }
         safeCall(call = {
-            apiService.postDownloadStickers(
-                packageId = stickerPackage.packageId,
-                isPurchase = Config.allowPremium,
-                userId = Stipop.userId,
-                lang = Stipop.lang,
-                countryCode = Stipop.countryCode,
-                price = price,
-                entrancePoint = Constants.Point.STORE,
-                eventPoint = Constants.Point.STORE
-            )
-        }, onCompletable = {
-            onSuccess(it)
-        })
+                apiService.postDownloadStickers(
+                    packageId = stickerPackage.packageId,
+                    isPurchase = Config.allowPremium,
+                    userId = Stipop.userId,
+                    lang = Stipop.lang,
+                    countryCode = Stipop.countryCode,
+                    price = price,
+                    entrancePoint = Constants.Point.STORE,
+                    eventPoint = Constants.Point.STORE
+                )
+            }, onCompletable = {
+                onSuccess(it)
+            })
     }
 }

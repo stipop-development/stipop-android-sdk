@@ -1,12 +1,12 @@
 package io.stipop.api
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.Keep
 import com.google.gson.Gson
 import io.stipop.BuildConfig
 import io.stipop.Config
 import io.stipop.Constants
+import io.stipop.Stipop
 import io.stipop.models.body.*
 import io.stipop.models.response.*
 import okhttp3.Headers
@@ -55,6 +55,7 @@ internal interface StipopApi {
     @GET("package/send/{userId}")
     suspend fun getRecentlySentStickers(
         @Path("userId") userId: String,
+        @Query("userId") userIdQuery: String = userId,
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int
     ): StickerListResponse
@@ -62,6 +63,7 @@ internal interface StipopApi {
     @GET("mysticker/favorite/{userId}")
     suspend fun getFavoriteStickers(
         @Path("userId") userId: String,
+        @Query("userId") userIdQuery: String = userId,
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int
     ): FavoriteListResponse
@@ -69,6 +71,7 @@ internal interface StipopApi {
     @GET("mysticker/{userId}")
     suspend fun getMyStickers(
         @Path("userId") userId: String,
+        @Query("userId") userIdQuery: String = userId,
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int
     ): MyStickerResponse
@@ -76,6 +79,7 @@ internal interface StipopApi {
     @GET("mysticker/hide/{userId}")
     suspend fun getMyHiddenStickers(
         @Path("userId") userId: String,
+        @Query("userId") userIdQuery: String = userId,
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int
     ): MyStickerResponse
@@ -83,19 +87,22 @@ internal interface StipopApi {
     @PUT("mysticker/favorite/{userId}")
     suspend fun putMyStickerFavorite(
         @Path("userId") userId: String,
+        @Query("userId") userIdQuery: String = userId,
         @Body favoriteBody: FavoriteBody
     ): StipopResponse
 
     @PUT("mysticker/order/{userId}")
     suspend fun putMyStickerOrders(
         @Path("userId") userId: String,
+        @Query("userId") userIdQuery: String = userId,
         @Body orderChangeBody: OrderChangeBody
     ): MyStickerOrderChangedResponse
 
     @PUT("mysticker/hide/{userId}/{packageId}")
     suspend fun putMyStickerVisibility(
         @Path("userId") userId: String,
-        @Path("packageId") packageId: Int
+        @Path("packageId") packageId: Int,
+        @Query("userId") userIdQuery: String = userId
     ): StipopResponse
 
     @GET("package")
@@ -175,34 +182,20 @@ internal interface StipopApi {
         @Query("event_point") eventPoint: String? = null
     ): StipopResponse
 
+    @POST("access")
+    suspend fun getAccessToken(
+        @Body getAccessTokenAPIBody: GetAcceesTokenAPIBody
+    ): GetNewAccessTokenResponse
+
     companion object {
         private val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BODY }
-        private val headers = Headers.Builder()
-            .add(
-                Constants.ApiParams.ApiKey, if (Constants.Value.IS_SANDBOX) {
-                    Constants.Value.SANDBOX_APIKEY
-                } else {
-                    Config.stipopConfigData.apiKey
-                }
-            )
-            .add(
-                Constants.ApiParams.SMetadata,
-                Gson().toJson(
-                    StipopMetaHeader(
-                        platform = Constants.Value.PLATFORM,
-                        sdk_version = BuildConfig.SDK_VERSION_NAME,
-                        os_version = Build.VERSION.SDK_INT.toString()
-                    )
-                )
-            )
-            .build()
         private val client = OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.MINUTES)
             .readTimeout(10, TimeUnit.MINUTES)
             .writeTimeout(10, TimeUnit.MINUTES)
             .addInterceptor(loggingInterceptor)
             .addInterceptor(Interceptor {
-                it.proceed(it.request().newBuilder().headers(headers).build())
+                it.proceed(it.request().newBuilder().headers(getHeaders()).build())
             })
             .addNetworkInterceptor {
                 it.proceed(it.request())
@@ -216,6 +209,35 @@ internal interface StipopApi {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(StipopApi::class.java)
+        }
+        private fun getHeaders(): Headers{
+            return Headers.Builder()
+                .add(
+                    Constants.ApiParams.ApiKey, if (Constants.Value.IS_SANDBOX) {
+                        Constants.Value.SANDBOX_APIKEY
+                    } else {
+                        Config.stipopConfigData.apiKey
+                    }
+                )
+                .add(
+                    Constants.ApiParams.SMetadata,
+                    Gson().toJson(
+                        StipopMetaHeader(
+                            platform = Constants.Value.PLATFORM,
+                            sdk_version = BuildConfig.SDK_VERSION_NAME,
+                            os_version = Build.VERSION.SDK_INT.toString()
+                        )
+                    )
+                )
+                .add(
+                    Constants.ApiParams.Authorization,
+                    if (Config.sAuthIsActive) {
+                        "Bearer ${Stipop.sAuthAccessToken}"
+                    } else {
+                        ""
+                    }
+                )
+                .build()
         }
     }
 }

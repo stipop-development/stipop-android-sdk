@@ -1,33 +1,23 @@
 package io.stipop.view
 
-import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import io.stipop.*
-import io.stipop.databinding.ActivityStoreBinding
 import io.stipop.adapter.StorePagerAdapter
 import io.stipop.api.StipopApi
-import io.stipop.base.BaseBottomSheetDialogFragment
 import io.stipop.base.BaseFragmentActivity
+import io.stipop.data.SAuthRepository
+import io.stipop.databinding.ActivityStoreBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.body.UserIdBody
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 internal class StoreActivity : BaseFragmentActivity() {
 
     val scope = CoroutineScope(Job() + Dispatchers.IO)
+    private val mainScope = CoroutineScope(Job() + Dispatchers.Main)
     private lateinit var binding: ActivityStoreBinding
     private val storeAdapter: StorePagerAdapter by lazy { StorePagerAdapter(this) }
 
@@ -35,7 +25,8 @@ internal class StoreActivity : BaseFragmentActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityStoreBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        mainScope.launch {
+            SAuthRepository.getAccessToken()
         with(binding) {
             storeViewPager.adapter = storeAdapter
             TabLayoutMediator(storeTabLayout, storeViewPager) { tab, position ->
@@ -52,17 +43,17 @@ internal class StoreActivity : BaseFragmentActivity() {
                 }
             }.attach()
 
-            storeViewPager.apply {
-                registerOnPageChangeCallback(callBack)
-                setCurrentItem(
-                    intent.getIntExtra(
-                        Constants.IntentKey.STARTING_TAB_POSITION,
-                        StorePagerAdapter.POSITION_MY_STICKERS
-                    ), false
-                )
-            }
+                    storeViewPager.apply {
+                        registerOnPageChangeCallback(callBack)
+                        setCurrentItem(
+                            intent.getIntExtra(
+                                Constants.IntentKey.STARTING_TAB_POSITION,
+                                StorePagerAdapter.POSITION_MY_STICKERS
+                            ), false
+                        )
+                    }
+                }
         }
-
         PackageDownloadEvent.liveData.observe(this) {
             Toast.makeText(this, getString(R.string.download_done), Toast.LENGTH_SHORT).show()
         }
@@ -85,15 +76,31 @@ internal class StoreActivity : BaseFragmentActivity() {
             super.onPageSelected(position)
             val userId = Stipop.userId
             scope.launch {
+
                 when (position) {
                     StorePagerAdapter.POSITION_ALL_STICKERS -> {
-                        StipopApi.create().trackViewStore(UserIdBody(userId))
+                        val apiService = StipopApi.create()
+                        val response = apiService.trackViewStore(UserIdBody(userId))
+                        if(response.code() == 401){
+                            SAuthRepository.getAccessToken()
+                            apiService.trackViewStore(UserIdBody(userId))
+                        }
                     }
                     StorePagerAdapter.POSITION_NEW_STICKERS -> {
-                        StipopApi.create().trackViewNew(UserIdBody(userId))
+                        val apiService = StipopApi.create()
+                        val response = apiService.trackViewNew(UserIdBody(userId))
+                        if(response.code() == 401){
+                            SAuthRepository.getAccessToken()
+                            apiService.trackViewNew(UserIdBody(userId))
+                        }
                     }
                     StorePagerAdapter.POSITION_MY_STICKERS -> {
-                        StipopApi.create().trackViewMySticker(UserIdBody(userId))
+                        val apiService = StipopApi.create()
+                        val response = apiService.trackViewMySticker(UserIdBody(userId))
+                        if(response.code() == 401){
+                            SAuthRepository.getAccessToken()
+                            apiService.trackViewMySticker(UserIdBody(userId))
+                        }
                     }
                 }
             }

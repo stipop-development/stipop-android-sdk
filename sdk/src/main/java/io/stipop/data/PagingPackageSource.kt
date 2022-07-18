@@ -36,26 +36,58 @@ internal class PagingPackageSource(
         val userId = Stipop.userId
         val limit = 20
         return try {
-            val response: StickerPackagesResponse
+            var response: StickerPackagesResponse? = null
             when (newOrder) {
-                true -> response = apiService.getNewStickerPackages(
-                    userId = userId,
-                    limit = limit,
-                    pageNumber = pageNumber,
-                    countryCode = Stipop.countryCode,
-                    lang = Stipop.lang,
-                    query = query
-                )
-                false -> response = apiService.getTrendingStickerPackages(
-                    userId = userId,
-                    limit = limit,
-                    pageNumber = pageNumber,
-                    countryCode = Stipop.countryCode,
-                    lang = Stipop.lang,
-                    query = query
-                )
+                true -> {
+                    try {
+                        response = apiService.getNewStickerPackages(
+                            userId = userId,
+                            limit = limit,
+                            pageNumber = pageNumber,
+                            countryCode = Stipop.countryCode,
+                            lang = Stipop.lang,
+                            query = query
+                        )
+                    } catch(exception: HttpException){
+                        if(exception.code() == 401){
+                            SAuthRepository.getAccessToken()
+                            response = apiService.getNewStickerPackages(
+                                userId = userId,
+                                limit = limit,
+                                pageNumber = pageNumber,
+                                countryCode = Stipop.countryCode,
+                                lang = Stipop.lang,
+                                query = query
+                            )
+                        }
+                    }
+                }
+                false -> {
+                    try {
+                        response = apiService.getTrendingStickerPackages(
+                            userId = userId,
+                            limit = limit,
+                            pageNumber = pageNumber,
+                            countryCode = Stipop.countryCode,
+                            lang = Stipop.lang,
+                            query = query
+                        )
+                    } catch(exception: HttpException){
+                        if(exception.code() == 401){
+                            SAuthRepository.getAccessToken()
+                            response = apiService.getTrendingStickerPackages(
+                                userId = userId,
+                                limit = limit,
+                                pageNumber = pageNumber,
+                                countryCode = Stipop.countryCode,
+                                lang = Stipop.lang,
+                                query = query
+                            )
+                        }
+                    }
+                }
             }
-            val stickerPackages = response.body?.packageList ?: emptyList()
+            val stickerPackages = response?.body?.packageList ?: emptyList()
             val nextKey = if (stickerPackages.isNullOrEmpty()) {
                 null
             } else {

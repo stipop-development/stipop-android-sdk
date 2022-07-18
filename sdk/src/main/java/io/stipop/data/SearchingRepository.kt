@@ -23,11 +23,11 @@ internal class SearchingRepository(private val apiService: StipopApi) : BaseRepo
 
     suspend fun getRecommendQueryAsFlow(): Flow<KeywordListResponse?> {
         return safeCallAsFlow(call = {
-            apiService.getRecommendedKeywords(
-                userId = Stipop.userId,
-                lang = Stipop.lang,
-                countryCode = Stipop.countryCode,
-            )
-        })
+                apiService.getRecommendedKeywords(
+                    userId = Stipop.userId,
+                    lang = Stipop.lang,
+                    countryCode = Stipop.countryCode,
+                )
+            })
     }
 }

@@ -11,8 +11,6 @@ class GlobalApplication : MultiDexApplication(),
     Application.ActivityLifecycleCallbacks
 {
 
-    private var init = false
-
     override fun onCreate() {
         super.onCreate()
         registerActivityLifecycleCallbacks(this)
@@ -28,10 +26,6 @@ class GlobalApplication : MultiDexApplication(),
     }
 
     override fun onActivityResumed(p0: Activity) {
-        when(init){
-            true -> Stipop.configure(this, callback = {Log.d(this.javaClass.name, "Dark mode configured") })
-            false -> init = true
-        }
     }
 
     override fun onActivityPaused(p0: Activity) {

@@ -74,34 +74,41 @@
             android:scaleType="fitCenter"
             android:src="@mipmap/icon_search" />
 
-        <LinearLayout
+        <HorizontalScrollView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal"
             >
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/packageThumbRecyclerView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:animateLayoutChanges="false"
-            android:layoutAnimation="@null"
-            android:orientation="horizontal"
-            android:overScrollMode="never"
-            android:scrollbars="none"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_my_pack_thumb" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                >
 
-        <io.stipop.custom.StipopImageView
-            android:id="@+id/settingImageView"
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:scaleType="fitCenter"
-            android:padding="8dp"
-            android:src="@mipmap/ic_setting" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/packageThumbRecyclerView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:animateLayoutChanges="false"
+                    android:layoutAnimation="@null"
+                    android:orientation="horizontal"
+                    android:overScrollMode="never"
+                    android:scrollbars="none"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_my_pack_thumb" />
 
-        </LinearLayout>
+                <io.stipop.custom.StipopImageView
+                    android:id="@+id/settingImageView"
+                    android:layout_width="48dp"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:padding="8dp"
+                    android:src="@mipmap/ic_setting" />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
 
         <io.stipop.custom.StipopImageView
             android:id="@+id/storeImageView"

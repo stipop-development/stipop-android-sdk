@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.Display
 import android.view.WindowInsets
 import android.view.WindowManager
@@ -30,7 +29,6 @@ import java.io.FileOutputStream
 import java.lang.reflect.InvocationTargetException
 import java.net.URL
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 internal object StipopUtils {
@@ -283,8 +281,8 @@ internal object StipopUtils {
         if (json != null && json.has(key) && !json.isNull(key)) {
             try {
                 return json.getDouble(key).toFloat()
-            } catch (e: JSONException) {
-                e.printStackTrace()
+            } catch (exception: JSONException) {
+                exception.printStackTrace()
             }
         }
         return 0.0f
@@ -294,8 +292,8 @@ internal object StipopUtils {
         if (json != null && json.has(key) && !json.isNull(key)) {
             try {
                 return json.getDouble(key)
-            } catch (e: JSONException) {
-                e.printStackTrace()
+            } catch (exception: JSONException) {
+                exception.printStackTrace()
             }
         }
         return defaultValue
@@ -306,8 +304,8 @@ internal object StipopUtils {
         if (json != null && json.has(key) && !json.isNull(key)) {
             try {
                 return json.getString(key)
-            } catch (e: JSONException) {
-                e.printStackTrace()
+            } catch (exception: JSONException) {
+                exception.printStackTrace()
             }
         }
         return defaultValue
@@ -317,8 +315,8 @@ internal object StipopUtils {
         if (json != null && json.has(key) && !json.isNull(key)) {
             try {
                 return json.getInt(key)
-            } catch (e: JSONException) {
-                e.printStackTrace()
+            } catch (exception: JSONException) {
+                exception.printStackTrace()
             }
         }
         return 0
@@ -328,8 +326,8 @@ internal object StipopUtils {
         if (json != null && json.has(key) && !json.isNull(key)) {
             try {
                 return json.getInt(key)
-            } catch (e: JSONException) {
-                e.printStackTrace()
+            } catch (exception: JSONException) {
+                exception.printStackTrace()
             }
         }
         return defaultValue
@@ -339,8 +337,8 @@ internal object StipopUtils {
         if (json != null && json.has(key) && !json.isNull(key)) {
             try {
                 return json.getBoolean(key)
-            } catch (e: JSONException) {
-                e.printStackTrace()
+            } catch (exception: JSONException) {
+                exception.printStackTrace()
             }
         }
         return false
@@ -350,8 +348,8 @@ internal object StipopUtils {
         if (json != null && json.has(key) && !json.isNull(key)) {
             try {
                 return json.getBoolean(key)
-            } catch (e: JSONException) {
-                e.printStackTrace()
+            } catch (exception: JSONException) {
+                exception.printStackTrace()
             }
         }
         return defaultValue
@@ -372,8 +370,8 @@ internal object StipopUtils {
         if (json != null && json.has(key) && !json.isNull(key)) {
             try {
                 return json.getString(key)
-            } catch (e: JSONException) {
-                e.printStackTrace()
+            } catch (exception: JSONException) {
+                exception.printStackTrace()
             }
         }
         return ""

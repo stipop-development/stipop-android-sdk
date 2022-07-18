@@ -12,6 +12,6 @@ internal data class StickerListResponse(
     @Keep
     data class ResponseBody(
         @SerializedName("stickerList") val stickerList: List<Sticker>? = emptyList(),
-        @SerializedName("pageMap") val pageMap: PageMapInfo
+        @SerializedName("pageMap") val pageMap: PageMapInfo?
     )
 }

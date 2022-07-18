@@ -17,7 +17,8 @@ data class StipopConfigData(
     @SerializedName("Send") var previewConfig: PreviewConfig = PreviewConfig(),
     @SerializedName("Function") var functionConfig: FunctionConfig = FunctionConfig(),
     @SerializedName("Icon") var iconConfig: IconConfig = IconConfig(),
-    @SerializedName("Layout") var layoutConfig: LayoutConfig = LayoutConfig()
+    @SerializedName("Layout") var layoutConfig: LayoutConfig = LayoutConfig(),
+    @SerializedName("SAuth") var sAuthConfig: SAuthConfig = SAuthConfig()
 ) {
     @Keep
     data class Theme(
@@ -184,7 +185,7 @@ data class StipopConfigData(
         @Keep
         data class PickerViewConfig(
             @SerializedName("Search") var search: SearchConfig = SearchConfig()
-            ) {
+        ) {
             @Keep
             data class SearchConfig(
                 @SerializedName("isActive") var isActive: Boolean = false
@@ -201,4 +202,13 @@ data class StipopConfigData(
             @SerializedName("onKeyboard") var onKeyboard: Boolean = true
         )
     }
+    @Keep
+    data class SAuthConfig(
+        @SerializedName("isActive") var isActive: Boolean = false,
+        @SerializedName("appId") var appId: String = "",
+        @SerializedName("clientId") var clientId: String = "",
+        @SerializedName("clientSecret") var clientSecret: String = "",
+        @SerializedName("refreshToken") var refreshToken: String = "",
+        @SerializedName("expiryTime") var expiryTime: Int = 3600
+    )
 }

@@ -1,13 +1,10 @@
 package io.stipop.view.viewmodel
 
-import android.util.Log
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import io.stipop.Config
 import io.stipop.Stipop
-import io.stipop.StipopUtils
 import io.stipop.api.StipopApi
+import io.stipop.data.SAuthRepository
 import io.stipop.data.SpvRepository
 import io.stipop.isNullOrNotEnough
 import io.stipop.models.SPSticker
@@ -29,7 +26,13 @@ internal class StickerPickerViewModel {
 
     fun trackSpv() {
         taskScope.launch {
-            StipopApi.create().trackViewPicker(UserIdBody(Stipop.userId))
+            try {
+                val response = StipopApi.create().trackViewPicker(UserIdBody(Stipop.userId))
+                if(response.code() == 401){
+                    SAuthRepository.getAccessToken()
+                    StipopApi.create().trackViewPicker(UserIdBody(Stipop.userId))
+                }
+            } catch(exception: Exception){}
         }
     }
 
@@ -54,17 +57,18 @@ internal class StickerPickerViewModel {
             onSuccess(recentStickers)
         } else {
             taskScope.launch {
-                val result = StipopApi.create().getRecentlySentStickers(Stipop.userId, 1, 24)
-                if (result.header.isSuccess() && result.body?.stickerList != null) {
-                    if (recentStickers.isEmpty()) {
-                        recentStickers.addAll(result.body.stickerList)
-                    }
-                    launch(Dispatchers.Main) {
-                        onSuccess(result.body.stickerList)
-                    }
-                } else {
-                    launch(Dispatchers.Main) {
-                        onSuccess(emptyList())
+                repository.getRecentlySentStickers {
+                    if (it.header.isSuccess() && it.body?.stickerList != null) {
+                        if (recentStickers.isEmpty()) {
+                            recentStickers.addAll(it.body.stickerList)
+                        }
+                        launch(Dispatchers.Main) {
+                            onSuccess(it.body.stickerList)
+                        }
+                    } else {
+                        launch(Dispatchers.Main) {
+                            onSuccess(emptyList())
+                        }
                     }
                 }
             }

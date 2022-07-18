@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
+import io.stipop.data.SAuthRepository
 import io.stipop.data.SearchingRepository
 import io.stipop.delayedTextFlow
 import io.stipop.models.Sticker
@@ -23,7 +24,18 @@ internal class SsvModel(private val repository: SearchingRepository) : ViewModel
 
     init {
         taskScope.launch {
-            StipopApi.create().trackViewSearch(UserIdBody(Stipop.userId))
+            val apiService = StipopApi.create()
+            repository.safeCall(call = { apiService.trackViewSearch(UserIdBody(Stipop.userId)) }, onCompletable = {
+                when(it?.code()){
+                    401 -> {
+                        taskScope.launch {
+                            SAuthRepository.getAccessToken()
+                            repository.safeCall(call = { apiService.trackViewSearch(UserIdBody(Stipop.userId)) },
+                                onCompletable = {})
+                        }
+                    }
+                }
+            })
         }
     }
 
