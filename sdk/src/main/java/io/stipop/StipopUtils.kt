@@ -63,7 +63,7 @@ internal object StipopUtils {
 
         val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-        val keyboardHeight = Stipop.currentKeyboardHeight
+        val keyboardHeight = Stipop.currentPickerViewHeight
 
         if(keyboardHeight > 0){
             when(editText){
@@ -77,6 +77,14 @@ internal object StipopUtils {
                 }
             }
         }
+    }
+
+    fun getBottomNavigationBarHeight(): Int{
+        val resources: Resources = Stipop.applicationContext.resources
+        val resourceId: Int = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return if (resourceId > 0) {
+            resources.getDimensionPixelSize(resourceId)
+        } else 0
     }
 
     fun downloadAtLocal(stickerPackage: StickerPackage) {

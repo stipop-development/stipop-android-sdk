@@ -30,8 +30,8 @@ internal object Constants {
     object Value {
         const val IS_SANDBOX = false
         const val SANDBOX_URL = "https://sandbox.stipop.com/v1/"
-        const val SANDBOX_APIKEY = "a3e68b6c54d8132f6879d5bc2c49708d"   // SAuth -> isActive : off
-//        const val SANDBOX_APIKEY = "1ea6727c6eb2536b6499e3e23c2bf776" // SAuth -> iSActive : on
+        const val SANDBOX_APIKEY = "a3e68b6c54d8132f6879d5bc2c49708d"   // SAuth -> isActive = off
+//        const val SANDBOX_APIKEY = "1ea6727c6eb2536b6499e3e23c2bf776" // SAuth -> iSActive = on
         const val BASE_URL = "https://messenger.stipop.io/v1/"
         const val PLATFORM = "android-sdk"
         const val BOTTOM_SHEET_TOP_OFFSET = 200

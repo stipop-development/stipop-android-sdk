@@ -77,7 +77,7 @@ internal class StickerPickerViewClass(
     private fun pickerKeyboardViewInit(){
         stickerPickerKeyboardView?.contentView = pickerView.root
         stickerPickerKeyboardView?.width = LinearLayout.LayoutParams.MATCH_PARENT
-        stickerPickerKeyboardView?.height = Stipop.currentKeyboardHeight
+        stickerPickerKeyboardView?.height = Stipop.currentPickerViewHeight
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             stickerPickerKeyboardView?.setIsClippedToScreen(true)
@@ -272,7 +272,7 @@ internal class StickerPickerViewClass(
         if (stickerPickerKeyboardView?.isShowing == true) {
             return
         }
-        if (Stipop.currentKeyboardHeight > 0) {
+        if (Stipop.currentPickerViewHeight > 0) {
             showPickerViewCommonFunction()
             stickerPickerKeyboardView?.showAtLocation(
                 activity.window.decorView.findViewById(android.R.id.content) as View,

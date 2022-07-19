@@ -18,7 +18,7 @@
             android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.MaterialComponents.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -29,5 +29,4 @@
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
     </application>
-
 </manifest>

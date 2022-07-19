@@ -25,11 +25,16 @@ internal open class BaseRepository {
      */
 
     suspend fun <T : Any> safeCallAsFlow(
+        retryCount: Int = 1,
         call: suspend () -> T
     ): Flow<T?> {
         try{
-            val r = call.invoke()
-            return flowOf(r)
+            if(retryCount <= 3) {
+                val r = call.invoke()
+                return flowOf(r)
+            } else {
+                return flowOf(null)
+            }
         }catch(exception: HttpException){
             var result: Flow<T?> = flowOf(null)
             when(exception.code()) {
@@ -38,7 +43,10 @@ internal open class BaseRepository {
                 // 401 : Unauthorized.
                 401 -> {
                     SAuthRepository.getAccessToken()
-                    result = safeCallAsFlow(call = call)
+
+                    var retryCountNumber = retryCount
+                    retryCountNumber++
+                    result = safeCallAsFlow(retryCount = retryCountNumber, call = call)
                 }
             }
             return result
@@ -60,12 +68,17 @@ internal open class BaseRepository {
 //    }
 
     suspend fun <T : Any> safeCall(
+        retryCount: Int = 1,
         call: suspend () -> T,
         onCompletable: (data: T?) -> Unit,
     ) {
         try {
-            val result = call.invoke()
-            onCompletable(result)
+            if(retryCount <= 3) {
+                val result = call.invoke()
+                onCompletable(result)
+            } else {
+                onCompletable(null)
+            }
         }catch(exception: HttpException){
             when(exception.code()){
                 // 400 : Bad request.
@@ -73,7 +86,10 @@ internal open class BaseRepository {
                 // 401 : Unauthorized.
                 401 -> {
                     SAuthRepository.getAccessToken()
-                    safeCall(call = call, onCompletable = onCompletable)
+
+                    var retryCountNumber = retryCount
+                    retryCountNumber++
+                    safeCall(retryCount = retryCountNumber, call = call, onCompletable = onCompletable)
                 }
             }
         } catch (exception: Exception) {

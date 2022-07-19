@@ -179,7 +179,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     }
 
     private fun listenerInit(){
-        chatInputEditText.setOnTouchListener { view, motionEvent ->
+        chatRecyclerview.setOnTouchListener { view, motionEvent ->
             when(motionEvent.action){
                 MotionEvent.ACTION_DOWN -> Stipop.hide()
             }
