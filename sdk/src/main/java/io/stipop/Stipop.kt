@@ -6,7 +6,6 @@ import android.graphics.Rect
 import android.os.Build
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentActivity
@@ -60,7 +59,7 @@ class Stipop(
         internal var fromTopToVisibleFramePx = 0
             private set
 
-        private var inputMode = -1
+        private var inputMode: WindowSoftInputModeAdjustEnum? = null
 
         internal var sAuthAccessToken = ""
         internal var sAuthAccessTokenUserId = ""
@@ -220,12 +219,13 @@ class Stipop(
     }
 
     private fun setInputMode(){
-        if(inputMode == -1) {
-            inputMode = activity.window.attributes.softInputMode
+        if(inputMode == null) {
+            val inputValue = activity.window.attributes.softInputMode
+            inputMode = WindowSoftInputModeUtils().isInputSoftModeNothing(inputValue)
         }
     }
     private fun getStickerPickerKeyboardViewHeight(){
-        if(inputMode == WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING || inputMode == 304) {
+        if(inputMode == WindowSoftInputModeAdjustEnum.ADJUST_NOTHING){
             getStickerPickerKeyboardViewHeightAdjustNothing()
         } else {
             getStickerPickerKeyboardViewHeightAdjust()
@@ -330,7 +330,7 @@ class Stipop(
     }
 
     private fun hidePickerKeyboardView(){
-        StipopUtils.hideKeyboard(activity)
+//        StipopUtils.hideKeyboard(activity)
         stickerPickerKeyboardView?.dismiss()
     }
 
