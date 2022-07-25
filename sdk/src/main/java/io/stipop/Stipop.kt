@@ -43,6 +43,7 @@ class Stipop(
     companion object {
 
         internal var sAuthDelegate: SAuthDelegate? = null
+        internal var keyboardHeightDelegate: StipopKeyboardHeightDelegate? = null
 
         private val mainScope = CoroutineScope(Job() + Dispatchers.Main)
 
@@ -223,6 +224,10 @@ class Stipop(
             }
         }
 
+        fun setKeyboardHeightDelegate(keyboardHeightDelegate: StipopKeyboardHeightDelegate){
+            Stipop.keyboardHeightDelegate = keyboardHeightDelegate
+        }
+
         fun getCurrentKeyboardHeight(): Int{
             return currentPickerViewHeight
         }
@@ -232,7 +237,6 @@ class Stipop(
     private var stickerPickerCustomFragment: StickerPickerCustomFragment? = null
 
     private var spvAdditionalHeightOffset = 0
-    private var keyboardHeightMax = -1
     private lateinit var rootView: View
 
     private fun connectIcon() {
@@ -288,7 +292,7 @@ class Stipop(
         if (heightDifference > StipopUtils.pxToDp(100)) {
             if(Build.VERSION.SDK_INT < 30){
                 when(isAdjustNothing){
-                    true -> currentPickerViewHeight = keyboardHeightMax - bottomInset
+                    true -> currentPickerViewHeight = -bottomInset
                     false -> currentPickerViewHeight = heightDifference - StipopUtils.getBottomNavigationBarHeight()
                 }
             } else {
@@ -306,6 +310,7 @@ class Stipop(
             currentPickerViewHeight = 0
             hidePickerKeyboardView()
         }
+        keyboardHeightDelegate?.onHeightChanged(currentPickerViewHeight)
     }
 
     private fun showSearch() {

@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.stipop.Stipop
 import io.stipop.StipopDelegate
+import io.stipop.StipopKeyboardHeightDelegate
 import io.stipop.custom.StipopImageView
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
@@ -45,7 +46,10 @@ import java.util.*
  * The received sticker can be handled through StipopDelegate Interface.
  */
 
-class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDelegate {
+class MainActivity : AppCompatActivity(),
+    StipopDelegate,
+    StipopKeyboardHeightDelegate,
+    ChatAdapter.GuideDelegate {
 
     private val TAG: String = "MainActivity"
 
@@ -95,6 +99,9 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
                     "If you need additional settings, please call it in callback scope."
                 )
             })
+
+        // If you want to detect keyboard's up/down height, implement this delegate.
+        Stipop.setKeyboardHeightDelegate(this)
 
         stipopPickerImageView.setOnClickListener {
             Stipop.show()
@@ -274,4 +281,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onHeightChanged(keyboardHeight: Int) {
+        Log.e("Stipop ","Keyboard height is changed -> $keyboardHeight")
+    }
 }
