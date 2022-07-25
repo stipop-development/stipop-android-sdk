@@ -6,7 +6,6 @@ import com.google.gson.Gson
 import io.stipop.BuildConfig
 import io.stipop.Config
 import io.stipop.Constants
-import io.stipop.Stipop
 import io.stipop.models.body.*
 import io.stipop.models.response.*
 import okhttp3.Headers
@@ -182,12 +181,10 @@ internal interface StipopApi {
         @Query("event_point") eventPoint: String? = null
     ): StipopResponse
 
-    @POST("access")
-    suspend fun getAccessToken(
-        @Body getAccessTokenAPIBody: GetAcceesTokenAPIBody
-    ): GetNewAccessTokenResponse
-
     companion object {
+
+        private var accessTokenWithBearerText = "Bearer "
+
         private val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BODY }
         private val client = OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.MINUTES)
@@ -231,13 +228,12 @@ internal interface StipopApi {
                 )
                 .add(
                     Constants.ApiParams.Authorization,
-                    if (Config.sAuthIsActive) {
-                        "Bearer ${Stipop.sAuthAccessToken}"
-                    } else {
-                        ""
-                    }
+                    if (Config.sAuthIsActive) { accessTokenWithBearerText } else { "" }
                 )
                 .build()
+        }
+        fun setAccessToken(accessToken: String){
+            accessTokenWithBearerText = "Bearer $accessToken"
         }
     }
 }

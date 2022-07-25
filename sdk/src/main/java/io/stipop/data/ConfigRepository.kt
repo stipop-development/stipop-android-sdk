@@ -4,7 +4,9 @@ import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.body.InitSdkBody
 import io.stipop.models.body.UserIdBody
+import io.stipop.models.enum.StipopApiEnum
 import io.stipop.models.response.StipopResponse
+import retrofit2.HttpException
 
 internal class ConfigRepository(private val apiService: StipopApi) : BaseRepository() {
 
@@ -16,28 +18,33 @@ internal class ConfigRepository(private val apiService: StipopApi) : BaseReposit
         initSdkBody.userId?.let {
             if (currentUserId == it || isInitialized) {
 //                onSuccess?.let { it(Unit) }
-                safeCall(call = { apiService.initSdk(initSdkBody) }, onCompletable = {
-                    onSuccess?.let { it(Unit) }
-                })
             } else {
                 currentUserId = it
-                safeCall(call = { apiService.initSdk(initSdkBody) }, onCompletable = {
-                    onSuccess?.let { it(Unit) }
-                })
                 isInitialized = true
             }
+            safeCall(
+                call = { apiService.initSdk(initSdkBody) }, onCompletable = {
+                    onSuccess?.let { it(Unit) }
+                })
         } ?: kotlin.run {
             onSuccess?.let { it(Unit) }
         }
     }
 
     suspend fun postConfigSdk() =
-        if(Stipop.userId != "-1") {
-            safeCall(call = { apiService.trackConfig(UserIdBody(userId = Stipop.userId)) },
+        try {
+            safeCall(
+                call = { apiService.trackConfig(
+                    userIdBody = UserIdBody(userId = Stipop.userId)) },
                 onCompletable = {
                     //
                 })
-        } else { }
+        } catch(exception: HttpException){
+            when(exception.code()){
+                401 -> Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_CONFIG, exception)
+                else -> {}
+            }
+        }
 
     suspend fun postTrackUsingSticker(
         stickerId: String,
@@ -48,7 +55,8 @@ internal class ConfigRepository(private val apiService: StipopApi) : BaseReposit
         eventPoint: String?,
         onSuccess: (data: StipopResponse) -> Unit
     ) {
-        safeCall(call = {
+        safeCall(
+            call = {
                 apiService.trackUsingSticker(
                     stickerId = stickerId,
                     userId = userId,

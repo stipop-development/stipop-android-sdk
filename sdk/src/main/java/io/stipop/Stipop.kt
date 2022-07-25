@@ -13,17 +13,24 @@ import androidx.fragment.app.FragmentManager
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
 import io.stipop.data.ConfigRepository
-import io.stipop.data.SAuthRepository
+import io.stipop.event.SAuthDelegate
+import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
+import io.stipop.models.enum.StipopApiEnum
+import io.stipop.s_auth.SAuthManager
+import io.stipop.s_auth.TrackUsingStickerEnum
 import io.stipop.view.PackDetailFragment
 import io.stipop.view.StickerSearchView
 import io.stipop.view.pickerview.StickerPickerCustomFragment
 import io.stipop.view.pickerview.StickerPickerKeyboardView
+import io.stipop.view.pickerview.StickerPickerViewClass
 import io.stipop.view.pickerview.listener.VisibleStateListener
+import io.stipop.view.viewmodel.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.util.*
 
 
@@ -35,9 +42,18 @@ class Stipop(
 
     companion object {
 
+        internal var sAuthDelegate: SAuthDelegate? = null
+
         private val mainScope = CoroutineScope(Job() + Dispatchers.Main)
 
-        private val configRepository: ConfigRepository by lazy { ConfigRepository(StipopApi.create()) }
+        internal val configRepository: ConfigRepository by lazy { ConfigRepository(StipopApi.create()) }
+
+        internal var stickerPickerViewClass: StickerPickerViewClass? = null
+        internal var stickerPickerViewModel: StickerPickerViewModel? = null
+        internal var storeHomeViewModel: StoreHomeViewModel? = null
+        internal var storeMyStickerViewModel: StoreMyStickerViewModel? = null
+        internal var storeNewsViewModel: StoreNewsViewModel? = null
+        internal var packDetailViewModel: PackDetailViewModel? = null
 
         internal lateinit var applicationContext: Context
 
@@ -61,19 +77,25 @@ class Stipop(
 
         private var inputMode: WindowSoftInputModeAdjustEnum? = null
 
-        internal var sAuthAccessToken = ""
-        internal var sAuthAccessTokenUserId = ""
-        internal var sAuthAccessTokenExpiryTimeMillis = 0L
+        suspend fun setAccessToken(accessToken: String){
+            SAuthManager.setAccessToken(accessToken)
+        }
 
-        fun configure(context: Context, callback: ((isSuccess: Boolean) -> Unit)? = null) {
-            mainScope.launch {
-                getAccessTokenIfOverExpiryTime()
-                configRepository.postConfigSdk()
+        fun configure(context: Context, sAuthDelegate: SAuthDelegate? = null, callback: ((isSuccess: Boolean) -> Unit)? = null) {
+
+            sAuthDelegate?.let {
+                this.sAuthDelegate = it
             }
-            Config.configure(context, callback = { result ->
-                configRepository.isConfigured = result
-                callback?.let { callback -> callback(result) }
-            })
+
+            mainScope.launch {
+                configRepository.postConfigSdk()
+
+                Config.configure(context, callback = { result ->
+                    configRepository.isConfigured = result
+                    callback?.let { callback -> callback(result) }
+                })
+
+            }
         }
 
         private var canRetryIfConnectFailed = true
@@ -109,13 +131,7 @@ class Stipop(
                 Log.v("STIPOP-SDK", "Stipop SDK connect succeeded. You can use SDK by calling Stipop.showKeyboard() or Stipop.showSearch() and implementing StipopDelegate interface.")
                 applicationContext = activity.applicationContext
                 mainScope.launch {
-                    getAccessTokenIfOverExpiryTime()
-                    configRepository.postInitSdk(
-                        initSdkBody = InitSdkBody(
-                            userId = Stipop.userId,
-                            lang = lang
-                        )
-                    )
+                    postInitSDK()
                     Stipop(activity, stipopButton, delegate).apply {
                         when(Config.pickerViewLayoutOnKeyboard){
                             true -> {
@@ -137,14 +153,18 @@ class Stipop(
                 }
             }
         }
-        internal suspend fun getAccessTokenIfOverExpiryTime(){
-            val currentTimeMillis = System.currentTimeMillis()
 
-            if(userId != "-1") {
-                if (sAuthAccessTokenUserId != userId) {
-                    SAuthRepository.getAccessToken()
-                } else if (currentTimeMillis >= sAuthAccessTokenExpiryTimeMillis) {
-                    SAuthRepository.getAccessToken()
+        suspend fun postInitSDK(){
+            try {
+                configRepository.postInitSdk(
+                    initSdkBody = InitSdkBody(
+                        userId = userId,
+                        lang = lang
+                    )
+                )
+            } catch(exception: HttpException){
+                when(exception.code()){
+                    401 -> sAuthDelegate?.httpException(StipopApiEnum.INIT_SDK, exception)
                 }
             }
         }
@@ -170,26 +190,36 @@ class Stipop(
             instance?.showStickerPackage(fragmentManager, packageId)
 
         internal fun send(
-            stickerId: Int,
-            keyword: String,
+            trackUsingStickerEnum: TrackUsingStickerEnum,
+            sticker: SPSticker,
             entrancePoint: String,
             completionHandler: (result: Boolean) -> Unit
         ) {
             mainScope.launch {
-                configRepository.postTrackUsingSticker(
-                    stickerId = stickerId.toString(),
-                    userId = userId,
-                    query = keyword,
-                    countryCode = countryCode,
-                    lang = lang,
-                    eventPoint = entrancePoint,
-                    onSuccess = {
-                        if (it.header.isSuccess()) {
-                            completionHandler(true)
-                        } else {
+                try {
+                    configRepository.postTrackUsingSticker(
+                        stickerId = sticker.stickerId.toString(),
+                        userId = userId,
+                        query = sticker.keyword,
+                        countryCode = countryCode,
+                        lang = lang,
+                        eventPoint = entrancePoint,
+                        onSuccess = {
+                            if (it.header.isSuccess()) {
+                                completionHandler(true)
+                            } else {
+                                completionHandler(false)
+                            }
+                        })
+                } catch(exception: HttpException){
+                    when(exception.code()){
+                        401 -> {
                             completionHandler(false)
+                            SAuthManager.setPostTrackUsingStickerData(trackUsingStickerEnum, sticker)
+                            sAuthDelegate?.httpException(StipopApiEnum.TRACK_USING_STICKER, exception)
                         }
-                    })
+                    }
+                }
             }
         }
 
@@ -280,15 +310,13 @@ class Stipop(
 
     private fun showSearch() {
         mainScope.launch {
-            getAccessTokenIfOverExpiryTime()
             StickerSearchView.newInstance()
-                .showNow(activity.supportFragmentManager, Constants.Tag.SSV)
+                .show(activity.supportFragmentManager, Constants.Tag.SSV)
         }
     }
 
     private fun showPickerView() {
         mainScope.launch {
-            getAccessTokenIfOverExpiryTime()
             when (Config.pickerViewLayoutOnKeyboard) {
                 true -> showPickerKeyboardView()
                 false -> showPickerCustomView()
@@ -341,7 +369,7 @@ class Stipop(
     private fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) {
         StipopUtils.hideKeyboard(activity)
         PackDetailFragment.newInstance(packageId, Constants.Point.EXTERNAL)
-            .showNow(fragmentManager, Constants.Tag.EXTERNAL)
+            .show(fragmentManager, Constants.Tag.EXTERNAL)
     }
 
     override fun onSpvVisibleState(isVisible: Boolean) {

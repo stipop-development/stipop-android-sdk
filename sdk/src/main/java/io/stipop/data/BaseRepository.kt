@@ -2,7 +2,6 @@ package io.stipop.data
 
 import android.util.Log
 import io.stipop.api.ApiResponse
-import io.stipop.api.StipopApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import retrofit2.HttpException
@@ -25,34 +24,10 @@ internal open class BaseRepository {
      */
 
     suspend fun <T : Any> safeCallAsFlow(
-        retryCount: Int = 1,
         call: suspend () -> T
     ): Flow<T?> {
-        try{
-            if(retryCount <= 3) {
-                val r = call.invoke()
-                return flowOf(r)
-            } else {
-                return flowOf(null)
-            }
-        }catch(exception: HttpException){
-            var result: Flow<T?> = flowOf(null)
-            when(exception.code()) {
-                // 400 : Bad request.
-                400 -> {}
-                // 401 : Unauthorized.
-                401 -> {
-                    SAuthRepository.getAccessToken()
-
-                    var retryCountNumber = retryCount
-                    retryCountNumber++
-                    result = safeCallAsFlow(retryCount = retryCountNumber, call = call)
-                }
-            }
-            return result
-        }catch (exception:Exception){
-            return flowOf(null)
-        }
+        val r = call.invoke()
+        return flowOf(r)
     }
 
 
@@ -68,33 +43,11 @@ internal open class BaseRepository {
 //    }
 
     suspend fun <T : Any> safeCall(
-        retryCount: Int = 1,
         call: suspend () -> T,
         onCompletable: (data: T?) -> Unit,
     ) {
-        try {
-            if(retryCount <= 3) {
-                val result = call.invoke()
-                onCompletable(result)
-            } else {
-                onCompletable(null)
-            }
-        }catch(exception: HttpException){
-            when(exception.code()){
-                // 400 : Bad request.
-                400 -> {}
-                // 401 : Unauthorized.
-                401 -> {
-                    SAuthRepository.getAccessToken()
-
-                    var retryCountNumber = retryCount
-                    retryCountNumber++
-                    safeCall(retryCount = retryCountNumber, call = call, onCompletable = onCompletable)
-                }
-            }
-        } catch (exception: Exception) {
-            onCompletable(null)
-        }
+        val result = call.invoke()
+        onCompletable(result)
     }
 
     suspend fun <T> safeApiCall(apiCall: suspend () -> T): ApiResponse<T> {

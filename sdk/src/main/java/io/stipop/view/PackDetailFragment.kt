@@ -16,10 +16,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import io.stipop.Config
-import io.stipop.Constants
-import io.stipop.R
-import io.stipop.StipopUtils
+import io.stipop.*
 import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentPackDetailBinding
@@ -31,7 +28,6 @@ import kotlinx.coroutines.launch
 class PackDetailFragment : BottomSheetDialogFragment() {
 
     private var binding: FragmentPackDetailBinding? = null
-    private lateinit var viewModel: PackDetailViewModel
 
     private val gridAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter() }
 
@@ -97,10 +93,10 @@ class PackDetailFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
+        Stipop.packDetailViewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
             PackDetailViewModel::class.java
         )
-        viewModel.stickerPackage.observeForever { stickerPackage ->
+        Stipop.packDetailViewModel?.stickerPackage?.observeForever { stickerPackage ->
             stickerPackage?.let {
                 updateUi(it)
                 gridAdapter.clearData()
@@ -129,8 +125,8 @@ class PackDetailFragment : BottomSheetDialogFragment() {
             binding?.recyclerView?.adapter = gridAdapter
             binding
             lifecycleScope.launch {
-                viewModel.trackViewPackage(packageId, entrancePoint)
-                viewModel.loadsPackages(packageId)
+                Stipop.packDetailViewModel?.trackViewPackage(packageId, entrancePoint)
+                Stipop.packDetailViewModel?.loadsPackages(packageId)
             }
         } ?: run {
             dismiss()
@@ -144,7 +140,7 @@ class PackDetailFragment : BottomSheetDialogFragment() {
                 dismiss()
             }
             downloadTV.setOnClickListener {
-                viewModel.requestDownloadPackage()
+                Stipop.packDetailViewModel?.requestDownloadPackage()
             }
         }
     }
@@ -152,6 +148,7 @@ class PackDetailFragment : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        Stipop.packDetailViewModel = null
     }
 
     private fun applyTheme() {

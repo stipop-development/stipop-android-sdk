@@ -76,11 +76,6 @@ internal object Config {
     var pickerViewSearchIsActive = true
     var pickerViewLayoutOnKeyboard = true
     var sAuthIsActive = false
-    var sAuthAppId = ""
-    var sAuthClientId = ""
-    var sAuthClientSecret = ""
-    var sAuthRefreshToken = ""
-    var sAuthExpiryTimeSeconds = 60
     private var detailBackIconName = "ic_back_border_3"
     private var detailCloseIconName = "ic_close_border_3"
     var detailNumOfColumns = 3
@@ -217,11 +212,6 @@ internal object Config {
             }
             sAuthConfig.let {
                 sAuthIsActive = it.isActive
-                sAuthAppId = it.appId
-                sAuthClientId = it.clientId
-                sAuthClientSecret = it.clientSecret
-                sAuthRefreshToken = it.refreshToken
-                sAuthExpiryTimeSeconds = it.expiryTime
             }
             Log.d("StipopSdk", "Resources Size : ${resourceLists.size}")
         }

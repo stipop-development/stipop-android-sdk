@@ -1,12 +1,12 @@
 package io.stipop.view.pickerview
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import io.stipop.Config
+import io.stipop.Stipop
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.ViewPickerBinding
 import io.stipop.view.pickerview.listener.VisibleStateListener
@@ -16,8 +16,6 @@ class StickerPickerCustomFragment : BaseFragment() {
     companion object { fun newInstance() = StickerPickerCustomFragment() }
 
     internal lateinit var binding: ViewPickerBinding
-
-    private lateinit var stickerPickerViewClass: StickerPickerViewClass
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +34,7 @@ class StickerPickerCustomFragment : BaseFragment() {
 
     private fun pickerFragmentInit(){
         if(!Config.pickerViewLayoutOnKeyboard) {
-            stickerPickerViewClass = StickerPickerViewClass(
+            Stipop.stickerPickerViewClass = StickerPickerViewClass(
                 PickerViewType.CUSTOM,
                 null,
                 this,
@@ -47,7 +45,7 @@ class StickerPickerCustomFragment : BaseFragment() {
     }
 
     internal fun setDelegate(visibleDelegate: VisibleStateListener){
-        stickerPickerViewClass.setDelegate(visibleDelegate)
+        Stipop.stickerPickerViewClass?.setDelegate(visibleDelegate)
     }
 
     internal fun isShowing(): Boolean{
@@ -55,16 +53,16 @@ class StickerPickerCustomFragment : BaseFragment() {
     }
 
     internal fun show() {
-        stickerPickerViewClass.show()
+        Stipop.stickerPickerViewClass?.show()
     }
 
     internal fun dismiss(){
-        stickerPickerViewClass.dismiss()
+        Stipop.stickerPickerViewClass?.dismiss()
     }
 
     override fun applyTheme() {
         if(!Config.pickerViewLayoutOnKeyboard) {
-            stickerPickerViewClass.applyTheme()
+            Stipop.stickerPickerViewClass?.applyTheme()
         }
     }
 }

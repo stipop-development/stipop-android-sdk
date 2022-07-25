@@ -5,6 +5,7 @@ import androidx.paging.PagingState
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
+import io.stipop.models.enum.StipopApiEnum
 import io.stipop.models.response.StickerPackagesResponse
 import retrofit2.HttpException
 import java.io.IOException
@@ -49,17 +50,10 @@ internal class PagingPackageSource(
                             query = query
                         )
                     } catch(exception: HttpException){
-                        if(exception.code() == 401){
-                            SAuthRepository.getAccessToken()
-                            response = apiService.getNewStickerPackages(
-                                userId = userId,
-                                limit = limit,
-                                pageNumber = pageNumber,
-                                countryCode = Stipop.countryCode,
-                                lang = Stipop.lang,
-                                query = query
-                            )
+                        when(exception.code()){
+                            401 -> Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_NEW_STICKER_PACKAGES, exception)
                         }
+                        return LoadResult.Error(exception)
                     }
                 }
                 false -> {
@@ -73,21 +67,16 @@ internal class PagingPackageSource(
                             query = query
                         )
                     } catch(exception: HttpException){
-                        if(exception.code() == 401){
-                            SAuthRepository.getAccessToken()
-                            response = apiService.getTrendingStickerPackages(
-                                userId = userId,
-                                limit = limit,
-                                pageNumber = pageNumber,
-                                countryCode = Stipop.countryCode,
-                                lang = Stipop.lang,
-                                query = query
-                            )
+                        when(exception.code()){
+                            401 -> {
+                                Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_TRENDING_STICKER_PACKAGES, exception)
+                            }
                         }
+                        return LoadResult.Error(exception)
                     }
                 }
             }
-            val stickerPackages = response?.body?.packageList ?: emptyList()
+            val stickerPackages = response.body?.packageList ?: emptyList()
             val nextKey = if (stickerPackages.isNullOrEmpty()) {
                 null
             } else {

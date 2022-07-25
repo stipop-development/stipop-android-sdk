@@ -8,26 +8,28 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.stipop.Constants
+import io.stipop.Stipop
 import io.stipop.adapter.MyLoadStateAdapter
 import io.stipop.adapter.PagingPackageAdapter
 import io.stipop.base.BaseFragment
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentNewStickerBinding
+import io.stipop.event.PackClickDelegate
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
+import io.stipop.s_auth.SNSFGetNewStickerPackagesReRequestDelegate
 import io.stipop.view.viewmodel.StoreNewsViewModel
-import io.stipop.event.PackClickDelegate
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-internal class StoreNewStickerFragment : BaseFragment(), PackClickDelegate {
+internal class StoreNewStickerFragment : BaseFragment(), SNSFGetNewStickerPackagesReRequestDelegate, PackClickDelegate {
 
     companion object {
         fun newInstance() = StoreNewStickerFragment()
+        var snsfGetNewStickerPackagesReRequestDelegate: SNSFGetNewStickerPackagesReRequestDelegate? = null
     }
 
     private var binding: FragmentNewStickerBinding? = null
-    private lateinit var viewModel: StoreNewsViewModel
     private val pagingPackageAdapter: PagingPackageAdapter by lazy { PagingPackageAdapter(this, Constants.Point.NEW) }
 
     override fun onCreateView(
@@ -43,11 +45,13 @@ internal class StoreNewStickerFragment : BaseFragment(), PackClickDelegate {
         super.onDestroyView()
         PackageDownloadEvent.onDestroy()
         binding = null
+        Stipop.storeNewsViewModel = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
+        StoreNewStickerFragment.snsfGetNewStickerPackagesReRequestDelegate = this
+        Stipop.storeNewsViewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
             StoreNewsViewModel::class.java
         )
         with(binding!!) {
@@ -56,13 +60,17 @@ internal class StoreNewStickerFragment : BaseFragment(), PackClickDelegate {
                 adapter = pagingPackageAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { pagingPackageAdapter.retry() })
             }
         }
-        lifecycleScope.launch {
-            viewModel.loadsPackages().collectLatest {
-                pagingPackageAdapter.submitData(it)
-            }
-        }
+        loadPackages()
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
             pagingPackageAdapter.refresh()
+        }
+    }
+
+    private fun loadPackages(){
+        lifecycleScope.launch {
+            Stipop.storeNewsViewModel?.loadsPackages()?.collectLatest {
+                pagingPackageAdapter.submitData(it)
+            }
         }
     }
 
@@ -76,6 +84,10 @@ internal class StoreNewStickerFragment : BaseFragment(), PackClickDelegate {
     }
 
     override fun onDownloadClicked(position: Int, stickerPackage: StickerPackage) {
-        viewModel.requestDownloadPackage(stickerPackage)
+        Stipop.storeNewsViewModel?.requestDownloadPackage(stickerPackage)
+    }
+
+    override fun packageAdapterRetry() {
+        pagingPackageAdapter.retry()
     }
 }

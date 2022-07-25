@@ -205,10 +205,5 @@ data class StipopConfigData(
     @Keep
     data class SAuthConfig(
         @SerializedName("isActive") var isActive: Boolean = false,
-        @SerializedName("appId") var appId: String = "",
-        @SerializedName("clientId") var clientId: String = "",
-        @SerializedName("clientSecret") var clientSecret: String = "",
-        @SerializedName("refreshToken") var refreshToken: String = "",
-        @SerializedName("expiryTime") var expiryTime: Int = 3600
     )
 }

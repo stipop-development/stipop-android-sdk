@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
+import io.stipop.Stipop
 import io.stipop.base.Injection
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.FragmentMyStickerBinding
@@ -23,22 +24,24 @@ import io.stipop.adapter.PagingMyPackAdapter
 import io.stipop.adapter.MyLoadStateAdapter
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.event.PackageVisibilityChangeEvent
+import io.stipop.s_auth.SMSFGetMyStickersReRequestDelegate
 import io.stipop.view.viewmodel.StoreMyStickerViewModel
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
+internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate, SMSFGetMyStickersReRequestDelegate {
 
     companion object {
         fun newInstance() = Bundle().let { StoreMyStickerFragment().apply { arguments = it } }
         private const val LAST_VISIBLE_SETTING: String = "last_visible_setting"
         private const val DEFAULT_VISIBLE = true
+
+        var smsfGetMyStickersReRequestDelegate: SMSFGetMyStickersReRequestDelegate? = null
     }
 
     private var binding: FragmentMyStickerBinding? = null
-    private lateinit var viewModelStore: StoreMyStickerViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
     private val pagingMyPackAdapter: PagingMyPackAdapter by lazy { PagingMyPackAdapter(PagingMyPackAdapter.ViewType.STORE, this) }
     private var searchJob: Job? = null
@@ -55,11 +58,13 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        Stipop.storeMyStickerViewModel = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModelStore = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
+        StoreMyStickerFragment.smsfGetMyStickersReRequestDelegate = this
+        Stipop.storeMyStickerViewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
             StoreMyStickerViewModel::class.java
         )
 
@@ -74,7 +79,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
 
         itemTouchHelper = ItemTouchHelper(DragAndDropHelperCallback(pagingMyPackAdapter)).apply { attachToRecyclerView(myStickersRecyclerView) }
 
-        viewModelStore.packageVisibilityChanged.observeForever {
+        Stipop.storeMyStickerViewModel?.packageVisibilityChanged?.observeForever {
             pagingMyPackAdapter.refresh()
             PackageVisibilityChangeEvent.publishEvent(it.second)
         }
@@ -101,7 +106,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
     private fun toggleMyStickers(wantVisibleSticker: Boolean) {
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
-            viewModelStore.loadsPackages(wantVisibleSticker).collectLatest {
+            Stipop.storeMyStickerViewModel?.loadsPackages(wantVisibleSticker)?.collectLatest {
                 pagingMyPackAdapter.submitData(it)
             }
         }
@@ -120,7 +125,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
     }
 
     override fun onVisibilityClicked(wantToVisible: Boolean, packageId: Int, position: Int) {
-        viewModelStore.hideOrRecoverPackage(packageId, position)
+        Stipop.storeMyStickerViewModel?.hideOrRecoverPackage(packageId, position)
     }
 
     override fun onDragStarted(viewHolder: RecyclerView.ViewHolder) {
@@ -128,7 +133,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
     }
 
     override fun onDragCompleted(fromData: Any, toData: Any) {
-        viewModelStore.changePackageOrder(fromData as StickerPackage, toData as StickerPackage)
+        Stipop.storeMyStickerViewModel?.changePackageOrder(fromData as StickerPackage, toData as StickerPackage)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -179,5 +184,12 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate {
             listLL.visibility = View.GONE
             emptyTextView.visibility = View.VISIBLE
         }
+    }
+
+    override fun getMyVisibleStickersRetry() {
+        pagingMyPackAdapter.retry()
+    }
+    override fun getMyHiddenStickersRetry() {
+        pagingMyPackAdapter.retry()
     }
 }

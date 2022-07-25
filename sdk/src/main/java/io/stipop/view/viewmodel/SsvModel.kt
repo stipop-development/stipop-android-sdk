@@ -7,13 +7,16 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
-import io.stipop.data.SAuthRepository
 import io.stipop.data.SearchingRepository
 import io.stipop.delayedTextFlow
 import io.stipop.models.Sticker
 import io.stipop.models.body.UserIdBody
+import io.stipop.models.enum.StipopApiEnum
+import io.stipop.s_auth.GetRecommendedKeywordsEnum
+import io.stipop.s_auth.SAuthManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import retrofit2.HttpException
 
 internal class SsvModel(private val repository: SearchingRepository) : ViewModel() {
 
@@ -23,19 +26,18 @@ internal class SsvModel(private val repository: SearchingRepository) : ViewModel
     var homeDataFlow: MutableLiveData<ArrayList<Any?>> = MutableLiveData()
 
     init {
+        trackViewSearch()
+    }
+
+    internal fun trackViewSearch(){
         taskScope.launch {
             val apiService = StipopApi.create()
-            repository.safeCall(call = { apiService.trackViewSearch(UserIdBody(Stipop.userId)) }, onCompletable = {
-                when(it?.code()){
-                    401 -> {
-                        taskScope.launch {
-                            SAuthRepository.getAccessToken()
-                            repository.safeCall(call = { apiService.trackViewSearch(UserIdBody(Stipop.userId)) },
-                                onCompletable = {})
-                        }
+            repository.safeCall(
+                call = { apiService.trackViewSearch(UserIdBody(Stipop.userId)) }, onCompletable = {
+                    when(it?.code()){
+                        401 -> Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_SEARCH, HttpException(it))
                     }
-                }
-            })
+                })
         }
     }
 
@@ -60,10 +62,19 @@ internal class SsvModel(private val repository: SearchingRepository) : ViewModel
 
     fun getKeywords() {
         viewModelScope.launch {
-            repository.getRecommendQueryAsFlow().collect {
-                homeDataFlow.postValue(arrayListOf(it?.body?.keywordList))
+            try {
+                repository.getRecommendQueryAsFlow().collect {
+                    homeDataFlow.postValue(arrayListOf(it?.body?.keywordList))
+                }
+            } catch(exception: HttpException){
+                when(exception.code()){
+                    401 -> {
+                        SAuthManager.setGetRecommendedKeywordsData(GetRecommendedKeywordsEnum.STICKER_SEARCH_VIEW)
+                        Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_RECOMMENDED_KEYWORDS, exception)
+                    }
+                }
+            } catch(exception: Exception){
             }
         }
     }
-
 }

@@ -4,23 +4,17 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.Constants
+import io.stipop.Stipop
 import io.stipop.StipopUtils
 import io.stipop.adapter.HomeTabAdapter
 import io.stipop.adapter.MyLoadStateAdapter
@@ -28,11 +22,12 @@ import io.stipop.adapter.PagingPackageAdapter
 import io.stipop.base.BaseFragment
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentStoreHomeBinding
-import io.stipop.event.PackageDownloadEvent
-import io.stipop.models.StickerPackage
-import io.stipop.view.viewmodel.StoreHomeViewModel
 import io.stipop.event.KeywordClickDelegate
 import io.stipop.event.PackClickDelegate
+import io.stipop.event.PackageDownloadEvent
+import io.stipop.models.StickerPackage
+import io.stipop.s_auth.SHFGetTrendingStickerPackagesDelegate
+import io.stipop.view.viewmodel.StoreHomeViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -40,14 +35,14 @@ import kotlinx.coroutines.launch
 
 
 internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
-    KeywordClickDelegate {
+    KeywordClickDelegate, SHFGetTrendingStickerPackagesDelegate {
 
     companion object {
         fun newInstance() = StoreHomeFragment()
+        var smfGetTrendingStickerPackagesDelegate: SHFGetTrendingStickerPackagesDelegate? = null
     }
 
     private var binding: FragmentStoreHomeBinding? = null
-    private lateinit var viewModel: StoreHomeViewModel
 
     private val homeTabAdapter: HomeTabAdapter by lazy { HomeTabAdapter(this, this) }
     private val pagingPackageAdapter: PagingPackageAdapter by lazy {
@@ -59,7 +54,7 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
     private var searchJob: Job? = null
     private var backPressCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (viewModel.uiState.isSearchingState) {
+            if (Stipop.storeHomeViewModel?.uiState?.isSearchingState!!) {
                 StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
                 binding?.searchEditText?.setText("")
                 binding?.searchEditText?.clearFocus()
@@ -91,7 +86,8 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
+        StoreHomeFragment.smfGetTrendingStickerPackagesDelegate = this
+        Stipop.storeHomeViewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
             StoreHomeViewModel::class.java
         )
 
@@ -103,12 +99,12 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
                 searchEditText.setText("")
                 StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
             }
-            searchEditText.addTextChangedListener { viewModel.flowQuery(it.toString().trim()) }
+            searchEditText.addTextChangedListener { Stipop.storeHomeViewModel?.flowQuery(it.toString().trim()) }
         }
 
-        lifecycleScope.launch { viewModel.emittedQuery.collect { value -> refreshList(value) } }
+        lifecycleScope.launch { Stipop.storeHomeViewModel?.emittedQuery?.collect { value -> refreshList(value) } }
 
-        viewModel.run {
+        Stipop.storeHomeViewModel?.run {
             getHomeSources()
             homeDataFlow.observeForever { homeTabAdapter.setInitData(it) }
             uiStateFlow.observeForever { uiState ->
@@ -135,7 +131,7 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
     private fun refreshList(query: String? = null) {
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
-            viewModel.loadsPackages(query).collectLatest {
+            Stipop.storeHomeViewModel?.loadsPackages(query)?.collectLatest {
                 pagingPackageAdapter.submitData(it)
             }
         }
@@ -161,9 +157,8 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
     }
 
     override fun onDownloadClicked(position: Int, stickerPackage: StickerPackage) {
-        viewModel.requestDownloadPackage(stickerPackage)
+        Stipop.storeHomeViewModel?.requestDownloadPackage(stickerPackage)
     }
-
 
     override fun onKeywordClicked(keyword: String) {
 
@@ -173,5 +168,13 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
             setText(keyword)
             clearFocus()
         }
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        Stipop.storeHomeViewModel = null
+    }
+
+    override fun trendingPackageAdapterRetry() {
+        pagingPackageAdapter.retry()
     }
 }

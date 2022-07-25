@@ -8,11 +8,12 @@ import io.stipop.*
 import io.stipop.adapter.StorePagerAdapter
 import io.stipop.api.StipopApi
 import io.stipop.base.BaseFragmentActivity
-import io.stipop.data.SAuthRepository
 import io.stipop.databinding.ActivityStoreBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.body.UserIdBody
+import io.stipop.models.enum.StipopApiEnum
 import kotlinx.coroutines.*
+import retrofit2.HttpException
 
 internal class StoreActivity : BaseFragmentActivity() {
 
@@ -26,7 +27,6 @@ internal class StoreActivity : BaseFragmentActivity() {
         binding = ActivityStoreBinding.inflate(layoutInflater)
         setContentView(binding.root)
         mainScope.launch {
-            SAuthRepository.getAccessToken()
         with(binding) {
             storeViewPager.adapter = storeAdapter
             TabLayoutMediator(storeTabLayout, storeViewPager) { tab, position ->
@@ -74,35 +74,46 @@ internal class StoreActivity : BaseFragmentActivity() {
     private val callBack = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
-            val userId = Stipop.userId
-            scope.launch {
-
                 when (position) {
                     StorePagerAdapter.POSITION_ALL_STICKERS -> {
-                        val apiService = StipopApi.create()
-                        val response = apiService.trackViewStore(UserIdBody(userId))
-                        if(response.code() == 401){
-                            SAuthRepository.getAccessToken()
-                            apiService.trackViewStore(UserIdBody(userId))
-                        }
+                        trackViewStore()
                     }
                     StorePagerAdapter.POSITION_NEW_STICKERS -> {
-                        val apiService = StipopApi.create()
-                        val response = apiService.trackViewNew(UserIdBody(userId))
-                        if(response.code() == 401){
-                            SAuthRepository.getAccessToken()
-                            apiService.trackViewNew(UserIdBody(userId))
-                        }
+                        trackViewNew()
                     }
                     StorePagerAdapter.POSITION_MY_STICKERS -> {
-                        val apiService = StipopApi.create()
-                        val response = apiService.trackViewMySticker(UserIdBody(userId))
-                        if(response.code() == 401){
-                            SAuthRepository.getAccessToken()
-                            apiService.trackViewMySticker(UserIdBody(userId))
-                        }
+                        trackViewSticker()
                     }
                 }
+            }
+        }
+
+    internal fun trackViewStore(){
+        scope.launch {
+            val apiService = StipopApi.create()
+            val response = apiService.trackViewStore(UserIdBody(Stipop.userId))
+            if (response.code() == 401) {
+                Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_STORE, HttpException(response))
+            }
+        }
+    }
+
+    internal fun trackViewNew(){
+        scope.launch {
+            val apiService = StipopApi.create()
+            val response = apiService.trackViewNew(UserIdBody(Stipop.userId))
+            if(response.code() == 401){
+                Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_NEW, HttpException(response))
+            }
+        }
+    }
+
+    internal fun trackViewSticker(){
+        scope.launch {
+            val apiService = StipopApi.create()
+            val response = apiService.trackViewMySticker(UserIdBody(Stipop.userId))
+            if(response.code() == 401){
+                Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_MY_STICKER, HttpException(response))
             }
         }
     }

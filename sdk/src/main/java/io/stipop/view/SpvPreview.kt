@@ -89,7 +89,7 @@ internal class SpvPreview(
         )
     }
 
-    private fun updateFavorite() {
+    fun updateFavorite() {
         currentSticker?.let {
             stickerPickerViewModel.putFavorites(it, onSuccess = { spSticker ->
                 activity.runOnUiThread {

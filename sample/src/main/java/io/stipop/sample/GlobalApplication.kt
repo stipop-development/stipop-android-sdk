@@ -1,49 +1,43 @@
 package io.stipop.sample
 
-import android.app.Activity
-import android.app.Application
-import android.os.Bundle
 import android.util.Log
 import androidx.multidex.MultiDexApplication
 import io.stipop.Stipop
+import io.stipop.event.SAuthDelegate
+import io.stipop.models.enum.StipopApiEnum
+import io.stipop.s_auth.SAuthManager
+import io.stipop.sample.stipop_auth.SAuthRepository
+import kotlinx.coroutines.*
+import retrofit2.HttpException
 
-class GlobalApplication : MultiDexApplication(),
-    Application.ActivityLifecycleCallbacks
-{
+class GlobalApplication : MultiDexApplication(), SAuthDelegate {
+
+    companion object {
+        var userId = "-1"
+    }
 
     override fun onCreate() {
         super.onCreate()
-        registerActivityLifecycleCallbacks(this)
-        Stipop.configure(this, callback = {
-            Log.d(this.javaClass.name, "Use callback if you need.")
-        })
+        Stipop.configure(this,
+            sAuthDelegate = this,   // If you do not use SAuth, type null
+            callback = {
+                Log.d(this.javaClass.name, "Use callback if you need.")
+            })
     }
 
-    override fun onActivityCreated(p0: Activity, p1: Bundle?) {
-    }
-
-    override fun onActivityStarted(p0: Activity) {
-    }
-
-    override fun onActivityResumed(p0: Activity) {
-    }
-
-    override fun onActivityPaused(p0: Activity) {
-    }
-
-    override fun onActivityStopped(p0: Activity) {
-    }
-
-    override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {
-    }
-
-    override fun onActivityDestroyed(p0: Activity) {
-        hideKeyboard()
-    }
-    private fun hideKeyboard(){
-        val keyboardPickerViewHeight = Stipop.getCurrentKeyboardHeight()
-        if(keyboardPickerViewHeight != 0) {
-            Stipop.hide()
+    /* If you use SAuth, implement this function and refresh accessToken when authorization error occured. */
+    override fun httpException(api: StipopApiEnum, exception: HttpException) {
+        when(exception.code()){
+            401 -> {
+                CoroutineScope(Job() + Dispatchers.IO).launch {
+                    while(SAuthRepository.getIsSAuthWorking()){
+                        delay(50)
+                    }
+                    val accessToken = SAuthRepository.getAccessTokenIfOverExpiryTime(userId = userId)
+                    Stipop.setAccessToken(accessToken = accessToken)
+                    SAuthManager.reRequest(api)
+                }
+            }
         }
     }
 }

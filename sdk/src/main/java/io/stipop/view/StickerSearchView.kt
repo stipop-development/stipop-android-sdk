@@ -1,7 +1,6 @@
 package io.stipop.view
 
 import android.app.Dialog
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -9,8 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -27,11 +24,13 @@ import io.stipop.*
 import io.stipop.adapter.HomeTabAdapter
 import io.stipop.adapter.PagingStickerAdapter
 import io.stipop.adapter.StickerDefaultAdapter
-import io.stipop.base.BaseBottomSheetDialogFragment
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentSearchViewBinding
 import io.stipop.event.KeywordClickDelegate
 import io.stipop.models.SPSticker
+import io.stipop.s_auth.SSVAdapterReRequestDelegate
+import io.stipop.s_auth.SSVOnStickerTapReRequestDelegate
+import io.stipop.s_auth.TrackUsingStickerEnum
 import io.stipop.view.viewmodel.SsvModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -40,16 +39,20 @@ import kotlinx.coroutines.launch
 
 class StickerSearchView : BottomSheetDialogFragment(),
     StickerDefaultAdapter.OnStickerClickListener,
+    SSVOnStickerTapReRequestDelegate,
+    SSVAdapterReRequestDelegate,
     KeywordClickDelegate {
 
     private var binding: FragmentSearchViewBinding? = null
-    private lateinit var viewModel: SsvModel
+    internal var viewModel: SsvModel? = null
     private var searchJob: Job? = null
     private val stickerAdapter: PagingStickerAdapter by lazy { PagingStickerAdapter(this) }
     private val keywordsAdapter: HomeTabAdapter by lazy { HomeTabAdapter(null, this) }
 
     companion object {
         fun newInstance() = StickerSearchView()
+        var ssvOnStickerTapReRequestDelegate: SSVOnStickerTapReRequestDelegate? = null
+        var ssvAdapterReRequestDelegate: SSVAdapterReRequestDelegate? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +63,8 @@ class StickerSearchView : BottomSheetDialogFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         applyTheme()
+        ssvOnStickerTapReRequestDelegate = this
+        ssvAdapterReRequestDelegate = this
         viewModel = ViewModelProvider(
             this,
             Injection.provideViewModelFactory(owner = this)
@@ -79,16 +84,16 @@ class StickerSearchView : BottomSheetDialogFragment(),
                 StipopUtils.hideKeyboard(requireActivity())
                 binding?.searchEditText?.clearFocus()
             }
-            searchEditText.addTextChangedListener { viewModel.flowQuery(it.toString().trim()) }
+            searchEditText.addTextChangedListener { viewModel!!.flowQuery(it.toString().trim()) }
         }
         lifecycleScope.launch {
-            viewModel.emittedQuery.collect { value ->
+            viewModel?.emittedQuery?.collect { value ->
                 refreshList(value)
             }
         }
-        viewModel.homeDataFlow.observeForever { keywordsAdapter.setInitData(it) }
+        viewModel?.homeDataFlow?.observeForever { keywordsAdapter.setInitData(it) }
         if (!Config.searchTagsHidden) {
-            viewModel.getKeywords()
+            viewModel?.getKeywords()
         }
 
         StipopUtils.hideKeyboard(requireActivity())
@@ -103,7 +108,7 @@ class StickerSearchView : BottomSheetDialogFragment(),
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
             stickerAdapter.submitData(PagingData.empty())
-            viewModel.loadStickers(query).collectLatest {
+            viewModel?.loadStickers(query)?.collectLatest {
                 stickerAdapter.submitData(it)
             }
         }
@@ -195,8 +200,8 @@ class StickerSearchView : BottomSheetDialogFragment(),
 
     override fun onStickerSingleTap(position: Int, spSticker: SPSticker) {
         Stipop.send(
-            spSticker.stickerId,
-            spSticker.keyword,
+            TrackUsingStickerEnum.STICKER_SEARCH_VIEW_SINGLE_TAP,
+            spSticker,
             Constants.Point.SEARCH_VIEW
         ) { result ->
             if (result) {
@@ -208,8 +213,8 @@ class StickerSearchView : BottomSheetDialogFragment(),
 
     override fun onStickerDoubleTap(position: Int, spSticker: SPSticker) {
         Stipop.send(
-            spSticker.stickerId,
-            spSticker.keyword,
+            TrackUsingStickerEnum.STICKER_SEARCH_VIEW_DOUBLE_TAP,
+            spSticker,
             Constants.Point.SEARCH_VIEW
         ) { result ->
             if (result) {
@@ -217,5 +222,20 @@ class StickerSearchView : BottomSheetDialogFragment(),
                 dismiss()
             }
         }
+    }
+    override fun ssvOnStickerSingleTapReRequest(position: Int, spSticker: SPSticker) {
+        onStickerSingleTap(position, spSticker)
+    }
+
+    override fun ssvOnStickerDoubleTapReRequest(position: Int, spSticker: SPSticker) {
+        onStickerDoubleTap(position, spSticker)
+    }
+
+    override fun stickerAdapterRetry() {
+        stickerAdapter.retry()
+    }
+
+    override fun keywordAdapterRefresh() {
+        viewModel?.getKeywords()
     }
 }

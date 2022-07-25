@@ -47,9 +47,6 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDelegate {
 
-    @SuppressLint("SimpleDateFormat")
-    private lateinit var userID: String
-
     private val TAG: String = "MainActivity"
 
     // This Code below is used to configure the sample app, so you can ignore it.
@@ -77,7 +74,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
     private fun bundleInit(){
         val bundle = intent.extras
 
-        userID = bundle!!.getString("user_id", "someone_user_id")
+        GlobalApplication.userId = bundle!!.getString("user_id", "someone_user_id")
 
     }
 
@@ -88,7 +85,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         val fragment = supportFragmentManager.findFragmentById(R.id.picker_view_fragment) as StickerPickerCustomFragment
         Stipop.connect(
             activity = this,
-            userId = userID,
+            userId = GlobalApplication.userId,
             delegate = this,
             stipopButton = stipopPickerImageView,
             stickerPickerCustomFragment = fragment,
@@ -152,7 +149,7 @@ class MainActivity : AppCompatActivity(), StipopDelegate, ChatAdapter.GuideDeleg
         setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        when(userID){
+        when(GlobalApplication.userId){
             "someone_user_id" -> nameTextView.text = "Common user"
             else -> nameTextView.text = "Random user"
         }

@@ -10,9 +10,7 @@ import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
 import io.stipop.models.response.CurationPackageResponse
 import io.stipop.models.response.KeywordListResponse
-import io.stipop.models.response.StickerPackagesResponse
 import io.stipop.models.response.StipopResponse
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 
 internal class PkgRepository(private val apiService: StipopApi) : BaseRepository() {
@@ -52,20 +50,20 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
             })
     }
 
-    @FlowPreview
-    suspend fun getPackagesAsFlow(page: Int): Flow<StickerPackagesResponse?> {
-        return safeCallAsFlow(
-            call = {
-                apiService.getTrendingStickerPackages(
-                    userId = Stipop.userId,
-                    lang = Stipop.lang,
-                    countryCode = Stipop.countryCode,
-                    pageNumber = page,
-                    limit = Constants.ApiParams.SizePerPage,
-                    query = null
-                )
-            })
-    }
+//    @FlowPreview
+//    suspend fun getPackagesAsFlow(page: Int): Flow<StickerPackagesResponse?> {
+//        return safeCallAsFlow(
+//            call = {
+//                apiService.getTrendingStickerPackages(
+//                    userId = Stipop.userId,
+//                    lang = Stipop.lang,
+//                    countryCode = Stipop.countryCode,
+//                    pageNumber = page,
+//                    limit = Constants.ApiParams.SizePerPage,
+//                    query = null
+//                )
+//            })
+//    }
 
     suspend fun getRecommendQueryAsFlow(): Flow<KeywordListResponse?> {
         return safeCallAsFlow(
@@ -90,7 +88,8 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
                 Config.pngPrice
             }
         }
-        safeCall(call = {
+        safeCall(
+            call = {
                 apiService.postDownloadStickers(
                     packageId = stickerPackage.packageId,
                     isPurchase = Config.allowPremium,

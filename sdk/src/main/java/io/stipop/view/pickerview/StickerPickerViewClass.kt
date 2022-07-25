@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -27,6 +28,8 @@ import io.stipop.event.MyPackEventDelegate
 import io.stipop.event.PreviewDelegate
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
+import io.stipop.models.enum.StipopApiEnum
+import io.stipop.s_auth.*
 import io.stipop.view.SpvPreview
 import io.stipop.view.StoreActivity
 import io.stipop.view.pickerview.listener.VisibleStateListener
@@ -36,6 +39,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 enum class PickerViewType {
     CUSTOM, ON_KEYBOARD
@@ -49,11 +53,17 @@ internal class StickerPickerViewClass(
     val pickerView: ViewPickerBinding
 ): StickerDefaultAdapter.OnStickerClickListener,
     MyPackEventDelegate,
+    SPVRecentStickerAdapterReRequestDelegate,
+    SPVGetMyStickersReRequestDelegate,
     PreviewDelegate
 {
 
-    private val stickerPickerViewModel: StickerPickerViewModel by lazy { StickerPickerViewModel() }
-    private val stickerPickerViewPreview: SpvPreview by lazy { SpvPreview(activity, this, stickerPickerViewModel) }
+    companion object {
+        var spvRecentStickerAdapterReRequestDelegate: SPVRecentStickerAdapterReRequestDelegate? = null
+        var spvGetMyStickersReRequestDelegate: SPVGetMyStickersReRequestDelegate? = null
+    }
+
+    var stickerPickerViewPreview: SpvPreview? = null
 
     private val stickerAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter(this) }
     private val packAdapter: PagingMyPackAdapter by lazy { PagingMyPackAdapter(PagingMyPackAdapter.ViewType.SPV,this) }
@@ -65,7 +75,8 @@ internal class StickerPickerViewClass(
     var delegate: VisibleStateListener? = null
 
     init {
-
+        StickerPickerViewClass.spvRecentStickerAdapterReRequestDelegate = this
+        StickerPickerViewClass.spvGetMyStickersReRequestDelegate = this
         when(type){
             PickerViewType.ON_KEYBOARD -> pickerKeyboardViewInit()
             PickerViewType.CUSTOM -> {}
@@ -91,6 +102,10 @@ internal class StickerPickerViewClass(
 
     private fun commonInit(){
 
+        Stipop.stickerPickerViewModel = StickerPickerViewModel()
+        Stipop.stickerPickerViewModel?.let {
+            stickerPickerViewPreview = SpvPreview(activity, this, it)
+        }
         applyTheme()
 
         with(pickerView) {
@@ -112,7 +127,7 @@ internal class StickerPickerViewClass(
             }
         }
         ioScope.launch {
-            stickerPickerViewModel.loadMyPackages().collectLatest {
+            Stipop.stickerPickerViewModel?.loadMyPackages()?.collectLatest {
                 launch(Dispatchers.Main) {
                     packAdapter.submitData(it)
                 }
@@ -210,51 +225,64 @@ internal class StickerPickerViewClass(
 
     private fun refreshData() {
         getRecentFavorite(false)
-        packAdapter.updateSelected()
-        packAdapter.refresh()
+        packAdapterRefresh()
     }
 
-    private fun getRecentFavorite(isClickedRequest: Boolean) {
+    internal fun getRecentFavorite(isClickedRequest: Boolean) {
         pickerView.progressBar.isVisible = false
         stickerAdapter.clearData()
         when (pickerView.recentFavoriteContainer.tag) {
             Constants.Tag.RECENT -> {
-                stickerPickerViewModel.loadRecent(onSuccess = {
-                    pickerView.progressBar.isVisible = false
-                    if (it.isEmpty()) {
-                        pickerView.emptyListTextView.isVisible = true
-                        initialize(!isClickedRequest)
-                    } else {
-                        applyRecentFavoriteTheme()
-                        it.forEach {
-                            stickerAdapter.updateData(it)
+                Stipop.stickerPickerViewModel?.loadRecent(
+                    isClickedRequest = isClickedRequest,
+                    onSuccess = {
+                        pickerView.progressBar.isVisible = false
+                        if (it.isEmpty()) {
+                            pickerView.emptyListTextView.isVisible = true
+                            initialize(!isClickedRequest)
+                        } else {
+                            applyRecentFavoriteTheme()
+                            it.forEach {
+                                stickerAdapter.updateData(it)
+                            }
                         }
-                    }
-                })
+                    })
             }
             Constants.Tag.FAVORITE -> {
-                stickerPickerViewModel.loadFavorites(onSuccess = {
-                    pickerView.progressBar.isVisible = false
-                    if (it.isEmpty()) {
-                        initialize(!isClickedRequest)
-                    } else {
-                        applyRecentFavoriteTheme()
-                        it.forEach {
-                            stickerAdapter.updateData(it)
-                        }
-                    }
-                })
+                loadFavorites(isClickedRequest)
             }
         }
     }
 
+    internal fun loadFavorites(isClickedRequest: Boolean){
+        Stipop.stickerPickerViewModel?.loadFavorites(
+            isClickedRequest = isClickedRequest,
+            onSuccess = {
+                pickerView.progressBar.isVisible = false
+                if (it.isEmpty()) {
+                    initialize(!isClickedRequest)
+                } else {
+                    applyRecentFavoriteTheme()
+                    it.forEach {
+                        stickerAdapter.updateData(it)
+                    }
+                }
+            })
+    }
+
+    internal fun packAdapterRefresh(){
+        packAdapter.updateSelected()
+        packAdapter.refresh()
+    }
     private fun initialize(isFirst: Boolean? = false) {
         if (isFirst == true) {
-            if (stickerPickerViewModel.recentStickers.isEmpty() && !packAdapter.isSelectedItemExist()) {
-                packAdapter.getItemByPosition(0)?.let {
-                    when(type){
-                        PickerViewType.CUSTOM -> {}
-                        PickerViewType.ON_KEYBOARD -> onPackageClick(0, it)
+            Stipop.stickerPickerViewModel?.let {
+                if (it.recentStickers.isEmpty() && !packAdapter.isSelectedItemExist()) {
+                    packAdapter.getItemByPosition(0)?.let {
+                        when (type) {
+                            PickerViewType.CUSTOM -> {}
+                            PickerViewType.ON_KEYBOARD -> onPackageClick(0, it)
+                        }
                     }
                 }
             }
@@ -273,14 +301,18 @@ internal class StickerPickerViewClass(
             return
         }
         if (Stipop.currentPickerViewHeight > 0) {
-            showPickerViewCommonFunction()
-            stickerPickerKeyboardView?.showAtLocation(
-                activity.window.decorView.findViewById(android.R.id.content) as View,
-                Gravity.TOP,
-                0,
-                y
-            )
-            stickerPickerViewPreview.spvTopCoordinate = stickerPickerKeyboardView?.height ?: 0
+            try {
+                showPickerViewCommonFunction()
+                stickerPickerKeyboardView?.showAtLocation(
+                    activity.window.decorView.findViewById(android.R.id.content) as View,
+                    Gravity.TOP,
+                    0,
+                    y
+                )
+                stickerPickerViewPreview?.spvTopCoordinate = stickerPickerKeyboardView?.height ?: 0
+            } catch(exception: Exception){
+
+            }
         }
     }
 
@@ -295,7 +327,7 @@ internal class StickerPickerViewClass(
 
     private fun showPickerViewCommonFunction(){
         refreshData()
-        stickerPickerViewModel.trackSpv()
+        Stipop.stickerPickerViewModel?.trackSpv()
         delegate?.onSpvVisibleState(true)
     }
 
@@ -320,7 +352,7 @@ internal class StickerPickerViewClass(
     }
 
     private fun dismissCommonFunction(){
-        stickerPickerViewPreview.dismiss()
+        stickerPickerViewPreview?.dismiss()
         packAdapter.updateSelected()
         delegate?.onSpvVisibleState(false)
     }
@@ -338,17 +370,18 @@ internal class StickerPickerViewClass(
 
     private fun sendSticker(spSticker: SPSticker) {
         Stipop.send(
-            spSticker.stickerId,
-            spSticker.keyword,
+            TrackUsingStickerEnum.STICKER_PICKER_VIEW_CLASS_SINGLE_TAP,
+            spSticker,
             Constants.Point.PICKER_VIEW
         ) { result ->
             if (result) {
                 Stipop.instance?.delegate?.onStickerSingleTapped(spSticker)
-                stickerPickerViewModel.saveRecent(spSticker)
-                stickerPickerViewPreview.dismiss()
+                Stipop.stickerPickerViewModel?.saveRecent(spSticker)
+                stickerPickerViewPreview?.dismiss()
             }
         }
     }
+
     private fun showStore(startingPosition: Int) {
         dismiss()
         Intent(activity, StoreActivity::class.java).apply {
@@ -360,9 +393,11 @@ internal class StickerPickerViewClass(
 
     override fun onStickerSingleTap(position: Int, spSticker: SPSticker) {
         if (Config.showPreview) {
-            val isSame = stickerPickerViewPreview.showOrUpdate(spSticker)
-            if (isSame) {
-                sendSticker(spSticker)
+            stickerPickerViewPreview?.let {
+                val isSame = it.showOrUpdate(spSticker)
+                if (isSame) {
+                    sendSticker(spSticker)
+                }
             }
         } else {
             sendSticker(spSticker)
@@ -370,21 +405,34 @@ internal class StickerPickerViewClass(
     }
 
     override fun onStickerDoubleTap(position: Int, spSticker: SPSticker) {
-        Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker)
+        Stipop.send(
+            TrackUsingStickerEnum.STICKER_PICKER_VIEW_CLASS_DOUBLE_TAP,
+            spSticker,
+            Constants.Point.SEARCH_VIEW
+        ) { result ->
+            if (result) {
+                Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker)
+                dismiss()
+            }
+        }
     }
 
     override fun onPackageClick(position: Int, stickerPackage: StickerPackage) {
         with(pickerView) {
             emptyListTextView.isVisible = false
             progressBar.isVisible = true
-            recentFavoriteContainer.setBackgroundColor(android.graphics.Color.parseColor(io.stipop.Config.themeGroupedContentBackgroundColor))
+            recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
             recentStickerImageView.clearTint()
             smallRecently.clearTint()
             smallFavorite.clearTint()
         }
         packAdapter.updateSelected(position)
         stickerAdapter.clearData()
-        stickerPickerViewModel.loadStickerPackage(stickerPackage, onSuccess = {
+        loadStickerPackage(stickerPackage)
+    }
+
+    internal fun loadStickerPackage(stickerPackage: StickerPackage){
+        Stipop.stickerPickerViewModel?.loadStickerPackage(stickerPackage, onSuccess = {
             showStickers(it)
         })
     }
@@ -406,7 +454,7 @@ internal class StickerPickerViewClass(
     }
 
     override fun onDragCompleted(fromData: Any, toData: Any) {
-        stickerPickerViewModel.changePackageOrder(fromData as StickerPackage, toData as StickerPackage)
+        Stipop.stickerPickerViewModel?.changePackageOrder(fromData as StickerPackage, toData as StickerPackage)
     }
 
     override fun onPreviewFavoriteChanged(sticker: SPSticker) {
@@ -417,5 +465,13 @@ internal class StickerPickerViewClass(
 
     override fun onPreviewStickerClicked(sticker: SPSticker) {
         sendSticker(sticker)
+    }
+
+    override fun recentStickerAdapterRetry() {
+        //
+    }
+
+    override fun getMyStickersRetry() {
+        packAdapter.retry()
     }
 }

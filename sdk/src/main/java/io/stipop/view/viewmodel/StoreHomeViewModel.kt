@@ -5,14 +5,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import io.stipop.Stipop
 import io.stipop.data.PkgRepository
 import io.stipop.delayedTextFlow
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
+import io.stipop.models.enum.StipopApiEnum
+import io.stipop.s_auth.PostDownloadStickersEnum
+import io.stipop.s_auth.SAuthManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewModel() {
 
@@ -45,16 +50,28 @@ internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewM
 
     fun getHomeSources() {
         viewModelScope.launch {
-            combineTransform(
-                repository.getRecommendQueryAsFlow(),
-                repository.getCurationPackagesAsFlow("a"),
-                repository.getCurationPackagesAsFlow("b")
-            ) { value1, value2, value3 ->
-                arrayListOf(value1?.body?.keywordList, value2?.body?.card, value3?.body?.card).run {
-                    emit(this)
+            try {
+                combineTransform(
+                    repository.getRecommendQueryAsFlow(),
+                    repository.getCurationPackagesAsFlow("a"),
+                    repository.getCurationPackagesAsFlow("b")
+                ) { value1, value2, value3 ->
+                    arrayListOf(
+                        value1?.body?.keywordList,
+                        value2?.body?.card,
+                        value3?.body?.card
+                    ).run {
+                        emit(this)
+                    }
+                }.collectLatest {
+                    homeDataFlow.postValue(it)
                 }
-            }.collectLatest {
-                homeDataFlow.postValue(it)
+            } catch(exception: HttpException){
+                when(exception.code()){
+                    401 -> Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_HOME_SOURCES, exception)
+                }
+            } catch(exception: Exception){
+
             }
         }
     }
@@ -70,10 +87,19 @@ internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewM
 
     fun requestDownloadPackage(stickerPackage: StickerPackage) {
         viewModelScope.launch {
-            repository.postDownloadStickers(stickerPackage) {
-                it?.let { response ->
-                    if (response.header.isSuccess()) {
-                        PackageDownloadEvent.publishEvent(stickerPackage.packageId)
+            try {
+                repository.postDownloadStickers(stickerPackage) {
+                    it?.let { response ->
+                        if (response.header.isSuccess()) {
+                            PackageDownloadEvent.publishEvent(stickerPackage.packageId)
+                        }
+                    }
+                }
+            } catch(exception: HttpException){
+                when(exception.code()){
+                    401 -> {
+                        SAuthManager.setPostDownloadStickersData(PostDownloadStickersEnum.STORE_HOME_VIEW_MODEL, stickerPackage)
+                        Stipop.sAuthDelegate?.httpException(StipopApiEnum.POST_DOWNLOAD_STICKERS, exception)
                     }
                 }
             }

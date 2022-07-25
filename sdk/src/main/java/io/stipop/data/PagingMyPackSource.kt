@@ -5,6 +5,7 @@ import androidx.paging.PagingState
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
+import io.stipop.models.enum.StipopApiEnum
 import io.stipop.models.response.MyStickerResponse
 import retrofit2.HttpException
 import java.io.IOException
@@ -39,14 +40,13 @@ internal class PagingMyPackSource(private val apiService: StipopApi, private val
                         limit = limit,
                         pageNumber = pageNumber
                     )
-                }catch(exception: HttpException){
-                    SAuthRepository.getAccessToken()
-                    response = apiService.getMyStickers(
-                        userId = userId,
-                        userIdQuery = userId,
-                        limit = limit,
-                        pageNumber = pageNumber
-                    )
+                } catch(exception: HttpException){
+                    when(exception.code()){
+                        401 -> {
+                            Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_MY_STICKERS, exception)
+                            return LoadResult.Error(exception)
+                        }
+                    }
                 }
             } else {
                 try {
@@ -55,23 +55,23 @@ internal class PagingMyPackSource(private val apiService: StipopApi, private val
                         limit = limit,
                         pageNumber = pageNumber
                     )
-                }catch(exception: HttpException){
-                    SAuthRepository.getAccessToken()
-                    response = apiService.getMyHiddenStickers(
-                        userId = userId,
-                        limit = limit,
-                        pageNumber = pageNumber
-                    )
+                } catch(exception: HttpException){
+                    when(exception.code()){
+                        401 -> {
+                            Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_MY_HIDDEN_STICKERS, exception)
+                            return LoadResult.Error(exception)
+                        }
+                    }
                 }
             }
-            val myStickers = response?.body?.packageList
+            val myStickers = response.body.packageList
             val nextKey = if (myStickers.isNullOrEmpty()) {
                 null
             } else {
                 pageNumber + 1
             }
             LoadResult.Page(
-                data = myStickers!!,
+                data = myStickers,
                 prevKey = if (pageNumber == STARTING_PAGE_INDEX) null else pageNumber - 1,
                 nextKey = nextKey
             )
