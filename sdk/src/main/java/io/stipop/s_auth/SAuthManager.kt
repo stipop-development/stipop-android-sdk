@@ -1,6 +1,5 @@
 package io.stipop.s_auth
 
-import android.util.Log
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.SPSticker
@@ -15,6 +14,8 @@ import io.stipop.view.pickerview.StickerPickerViewClass
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
 interface SPVRecentStickerAdapterReRequestDelegate {
     fun recentStickerAdapterRetry()
@@ -102,11 +103,20 @@ class SAuthManager {
         private var trackUsingStickerEnum: TrackUsingStickerEnum? = null
         private var trackUsingStickerSPSticker: SPSticker? = null
 
+        private var trackErrorException: Exception? = null
+
+        private var retryTime: String = ""
+        private var retryCountInMinutes: Int = 0
+
         internal fun setAccessToken(accessToken: String){
             StipopApi.setAccessToken(accessToken)
         }
 
         fun reRequest(api: StipopApiEnum){
+            retryCount()
+            if(retryCountInMinutes >= 30){
+                return
+            }
 
             when (api) {
                 StipopApiEnum.INIT_SDK -> initSDK()
@@ -132,7 +142,17 @@ class SAuthManager {
                 StipopApiEnum.TRACK_VIEW_MY_STICKER -> trackViewMySticker()
                 StipopApiEnum.TRACK_VIEW_PACKAGE -> trackViewPackage()
                 StipopApiEnum.TRACK_USING_STICKER -> postTrackUsingSticker()
+                StipopApiEnum.TRACK_ERROR -> trackError()
             }
+        }
+
+        private fun retryCount(){
+            val currentTime = SimpleDateFormat("HH:mm").format(Date())
+            if(currentTime != retryTime){
+                retryCountInMinutes = 0
+                retryTime = currentTime
+            }
+            retryCountInMinutes++
         }
 
         private fun initSDK(){
@@ -351,6 +371,16 @@ class SAuthManager {
         internal fun setPostTrackUsingStickerData(trackUsingStickerEnum: TrackUsingStickerEnum?, spSticker: SPSticker?){
             this.trackUsingStickerEnum = trackUsingStickerEnum
             this.trackUsingStickerSPSticker = spSticker
+        }
+
+        private fun trackError() {
+            trackErrorException?.let {
+                Stipop.trackError(it)
+            }
+        }
+
+        internal fun setTrackErrorData(exception: Exception){
+            this.trackErrorException = exception
         }
     }
 }

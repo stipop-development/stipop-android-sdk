@@ -1,6 +1,5 @@
 package io.stipop.sample.stipop_auth
 
-import com.google.gson.annotations.SerializedName
 import io.stipop.sample.stipop_auth.api.StipopSampleApi
 import io.stipop.sample.stipop_auth.model.GetAccessTokenAPIBody
 import io.stipop.sample.stipop_auth.model.GetNewAccessTokenResponse
@@ -13,7 +12,7 @@ class SAuthRepository {
         private var clientId: String = "YOUR_APP_CLIENT_ID"
         private var clientSecret: String = "YOUR_APP_CLIENT_SECRET"
         private var refreshToken: String = "YOUR_APP_REFRESH_TOKEN"
-        private var expiryTime: Int = 3600
+        private var expiryTime: Int = 86400
 
         private var isSAuthWorking = false
 

@@ -74,6 +74,7 @@ internal class SsvModel(private val repository: SearchingRepository) : ViewModel
                     }
                 }
             } catch(exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }

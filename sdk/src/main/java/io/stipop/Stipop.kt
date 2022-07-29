@@ -16,6 +16,7 @@ import io.stipop.data.ConfigRepository
 import io.stipop.event.SAuthDelegate
 import io.stipop.models.SPSticker
 import io.stipop.models.body.InitSdkBody
+import io.stipop.models.body.TrackErrorBody
 import io.stipop.models.enum.StipopApiEnum
 import io.stipop.s_auth.SAuthManager
 import io.stipop.s_auth.TrackUsingStickerEnum
@@ -26,11 +27,10 @@ import io.stipop.view.pickerview.StickerPickerKeyboardView
 import io.stipop.view.pickerview.StickerPickerViewClass
 import io.stipop.view.pickerview.listener.VisibleStateListener
 import io.stipop.view.viewmodel.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.HttpException
+import java.io.PrintWriter
+import java.io.StringWriter
 import java.util.*
 
 
@@ -78,16 +78,16 @@ class Stipop(
 
         private var inputMode: WindowSoftInputModeAdjustEnum? = null
 
-        suspend fun setAccessToken(accessToken: String){
+        private var canRetryIfConnectFailed = true
+
+        fun setAccessToken(accessToken: String){
             SAuthManager.setAccessToken(accessToken)
         }
 
         fun configure(context: Context, sAuthDelegate: SAuthDelegate? = null, callback: ((isSuccess: Boolean) -> Unit)? = null) {
-
             sAuthDelegate?.let {
                 this.sAuthDelegate = it
             }
-
             mainScope.launch {
                 configRepository.postConfigSdk()
 
@@ -95,11 +95,8 @@ class Stipop(
                     configRepository.isConfigured = result
                     callback?.let { callback -> callback(result) }
                 })
-
             }
         }
-
-        private var canRetryIfConnectFailed = true
 
         fun connect(
             activity: FragmentActivity,
@@ -130,11 +127,20 @@ class Stipop(
                 }
             } else {
                 Log.v("STIPOP-SDK", "Stipop SDK connect succeeded. You can use SDK by calling Stipop.showKeyboard() or Stipop.showSearch() and implementing StipopDelegate interface.")
-                applicationContext = activity.applicationContext
-                mainScope.launch {
-                    postInitSDK()
-                    Stipop(activity, stipopButton, delegate).apply {
-                        when(Config.pickerViewLayoutOnKeyboard){
+                connectSuccessInit(activity, stipopButton, delegate, taskCallBack)
+            }
+        }
+
+        private fun connectSuccessInit(activity: FragmentActivity,
+                                       stipopButton: StipopImageView?,
+                                       stipopDelegate: StipopDelegate,
+                                       taskCallBack: ((isSuccess: Boolean) -> Unit)?){
+            applicationContext = activity.applicationContext
+            mainScope.launch {
+                postInitSDK()
+                try {
+                    Stipop(activity, stipopButton, stipopDelegate).apply {
+                        when (Config.pickerViewLayoutOnKeyboard) {
                             true -> {
                                 stickerPickerKeyboardView = StickerPickerKeyboardView(activity)
                                 stickerPickerKeyboardView?.setDelegate(this)
@@ -151,6 +157,8 @@ class Stipop(
                         instance = this
                         taskCallBack?.let { it(true) }
                     }
+                } catch(exception: Exception){
+                    trackError(exception)
                 }
             }
         }
@@ -187,8 +195,9 @@ class Stipop(
 
         fun hide() = instance?.hidePickerView()
 
-        fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) =
+        fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) {
             instance?.showStickerPackage(fragmentManager, packageId)
+        }
 
         internal fun send(
             trackUsingStickerEnum: TrackUsingStickerEnum,
@@ -228,8 +237,18 @@ class Stipop(
             Stipop.keyboardHeightDelegate = keyboardHeightDelegate
         }
 
-        fun getCurrentKeyboardHeight(): Int{
-            return currentPickerViewHeight
+        internal fun trackError(exception: Exception){
+            val stringWriter = StringWriter()
+            exception.printStackTrace(PrintWriter(stringWriter))
+            val exceptionAsString: String = stringWriter.toString()
+
+            GlobalScope.launch {
+                val response = StipopApi.create().trackError(Stipop.userId, TrackErrorBody(exceptionAsString))
+                if(response.code() == 401){
+                    SAuthManager.setTrackErrorData(exception)
+                    Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_ERROR, HttpException((response)))
+                }
+            }
         }
     }
 
@@ -238,6 +257,8 @@ class Stipop(
 
     private var spvAdditionalHeightOffset = 0
     private lateinit var rootView: View
+
+    private val fullSizeHeight = StipopUtils.getScreenHeight(activity)
 
     private fun connectIcon() {
         stipopButton?.setImageResource(Config.getStickerIconResourceId(activity))
@@ -258,32 +279,46 @@ class Stipop(
             inputMode = WindowSoftInputModeUtils().isInputSoftModeNothing(inputValue)
         }
     }
+
     private fun getStickerPickerKeyboardViewHeight(){
-        if(inputMode == WindowSoftInputModeAdjustEnum.ADJUST_NOTHING){
-            getStickerPickerKeyboardViewHeightAdjustNothing()
-        } else {
-            getStickerPickerKeyboardViewHeightAdjust()
+        try {
+            if(inputMode == WindowSoftInputModeAdjustEnum.ADJUST_NOTHING){
+                getStickerPickerKeyboardViewHeightAdjustNothing()
+            } else {
+                getStickerPickerKeyboardViewHeightAdjust()
+            }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
+    }
+
+    private fun getStickerPickerKeyboardViewHeightAdjustNothing() {
+        StipopHeightProvider(activity, StipopHeightProviderTypeEnum.FROM_TOP_TO_VISIBLE_FRAME_PX).init().setHeightListener(object: StipopHeightProvider.StipopHeightListener{
+            override fun onHeightChanged(height: Int) {
+                try {
+                    fromTopToVisibleFramePx = height
+                    getStickerPickerKeyboardViewHeightShow()
+                } catch(exception: Exception){
+                    Stipop.trackError(exception)
+                }
+            }
+        })
     }
 
     private fun getStickerPickerKeyboardViewHeightAdjust() {
         rootView = activity.window.decorView.findViewById(android.R.id.content) as View
         rootView.viewTreeObserver.addOnGlobalLayoutListener {
-            val visibleFrameRect = Rect()
-            rootView.getWindowVisibleDisplayFrame(visibleFrameRect)
-            fromTopToVisibleFramePx = visibleFrameRect.bottom
-            getStickerPickerKeyboardViewHeightShow()
+            try {
+                val visibleFrameRect = Rect()
+                rootView.getWindowVisibleDisplayFrame(visibleFrameRect)
+                fromTopToVisibleFramePx = visibleFrameRect.bottom
+                getStickerPickerKeyboardViewHeightShow()
+            } catch(exception: Exception){
+                Stipop.trackError(exception)
+            }
         }
     }
-    private val fullSizeHeight = StipopUtils.getScreenHeight(activity)
-    private fun getStickerPickerKeyboardViewHeightAdjustNothing() {
-        StipopHeightProvider(activity, StipopHeightProviderTypeEnum.FROM_TOP_TO_VISIBLE_FRAME_PX).init().setHeightListener(object: StipopHeightProvider.StipopHeightListener{
-            override fun onHeightChanged(height: Int) {
-                fromTopToVisibleFramePx = height
-                getStickerPickerKeyboardViewHeightShow()
-            }
-        })
-    }
+
     private fun getStickerPickerKeyboardViewHeightShow(isAdjustNothing: Boolean = false){
         val insets: WindowInsetsCompat? = ViewCompat.getRootWindowInsets(activity.window.decorView)
         val bottomInset = insets?.systemWindowInsetBottom ?: 0
@@ -315,16 +350,19 @@ class Stipop(
 
     private fun showSearch() {
         mainScope.launch {
-            StickerSearchView.newInstance()
-                .show(activity.supportFragmentManager, Constants.Tag.SSV)
+            StickerSearchView.newInstance().show(activity.supportFragmentManager, Constants.Tag.SSV)
         }
     }
 
     private fun showPickerView() {
         mainScope.launch {
-            when (Config.pickerViewLayoutOnKeyboard) {
-                true -> showPickerKeyboardView()
-                false -> showPickerCustomView()
+            try {
+                when (Config.pickerViewLayoutOnKeyboard) {
+                    true -> showPickerKeyboardView()
+                    false -> showPickerCustomView()
+                }
+            } catch(exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }
@@ -356,9 +394,13 @@ class Stipop(
     }
 
     private fun hidePickerView() {
-        when(Config.pickerViewLayoutOnKeyboard){
-            true -> hidePickerKeyboardView()
-            false -> hidePickerCustomView()
+        try {
+            when(Config.pickerViewLayoutOnKeyboard){
+                true -> hidePickerKeyboardView()
+                false -> hidePickerCustomView()
+            }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 
@@ -373,18 +415,21 @@ class Stipop(
 
     private fun showStickerPackage(fragmentManager: FragmentManager, packageId: Int) {
         StipopUtils.hideKeyboard(activity)
-        PackDetailFragment.newInstance(packageId, Constants.Point.EXTERNAL)
-            .show(fragmentManager, Constants.Tag.EXTERNAL)
+        PackDetailFragment.newInstance(packageId, Constants.Point.EXTERNAL).show(fragmentManager, Constants.Tag.EXTERNAL)
     }
 
     override fun onSpvVisibleState(isVisible: Boolean) {
-        when (isVisible) {
-            true -> {
-                enableStickerIcon()
+        try {
+            when (isVisible) {
+                true -> {
+                    enableStickerIcon()
+                }
+                false -> {
+                    disableStickerIcon()
+                }
             }
-            false -> {
-                disableStickerIcon()
-            }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 }

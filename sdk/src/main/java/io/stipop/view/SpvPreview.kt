@@ -60,17 +60,21 @@ internal class SpvPreview(
 
     fun showOrUpdate(spSticker: SPSticker): Boolean {
         val isSame = currentSticker == spSticker
-        currentSticker = spSticker
-        if (!isShowing) {
-            showAtLocation(
-                rootView,
-                Gravity.TOP,
-                0,
-                Stipop.fromTopToVisibleFramePx - height + Config.previewPadding
-            )
+        try {
+            currentSticker = spSticker
+            if (!isShowing) {
+                showAtLocation(
+                    rootView,
+                    Gravity.TOP,
+                    0,
+                    Stipop.fromTopToVisibleFramePx - height + Config.previewPadding
+                )
+            }
+            setStickerUi()
+            setFavoriteUi()
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
-        setStickerUi()
-        setFavoriteUi()
         return isShowing && isSame
     }
 

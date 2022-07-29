@@ -1,7 +1,6 @@
 package io.stipop.custom
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText

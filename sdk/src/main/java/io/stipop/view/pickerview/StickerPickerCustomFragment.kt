@@ -13,7 +13,7 @@ import io.stipop.view.pickerview.listener.VisibleStateListener
 
 class StickerPickerCustomFragment : BaseFragment() {
 
-    companion object { fun newInstance() = StickerPickerCustomFragment() }
+//    companion object { fun newInstance() = StickerPickerCustomFragment() }
 
     internal lateinit var binding: ViewPickerBinding
 
@@ -22,6 +22,15 @@ class StickerPickerCustomFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        try {
+            return createView(inflater, container)
+        } catch(exception: Exception) {
+            Stipop.trackError(exception)
+            return createView(inflater, container)
+        }
+    }
+
+    private fun createView(inflater: LayoutInflater, container: ViewGroup?): View{
         binding = ViewPickerBinding.inflate(inflater, container, false)
         binding.containerLL.visibility = View.GONE
         return binding!!.root

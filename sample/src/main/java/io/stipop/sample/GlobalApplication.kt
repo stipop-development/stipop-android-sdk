@@ -12,10 +12,6 @@ import retrofit2.HttpException
 
 class GlobalApplication : MultiDexApplication(), SAuthDelegate {
 
-    companion object {
-        var userId = "-1"
-    }
-
     override fun onCreate() {
         super.onCreate()
         Stipop.configure(this,
@@ -33,7 +29,7 @@ class GlobalApplication : MultiDexApplication(), SAuthDelegate {
                     while(SAuthRepository.getIsSAuthWorking()){
                         delay(50)
                     }
-                    val accessToken = SAuthRepository.getAccessTokenIfOverExpiryTime(userId = userId)
+                    val accessToken = SAuthRepository.getAccessTokenIfOverExpiryTime(userId = Stipop.userId)
                     Stipop.setAccessToken(accessToken = accessToken)
                     SAuthManager.reRequest(api)
                 }

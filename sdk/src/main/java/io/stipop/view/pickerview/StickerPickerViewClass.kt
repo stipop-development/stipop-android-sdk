@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -28,8 +27,9 @@ import io.stipop.event.MyPackEventDelegate
 import io.stipop.event.PreviewDelegate
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
-import io.stipop.models.enum.StipopApiEnum
-import io.stipop.s_auth.*
+import io.stipop.s_auth.SPVGetMyStickersReRequestDelegate
+import io.stipop.s_auth.SPVRecentStickerAdapterReRequestDelegate
+import io.stipop.s_auth.TrackUsingStickerEnum
 import io.stipop.view.SpvPreview
 import io.stipop.view.StoreActivity
 import io.stipop.view.pickerview.listener.VisibleStateListener
@@ -39,7 +39,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 
 enum class PickerViewType {
     CUSTOM, ON_KEYBOARD
@@ -75,14 +74,21 @@ internal class StickerPickerViewClass(
     var delegate: VisibleStateListener? = null
 
     init {
-        StickerPickerViewClass.spvRecentStickerAdapterReRequestDelegate = this
-        StickerPickerViewClass.spvGetMyStickersReRequestDelegate = this
+        try {
+            StickerPickerViewClass.spvRecentStickerAdapterReRequestDelegate = this
+            StickerPickerViewClass.spvGetMyStickersReRequestDelegate = this
+            keyboardViewInit()
+            commonInit()
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
+        }
+    }
+
+    private fun keyboardViewInit(){
         when(type){
             PickerViewType.ON_KEYBOARD -> pickerKeyboardViewInit()
             PickerViewType.CUSTOM -> {}
         }
-
-        commonInit()
     }
 
     private fun pickerKeyboardViewInit(){
@@ -163,26 +169,30 @@ internal class StickerPickerViewClass(
     }
 
     internal fun applyTheme() {
-        with(pickerView) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                progressBar.indeterminateTintList =
-                    ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
-            }
-            containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
-            packageListHeader.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-            settingImageView.setIconDefaultsColor()
-            storeImageView.setImageResource(io.stipop.Config.getKeyboardStoreResourceId(activity))
-            storeImageView.setIconDefaultsColor()
+        try {
+            with(pickerView) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    progressBar.indeterminateTintList =
+                        ColorStateList.valueOf(Color.parseColor(Config.themeMainColor))
+                }
+                containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
+                packageListHeader.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
+                settingImageView.setIconDefaultsColor()
+                storeImageView.setImageResource(io.stipop.Config.getKeyboardStoreResourceId(activity))
+                storeImageView.setIconDefaultsColor()
 //            smallFavorite.setImageResource(R.mipmap.ic_favorites_active)
 //            smallRecently.setImageResource(R.mipmap.ic_recents_active)
-            recentFavoriteContainer.tag = io.stipop.Constants.Tag.RECENT
-            recentStickerImageView.isVisible = !Config.showPreview
-            smallRecently.isVisible = Config.showPreview
-            smallFavorite.isVisible = Config.showPreview
-            stickerRecyclerView.layoutManager =
-                GridLayoutManager(activity, Config.keyboardNumOfColumns)
+                recentFavoriteContainer.tag = io.stipop.Constants.Tag.RECENT
+                recentStickerImageView.isVisible = !Config.showPreview
+                smallRecently.isVisible = Config.showPreview
+                smallFavorite.isVisible = Config.showPreview
+                stickerRecyclerView.layoutManager =
+                    GridLayoutManager(activity, Config.keyboardNumOfColumns)
+            }
+            applyRecentFavoriteTheme()
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
-        applyRecentFavoriteTheme()
     }
 
     private fun applyRecentFavoriteTheme() {
@@ -290,9 +300,13 @@ internal class StickerPickerViewClass(
     }
 
     internal fun show(y: Int = 0){
-        when(type){
-            PickerViewType.ON_KEYBOARD -> showPickerKeyboardView(y)
-            PickerViewType.CUSTOM -> showPickerCustomView()
+        try {
+            when(type){
+                PickerViewType.ON_KEYBOARD -> showPickerKeyboardView(y)
+                PickerViewType.CUSTOM -> showPickerCustomView()
+            }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 
@@ -301,18 +315,14 @@ internal class StickerPickerViewClass(
             return
         }
         if (Stipop.currentPickerViewHeight > 0) {
-            try {
-                showPickerViewCommonFunction()
-                stickerPickerKeyboardView?.showAtLocation(
-                    activity.window.decorView.findViewById(android.R.id.content) as View,
-                    Gravity.TOP,
-                    0,
-                    y
-                )
-                stickerPickerViewPreview?.spvTopCoordinate = stickerPickerKeyboardView?.height ?: 0
-            } catch(exception: Exception){
-
-            }
+            showPickerViewCommonFunction()
+            stickerPickerKeyboardView?.showAtLocation(
+                activity.window.decorView.findViewById(android.R.id.content) as View,
+                Gravity.TOP,
+                0,
+                y
+            )
+            stickerPickerViewPreview?.spvTopCoordinate = stickerPickerKeyboardView?.height ?: 0
         }
     }
 
@@ -339,15 +349,19 @@ internal class StickerPickerViewClass(
     }
 
     internal fun dismiss(){
-        when(type){
-            PickerViewType.ON_KEYBOARD -> {
-                stickerPickerKeyboardView?.wantShowing = false
-                dismissCommonFunction()
+        try {
+            when(type){
+                PickerViewType.ON_KEYBOARD -> {
+                    stickerPickerKeyboardView?.wantShowing = false
+                    dismissCommonFunction()
+                }
+                PickerViewType.CUSTOM -> {
+                    setPickerCustomViewVisibility(false)
+                    dismissCommonFunction()
+                }
             }
-            PickerViewType.CUSTOM -> {
-                setPickerCustomViewVisibility(false)
-                dismissCommonFunction()
-            }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 
@@ -358,13 +372,19 @@ internal class StickerPickerViewClass(
     }
 
     private fun showStickers(selectedPackage: StickerPackage) {
-        pickerView.emptyListTextView.isVisible = false
-        pickerView.progressBar.isVisible = false
-        StipopUtils.getStickersFromLocal(activity, selectedPackage.packageId).let { stickerList ->
-            stickerAdapter.updateData(if (stickerList.isEmpty()) selectedPackage.stickers else stickerList)
-            if (stickerList.isEmpty()) {
-                StipopUtils.downloadAtLocal(selectedPackage)
+        try {
+            pickerView.emptyListTextView.isVisible = false
+            pickerView.progressBar.isVisible = false
+            StipopUtils.getStickersFromLocal(activity, selectedPackage.packageId).let { stickerList ->
+                stickerList.let {
+                    stickerAdapter.updateData(if (it.isEmpty()) selectedPackage.stickers else stickerList)
+                    if (stickerList.isEmpty()) {
+                        StipopUtils.downloadAtLocal(selectedPackage)
+                    }
+                }
             }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 
@@ -374,20 +394,28 @@ internal class StickerPickerViewClass(
             spSticker,
             Constants.Point.PICKER_VIEW
         ) { result ->
-            if (result) {
-                Stipop.instance?.delegate?.onStickerSingleTapped(spSticker)
-                Stipop.stickerPickerViewModel?.saveRecent(spSticker)
-                stickerPickerViewPreview?.dismiss()
+            try {
+                if (result) {
+                    Stipop.instance?.delegate?.onStickerSingleTapped(spSticker)
+                    Stipop.stickerPickerViewModel?.saveRecent(spSticker)
+                    stickerPickerViewPreview?.dismiss()
+                }
+            } catch(exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }
 
     private fun showStore(startingPosition: Int) {
-        dismiss()
-        Intent(activity, StoreActivity::class.java).apply {
-            putExtra(Constants.IntentKey.STARTING_TAB_POSITION, startingPosition)
-        }.run {
-            activity.startActivity(this)
+        try {
+            dismiss()
+            Intent(activity, StoreActivity::class.java).apply {
+                putExtra(Constants.IntentKey.STARTING_TAB_POSITION, startingPosition)
+            }.run {
+                activity.startActivity(this)
+            }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 
@@ -418,17 +446,21 @@ internal class StickerPickerViewClass(
     }
 
     override fun onPackageClick(position: Int, stickerPackage: StickerPackage) {
-        with(pickerView) {
-            emptyListTextView.isVisible = false
-            progressBar.isVisible = true
-            recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-            recentStickerImageView.clearTint()
-            smallRecently.clearTint()
-            smallFavorite.clearTint()
+        try {
+            with(pickerView) {
+                emptyListTextView.isVisible = false
+                progressBar.isVisible = true
+                recentFavoriteContainer.setBackgroundColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
+                recentStickerImageView.clearTint()
+                smallRecently.clearTint()
+                smallFavorite.clearTint()
+            }
+            packAdapter.updateSelected(position)
+            stickerAdapter.clearData()
+            loadStickerPackage(stickerPackage)
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
-        packAdapter.updateSelected(position)
-        stickerAdapter.clearData()
-        loadStickerPackage(stickerPackage)
     }
 
     internal fun loadStickerPackage(stickerPackage: StickerPackage){
@@ -450,16 +482,28 @@ internal class StickerPickerViewClass(
     }
 
     override fun onDragStarted(viewHolder: RecyclerView.ViewHolder) {
-        itemTouchHelper?.startDrag(viewHolder)
+        try {
+            itemTouchHelper?.startDrag(viewHolder)
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
+        }
     }
 
     override fun onDragCompleted(fromData: Any, toData: Any) {
-        Stipop.stickerPickerViewModel?.changePackageOrder(fromData as StickerPackage, toData as StickerPackage)
+        try {
+            Stipop.stickerPickerViewModel?.changePackageOrder(fromData as StickerPackage, toData as StickerPackage)
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
+        }
     }
 
     override fun onPreviewFavoriteChanged(sticker: SPSticker) {
-        stickerAdapter.updateFavorite(sticker)?.let {
-            StipopUtils.saveStickerAsJson(activity, it)
+        try {
+            stickerAdapter.updateFavorite(sticker)?.let {
+                StipopUtils.saveStickerAsJson(activity, it)
+            }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 

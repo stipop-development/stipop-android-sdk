@@ -8,7 +8,6 @@ import io.stipop.models.StickerPackage
 import io.stipop.models.enum.StipopApiEnum
 import io.stipop.models.response.MyStickerResponse
 import retrofit2.HttpException
-import java.io.IOException
 
 internal class PagingMyPackSource(private val apiService: StipopApi, private val wantVisibleSticker: Boolean) : PagingSource<Int, StickerPackage>() {
 
@@ -75,13 +74,9 @@ internal class PagingMyPackSource(private val apiService: StipopApi, private val
                 prevKey = if (pageNumber == STARTING_PAGE_INDEX) null else pageNumber - 1,
                 nextKey = nextKey
             )
-        } catch (exception: IOException) {
-            return LoadResult.Error(exception)
-        } catch (exception: HttpException) {
-            return LoadResult.Error(exception)
-        } catch (exception: Exception){
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
             return LoadResult.Error(exception)
         }
     }
-
 }

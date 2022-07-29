@@ -24,7 +24,6 @@ internal interface StipopSampleApi {
     companion object {
 
         private val BASE_URL = "https://messenger.stipop.io/v1/"
-        private val API_KEY_KEY = "api_key"
         private val API_KEY_VALUE = "YOUR_API_KEY_VALUE"
 
         private val loggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
@@ -51,7 +50,7 @@ internal interface StipopSampleApi {
         }
         private fun getHeaders(): Headers {
             return Headers.Builder()
-                .add(API_KEY_KEY, API_KEY_VALUE)
+                .add("api_key", API_KEY_VALUE)
                 .build()
         }
     }

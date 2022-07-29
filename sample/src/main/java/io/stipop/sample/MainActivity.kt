@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity(),
     private val sendImageView: AppCompatImageView by lazy { findViewById(R.id.sendImageView) }
     private val chatsAdapter: ChatAdapter by lazy { ChatAdapter(this) }
 
+    var userId = "-1"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity(),
     private fun bundleInit(){
         val bundle = intent.extras
 
-        GlobalApplication.userId = bundle!!.getString("user_id", "someone_user_id")
+        userId = bundle!!.getString("user_id", "someone_user_id")
 
     }
 
@@ -89,7 +90,7 @@ class MainActivity : AppCompatActivity(),
         val fragment = supportFragmentManager.findFragmentById(R.id.picker_view_fragment) as StickerPickerCustomFragment
         Stipop.connect(
             activity = this,
-            userId = GlobalApplication.userId,
+            userId = userId,
             delegate = this,
             stipopButton = stipopPickerImageView,
             stickerPickerCustomFragment = fragment,
@@ -156,7 +157,7 @@ class MainActivity : AppCompatActivity(),
         setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        when(GlobalApplication.userId){
+        when(userId){
             "someone_user_id" -> nameTextView.text = "Common user"
             else -> nameTextView.text = "Random user"
         }
@@ -210,6 +211,7 @@ class MainActivity : AppCompatActivity(),
             input.hideSoftInputFromWindow(p0?.windowToken, 0)
             false
         }
+
     }
 
     private fun toggleSendButton(isActivate: Boolean) {

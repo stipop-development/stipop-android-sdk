@@ -10,5 +10,5 @@ internal data class GetAccessTokenAPIBody(
     @SerializedName("clientId") val clientId: String? = "YOUR_APP_CLIENT_ID",
     @SerializedName("clientSecret") val clientSecret: String? = "YOUR_APP_CLIENT_SECRET",
     @SerializedName("refreshToken") val refreshToken: String? = "YOUR_APP_REFRESH_TOKEN",
-    @SerializedName("expiryTime") val expiryTime: Int? = 3600
+    @SerializedName("expiryTime") val expiryTime: Int? = 86400
 )

@@ -71,7 +71,7 @@ internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewM
                     401 -> Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_HOME_SOURCES, exception)
                 }
             } catch(exception: Exception){
-
+                Stipop.trackError(exception)
             }
         }
     }

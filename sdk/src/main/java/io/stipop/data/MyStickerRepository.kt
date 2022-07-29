@@ -50,7 +50,7 @@ internal class MyStickerRepository(private val apiService: StipopApi): BaseRepos
                 }
             }
         } catch(exception: Exception){
-
+            Stipop.trackError(exception)
         }
     }
 
@@ -68,6 +68,7 @@ internal class MyStickerRepository(private val apiService: StipopApi): BaseRepos
                 }
             }
         } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 

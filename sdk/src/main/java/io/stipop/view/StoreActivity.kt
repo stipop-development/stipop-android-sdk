@@ -12,7 +12,10 @@ import io.stipop.databinding.ActivityStoreBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.body.UserIdBody
 import io.stipop.models.enum.StipopApiEnum
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 internal class StoreActivity : BaseFragmentActivity() {
@@ -24,24 +27,29 @@ internal class StoreActivity : BaseFragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityStoreBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        try {
+            binding = ActivityStoreBinding.inflate(layoutInflater)
+            setContentView(binding.root)
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
+        }
         mainScope.launch {
-        with(binding) {
-            storeViewPager.adapter = storeAdapter
-            TabLayoutMediator(storeTabLayout, storeViewPager) { tab, position ->
-                when (position) {
-                    StorePagerAdapter.POSITION_ALL_STICKERS -> {
-                        tab.text = getString(R.string.all_stickers)
-                    }
-                    StorePagerAdapter.POSITION_NEW_STICKERS -> {
-                        tab.text = getString(R.string.news_tab)
-                    }
-                    StorePagerAdapter.POSITION_MY_STICKERS -> {
-                        tab.text = getString(R.string.my_stickers)
-                    }
-                }
-            }.attach()
+            try {
+                with(binding) {
+                    storeViewPager.adapter = storeAdapter
+                    TabLayoutMediator(storeTabLayout, storeViewPager) { tab, position ->
+                        when (position) {
+                            StorePagerAdapter.POSITION_ALL_STICKERS -> {
+                                tab.text = getString(R.string.all_stickers)
+                            }
+                            StorePagerAdapter.POSITION_NEW_STICKERS -> {
+                                tab.text = getString(R.string.news_tab)
+                            }
+                            StorePagerAdapter.POSITION_MY_STICKERS -> {
+                                tab.text = getString(R.string.my_stickers)
+                            }
+                        }
+                    }.attach()
 
                     storeViewPager.apply {
                         registerOnPageChangeCallback(callBack)
@@ -53,6 +61,9 @@ internal class StoreActivity : BaseFragmentActivity() {
                         )
                     }
                 }
+            } catch(exception: Exception){
+                Stipop.trackError(exception)
+            }
         }
         PackageDownloadEvent.liveData.observe(this) {
             Toast.makeText(this, getString(R.string.download_done), Toast.LENGTH_SHORT).show()
@@ -60,10 +71,14 @@ internal class StoreActivity : BaseFragmentActivity() {
     }
 
     override fun applyTheme() {
-        with(binding) {
-            container.setStipopBackgroundColor()
-            dividingLine.setStipopUnderlineColor()
-            storeTabLayout.setTabLayoutStyle()
+        try {
+            with(binding) {
+                container.setStipopBackgroundColor()
+                dividingLine.setStipopUnderlineColor()
+                storeTabLayout.setTabLayoutStyle()
+            }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
     override fun onDestroy() {
@@ -74,19 +89,19 @@ internal class StoreActivity : BaseFragmentActivity() {
     private val callBack = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
-                when (position) {
-                    StorePagerAdapter.POSITION_ALL_STICKERS -> {
-                        trackViewStore()
-                    }
-                    StorePagerAdapter.POSITION_NEW_STICKERS -> {
-                        trackViewNew()
-                    }
-                    StorePagerAdapter.POSITION_MY_STICKERS -> {
-                        trackViewSticker()
-                    }
+            when (position) {
+                StorePagerAdapter.POSITION_ALL_STICKERS -> {
+                    trackViewStore()
+                }
+                StorePagerAdapter.POSITION_NEW_STICKERS -> {
+                    trackViewNew()
+                }
+                StorePagerAdapter.POSITION_MY_STICKERS -> {
+                    trackViewSticker()
                 }
             }
         }
+    }
 
     internal fun trackViewStore(){
         scope.launch {

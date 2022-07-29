@@ -69,8 +69,14 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentStoreHomeBinding.inflate(inflater, container, false)
-        return binding!!.root
+        try {
+            binding = FragmentStoreHomeBinding.inflate(inflater, container, false)
+            return binding!!.root
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
+            binding = FragmentStoreHomeBinding.inflate(inflater, container, false)
+            return binding!!.root
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -86,45 +92,49 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        StoreHomeFragment.smfGetTrendingStickerPackagesDelegate = this
-        Stipop.storeHomeViewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
-            StoreHomeViewModel::class.java
-        )
+        try {
+            StoreHomeFragment.smfGetTrendingStickerPackagesDelegate = this
+            Stipop.storeHomeViewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
+                StoreHomeViewModel::class.java
+            )
 
-        with(binding!!) {
-            bannerRecyclerView.adapter = homeTabAdapter
+            with(binding!!) {
+                bannerRecyclerView.adapter = homeTabAdapter
 
-            allStickerRecyclerView.adapter = pagingPackageAdapter.withLoadStateFooter(MyLoadStateAdapter { pagingPackageAdapter.retry() })
-            clearSearchImageView.setOnClickListener {
-                searchEditText.setText("")
+                allStickerRecyclerView.adapter = pagingPackageAdapter.withLoadStateFooter(MyLoadStateAdapter { pagingPackageAdapter.retry() })
+                clearSearchImageView.setOnClickListener {
+                    searchEditText.setText("")
+                    StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
+                }
+                searchEditText.addTextChangedListener { Stipop.storeHomeViewModel?.flowQuery(it.toString().trim()) }
+            }
+
+            lifecycleScope.launch { Stipop.storeHomeViewModel?.emittedQuery?.collect { value -> refreshList(value) } }
+
+            Stipop.storeHomeViewModel?.run {
+                getHomeSources()
+                homeDataFlow.observeForever { homeTabAdapter.setInitData(it) }
+                uiStateFlow.observeForever { uiState ->
+                    binding!!.bannerRecyclerView.isVisible = !uiState.isSearchingState
+                }
+            }
+            PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
+                pagingPackageAdapter.refresh()
+            }
+
+            binding!!.layout.setOnTouchListener { view, motionEvent ->
                 StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
+                false
             }
-            searchEditText.addTextChangedListener { Stipop.storeHomeViewModel?.flowQuery(it.toString().trim()) }
-        }
 
-        lifecycleScope.launch { Stipop.storeHomeViewModel?.emittedQuery?.collect { value -> refreshList(value) } }
+            binding!!.searchEditText.setTextColor(Config.getSearchTitleTextColor(requireContext()))
 
-        Stipop.storeHomeViewModel?.run {
-            getHomeSources()
-            homeDataFlow.observeForever { homeTabAdapter.setInitData(it) }
-            uiStateFlow.observeForever { uiState ->
-                binding!!.bannerRecyclerView.isVisible = !uiState.isSearchingState
+            binding!!.allStickerRecyclerView.setOnTouchListener { view, motionEvent ->
+                StipopUtils.hideKeyboard(requireActivity(), binding!!.searchEditText)
+                false
             }
-        }
-        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
-            pagingPackageAdapter.refresh()
-        }
-
-        binding!!.layout.setOnTouchListener { view, motionEvent ->
-            StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
-            false
-        }
-
-        binding!!.searchEditText.setTextColor(Config.getSearchTitleTextColor(requireContext()))
-
-        binding!!.allStickerRecyclerView.setOnTouchListener { view, motionEvent ->
-            StipopUtils.hideKeyboard(requireActivity(), binding!!.searchEditText)
-            false
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 
@@ -138,22 +148,25 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
     }
 
     override fun applyTheme() {
-        with(binding) {
-            (this?.searchBarContainer?.background as GradientDrawable).apply {
-                setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
-                cornerRadius = StipopUtils.dpToPx(Config.searchbarRadius.toFloat())
+        try {
+            with(binding) {
+                (this?.searchBarContainer?.background as GradientDrawable).apply {
+                    setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor))
+                    cornerRadius = StipopUtils.dpToPx(Config.searchbarRadius.toFloat())
+                }
+                this.searchEditText.setTextColor(Config.getSearchTitleTextColor(requireContext()))
+                this.searchIconIV.setImageResource(Config.getSearchbarResourceId(requireContext()))
+                this.clearSearchImageView.setImageResource(Config.getEraseResourceId(requireContext()))
+                this.searchIconIV.setIconDefaultsColor()
+                this.clearSearchImageView.setIconDefaultsColor()
             }
-            this.searchEditText.setTextColor(Config.getSearchTitleTextColor(requireContext()))
-            this.searchIconIV.setImageResource(Config.getSearchbarResourceId(requireContext()))
-            this.clearSearchImageView.setImageResource(Config.getEraseResourceId(requireContext()))
-            this.searchIconIV.setIconDefaultsColor()
-            this.clearSearchImageView.setIconDefaultsColor()
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 
     override fun onPackageDetailClicked(packageId: Int, entrancePoint: String) {
-        PackDetailFragment.newInstance(packageId, entrancePoint)
-            .showNow(parentFragmentManager, Constants.Tag.DETAIL)
+        PackDetailFragment.newInstance(packageId, entrancePoint).showNow(parentFragmentManager, Constants.Tag.DETAIL)
     }
 
     override fun onDownloadClicked(position: Int, stickerPackage: StickerPackage) {

@@ -1,6 +1,5 @@
 package io.stipop.data
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import io.stipop.Stipop
@@ -59,7 +58,8 @@ internal class PagingStickerSource(private val apiService: StipopApi, private va
                 }
             }
             return LoadResult.Error(exception)
-        } catch (exception: Exception) {
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
             return LoadResult.Error(exception)
         }
     }

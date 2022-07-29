@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,45 +61,49 @@ class StickerSearchView : BottomSheetDialogFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        applyTheme()
-        ssvOnStickerTapReRequestDelegate = this
-        ssvAdapterReRequestDelegate = this
-        viewModel = ViewModelProvider(
-            this,
-            Injection.provideViewModelFactory(owner = this)
-        ).get(SsvModel::class.java)
+        try {
+            applyTheme()
+            ssvOnStickerTapReRequestDelegate = this
+            ssvAdapterReRequestDelegate = this
+            viewModel = ViewModelProvider(
+                this,
+                Injection.provideViewModelFactory(owner = this)
+            ).get(SsvModel::class.java)
 
-        with(binding!!) {
-            keywordRecyclerView.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = keywordsAdapter
+            with(binding!!) {
+                keywordRecyclerView.apply {
+                    layoutManager = LinearLayoutManager(context)
+                    adapter = keywordsAdapter
+                }
+                recyclerView.apply {
+                    layoutManager = GridLayoutManager(context, Config.searchNumOfColumns)
+                    adapter = stickerAdapter
+                }
+                clearSearchImageView.setOnClickListener {
+                    searchEditText.setText("")
+                    StipopUtils.hideKeyboard(requireActivity())
+                    binding?.searchEditText?.clearFocus()
+                }
+                searchEditText.addTextChangedListener { viewModel!!.flowQuery(it.toString().trim()) }
             }
-            recyclerView.apply {
-                layoutManager = GridLayoutManager(context, Config.searchNumOfColumns)
-                adapter = stickerAdapter
+            lifecycleScope.launch {
+                viewModel?.emittedQuery?.collect { value ->
+                    refreshList(value)
+                }
             }
-            clearSearchImageView.setOnClickListener {
-                searchEditText.setText("")
-                StipopUtils.hideKeyboard(requireActivity())
-                binding?.searchEditText?.clearFocus()
+            viewModel?.homeDataFlow?.observeForever { keywordsAdapter.setInitData(it) }
+            if (!Config.searchTagsHidden) {
+                viewModel?.getKeywords()
             }
-            searchEditText.addTextChangedListener { viewModel!!.flowQuery(it.toString().trim()) }
-        }
-        lifecycleScope.launch {
-            viewModel?.emittedQuery?.collect { value ->
-                refreshList(value)
-            }
-        }
-        viewModel?.homeDataFlow?.observeForever { keywordsAdapter.setInitData(it) }
-        if (!Config.searchTagsHidden) {
-            viewModel?.getKeywords()
-        }
 
-        StipopUtils.hideKeyboard(requireActivity())
+            StipopUtils.hideKeyboard(requireActivity())
 
-        binding?.recyclerView?.setOnTouchListener { view, motionEvent ->
-            StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
-            false
+            binding?.recyclerView?.setOnTouchListener { view, motionEvent ->
+                StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
+                false
+            }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 
@@ -119,8 +122,14 @@ class StickerSearchView : BottomSheetDialogFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSearchViewBinding.inflate(inflater, container, false)
-        return binding!!.root
+        try {
+            binding = FragmentSearchViewBinding.inflate(inflater, container, false)
+            return binding!!.root
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
+            binding = FragmentSearchViewBinding.inflate(inflater, container, false)
+            return binding!!.root
+        }
     }
 
     override fun onDestroyView() {
@@ -129,6 +138,14 @@ class StickerSearchView : BottomSheetDialogFragment(),
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return try {
+            createDialog(savedInstanceState)
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
+            createDialog(savedInstanceState)
+        }
+    }
+    private fun createDialog(savedInstanceState: Bundle?): Dialog {
         val dialog: Dialog = super.onCreateDialog(savedInstanceState)
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheetDialog: BottomSheetDialog = dialogInterface as BottomSheetDialog
@@ -138,32 +155,36 @@ class StickerSearchView : BottomSheetDialogFragment(),
     }
 
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
-        val bottomSheet: FrameLayout =
-            bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet) as FrameLayout
-        val behavior: BottomSheetBehavior<*> = BottomSheetBehavior.from<View>(bottomSheet)
-        val layoutParams: ViewGroup.LayoutParams = bottomSheet.layoutParams
-        layoutParams.height = getBottomSheetDialogDefaultHeight()
-        bottomSheet.layoutParams = layoutParams
-        behavior.isDraggable = false
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        behavior.peekHeight = getBottomSheetDialogDefaultHeight()
-        behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> bottomSheet.layoutParams.height =
-                        behavior.peekHeight
-                    BottomSheetBehavior.STATE_COLLAPSED -> bottomSheet.layoutParams.height =
-                        behavior.peekHeight
-                    BottomSheetBehavior.STATE_HIDDEN -> dismiss()
-                    else -> {
+        try {
+            val bottomSheet: FrameLayout =
+                bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet) as FrameLayout
+            val behavior: BottomSheetBehavior<*> = BottomSheetBehavior.from<View>(bottomSheet)
+            val layoutParams: ViewGroup.LayoutParams = bottomSheet.layoutParams
+            layoutParams.height = getBottomSheetDialogDefaultHeight()
+            bottomSheet.layoutParams = layoutParams
+            behavior.isDraggable = false
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            behavior.peekHeight = getBottomSheetDialogDefaultHeight()
+            behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_EXPANDED -> bottomSheet.layoutParams.height =
+                            behavior.peekHeight
+                        BottomSheetBehavior.STATE_COLLAPSED -> bottomSheet.layoutParams.height =
+                            behavior.peekHeight
+                        BottomSheetBehavior.STATE_HIDDEN -> dismiss()
+                        else -> {
 
+                        }
                     }
                 }
-            }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            }
-        })
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                }
+            })
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
+        }
     }
 
     private fun getBottomSheetDialogDefaultHeight(): Int {

@@ -181,6 +181,12 @@ internal interface StipopApi {
         @Query("event_point") eventPoint: String? = null
     ): StipopResponse
 
+    @POST("analytics/error")
+    suspend fun trackError(
+        @Query("userId") userId: String,
+        @Body trackErrorBody: TrackErrorBody
+    ): Response<StipopResponse>
+
     companion object {
 
         private var accessTokenWithBearerText = "Bearer "

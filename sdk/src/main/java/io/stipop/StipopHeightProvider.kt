@@ -16,7 +16,13 @@ enum class StipopHeightProviderTypeEnum {
     FROM_TOP_TO_VISIBLE_FRAME_PX, KEYBOARD
 }
 
+
+
 internal class StipopHeightProvider(private val activity: Activity, private val type: StipopHeightProviderTypeEnum) : PopupWindow(activity), OnGlobalLayoutListener {
+
+    interface StipopHeightListener {
+        fun onHeightChanged(height: Int)
+    }
 
     private val rootView: View = View(activity)
     private var listener: StipopHeightListener? = null
@@ -25,13 +31,17 @@ internal class StipopHeightProvider(private val activity: Activity, private val 
     private var heightMax = 0
 
     init {
-        contentView = rootView
-        rootView.viewTreeObserver.addOnGlobalLayoutListener(this)
-        setBackgroundDrawable(ColorDrawable(0))
-        width = 0
-        height = WindowManager.LayoutParams.MATCH_PARENT
-        softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
-        inputMethodMode = INPUT_METHOD_NEEDED
+        try {
+            contentView = rootView
+            rootView.viewTreeObserver.addOnGlobalLayoutListener(this)
+            setBackgroundDrawable(ColorDrawable(0))
+            width = 0
+            height = WindowManager.LayoutParams.MATCH_PARENT
+            softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+            inputMethodMode = INPUT_METHOD_NEEDED
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
+        }
     }
 
     fun init(): StipopHeightProvider {
@@ -60,7 +70,6 @@ internal class StipopHeightProvider(private val activity: Activity, private val 
     }
 
     private fun onGlobalLayoutFromTopToVisibleFramePx(){
-
         val visibleFrameRect = Rect()
         rootView.getWindowVisibleDisplayFrame(visibleFrameRect)
         val fromTopToVisibleFramePx = visibleFrameRect.bottom
@@ -73,26 +82,27 @@ internal class StipopHeightProvider(private val activity: Activity, private val 
     }
 
     private fun onGlobalLayoutKeyboard(){
-        val rect = Rect()
-        rootView.getWindowVisibleDisplayFrame(rect)
+        try {
+            val rect = Rect()
+            rootView.getWindowVisibleDisplayFrame(rect)
 
-        if (rect.bottom > heightMax) {
-            heightMax = rect.bottom
-        }
-
-        var keyboardHeight = heightMax - rect.bottom
-        if(Build.VERSION.SDK_INT >= 30){
-            val insets: WindowInsetsCompat? = ViewCompat.getRootWindowInsets(activity.window.decorView)
-            keyboardHeight -= insets?.systemWindowInsetBottom ?: 0
-        }
-
-        if (listener != null) {
-            if(heightMax/2 >= keyboardHeight) {
-                listener!!.onHeightChanged(keyboardHeight)
+            if (rect.bottom > heightMax) {
+                heightMax = rect.bottom
             }
+
+            var keyboardHeight = heightMax - rect.bottom
+            if(Build.VERSION.SDK_INT >= 30){
+                val insets: WindowInsetsCompat? = ViewCompat.getRootWindowInsets(activity.window.decorView)
+                keyboardHeight -= insets?.systemWindowInsetBottom ?: 0
+            }
+
+            if (listener != null) {
+                if(heightMax/2 >= keyboardHeight) {
+                    listener!!.onHeightChanged(keyboardHeight)
+                }
+            }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
-    }
-    interface StipopHeightListener {
-        fun onHeightChanged(height: Int)
     }
 }

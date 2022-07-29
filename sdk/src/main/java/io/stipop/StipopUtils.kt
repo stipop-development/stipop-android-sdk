@@ -60,22 +60,25 @@ internal object StipopUtils {
     }
 
     fun hideKeyboard(activity: Activity, editText: EditText? = null) {
+        try {
+            val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val keyboardHeight = Stipop.currentPickerViewHeight
 
-        val keyboardHeight = Stipop.currentPickerViewHeight
-
-        if(keyboardHeight > 0){
-            when(editText){
-                null -> {
-                    imm.hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
-                    activity.window.decorView.clearFocus()
-                }
-                else -> {
-                    imm.hideSoftInputFromWindow(editText.windowToken, 0)
-                    editText.clearFocus()
+            if(keyboardHeight > 0){
+                when(editText){
+                    null -> {
+                        imm.hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
+                        activity.window.decorView.clearFocus()
+                    }
+                    else -> {
+                        imm.hideSoftInputFromWindow(editText.windowToken, 0)
+                        editText.clearFocus()
+                    }
                 }
             }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 

@@ -14,16 +14,16 @@ import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
 import io.stipop.Stipop
-import io.stipop.base.Injection
+import io.stipop.adapter.MyLoadStateAdapter
+import io.stipop.adapter.PagingMyPackAdapter
 import io.stipop.base.BaseFragment
+import io.stipop.base.Injection
+import io.stipop.custom.DragAndDropHelperCallback
 import io.stipop.databinding.FragmentMyStickerBinding
 import io.stipop.event.MyPackEventDelegate
-import io.stipop.custom.DragAndDropHelperCallback
-import io.stipop.models.StickerPackage
-import io.stipop.adapter.PagingMyPackAdapter
-import io.stipop.adapter.MyLoadStateAdapter
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.event.PackageVisibilityChangeEvent
+import io.stipop.models.StickerPackage
 import io.stipop.s_auth.SMSFGetMyStickersReRequestDelegate
 import io.stipop.view.viewmodel.StoreMyStickerViewModel
 import kotlinx.android.synthetic.main.fragment_my_sticker.*
@@ -51,8 +51,14 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate, SMS
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMyStickerBinding.inflate(inflater, container, false)
-        return binding!!.root
+        return try {
+            binding = FragmentMyStickerBinding.inflate(inflater, container, false)
+            binding!!.root
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
+            binding = FragmentMyStickerBinding.inflate(inflater, container, false)
+            binding!!.root
+        }
     }
 
     override fun onDestroyView() {
@@ -63,44 +69,52 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate, SMS
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        StoreMyStickerFragment.smsfGetMyStickersReRequestDelegate = this
-        Stipop.storeMyStickerViewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
-            StoreMyStickerViewModel::class.java
-        )
+        try {
+            StoreMyStickerFragment.smsfGetMyStickersReRequestDelegate = this
+            Stipop.storeMyStickerViewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
+                StoreMyStickerViewModel::class.java
+            )
 
-        myStickersRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = pagingMyPackAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { pagingMyPackAdapter.retry() })
-        }
+            myStickersRecyclerView.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = pagingMyPackAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { pagingMyPackAdapter.retry() })
+            }
 
-        val wantVisibleSticker = savedInstanceState?.getBoolean(LAST_VISIBLE_SETTING) ?: DEFAULT_VISIBLE
-        toggleMyStickers(wantVisibleSticker)
-        initRequest(wantVisibleSticker)
+            val wantVisibleSticker = savedInstanceState?.getBoolean(LAST_VISIBLE_SETTING) ?: DEFAULT_VISIBLE
+            toggleMyStickers(wantVisibleSticker)
+            initRequest(wantVisibleSticker)
 
-        itemTouchHelper = ItemTouchHelper(DragAndDropHelperCallback(pagingMyPackAdapter)).apply { attachToRecyclerView(myStickersRecyclerView) }
+            itemTouchHelper = ItemTouchHelper(DragAndDropHelperCallback(pagingMyPackAdapter)).apply { attachToRecyclerView(myStickersRecyclerView) }
 
-        Stipop.storeMyStickerViewModel?.packageVisibilityChanged?.observeForever {
-            pagingMyPackAdapter.refresh()
-            PackageVisibilityChangeEvent.publishEvent(it.second)
-        }
+            Stipop.storeMyStickerViewModel?.packageVisibilityChanged?.observeForever {
+                pagingMyPackAdapter.refresh()
+                PackageVisibilityChangeEvent.publishEvent(it.second)
+            }
 
-        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
-            pagingMyPackAdapter.refresh()
-            binding?.myStickersRecyclerView?.scrollToPosition(0)
+            PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
+                pagingMyPackAdapter.refresh()
+                binding?.myStickersRecyclerView?.scrollToPosition(0)
+            }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 
     override fun applyTheme() {
-        stickerVisibleToggleTextView.setTextColor(
-            Config.getActiveHiddenStickerTextColor(
-                requireContext()
+        try {
+            stickerVisibleToggleTextView.setTextColor(
+                Config.getActiveHiddenStickerTextColor(
+                    requireContext()
+                )
             )
-        )
-        stickerVisibleToggleTextView.setBackgroundColor(
-            Config.getHiddenStickerBackgroundColor(
-                requireContext()
+            stickerVisibleToggleTextView.setBackgroundColor(
+                Config.getHiddenStickerBackgroundColor(
+                    requireContext()
+                )
             )
-        )
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
+        }
     }
 
     private fun toggleMyStickers(wantVisibleSticker: Boolean) {

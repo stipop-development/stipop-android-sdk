@@ -37,8 +37,14 @@ internal class StoreNewStickerFragment : BaseFragment(), SNSFGetNewStickerPackag
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNewStickerBinding.inflate(inflater, container, false)
-        return binding!!.root
+        return try {
+            binding = FragmentNewStickerBinding.inflate(inflater, container, false)
+            binding!!.root
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
+            binding = FragmentNewStickerBinding.inflate(inflater, container, false)
+            binding!!.root
+        }
     }
 
     override fun onDestroyView() {
@@ -50,19 +56,23 @@ internal class StoreNewStickerFragment : BaseFragment(), SNSFGetNewStickerPackag
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        StoreNewStickerFragment.snsfGetNewStickerPackagesReRequestDelegate = this
-        Stipop.storeNewsViewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
-            StoreNewsViewModel::class.java
-        )
-        with(binding!!) {
-            recyclerView.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = pagingPackageAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { pagingPackageAdapter.retry() })
+        try {
+            StoreNewStickerFragment.snsfGetNewStickerPackagesReRequestDelegate = this
+            Stipop.storeNewsViewModel = ViewModelProvider(this, Injection.provideViewModelFactory(owner = this)).get(
+                StoreNewsViewModel::class.java
+            )
+            with(binding!!) {
+                recyclerView.apply {
+                    layoutManager = LinearLayoutManager(context)
+                    adapter = pagingPackageAdapter.withLoadStateFooter(footer = MyLoadStateAdapter { pagingPackageAdapter.retry() })
+                }
             }
-        }
-        loadPackages()
-        PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
-            pagingPackageAdapter.refresh()
+            loadPackages()
+            PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
+                pagingPackageAdapter.refresh()
+            }
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 
@@ -79,8 +89,7 @@ internal class StoreNewStickerFragment : BaseFragment(), SNSFGetNewStickerPackag
     }
 
     override fun onPackageDetailClicked(packageId: Int, entrancePoint: String) {
-        PackDetailFragment.newInstance(packageId, entrancePoint)
-            .showNow(parentFragmentManager, Constants.Tag.DETAIL)
+        PackDetailFragment.newInstance(packageId, entrancePoint).showNow(parentFragmentManager, Constants.Tag.DETAIL)
     }
 
     override fun onDownloadClicked(position: Int, stickerPackage: StickerPackage) {
