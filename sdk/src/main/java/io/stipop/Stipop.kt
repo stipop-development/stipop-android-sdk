@@ -88,14 +88,13 @@ class Stipop(
             sAuthDelegate?.let {
                 this.sAuthDelegate = it
             }
-            mainScope.launch {
-                configRepository.postConfigSdk()
-
-                Config.configure(context, callback = { result ->
+            Config.configure(context, callback = { result ->
+                mainScope.launch {
                     configRepository.isConfigured = result
+                    configRepository.postConfigSdk()
                     callback?.let { callback -> callback(result) }
-                })
-            }
+                }
+            })
         }
 
         fun connect(
