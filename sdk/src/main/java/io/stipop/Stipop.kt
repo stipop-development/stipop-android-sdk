@@ -318,20 +318,10 @@ class Stipop(
         }
     }
 
-    private fun getStickerPickerKeyboardViewHeightShow(isAdjustNothing: Boolean = false){
-        val insets: WindowInsetsCompat? = ViewCompat.getRootWindowInsets(activity.window.decorView)
-        val bottomInset = insets?.systemWindowInsetBottom ?: 0
-
+    private fun getStickerPickerKeyboardViewHeightShow(){
         val heightDifference = fullSizeHeight - fromTopToVisibleFramePx + spvAdditionalHeightOffset
         if (heightDifference > StipopUtils.pxToDp(100)) {
-            if(Build.VERSION.SDK_INT < 30){
-                when(isAdjustNothing){
-                    true -> currentPickerViewHeight = -bottomInset
-                    false -> currentPickerViewHeight = heightDifference - StipopUtils.getBottomNavigationBarHeight()
-                }
-            } else {
-                currentPickerViewHeight = heightDifference
-            }
+            currentPickerViewHeight = heightDifference
             stickerPickerKeyboardView.let { spv ->
                 spv?.let {
                     it.height = currentPickerViewHeight

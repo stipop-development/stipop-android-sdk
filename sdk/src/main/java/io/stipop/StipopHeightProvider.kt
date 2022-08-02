@@ -28,7 +28,6 @@ internal class StipopHeightProvider(private val activity: Activity, private val 
     private var listener: StipopHeightListener? = null
 
     private val fullSizeHeight = StipopUtils.getScreenHeight(activity)
-    private var heightMax = 0
 
     init {
         try {
@@ -64,9 +63,8 @@ internal class StipopHeightProvider(private val activity: Activity, private val 
     override fun onGlobalLayout() {
         when(type){
             StipopHeightProviderTypeEnum.FROM_TOP_TO_VISIBLE_FRAME_PX -> onGlobalLayoutFromTopToVisibleFramePx()
-            StipopHeightProviderTypeEnum.KEYBOARD -> onGlobalLayoutKeyboard()
+            StipopHeightProviderTypeEnum.KEYBOARD -> {}
         }
-
     }
 
     private fun onGlobalLayoutFromTopToVisibleFramePx(){
@@ -75,34 +73,7 @@ internal class StipopHeightProvider(private val activity: Activity, private val 
         val fromTopToVisibleFramePx = visibleFrameRect.bottom
 
         if (listener != null) {
-            if(fullSizeHeight/2 <= fromTopToVisibleFramePx) {
-                listener!!.onHeightChanged(fromTopToVisibleFramePx)
-            }
-        }
-    }
-
-    private fun onGlobalLayoutKeyboard(){
-        try {
-            val rect = Rect()
-            rootView.getWindowVisibleDisplayFrame(rect)
-
-            if (rect.bottom > heightMax) {
-                heightMax = rect.bottom
-            }
-
-            var keyboardHeight = heightMax - rect.bottom
-            if(Build.VERSION.SDK_INT >= 30){
-                val insets: WindowInsetsCompat? = ViewCompat.getRootWindowInsets(activity.window.decorView)
-                keyboardHeight -= insets?.systemWindowInsetBottom ?: 0
-            }
-
-            if (listener != null) {
-                if(heightMax/2 >= keyboardHeight) {
-                    listener!!.onHeightChanged(keyboardHeight)
-                }
-            }
-        } catch(exception: Exception){
-            Stipop.trackError(exception)
+            listener!!.onHeightChanged(fromTopToVisibleFramePx)
         }
     }
 }
