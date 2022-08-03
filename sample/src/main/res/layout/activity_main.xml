@@ -85,6 +85,7 @@
         android:background="@color/chat_background" />
 
     <LinearLayout
+        android:id="@+id/typingViewLayoutBackgroundView"
         android:background="@color/stipop_typing_view_layout_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -2,12 +2,8 @@ package io.stipop
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Rect
-import android.os.Build
 import android.util.Log
 import android.view.View
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import io.stipop.api.StipopApi
@@ -281,60 +277,37 @@ class Stipop(
 
     private fun getStickerPickerKeyboardViewHeight(){
         try {
-            if(inputMode == WindowSoftInputModeAdjustEnum.ADJUST_NOTHING){
-                getStickerPickerKeyboardViewHeightAdjustNothing()
-            } else {
-                getStickerPickerKeyboardViewHeightAdjust()
-            }
+            StipopKeyboardHeightProvider(activity).init().setHeightListener(object: StipopKeyboardHeightProvider.StipopKeyboardHeightListener{
+                override fun onHeightChanged(fromTopToVisibleFramePx: Int, keyboardHeight: Int) {
+                    Stipop.fromTopToVisibleFramePx = fromTopToVisibleFramePx
+                    getStickerPickerKeyboardViewHeightShow(keyboardHeight)
+                }
+            })
         } catch(exception: Exception){
             Stipop.trackError(exception)
         }
     }
 
-    private fun getStickerPickerKeyboardViewHeightAdjustNothing() {
-        StipopHeightProvider(activity, StipopHeightProviderTypeEnum.FROM_TOP_TO_VISIBLE_FRAME_PX).init().setHeightListener(object: StipopHeightProvider.StipopHeightListener{
-            override fun onHeightChanged(height: Int) {
-                try {
-                    fromTopToVisibleFramePx = height
-                    getStickerPickerKeyboardViewHeightShow()
-                } catch(exception: Exception){
-                    Stipop.trackError(exception)
-                }
-            }
-        })
-    }
-
-    private fun getStickerPickerKeyboardViewHeightAdjust() {
-        rootView = activity.window.decorView.findViewById(android.R.id.content) as View
-        rootView.viewTreeObserver.addOnGlobalLayoutListener {
-            try {
-                val visibleFrameRect = Rect()
-                rootView.getWindowVisibleDisplayFrame(visibleFrameRect)
-                fromTopToVisibleFramePx = visibleFrameRect.bottom
-                getStickerPickerKeyboardViewHeightShow()
-            } catch(exception: Exception){
-                Stipop.trackError(exception)
-            }
-        }
-    }
-
-    private fun getStickerPickerKeyboardViewHeightShow(){
-        val heightDifference = fullSizeHeight - fromTopToVisibleFramePx + spvAdditionalHeightOffset
-        if (heightDifference > StipopUtils.pxToDp(100)) {
-            currentPickerViewHeight = heightDifference
-            stickerPickerKeyboardView.let { spv ->
-                spv?.let {
-                    it.height = currentPickerViewHeight
-                    if (it.wantShowing && !it.isShowing) {
-                        it.show(fromTopToVisibleFramePx)
+    private fun getStickerPickerKeyboardViewHeightShow(keyboardHeight: Int){
+        try {
+            if (keyboardHeight > StipopUtils.pxToDp(100)) {
+                currentPickerViewHeight = keyboardHeight
+                stickerPickerKeyboardView.let { spv ->
+                    spv?.let {
+                        it.height = currentPickerViewHeight
+                        if (it.wantShowing && !it.isShowing) {
+                            it.show(fromTopToVisibleFramePx)
+                        }
                     }
                 }
+            } else {
+                currentPickerViewHeight = 0
+                hidePickerKeyboardView()
             }
-        } else {
-            currentPickerViewHeight = 0
-            hidePickerKeyboardView()
+            keyboardHeightDelegate?.onHeightChanged(currentPickerViewHeight)
+        } catch(exception: Exception){
+            Stipop.trackError(exception)
         }
-        keyboardHeightDelegate?.onHeightChanged(currentPickerViewHeight)
     }
 
     private fun showSearch() {

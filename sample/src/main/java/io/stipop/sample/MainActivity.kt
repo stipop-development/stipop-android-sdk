@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
@@ -63,6 +64,7 @@ class MainActivity : AppCompatActivity(),
     private val stipopPickerImageView: StipopImageView by lazy { findViewById(R.id.stickerPickerImageView) }
     private val sendImageView: AppCompatImageView by lazy { findViewById(R.id.sendImageView) }
     private val chatsAdapter: ChatAdapter by lazy { ChatAdapter(this) }
+    private val typingViewLayoutBackgroundView: LinearLayout by lazy {findViewById(R.id.typingViewLayoutBackgroundView)}
 
     var userId = "-1"
 
@@ -284,6 +286,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onHeightChanged(keyboardHeight: Int) {
-        Log.e("Stipop ","Keyboard height is changed -> $keyboardHeight")
+        Log.e("Stipop onHeightChanged","Keyboard height is changed -> $keyboardHeight")
     }
 }
