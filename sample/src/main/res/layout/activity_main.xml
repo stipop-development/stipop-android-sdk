@@ -72,7 +72,7 @@
 
     <fragment
         android:id="@+id/picker_view_fragment"
-        android:name="io.stipop.view.pickerview.StickerPickerCustomFragment"
+        android:name="io.stipop.view.pickerview.StickerPickerFragment"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         />

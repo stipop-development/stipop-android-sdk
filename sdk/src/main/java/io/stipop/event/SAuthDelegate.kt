@@ -1,7 +1,6 @@
 package io.stipop.event
 
-import io.stipop.models.SPSticker
-import io.stipop.models.enum.StipopApiEnum
+import io.stipop.models.StipopApiEnum
 import retrofit2.HttpException
 
 interface SAuthDelegate {

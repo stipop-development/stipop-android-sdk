@@ -1,4 +1,4 @@
-package io.stipop.models.enum
+package io.stipop.models
 
 enum class StipopApiEnum {
     INIT_SDK,

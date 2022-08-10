@@ -1,28 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="bottom_alert_title">Hide this sticker pack?</string>
-    <string name="bottom_alert_contents">Do you want to hide the sticker pack? You can always re-download hidden stickers later.</string>
-    <string name="cancel">Cancel</string>
-    <string name="hide">Hide</string>
-    <string name="downloaded">DOWNLOADED</string>
-    <string name="download">DOWNLOAD</string>
+    <string name="downloaded">Download Complete</string>
+    <string name="download">Download</string>
     <string name="search">Search</string>
-    <string name="all_stickers">Home</string>
-    <string name="news_tab">New</string>
-    <string name="my_stickers">My Sticker</string>
-    <string name="popular_stickers">Popular Stickers</string>
-    <string name="recommended_tag">Recommended tag</string>
+    <string name="home_tab">Home</string>
+    <string name="new_tab">New</string>
+    <string name="my_stickers_tab">My Stickers</string>
     <string name="view_hidden_stickers">View Hidden Stickers</string>
-    <string name="view_active_stickers">View Active Stickers</string>
+    <string name="view_active_stickers">View My Stickers</string>
     <string name="no_result">No results</string>
     <string name="trending">Trending</string>
     <string name="stickers">Stickers</string>
     <string name="recent_search">Recent Search</string>
-    <string name="clear">Clear</string>
-    <string name="download_done">Sticker Package is downloaded : )</string>
-    <string name="can_not_download">"Can not download!!!"</string>
-    <string name="can_not_open_package">Can not open this sticker package.</string>
-    <string name="empty_recent">The recently used stickers are displayed.\nTry send the stickers!</string>
+    <string name="download_done">Download Complete</string>
+    <string name="can_not_open_package">Cannot open sticker page. Please try again.</string>
+    <string name="empty_recent">No stickers sent recently.</string>
     <string name="okay">OK</string>
-    <string name="sticker_cannot_download_msg">This sticker set can not be downloaded. :(</string>
+    <string name="sticker_cannot_download_msg">Download error. Please try again.</string>
 </resources>

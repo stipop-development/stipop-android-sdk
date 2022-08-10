@@ -17,6 +17,7 @@ data class StipopConfigData(
     @SerializedName("Send") var previewConfig: PreviewConfig = PreviewConfig(),
     @SerializedName("Function") var functionConfig: FunctionConfig = FunctionConfig(),
     @SerializedName("Icon") var iconConfig: IconConfig = IconConfig(),
+    @SerializedName("View") var viewConfig: ViewConfig = ViewConfig(),
     @SerializedName("Layout") var layoutConfig: LayoutConfig = LayoutConfig(),
     @SerializedName("SAuth") var sAuthConfig: SAuthConfig = SAuthConfig()
 ) {
@@ -192,7 +193,15 @@ data class StipopConfigData(
             )
         }
     }
-
+    @Keep
+    data class ViewConfig(
+        @SerializedName("SPPickerView") var pickerView: PickerViewConfig = PickerViewConfig()
+    ) {
+        @Keep
+        data class PickerViewConfig(
+            @SerializedName("type") var type: String = "PopupWindow"
+        )
+    }
     @Keep
     data class LayoutConfig(
         @SerializedName("SPPickerView") var pickerView: PickerViewConfig = PickerViewConfig()

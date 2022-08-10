@@ -1,10 +1,11 @@
 package io.stipop.sample
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.multidex.MultiDexApplication
 import io.stipop.Stipop
 import io.stipop.event.SAuthDelegate
-import io.stipop.models.enum.StipopApiEnum
+import io.stipop.models.StipopApiEnum
 import io.stipop.s_auth.SAuthManager
 import io.stipop.sample.stipop_auth.SAuthRepository
 import kotlinx.coroutines.*

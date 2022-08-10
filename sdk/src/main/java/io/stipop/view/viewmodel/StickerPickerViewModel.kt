@@ -10,7 +10,7 @@ import io.stipop.models.SPSticker
 import io.stipop.models.Sticker
 import io.stipop.models.StickerPackage
 import io.stipop.models.body.UserIdBody
-import io.stipop.models.enum.StipopApiEnum
+import io.stipop.models.StipopApiEnum
 import io.stipop.s_auth.GetStickerPackageEnum
 import io.stipop.s_auth.SAuthManager
 import kotlinx.coroutines.CoroutineScope

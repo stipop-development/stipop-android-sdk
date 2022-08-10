@@ -30,7 +30,7 @@ import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.sample.adapter.ChatAdapter
 import io.stipop.sample.models.ChatItem
-import io.stipop.view.pickerview.StickerPickerCustomFragment
+import io.stipop.view.pickerview.StickerPickerFragment
 import java.util.*
 
 /**
@@ -89,13 +89,13 @@ class MainActivity : AppCompatActivity(),
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
 
         // If you want to custom your PickerView's position, add StickerPickerCustomFragment. or not, set stickerPickerCustomFragment to null.
-        val fragment = supportFragmentManager.findFragmentById(R.id.picker_view_fragment) as StickerPickerCustomFragment
+        val fragment = supportFragmentManager.findFragmentById(R.id.picker_view_fragment) as StickerPickerFragment
         Stipop.connect(
             activity = this,
             userId = userId,
             delegate = this,
             stipopButton = stipopPickerImageView,
-            stickerPickerCustomFragment = fragment,
+            stickerPickerFragment = fragment,
             taskCallBack = {
                 Log.d(
                     this.javaClass.name,
@@ -105,6 +105,8 @@ class MainActivity : AppCompatActivity(),
 
         // If you want to detect keyboard's up/down height, implement this delegate.
         Stipop.setKeyboardHeightDelegate(this)
+        // If you use 'PopupWindow' type and 'custom layout' for Sticker Picker View, please set Sticker Picker View's 'Y' value and 'Height' value.
+        Stipop.setCustomPopupWindowYAndHeightValue(500, 700)
 
         stipopPickerImageView.setOnClickListener {
             Stipop.show()
@@ -146,7 +148,7 @@ class MainActivity : AppCompatActivity(),
      */
     override fun onStickerPackRequested(spPackage: SPPackage): Boolean {
         Log.d(TAG, spPackage.toString());
-        return true
+        return false
     }
 
     /**

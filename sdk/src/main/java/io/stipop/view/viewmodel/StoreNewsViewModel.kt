@@ -8,7 +8,7 @@ import io.stipop.Stipop
 import io.stipop.data.PkgRepository
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
-import io.stipop.models.enum.StipopApiEnum
+import io.stipop.models.StipopApiEnum
 import io.stipop.s_auth.PostDownloadStickersEnum
 import io.stipop.s_auth.SAuthManager
 import kotlinx.coroutines.flow.*

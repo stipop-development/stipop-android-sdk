@@ -4,7 +4,7 @@ import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.body.InitSdkBody
 import io.stipop.models.body.UserIdBody
-import io.stipop.models.enum.StipopApiEnum
+import io.stipop.models.StipopApiEnum
 import io.stipop.models.response.StipopResponse
 import retrofit2.HttpException
 

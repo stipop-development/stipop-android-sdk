@@ -7,13 +7,12 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import io.stipop.Config
 import io.stipop.Stipop
+import io.stipop.ViewPickerViewType
 import io.stipop.base.BaseFragment
 import io.stipop.databinding.ViewPickerBinding
 import io.stipop.view.pickerview.listener.VisibleStateListener
 
-class StickerPickerCustomFragment : BaseFragment() {
-
-//    companion object { fun newInstance() = StickerPickerCustomFragment() }
+class StickerPickerFragment : BaseFragment() {
 
     internal lateinit var binding: ViewPickerBinding
 
@@ -42,7 +41,7 @@ class StickerPickerCustomFragment : BaseFragment() {
     }
 
     private fun pickerFragmentInit(){
-        if(!Config.pickerViewLayoutOnKeyboard) {
+        if(Config.getViewPickerViewType() == ViewPickerViewType.FRAGMENT) {
             Stipop.stickerPickerViewClass = StickerPickerViewClass(
                 PickerViewType.CUSTOM,
                 null,

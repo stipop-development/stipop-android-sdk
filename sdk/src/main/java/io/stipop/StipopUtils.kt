@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Display
 import android.view.WindowInsets
 import android.view.WindowManager
@@ -36,10 +37,10 @@ internal object StipopUtils {
     fun controlLocale(locale: Locale): Locale {
         return when (locale.isO3Country) {
             Locale.SIMPLIFIED_CHINESE.isO3Country -> {
-                Locale("zh-cn", locale.country)
+                Locale("zh-CN", locale.country)
             }
             Locale.TRADITIONAL_CHINESE.isO3Country -> {
-                Locale("zh-tw", locale.country)
+                Locale("zh-TW", locale.country)
             }
             else -> {
                 locale

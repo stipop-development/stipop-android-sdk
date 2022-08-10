@@ -1,27 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="bottom_alert_title">¿Esconder sticker?</string>
-    <string name="bottom_alert_contents">¿Quieres esconder los stickers?</string>
-    <string name="cancel">Cancelar</string>
-    <string name="hide">Esconder</string>
     <string name="downloaded">DESCARGADO</string>
     <string name="download">DESCARGAR</string>
     <string name="search">Buscar</string>
-    <string name="all_stickers">Inicio</string>
-    <string name="news_tab">Nuevo</string>
-    <string name="my_stickers">Mi sticker</string>
-    <string name="popular_stickers">Stickers populares</string>
-    <string name="recommended_tag">Etiqueta recomendada</string>
+    <string name="home_tab">Inicio</string>
+    <string name="new_tab">Nuevo</string>
+    <string name="my_stickers_tab">Mi sticker</string>
     <string name="view_hidden_stickers">Ver stickers ocultas</string>
     <string name="view_active_stickers">Ver stickers activas</string>
     <string name="no_result">No hay resultados</string>
     <string name="trending">Tendencias</string>
     <string name="stickers">Stickers</string>
     <string name="recent_search">Búsqueda reciente</string>
-    <string name="clear">Limpiar</string>
     <string name="download_done">Descarga completa</string>
-    <string name="can_not_download">Error de descarga</string>
     <string name="can_not_open_package">Esta sticker no se puede abrir.</string>
-    <string name="empty_recent">Stickers enviadas recientemente</string>
+    <string name="empty_recent">Stickers enviadas recientemente.</string>
     <string name="okay">Ok</string>
+    <string name="sticker_cannot_download_msg">Download error. Please try again.</string>
 </resources>

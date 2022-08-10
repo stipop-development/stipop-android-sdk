@@ -7,7 +7,7 @@ import io.stipop.Stipop
 import io.stipop.databinding.ViewPickerBinding
 import io.stipop.view.pickerview.listener.VisibleStateListener
 
-internal class StickerPickerKeyboardView(
+internal class StickerPickerPopupView(
     private val activity: Activity
 ) : PopupWindow() {
 
@@ -16,7 +16,7 @@ internal class StickerPickerKeyboardView(
     var wantShowing: Boolean = false
 
     init {
-        if(Config.pickerViewLayoutOnKeyboard) {
+        if(Config.isPickerViewPopupWindow()) {
             Stipop.stickerPickerViewClass = StickerPickerViewClass(
                 PickerViewType.ON_KEYBOARD,
                 this,

@@ -74,6 +74,7 @@ internal object Config {
     var gifPrice: Double = 0.0
     var stickerDoubleTap = false
     var pickerViewSearchIsActive = true
+    private var viewPickerViewType = "PopupWindow"
     var pickerViewLayoutOnKeyboard = true
     var sAuthIsActive = false
     private var detailBackIconName = "ic_back_border_3"
@@ -206,6 +207,9 @@ internal object Config {
             }
             iconConfig.let {
                 pickerViewSearchIsActive = it.pickerView.search.isActive
+            }
+            viewConfig.let {
+                viewPickerViewType = if(it.pickerView.type == "PopupWindow" || it.pickerView.type == "Fragment") (it.pickerView.type) else "PopupWindow"
             }
             layoutConfig.let {
                 pickerViewLayoutOnKeyboard = it.pickerView.onKeyboard
@@ -438,5 +442,21 @@ internal object Config {
         return color
     }
 
+    internal fun getViewPickerViewType(): ViewPickerViewType{
+        when(viewPickerViewType){
+            "PopupWindow" -> return ViewPickerViewType.POPUP_WINDOW
+            "Fragment" -> return ViewPickerViewType.FRAGMENT
+            else -> return ViewPickerViewType.POPUP_WINDOW
+        }
+    }
 
+    internal fun isPickerViewPopupWindow(): Boolean{
+        return pickerViewLayoutOnKeyboard || (!pickerViewLayoutOnKeyboard && getViewPickerViewType() == ViewPickerViewType.POPUP_WINDOW)
+    }
+
+
+}
+internal enum class ViewPickerViewType{
+    POPUP_WINDOW,
+    FRAGMENT
 }

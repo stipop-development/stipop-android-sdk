@@ -7,7 +7,7 @@ import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
 import io.stipop.models.body.OrderChangeBody
-import io.stipop.models.enum.StipopApiEnum
+import io.stipop.models.StipopApiEnum
 import io.stipop.models.response.MyStickerOrderChangedResponse
 import io.stipop.models.response.StipopResponse
 import io.stipop.s_auth.GetMyStickerEnum

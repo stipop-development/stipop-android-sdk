@@ -46,8 +46,8 @@ enum class PickerViewType {
 
 internal class StickerPickerViewClass(
     val type: PickerViewType,
-    val stickerPickerKeyboardView: StickerPickerKeyboardView? = null,
-    val stickerPickerCustomFragment: StickerPickerCustomFragment? = null,
+    val stickerPickerPopupView: StickerPickerPopupView? = null,
+    val stickerPickerFragment: StickerPickerFragment? = null,
     val activity: Activity,
     val pickerView: ViewPickerBinding
 ): StickerDefaultAdapter.OnStickerClickListener,
@@ -92,18 +92,18 @@ internal class StickerPickerViewClass(
     }
 
     private fun pickerKeyboardViewInit(){
-        stickerPickerKeyboardView?.contentView = pickerView.root
-        stickerPickerKeyboardView?.width = LinearLayout.LayoutParams.MATCH_PARENT
-        stickerPickerKeyboardView?.height = Stipop.currentPickerViewHeight
+        stickerPickerPopupView?.contentView = pickerView.root
+        stickerPickerPopupView?.width = LinearLayout.LayoutParams.MATCH_PARENT
+        stickerPickerPopupView?.height = Stipop.currentPickerViewHeight
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            stickerPickerKeyboardView?.setIsClippedToScreen(true)
+            stickerPickerPopupView?.setIsClippedToScreen(true)
         } else {
-            stickerPickerKeyboardView?.isClippingEnabled = false
+            stickerPickerPopupView?.isClippingEnabled = false
         }
 
-        stickerPickerKeyboardView?.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
-        stickerPickerKeyboardView?.inputMethodMode = PopupWindow.INPUT_METHOD_FROM_FOCUSABLE
+        stickerPickerPopupView?.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
+        stickerPickerPopupView?.inputMethodMode = PopupWindow.INPUT_METHOD_FROM_FOCUSABLE
     }
 
     private fun commonInit(){
@@ -289,10 +289,7 @@ internal class StickerPickerViewClass(
             Stipop.stickerPickerViewModel?.let {
                 if (it.recentStickers.isEmpty() && !packAdapter.isSelectedItemExist()) {
                     packAdapter.getItemByPosition(0)?.let {
-                        when (type) {
-                            PickerViewType.CUSTOM -> {}
-                            PickerViewType.ON_KEYBOARD -> onPackageClick(0, it)
-                        }
+                        onPackageClick(0, it)
                     }
                 }
             }
@@ -302,32 +299,32 @@ internal class StickerPickerViewClass(
     internal fun show(y: Int = 0){
         try {
             when(type){
-                PickerViewType.ON_KEYBOARD -> showPickerKeyboardView(y)
-                PickerViewType.CUSTOM -> showPickerCustomView()
+                PickerViewType.ON_KEYBOARD -> showPopupPickerView(y)
+                PickerViewType.CUSTOM -> showFragmentPickerView()
             }
         } catch(exception: Exception){
             Stipop.trackError(exception)
         }
     }
 
-    private fun showPickerKeyboardView(y: Int){
-        if (stickerPickerKeyboardView?.isShowing == true) {
+    private fun showPopupPickerView(y: Int){
+        if (stickerPickerPopupView?.isShowing == true) {
             return
         }
         if (Stipop.currentPickerViewHeight > 0) {
             showPickerViewCommonFunction()
-            stickerPickerKeyboardView?.showAtLocation(
+            stickerPickerPopupView?.showAtLocation(
                 activity.window.decorView.findViewById(android.R.id.content) as View,
                 Gravity.TOP,
                 0,
                 y
             )
-            stickerPickerViewPreview?.spvTopCoordinate = stickerPickerKeyboardView?.height ?: 0
+            stickerPickerViewPreview?.spvTopCoordinate = stickerPickerPopupView?.height ?: 0
         }
     }
 
-    private fun showPickerCustomView(){
-        if(stickerPickerCustomFragment?.isShowing() == true){
+    private fun showFragmentPickerView(){
+        if(stickerPickerFragment?.isShowing() == true){
             return
         }
 
@@ -352,7 +349,7 @@ internal class StickerPickerViewClass(
         try {
             when(type){
                 PickerViewType.ON_KEYBOARD -> {
-                    stickerPickerKeyboardView?.wantShowing = false
+                    stickerPickerPopupView?.wantShowing = false
                     dismissCommonFunction()
                 }
                 PickerViewType.CUSTOM -> {

@@ -11,7 +11,7 @@ import io.stipop.base.BaseFragmentActivity
 import io.stipop.databinding.ActivityStoreBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.body.UserIdBody
-import io.stipop.models.enum.StipopApiEnum
+import io.stipop.models.StipopApiEnum
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -40,13 +40,13 @@ internal class StoreActivity : BaseFragmentActivity() {
                     TabLayoutMediator(storeTabLayout, storeViewPager) { tab, position ->
                         when (position) {
                             StorePagerAdapter.POSITION_ALL_STICKERS -> {
-                                tab.text = getString(R.string.all_stickers)
+                                tab.text = getString(R.string.home_tab)
                             }
                             StorePagerAdapter.POSITION_NEW_STICKERS -> {
-                                tab.text = getString(R.string.news_tab)
+                                tab.text = getString(R.string.new_tab)
                             }
                             StorePagerAdapter.POSITION_MY_STICKERS -> {
-                                tab.text = getString(R.string.my_stickers)
+                                tab.text = getString(R.string.my_stickers_tab)
                             }
                         }
                     }.attach()

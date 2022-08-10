@@ -5,7 +5,7 @@ import io.stipop.api.StipopApi
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import io.stipop.models.body.UserIdBody
-import io.stipop.models.enum.StipopApiEnum
+import io.stipop.models.StipopApiEnum
 import io.stipop.view.StickerSearchView
 import io.stipop.view.StoreHomeFragment
 import io.stipop.view.StoreMyStickerFragment
