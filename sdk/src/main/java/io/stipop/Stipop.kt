@@ -89,7 +89,6 @@ class Stipop(
             Config.configure(context, callback = { result ->
                 mainScope.launch {
                     configRepository.isConfigured = result
-                    configRepository.postConfigSdk()
                     callback?.let { callback -> callback(result) }
                 }
             })
@@ -135,6 +134,7 @@ class Stipop(
                                        taskCallBack: ((isSuccess: Boolean) -> Unit)?){
             applicationContext = activity.applicationContext
             mainScope.launch {
+                configRepository.postConfigSdk()
                 postInitSDK()
                 try {
                     Stipop(activity, stipopButton, stipopDelegate).apply {
