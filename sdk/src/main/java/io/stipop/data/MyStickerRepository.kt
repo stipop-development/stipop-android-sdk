@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import retrofit2.HttpException
 
-internal class MyStickerRepository(private val apiService: StipopApi): BaseRepository() {
+internal class MyStickerRepository(): BaseRepository() {
 
     private val packageOrderChangedResult = MutableSharedFlow<MyStickerOrderChangedResponse>()
     val packageVisibilityUpdateResult = MutableSharedFlow<Triple<StipopResponse, Int, Int>>()
@@ -28,7 +28,7 @@ internal class MyStickerRepository(private val apiService: StipopApi): BaseRepos
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
-            ), pagingSourceFactory = { PagingMyPackSource(apiService, wantVisibleSticker) }).flow
+            ), pagingSourceFactory = { PagingMyPackSource(wantVisibleSticker) }).flow
     }
 
     suspend fun requestChangePackOrder(fromStickerPackage: StickerPackage, toStickerPackage: StickerPackage) {
@@ -37,17 +37,15 @@ internal class MyStickerRepository(private val apiService: StipopApi): BaseRepos
         val toOrder = toStickerPackage.order
         var response: MyStickerOrderChangedResponse? = null
         try {
-            try {
-                response = apiService.putMyStickerOrders(
-                    userId = userId,
-                    orderChangeBody = OrderChangeBody(fromOrder, toOrder)
-                )
-                packageOrderChangedResult.emit(response)
-            } catch (exception: HttpException) {
-                if (exception.code() == 401) {
-                    SAuthManager.setPutMyStickersOrdersData(PutMyStickersOrdersEnum.STORE_MY_STICKER_VIEW_MODEL, fromStickerPackage, toStickerPackage)
-                    Stipop.sAuthDelegate?.httpException(StipopApiEnum.PUT_MY_STICKERS_ORDERS, exception)
-                }
+            response = StipopApi.create().putMyStickerOrders(
+                userId = userId,
+                orderChangeBody = OrderChangeBody(fromOrder, toOrder)
+            )
+            packageOrderChangedResult.emit(response)
+        } catch (exception: HttpException) {
+            if (exception.code() == 401) {
+                SAuthManager.setPutMyStickersOrdersData(PutMyStickersOrdersEnum.STORE_MY_STICKER_VIEW_MODEL, fromStickerPackage, toStickerPackage)
+                Stipop.sAuthDelegate?.httpException(StipopApiEnum.PUT_MY_STICKERS_ORDERS, exception)
             }
         } catch(exception: Exception){
             Stipop.trackError(exception)
@@ -58,14 +56,12 @@ internal class MyStickerRepository(private val apiService: StipopApi): BaseRepos
         val userId = Stipop.userId
         var response: StipopResponse? = null
         try {
-            try {
-                response = apiService.putMyStickerVisibility(userId = userId, packageId = packageId)
-                packageVisibilityUpdateResult.emit(Triple(response, packageId, position))
-            } catch (exception: HttpException) {
-                if (exception.code() == 401) {
-                    SAuthManager.setPutMyStickerVisibilityData(packageId, position)
-                    Stipop.sAuthDelegate?.httpException(StipopApiEnum.PUT_MY_STICKER_VISIBILITY, exception)
-                }
+            response = StipopApi.create().putMyStickerVisibility(userId = userId, packageId = packageId)
+            packageVisibilityUpdateResult.emit(Triple(response, packageId, position))
+        } catch (exception: HttpException) {
+            if (exception.code() == 401) {
+                SAuthManager.setPutMyStickerVisibilityData(packageId, position)
+                Stipop.sAuthDelegate?.httpException(StipopApiEnum.PUT_MY_STICKER_VISIBILITY, exception)
             }
         } catch(exception: Exception){
             Stipop.trackError(exception)

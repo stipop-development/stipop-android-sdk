@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity(),
      */
     override fun onStickerPackRequested(spPackage: SPPackage): Boolean {
         Log.d(TAG, spPackage.toString());
-        return false
+        return true
     }
 
     /**

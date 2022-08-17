@@ -105,30 +105,39 @@ internal class StoreActivity : BaseFragmentActivity() {
 
     internal fun trackViewStore(){
         scope.launch {
-            val apiService = StipopApi.create()
-            val response = apiService.trackViewStore(UserIdBody(Stipop.userId))
-            if (response.code() == 401) {
-                Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_STORE, HttpException(response))
+            try {
+                val response = StipopApi.create().trackViewStore(UserIdBody(Stipop.userId))
+                if (response.code() == 401) {
+                    Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_STORE, HttpException(response))
+                }
+            } catch (exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }
 
     internal fun trackViewNew(){
         scope.launch {
-            val apiService = StipopApi.create()
-            val response = apiService.trackViewNew(UserIdBody(Stipop.userId))
-            if(response.code() == 401){
-                Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_NEW, HttpException(response))
+            try {
+                val response = StipopApi.create().trackViewNew(UserIdBody(Stipop.userId))
+                if(response.code() == 401){
+                    Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_NEW, HttpException(response))
+                }
+            } catch (exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }
 
     internal fun trackViewSticker(){
         scope.launch {
-            val apiService = StipopApi.create()
-            val response = apiService.trackViewMySticker(UserIdBody(Stipop.userId))
-            if(response.code() == 401){
-                Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_MY_STICKER, HttpException(response))
+            try {
+                val response = StipopApi.create().trackViewMySticker(UserIdBody(Stipop.userId))
+                if(response.code() == 401){
+                    Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_MY_STICKER, HttpException(response))
+                }
+            } catch(exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }

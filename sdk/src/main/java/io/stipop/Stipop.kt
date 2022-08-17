@@ -42,7 +42,7 @@ class Stipop(
 
         private val mainScope = CoroutineScope(Job() + Dispatchers.Main)
 
-        internal val configRepository: ConfigRepository by lazy { ConfigRepository(StipopApi.create()) }
+        internal var configRepository: ConfigRepository = ConfigRepository()
 
         internal var stickerPickerViewClass: StickerPickerViewClass? = null
         internal var stickerPickerViewModel: StickerPickerViewModel? = null
@@ -122,7 +122,7 @@ class Stipop(
                     }
                 }
             } else {
-                Log.v("STIPOP-SDK", "Stipop SDK connect succeeded. You can use SDK by calling Stipop.showKeyboard() or Stipop.showSearch() and implementing StipopDelegate interface.")
+                Log.v("STIPOP-SDK", "Stipop SDK connect succeeded. You can use SDK by calling Stipop.show() or Stipop.showSearch() and implementing StipopDelegate interface.")
                 connectSuccessInit(activity, stickerPickerFragment, stipopButton, delegate, taskCallBack)
             }
         }
@@ -162,6 +162,8 @@ class Stipop(
                 when(exception.code()){
                     401 -> sAuthDelegate?.httpException(StipopApiEnum.INIT_SDK, exception)
                 }
+            } catch (exception: Exception){
+                trackError(exception)
             }
         }
         private fun initPickerView(stipop: Stipop, stickerPickerFragment: StickerPickerFragment? = null){
@@ -239,6 +241,8 @@ class Stipop(
                             sAuthDelegate?.httpException(StipopApiEnum.TRACK_USING_STICKER, exception)
                         }
                     }
+                } catch (exception: Exception){
+                    trackError(exception)
                 }
             }
         }
@@ -248,15 +252,21 @@ class Stipop(
         }
 
         internal fun trackError(exception: Exception){
-            val stringWriter = StringWriter()
-            exception.printStackTrace(PrintWriter(stringWriter))
-            val exceptionAsString: String = stringWriter.toString()
+            if(StipopUtils.getCurrentNetworkStatus()) {
+                val stringWriter = StringWriter()
+                exception.printStackTrace(PrintWriter(stringWriter))
+                val exceptionAsString: String = stringWriter.toString()
 
-            GlobalScope.launch {
-                val response = StipopApi.create().trackError(Stipop.userId, TrackErrorBody(exceptionAsString))
-                if(response.code() == 401){
-                    SAuthManager.setTrackErrorData(exception)
-                    Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_ERROR, HttpException((response)))
+                GlobalScope.launch {
+                    try {
+                        val response = StipopApi.create().trackError(Stipop.userId, TrackErrorBody(exceptionAsString))
+                        if(response.code() == 401){
+                            SAuthManager.setTrackErrorData(exception)
+                            Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_ERROR, HttpException((response)))
+                        }
+                    } catch (exception: Exception){
+                        trackError(exception)
+                    }
                 }
             }
         }
@@ -302,7 +312,7 @@ class Stipop(
                 }
             })
         } catch(exception: Exception){
-            Stipop.trackError(exception)
+            trackError(exception)
         }
     }
     private fun setKeyboardHeightDelegateValue(keyboardHeight: Int){
@@ -313,7 +323,7 @@ class Stipop(
                 keyboardHeightDelegate?.onHeightChanged(0)
             }
         } catch(exception: Exception){
-            Stipop.trackError(exception)
+            trackError(exception)
         }
     }
 
@@ -336,7 +346,7 @@ class Stipop(
                 hidePopupPickerView()
             }
         } catch(exception: Exception){
-            Stipop.trackError(exception)
+            trackError(exception)
         }
     }
 
@@ -359,7 +369,7 @@ class Stipop(
                     ViewPickerViewType.FRAGMENT -> showAndHideFragmentPickerCustomView()
                 }
             } catch(exception: Exception){
-                Stipop.trackError(exception)
+                trackError(exception)
             }
         }
     }
@@ -416,7 +426,7 @@ class Stipop(
                 }
             }
         } catch(exception: Exception){
-            Stipop.trackError(exception)
+            trackError(exception)
         }
     }
 
@@ -440,7 +450,7 @@ class Stipop(
                 }
             }
         } catch(exception: Exception){
-            Stipop.trackError(exception)
+            trackError(exception)
         }
     }
 }

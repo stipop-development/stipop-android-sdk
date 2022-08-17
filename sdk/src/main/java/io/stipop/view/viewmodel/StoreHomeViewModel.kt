@@ -102,6 +102,8 @@ internal class StoreHomeViewModel(private val repository: PkgRepository) : ViewM
                         Stipop.sAuthDelegate?.httpException(StipopApiEnum.POST_DOWNLOAD_STICKERS, exception)
                     }
                 }
+            } catch (exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }

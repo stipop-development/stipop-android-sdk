@@ -23,15 +23,19 @@ import retrofit2.HttpException
 internal class StickerPickerViewModel {
 
     private val taskScope = CoroutineScope(Job() + Dispatchers.IO)
-    val repository = SpvRepository(StipopApi.create())
+    val repository = SpvRepository()
     val recentStickers: ArrayList<Sticker> = ArrayList()
     private var selectedPackage: StickerPackage? = null
 
     fun trackSpv() {
         taskScope.launch {
-            val response = StipopApi.create().trackViewPicker(UserIdBody(Stipop.userId))
-            if(response.code() == 401){
-                Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_PICKER, HttpException((response)))
+            try {
+                val response = StipopApi.create().trackViewPicker(UserIdBody(Stipop.userId))
+                if(response.code() == 401){
+                    Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_PICKER, HttpException((response)))
+                }
+            } catch (exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }
@@ -79,6 +83,8 @@ internal class StickerPickerViewModel {
                             Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_RECENTLY_SENT_STICKERS, exception)
                         }
                     }
+                } catch (exception: Exception){
+                    Stipop.trackError(exception)
                 }
             }
         }
@@ -101,6 +107,8 @@ internal class StickerPickerViewModel {
                         Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_FAVORITE_STICKERS, exception)
                     }
                 }
+            } catch (exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }
@@ -124,6 +132,8 @@ internal class StickerPickerViewModel {
                 when (exception.code()) {
                     401 -> Stipop.sAuthDelegate?.httpException(StipopApiEnum.PUT_MY_STICKER_FAVORITE, exception)
                 }
+            } catch (exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }
@@ -142,16 +152,16 @@ internal class StickerPickerViewModel {
             when (selectedPackage?.stickers.isNullOrNotEnough()) {
                 true -> {
                     try {
-                    repository.getStickerPackage(stickerPackage.packageId, onSuccess = {
-                        if (it.header.isSuccess()) {
-                            it.body?.stickerPackage?.let {
-                                selectedPackage = it
+                        repository.getStickerPackage(stickerPackage.packageId, onSuccess = {
+                            if (it.header.isSuccess()) {
+                                it.body?.stickerPackage?.let {
+                                    selectedPackage = it
+                                }
+                                launch(Dispatchers.Main) {
+                                    onSuccess(selectedPackage!!)
+                                }
                             }
-                            launch(Dispatchers.Main) {
-                                onSuccess(selectedPackage!!)
-                            }
-                        }
-                    })
+                        })
                     } catch(exception: HttpException) {
                         when (exception.code()) {
                             401 -> {
@@ -159,6 +169,8 @@ internal class StickerPickerViewModel {
                                 Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_STICKER_PACKAGE, exception)
                             }
                         }
+                    } catch (exception: Exception){
+                        Stipop.trackError(exception)
                     }
                 }
                 false -> {

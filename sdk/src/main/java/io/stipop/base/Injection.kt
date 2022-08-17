@@ -18,22 +18,20 @@ import io.stipop.view.viewmodel.StoreHomeViewModel
 
 internal object Injection {
 
-    private val stipopApi = StipopApi.create()
-
     private fun provideMyStickerRepository(): MyStickerRepository {
-        return MyStickerRepository(stipopApi)
+        return MyStickerRepository()
     }
 
     private fun providePackageRepository(): PkgRepository {
-        return PkgRepository(stipopApi)
+        return PkgRepository()
     }
 
     private fun provideStickerDetailRepository(): StickerDetailRepository {
-        return StickerDetailRepository(stipopApi)
+        return StickerDetailRepository()
     }
 
     private fun provideSearchingRepository(): SearchingRepository {
-        return SearchingRepository(stipopApi)
+        return SearchingRepository()
     }
 
     fun provideViewModelFactory(owner: SavedStateRegistryOwner): ViewModelProvider.Factory {

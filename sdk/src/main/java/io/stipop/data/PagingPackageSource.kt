@@ -10,7 +10,6 @@ import io.stipop.models.response.StickerPackagesResponse
 import retrofit2.HttpException
 
 internal class PagingPackageSource(
-    private val apiService: StipopApi,
     private val query: String? = null,
     private val newOrder: Boolean = false
 ) : PagingSource<Int, StickerPackage>() {
@@ -40,7 +39,7 @@ internal class PagingPackageSource(
             when (newOrder) {
                 true -> {
                     try {
-                        response = apiService.getNewStickerPackages(
+                        response = StipopApi.create().getNewStickerPackages(
                             userId = userId,
                             limit = limit,
                             pageNumber = pageNumber,
@@ -57,7 +56,7 @@ internal class PagingPackageSource(
                 }
                 false -> {
                     try {
-                        response = apiService.getTrendingStickerPackages(
+                        response = StipopApi.create().getTrendingStickerPackages(
                             userId = userId,
                             limit = limit,
                             pageNumber = pageNumber,

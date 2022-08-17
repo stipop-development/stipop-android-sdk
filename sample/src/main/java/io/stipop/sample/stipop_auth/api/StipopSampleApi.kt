@@ -23,35 +23,34 @@ internal interface StipopSampleApi {
 
     companion object {
 
-        private val BASE_URL = "https://messenger.stipop.io/v1/"
         private val API_KEY_VALUE = "YOUR_API_KEY_VALUE"
 
-        private val loggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-        private val client = OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.MINUTES)
-            .readTimeout(10, TimeUnit.MINUTES)
-            .writeTimeout(10, TimeUnit.MINUTES)
-            .addInterceptor(loggingInterceptor)
-            .addInterceptor(Interceptor {
-                it.proceed(it.request().newBuilder().headers(getHeaders()).build())
-            })
-            .addNetworkInterceptor {
-                it.proceed(it.request())
-            }
-            .build()
-
         fun create(): StipopSampleApi {
+            val headers = Headers.Builder()
+                .add("api_key", API_KEY_VALUE)
+                .build()
+
+            val loggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+            val client = OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.MINUTES)
+                .readTimeout(10, TimeUnit.MINUTES)
+                .writeTimeout(10, TimeUnit.MINUTES)
+                .addInterceptor(loggingInterceptor)
+                .addInterceptor(Interceptor {
+                    it.proceed(it.request().newBuilder().headers(headers).build())
+                })
+                .addNetworkInterceptor {
+                    it.proceed(it.request())
+                }
+                .build()
+
+            val BASE_URL = "https://messenger.stipop.io/v1/"
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(StipopSampleApi::class.java)
-        }
-        private fun getHeaders(): Headers {
-            return Headers.Builder()
-                .add("api_key", API_KEY_VALUE)
-                .build()
         }
     }
 }

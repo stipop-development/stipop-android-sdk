@@ -9,7 +9,7 @@ import io.stipop.models.StipopApiEnum
 import io.stipop.models.response.StickersResponse
 import retrofit2.HttpException
 
-internal class PagingStickerSource(private val apiService: StipopApi, private val query: String? = null) : PagingSource<Int, Sticker>() {
+internal class PagingStickerSource(private val query: String? = null) : PagingSource<Int, Sticker>() {
 
     private val STARTING_PAGE_INDEX = 1
     private val ITEM_PER_PAGE = 12
@@ -31,7 +31,7 @@ internal class PagingStickerSource(private val apiService: StipopApi, private va
         val userId = Stipop.userId
         var response: StickersResponse? = null
         try {
-            response = apiService.getStickers(
+            response = StipopApi.create().getStickers(
                 userId = userId,
                 limit = ITEM_PER_PAGE,
                 pageNumber = pageNumber,

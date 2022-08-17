@@ -8,14 +8,14 @@ import io.stipop.models.StickerPackage
 import io.stipop.models.response.StickerPackageResponse
 import io.stipop.models.response.StipopResponse
 
-internal class StickerDetailRepository(private val apiService: StipopApi) : BaseRepository() {
+internal class StickerDetailRepository() : BaseRepository() {
 
     suspend fun getStickerPackage(
         packageId: Int,
         onSuccess: (data: StickerPackageResponse) -> Unit
     ) {
         safeCall(
-            call = { apiService.getStickerPackage(packageId, Stipop.userId) },
+            call = { StipopApi.create().getStickerPackage(packageId, Stipop.userId) },
             onCompletable = {
                 it?.let(onSuccess)
             })
@@ -35,7 +35,7 @@ internal class StickerDetailRepository(private val apiService: StipopApi) : Base
         }
         safeCall(
             call = {
-                apiService.postDownloadStickers(
+                StipopApi.create().postDownloadStickers(
                     packageId = stickerPackage.packageId,
                     isPurchase = Config.allowPremium,
                     userId = Stipop.userId,

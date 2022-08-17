@@ -1,5 +1,6 @@
 package io.stipop.data
 
+import android.util.Log
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.body.InitSdkBody
@@ -8,7 +9,7 @@ import io.stipop.models.StipopApiEnum
 import io.stipop.models.response.StipopResponse
 import retrofit2.HttpException
 
-internal class ConfigRepository(private val apiService: StipopApi) : BaseRepository() {
+internal class ConfigRepository() : BaseRepository() {
 
     var isConfigured = false
     var isInitialized = false
@@ -23,7 +24,7 @@ internal class ConfigRepository(private val apiService: StipopApi) : BaseReposit
                 isInitialized = true
             }
             safeCall(
-                call = { apiService.initSdk(initSdkBody) }, onCompletable = {
+                call = { StipopApi.create().initSdk(initSdkBody) }, onCompletable = {
                     onSuccess?.let { it(Unit) }
                 })
         } ?: kotlin.run {
@@ -34,7 +35,7 @@ internal class ConfigRepository(private val apiService: StipopApi) : BaseReposit
     suspend fun postConfigSdk() =
         try {
             safeCall(
-                call = { apiService.trackConfig(
+                call = { StipopApi.create().trackConfig(
                     userIdBody = UserIdBody(userId = Stipop.userId)) },
                 onCompletable = {
                     //
@@ -44,6 +45,8 @@ internal class ConfigRepository(private val apiService: StipopApi) : BaseReposit
                 401 -> Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_CONFIG, exception)
                 else -> {}
             }
+        } catch (exception: Exception){
+            Stipop.trackError(exception)
         }
 
     suspend fun postTrackUsingSticker(
@@ -57,7 +60,7 @@ internal class ConfigRepository(private val apiService: StipopApi) : BaseReposit
     ) {
         safeCall(
             call = {
-                apiService.trackUsingSticker(
+                StipopApi.create().trackUsingSticker(
                     stickerId = stickerId,
                     userId = userId,
                     query = query,

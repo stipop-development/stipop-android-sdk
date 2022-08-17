@@ -3,13 +3,14 @@ package io.stipop.data
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import io.stipop.Stipop
+import io.stipop.StipopUtils
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
 import io.stipop.models.StipopApiEnum
 import io.stipop.models.response.MyStickerResponse
 import retrofit2.HttpException
 
-internal class PagingMyPackSource(private val apiService: StipopApi, private val wantVisibleSticker: Boolean) : PagingSource<Int, StickerPackage>() {
+internal class PagingMyPackSource(private val wantVisibleSticker: Boolean) : PagingSource<Int, StickerPackage>() {
 
     private val STARTING_PAGE_INDEX = 1
     private var currentVisibleSetting = true
@@ -33,7 +34,7 @@ internal class PagingMyPackSource(private val apiService: StipopApi, private val
             var response: MyStickerResponse? = null
             if (wantVisibleSticker) {
                 try {
-                    response = apiService.getMyStickers(
+                    response = StipopApi.create().getMyStickers(
                         userId = userId,
                         userIdQuery = userId,
                         limit = limit,
@@ -49,7 +50,7 @@ internal class PagingMyPackSource(private val apiService: StipopApi, private val
                 }
             } else {
                 try {
-                    response = apiService.getMyHiddenStickers(
+                    response = StipopApi.create().getMyHiddenStickers(
                         userId = userId,
                         limit = limit,
                         pageNumber = pageNumber

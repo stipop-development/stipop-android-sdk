@@ -20,7 +20,7 @@ import io.stipop.s_auth.SAuthManager
 import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 
-internal class SpvRepository(private val apiService: StipopApi) : BaseRepository() {
+internal class SpvRepository() : BaseRepository() {
 
     fun getMyStickerStream(): Flow<PagingData<StickerPackage>> {
         SAuthManager.setGetMyStickersData(GetMyStickerEnum.STICKER_PICKER_VIEW_CLASS)
@@ -28,7 +28,7 @@ internal class SpvRepository(private val apiService: StipopApi) : BaseRepository
             config = PagingConfig(
                 pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
-            ), pagingSourceFactory = { PagingMyPackSource(apiService, true) }).flow
+            ), pagingSourceFactory = { PagingMyPackSource(true) }).flow
     }
 
     suspend fun requestChangePackOrder(fromStickerPackage: StickerPackage, toStickerPackage: StickerPackage) {
@@ -36,12 +36,14 @@ internal class SpvRepository(private val apiService: StipopApi) : BaseRepository
         val fromOrder = fromStickerPackage.order
         val toOrder = toStickerPackage.order
         try {
-            apiService.putMyStickerOrders(userId = userId, orderChangeBody = OrderChangeBody(fromOrder, toOrder))
+            StipopApi.create().putMyStickerOrders(userId = userId, orderChangeBody = OrderChangeBody(fromOrder, toOrder))
         } catch (exception: HttpException) {
             if (exception.code() == 401) {
                 SAuthManager.setPutMyStickersOrdersData(PutMyStickersOrdersEnum.STICKER_PICKER_VIEW_MODEL, fromStickerPackage, toStickerPackage)
                 Stipop.sAuthDelegate?.httpException(StipopApiEnum.PUT_MY_STICKERS_ORDERS, exception)
             }
+        } catch (exception: Exception){
+            Stipop.trackError(exception)
         }
     }
 
@@ -50,7 +52,7 @@ internal class SpvRepository(private val apiService: StipopApi) : BaseRepository
         onSuccess: (data: StickerPackageResponse) -> Unit
     ) {
         safeCall(
-            call = { apiService.getStickerPackage(packageId, Stipop.userId) },
+            call = { StipopApi.create().getStickerPackage(packageId, Stipop.userId) },
             onCompletable = {
                 it?.let(onSuccess)
             })
@@ -59,7 +61,7 @@ internal class SpvRepository(private val apiService: StipopApi) : BaseRepository
     suspend fun putFavorite(spSticker: SPSticker, onSuccess: (data: StipopResponse) -> Unit) {
         safeCall(
             call = {
-                apiService.putMyStickerFavorite(
+                StipopApi.create().putMyStickerFavorite(
                     userId = Stipop.userId,
                     favoriteBody = FavoriteBody(spSticker.stickerId)
                 )
@@ -71,7 +73,7 @@ internal class SpvRepository(private val apiService: StipopApi) : BaseRepository
 
     suspend fun getFavorites(onSuccess: (data: FavoriteListResponse) -> Unit) {
         safeCall(
-            call = { apiService.getFavoriteStickers(userId = Stipop.userId, pageNumber = 1, limit = 24) },
+            call = { StipopApi.create().getFavoriteStickers(userId = Stipop.userId, pageNumber = 1, limit = 24) },
             onCompletable = {
                 it?.let(onSuccess)
             }
@@ -80,7 +82,7 @@ internal class SpvRepository(private val apiService: StipopApi) : BaseRepository
 
     suspend fun getRecentlySentStickers(onSuccess: (data: StickerListResponse) -> Unit) {
         safeCall(
-            call = { apiService.getRecentlySentStickers(userId = Stipop.userId, userIdQuery = Stipop.userId, pageNumber = 1, limit = 24) },
+            call = { StipopApi.create().getRecentlySentStickers(userId = Stipop.userId, userIdQuery = Stipop.userId, pageNumber = 1, limit = 24) },
             onCompletable = {
                 it?.let(onSuccess)
             }

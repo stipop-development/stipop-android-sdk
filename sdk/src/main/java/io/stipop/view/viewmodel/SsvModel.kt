@@ -31,13 +31,16 @@ internal class SsvModel(private val repository: SearchingRepository) : ViewModel
 
     internal fun trackViewSearch(){
         taskScope.launch {
-            val apiService = StipopApi.create()
-            repository.safeCall(
-                call = { apiService.trackViewSearch(UserIdBody(Stipop.userId)) }, onCompletable = {
-                    when(it?.code()){
-                        401 -> Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_SEARCH, HttpException(it))
-                    }
-                })
+            try {
+                repository.safeCall(
+                    call = { StipopApi.create().trackViewSearch(UserIdBody(Stipop.userId)) }, onCompletable = {
+                        when (it?.code()) {
+                            401 -> Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_SEARCH, HttpException(it))
+                        }
+                    })
+            } catch(exception: Exception){
+                Stipop.trackError(exception)
+            }
         }
     }
 

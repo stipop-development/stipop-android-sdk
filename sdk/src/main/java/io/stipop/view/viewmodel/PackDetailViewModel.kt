@@ -36,6 +36,8 @@ internal class PackDetailViewModel(private val repository: StickerDetailReposito
                         Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_PACKAGE, exception)
                     }
                 }
+            } catch (exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }
@@ -55,6 +57,8 @@ internal class PackDetailViewModel(private val repository: StickerDetailReposito
                         Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_STICKER_PACKAGE, exception)
                     }
                 }
+            } catch (exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }
@@ -78,6 +82,8 @@ internal class PackDetailViewModel(private val repository: StickerDetailReposito
                                 Stipop.sAuthDelegate?.httpException(StipopApiEnum.POST_DOWNLOAD_STICKERS, exception)
                             }
                         }
+                    } catch (exception: Exception){
+                        Stipop.trackError(exception)
                     }
                 }
             }

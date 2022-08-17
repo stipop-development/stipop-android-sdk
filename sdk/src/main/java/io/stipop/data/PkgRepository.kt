@@ -13,7 +13,7 @@ import io.stipop.models.response.KeywordListResponse
 import io.stipop.models.response.StipopResponse
 import kotlinx.coroutines.flow.Flow
 
-internal class PkgRepository(private val apiService: StipopApi) : BaseRepository() {
+internal class PkgRepository() : BaseRepository() {
 
     fun getSearchingPackStream(query: String? = null): Flow<PagingData<StickerPackage>> {
         return Pager(
@@ -23,7 +23,6 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
             ),
             pagingSourceFactory = {
                 PagingPackageSource(
-                    apiService,
                     query = query,
                     newOrder = false
                 )
@@ -35,13 +34,13 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
             config = PagingConfig(
                 pageSize = MyStickerRepository.NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
-            ), pagingSourceFactory = { PagingPackageSource(apiService, newOrder = true) }).flow
+            ), pagingSourceFactory = { PagingPackageSource(newOrder = true) }).flow
     }
 
     suspend fun getCurationPackagesAsFlow(type: String): Flow<CurationPackageResponse?> {
         return safeCallAsFlow(
             call = {
-                apiService.getCurationPackages(
+                StipopApi.create().getCurationPackages(
                     curationType = type,
                     userId = Stipop.userId,
                     lang = Stipop.lang,
@@ -68,7 +67,7 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
     suspend fun getRecommendQueryAsFlow(): Flow<KeywordListResponse?> {
         return safeCallAsFlow(
             call = {
-                apiService.getRecommendedKeywords(
+                StipopApi.create().getRecommendedKeywords(
                     userId = Stipop.userId,
                     lang = Stipop.lang,
                     countryCode = Stipop.countryCode,
@@ -90,7 +89,7 @@ internal class PkgRepository(private val apiService: StipopApi) : BaseRepository
         }
         safeCall(
             call = {
-                apiService.postDownloadStickers(
+                StipopApi.create().postDownloadStickers(
                     packageId = stickerPackage.packageId,
                     isPurchase = Config.allowPremium,
                     userId = Stipop.userId,

@@ -8,6 +8,8 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Insets
 import android.graphics.Point
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
@@ -402,5 +404,35 @@ internal object StipopUtils {
             config.setLocale(locale)
         }
         resources.updateConfiguration(config, resources.displayMetrics)
+    }
+
+    fun getCurrentNetworkStatus(): Boolean{
+        val manger = Stipop.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val nw = manger.activeNetwork ?: return false
+            val actNw = manger.getNetworkCapabilities(nw) ?: return false
+            return when {
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
+                    Log.d("NETWORK", "WIFI available")
+                    true
+                }
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+                    Log.d("NETWORK", "CELLULAR available")
+                    true
+                }
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
+                    Log.d("NETWORK", "ETHERNET available")
+                    true
+                }
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> {
+                    Log.d("NETWORK", "BLUETOOTH available")
+                    true
+                }
+                else -> false
+            }
+        } else {
+            return manger.activeNetworkInfo?.isConnected ?: false
+        }
     }
 }

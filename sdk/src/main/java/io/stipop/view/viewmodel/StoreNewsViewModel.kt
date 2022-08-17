@@ -20,13 +20,13 @@ internal class StoreNewsViewModel(private val repository: PkgRepository) : ViewM
     fun requestDownloadPackage(stickerPackage: StickerPackage) {
         viewModelScope.launch {
             try {
-            repository.postDownloadStickers(stickerPackage) {
-                it?.let { response ->
-                    if (response.header.isSuccess()) {
-                        PackageDownloadEvent.publishEvent(stickerPackage.packageId)
+                repository.postDownloadStickers(stickerPackage) {
+                    it?.let { response ->
+                        if (response.header.isSuccess()) {
+                            PackageDownloadEvent.publishEvent(stickerPackage.packageId)
+                        }
                     }
                 }
-            }
             } catch(exception: HttpException){
                 when(exception.code()){
                     401 -> {
@@ -34,6 +34,8 @@ internal class StoreNewsViewModel(private val repository: PkgRepository) : ViewM
                         Stipop.sAuthDelegate?.httpException(StipopApiEnum.POST_DOWNLOAD_STICKERS, exception)
                     }
                 }
+            } catch (exception: Exception){
+                Stipop.trackError(exception)
             }
         }
     }
