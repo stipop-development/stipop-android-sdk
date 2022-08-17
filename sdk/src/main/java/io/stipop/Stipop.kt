@@ -307,21 +307,10 @@ class Stipop(
         try {
             StipopKeyboardHeightProvider(activity).init().setHeightListener(object: StipopKeyboardHeightProvider.StipopKeyboardHeightListener{
                 override fun onHeightChanged(fromTopToVisibleFramePx: Int, keyboardHeight: Int) {
-                    setKeyboardHeightDelegateValue(keyboardHeight)
                     getStickerPickerKeyboardViewHeightShow(fromTopToVisibleFramePx, keyboardHeight)
+                    setKeyboardHeightDelegateValue(keyboardHeight)
                 }
             })
-        } catch(exception: Exception){
-            trackError(exception)
-        }
-    }
-    private fun setKeyboardHeightDelegateValue(keyboardHeight: Int){
-        try {
-            if (keyboardHeight > StipopUtils.pxToDp(100)) {
-                keyboardHeightDelegate?.onHeightChanged(currentPickerViewHeight)
-            } else {
-                keyboardHeightDelegate?.onHeightChanged(0)
-            }
         } catch(exception: Exception){
             trackError(exception)
         }
@@ -344,6 +333,18 @@ class Stipop(
             } else {
                 currentPickerViewHeight = 0
                 hidePopupPickerView()
+            }
+        } catch(exception: Exception){
+            trackError(exception)
+        }
+    }
+
+    private fun setKeyboardHeightDelegateValue(keyboardHeight: Int){
+        try {
+            if (keyboardHeight > StipopUtils.pxToDp(100)) {
+                keyboardHeightDelegate?.onHeightChanged(currentPickerViewHeight)
+            } else {
+                keyboardHeightDelegate?.onHeightChanged(0)
             }
         } catch(exception: Exception){
             trackError(exception)
