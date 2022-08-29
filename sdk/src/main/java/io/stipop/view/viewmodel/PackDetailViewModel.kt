@@ -25,7 +25,7 @@ internal class PackDetailViewModel(private val repository: StickerDetailReposito
         viewModelScope.launch {
             try {
                 StipopApi.create().trackViewPackage(
-                    UserIdBody(Stipop.userId),
+                    userIdBody = UserIdBody(userId = Stipop.userId),
                     entrancePoint = entrancePoint,
                     packageId = packageId
                 )

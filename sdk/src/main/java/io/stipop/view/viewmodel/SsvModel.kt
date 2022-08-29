@@ -33,7 +33,7 @@ internal class SsvModel(private val repository: SearchingRepository) : ViewModel
         taskScope.launch {
             try {
                 repository.safeCall(
-                    call = { StipopApi.create().trackViewSearch(UserIdBody(Stipop.userId)) }, onCompletable = {
+                    call = { StipopApi.create().trackViewSearch(userIdBody = UserIdBody(userId = Stipop.userId)) }, onCompletable = {
                         when (it?.code()) {
                             401 -> Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_SEARCH, HttpException(it))
                         }

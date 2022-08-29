@@ -25,12 +25,16 @@ internal interface StipopApi {
 
     @POST("init")
     suspend fun initSdk(
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Body initSdkBody: InitSdkBody
     ): StipopResponse
 
     @GET("curation/type/{type}")
     suspend fun getCurationPackages(
         @Path("type") curationType: String,
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userId: String,
         @Query("lang") lang: String? = Locale.getDefault().language,
         @Query("countryCode") countryCode: String? = Locale.getDefault().country,
@@ -41,11 +45,15 @@ internal interface StipopApi {
     @GET("package/{packageId}")
     suspend fun getStickerPackage(
         @Path("packageId") packageId: Int,
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userId: String,
     ): StickerPackageResponse
 
     @GET("search/keyword")
     suspend fun getRecommendedKeywords(
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userId: String,
         @Query("lang") lang: String,
         @Query("countryCode") countryCode: String,
@@ -54,6 +62,8 @@ internal interface StipopApi {
     @GET("package/send/{userId}")
     suspend fun getRecentlySentStickers(
         @Path("userId") userId: String,
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userIdQuery: String = userId,
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int
@@ -62,6 +72,8 @@ internal interface StipopApi {
     @GET("mysticker/favorite/{userId}")
     suspend fun getFavoriteStickers(
         @Path("userId") userId: String,
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userIdQuery: String = userId,
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int
@@ -70,6 +82,8 @@ internal interface StipopApi {
     @GET("mysticker/{userId}")
     suspend fun getMyStickers(
         @Path("userId") userId: String,
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userIdQuery: String = userId,
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int
@@ -78,6 +92,8 @@ internal interface StipopApi {
     @GET("mysticker/hide/{userId}")
     suspend fun getMyHiddenStickers(
         @Path("userId") userId: String,
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userIdQuery: String = userId,
         @Query("pageNumber") pageNumber: Int,
         @Query("limit") limit: Int
@@ -86,6 +102,8 @@ internal interface StipopApi {
     @PUT("mysticker/favorite/{userId}")
     suspend fun putMyStickerFavorite(
         @Path("userId") userId: String,
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userIdQuery: String = userId,
         @Body favoriteBody: FavoriteBody
     ): StipopResponse
@@ -93,6 +111,8 @@ internal interface StipopApi {
     @PUT("mysticker/order/{userId}")
     suspend fun putMyStickerOrders(
         @Path("userId") userId: String,
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userIdQuery: String = userId,
         @Body orderChangeBody: OrderChangeBody
     ): MyStickerOrderChangedResponse
@@ -101,11 +121,15 @@ internal interface StipopApi {
     suspend fun putMyStickerVisibility(
         @Path("userId") userId: String,
         @Path("packageId") packageId: Int,
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userIdQuery: String = userId
     ): StipopResponse
 
     @GET("package")
     suspend fun getTrendingStickerPackages(
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userId: String,
         @Query("lang") lang: String,
         @Query("countryCode") countryCode: String,
@@ -116,6 +140,8 @@ internal interface StipopApi {
 
     @GET("search")
     suspend fun getStickers(
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userId: String,
         @Query("lang") lang: String,
         @Query("countryCode") countryCode: String,
@@ -126,6 +152,8 @@ internal interface StipopApi {
 
     @GET("package/new")
     suspend fun getNewStickerPackages(
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userId: String,
         @Query("lang") lang: String,
         @Query("countryCode") countryCode: String,
@@ -137,6 +165,8 @@ internal interface StipopApi {
     @POST("download/{packageId}")
     suspend fun postDownloadStickers(
         @Path("packageId") packageId: Int,
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userId: String,
         @Query("isPurchase") isPurchase: String,
         @Query("countryCode") countryCode: String,
@@ -147,33 +177,61 @@ internal interface StipopApi {
     ): StipopResponse
 
     @POST("sdk/track/config")
-    suspend fun trackConfig(@Body userIdBody: UserIdBody): StipopResponse
+    suspend fun trackConfig(
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
+        @Body userIdBody: UserIdBody
+    ): StipopResponse
 
     @POST("sdk/track/view/picker")
-    suspend fun trackViewPicker(@Body userIdBody: UserIdBody): Response<StipopResponse>
+    suspend fun trackViewPicker(
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
+        @Body userIdBody: UserIdBody
+    ): Response<StipopResponse>
 
     @POST("sdk/track/view/search")
-    suspend fun trackViewSearch(@Body userIdBody: UserIdBody): Response<StipopResponse>
+    suspend fun trackViewSearch(
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
+        @Body userIdBody: UserIdBody
+    ): Response<StipopResponse>
 
     @POST("sdk/track/view/store")
-    suspend fun trackViewStore(@Body userIdBody: UserIdBody): Response<StipopResponse>
+    suspend fun trackViewStore(
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
+        @Body userIdBody: UserIdBody
+    ): Response<StipopResponse>
 
     @POST("sdk/track/view/new")
-    suspend fun trackViewNew(@Body userIdBody: UserIdBody): Response<StipopResponse>
+    suspend fun trackViewNew(
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
+        @Body userIdBody: UserIdBody
+    ): Response<StipopResponse>
 
     @POST("sdk/track/view/mysticker")
-    suspend fun trackViewMySticker(@Body userIdBody: UserIdBody): Response<StipopResponse>
+    suspend fun trackViewMySticker(
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
+        @Body userIdBody: UserIdBody
+    ): Response<StipopResponse>
 
     @POST("sdk/track/view/package/{entrance_point}/{package_id}")
     suspend fun trackViewPackage(
         @Body userIdBody: UserIdBody,
         @Path("entrance_point") entrancePoint: String? = Constants.Point.DEFAULT,
-        @Path("package_id") packageId: Int
+        @Path("package_id") packageId: Int,
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
     ): Response<StipopResponse>
 
     @POST("analytics/send/{stickerId}")
     suspend fun trackUsingSticker(
         @Path("stickerId") stickerId: String,
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userId: String,
         @Query("q") query: String? = null,
         @Query("countryCode") countryCode: String,
@@ -183,6 +241,8 @@ internal interface StipopApi {
 
     @POST("analytics/error")
     suspend fun trackError(
+        @Query("platform") platform: String = Constants.Value.PLATFORM,
+        @Query("version") version: String = BuildConfig.SDK_VERSION_NAME,
         @Query("userId") userId: String,
         @Body trackErrorBody: TrackErrorBody
     ): Response<StipopResponse>

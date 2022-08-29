@@ -24,7 +24,7 @@ internal class ConfigRepository() : BaseRepository() {
                 isInitialized = true
             }
             safeCall(
-                call = { StipopApi.create().initSdk(initSdkBody) }, onCompletable = {
+                call = { StipopApi.create().initSdk(initSdkBody = initSdkBody) }, onCompletable = {
                     onSuccess?.let { it(Unit) }
                 })
         } ?: kotlin.run {

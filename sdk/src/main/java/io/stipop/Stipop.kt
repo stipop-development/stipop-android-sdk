@@ -259,7 +259,7 @@ class Stipop(
 
                 GlobalScope.launch {
                     try {
-                        val response = StipopApi.create().trackError(Stipop.userId, TrackErrorBody(exceptionAsString))
+                        val response = StipopApi.create().trackError(userId = Stipop.userId, trackErrorBody = TrackErrorBody(exceptionAsString))
                         if(response.code() == 401){
                             SAuthManager.setTrackErrorData(exception)
                             Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_ERROR, HttpException((response)))

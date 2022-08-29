@@ -22,7 +22,16 @@ class GlobalApplication : MultiDexApplication(), SAuthDelegate {
             })
     }
 
-    /* If you use SAuth, implement this function and refresh accessToken when authorization error occured. */
+    /**
+     * httpException (From SAuthDelegate)
+     * :If HttpException occurs in Stipop, occurred HttpException will be received in here.
+     *
+     * @process 1: Issue new AccessToken (If other exception is issuing an AccessToken, please wait until finishing and request using this AccessToken).
+     *          2: Set new AccessToken to Stipop. (Using Stipop.setAccessToken method)
+     *          3: Rerequest to the API where error occurred. (Using SAuthManager.reRequest method)
+     * @param api: Where HttpException occurred.
+     * @param exception: HttpException occurred.
+     */
     override fun httpException(api: StipopApiEnum, exception: HttpException) {
         when(exception.code()){
             401 -> {

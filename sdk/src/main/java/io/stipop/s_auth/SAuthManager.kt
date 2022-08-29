@@ -320,19 +320,19 @@ class SAuthManager {
 
         private fun trackViewStore(){
             CoroutineScope(Dispatchers.IO).launch {
-                StipopApi.create().trackViewStore(UserIdBody(Stipop.userId))
+                StipopApi.create().trackViewStore(userIdBody = UserIdBody(userId = Stipop.userId))
             }
         }
 
         private fun trackViewNew(){
             CoroutineScope(Dispatchers.IO).launch {
-                StipopApi.create().trackViewNew(UserIdBody(Stipop.userId))
+                StipopApi.create().trackViewNew(userIdBody = UserIdBody(userId = Stipop.userId))
             }
         }
 
         private fun trackViewMySticker(){
             CoroutineScope(Dispatchers.IO).launch {
-                StipopApi.create().trackViewMySticker(UserIdBody(Stipop.userId))
+                StipopApi.create().trackViewMySticker(userIdBody = UserIdBody(userId = Stipop.userId))
             }
         }
 

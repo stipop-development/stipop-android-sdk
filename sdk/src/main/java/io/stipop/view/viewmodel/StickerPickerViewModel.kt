@@ -30,7 +30,7 @@ internal class StickerPickerViewModel {
     fun trackSpv() {
         taskScope.launch {
             try {
-                val response = StipopApi.create().trackViewPicker(UserIdBody(Stipop.userId))
+                val response = StipopApi.create().trackViewPicker(userIdBody = UserIdBody(userId = Stipop.userId))
                 if(response.code() == 401){
                     Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_PICKER, HttpException((response)))
                 }

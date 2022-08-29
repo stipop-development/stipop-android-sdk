@@ -52,7 +52,7 @@ internal class SpvRepository() : BaseRepository() {
         onSuccess: (data: StickerPackageResponse) -> Unit
     ) {
         safeCall(
-            call = { StipopApi.create().getStickerPackage(packageId, Stipop.userId) },
+            call = { StipopApi.create().getStickerPackage(packageId = packageId, userId = Stipop.userId) },
             onCompletable = {
                 it?.let(onSuccess)
             })

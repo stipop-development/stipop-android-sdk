@@ -106,7 +106,7 @@ internal class StoreActivity : BaseFragmentActivity() {
     internal fun trackViewStore(){
         scope.launch {
             try {
-                val response = StipopApi.create().trackViewStore(UserIdBody(Stipop.userId))
+                val response = StipopApi.create().trackViewStore(userIdBody = UserIdBody(userId = Stipop.userId))
                 if (response.code() == 401) {
                     Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_STORE, HttpException(response))
                 }
@@ -119,7 +119,7 @@ internal class StoreActivity : BaseFragmentActivity() {
     internal fun trackViewNew(){
         scope.launch {
             try {
-                val response = StipopApi.create().trackViewNew(UserIdBody(Stipop.userId))
+                val response = StipopApi.create().trackViewNew(userIdBody = UserIdBody(userId = Stipop.userId))
                 if(response.code() == 401){
                     Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_NEW, HttpException(response))
                 }
@@ -132,7 +132,7 @@ internal class StoreActivity : BaseFragmentActivity() {
     internal fun trackViewSticker(){
         scope.launch {
             try {
-                val response = StipopApi.create().trackViewMySticker(UserIdBody(Stipop.userId))
+                val response = StipopApi.create().trackViewMySticker(userIdBody = UserIdBody(userId = Stipop.userId))
                 if(response.code() == 401){
                     Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_MY_STICKER, HttpException(response))
                 }
