@@ -23,9 +23,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.stipop.Stipop
-import io.stipop.StipopDelegate
-import io.stipop.StipopKeyboardHeightDelegate
+import io.stipop.delegate.StipopDelegate
+import io.stipop.delegate.StipopKeyboardHeightDelegate
 import io.stipop.custom.StipopImageView
+import io.stipop.delegate.SPComponentLifeCycleDelegate
+import io.stipop.models.ComponentEnum
+import io.stipop.models.LifeCycleEnum
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
 import io.stipop.sample.adapter.ChatAdapter
@@ -50,7 +53,7 @@ import java.util.*
 class MainActivity : AppCompatActivity(),
     StipopDelegate,
     StipopKeyboardHeightDelegate,
-    ChatAdapter.GuideDelegate {
+    ChatAdapter.GuideDelegate, SPComponentLifeCycleDelegate {
 
     private val TAG: String = "MainActivity"
 
@@ -107,6 +110,8 @@ class MainActivity : AppCompatActivity(),
         Stipop.setKeyboardHeightDelegate(this)
         // If you use 'PopupWindow' type and 'custom layout' for Sticker Picker View, please set Sticker Picker View's 'Y' value and 'Height' value.
         Stipop.setCustomPopupWindowYAndHeightValue(500, 700)
+        // If you want to detect StipopImageView button's color change, please implement ComponentLifeCycleDelegate.
+        Stipop.setComponentLifeCycleDelegate(this)
 
         stipopPickerImageView.setOnClickListener {
             Stipop.show()
@@ -289,5 +294,9 @@ class MainActivity : AppCompatActivity(),
 
     override fun onHeightChanged(keyboardHeight: Int) {
         Log.e("Stipop onHeightChanged","Keyboard height is changed -> $keyboardHeight")
+    }
+
+    override fun spComponentLifeCycle(componentEnum: ComponentEnum, lifeCycleEnum: LifeCycleEnum) {
+        Log.e("Stipop spComponentLifeCycle","${componentEnum.name}'s state is changed -> ${lifeCycleEnum.name}")
     }
 }

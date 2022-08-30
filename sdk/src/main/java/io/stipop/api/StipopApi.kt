@@ -251,7 +251,7 @@ internal interface StipopApi {
 
         private var accessTokenWithBearerText = "Bearer "
 
-        private val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.BODY }
+        private val loggingInterceptor = HttpLoggingInterceptor().apply { level = Level.HEADERS }
         private val client = OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.MINUTES)
             .readTimeout(10, TimeUnit.MINUTES)

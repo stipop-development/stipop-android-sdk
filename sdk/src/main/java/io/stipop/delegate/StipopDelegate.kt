@@ -1,4 +1,4 @@
-package io.stipop
+package io.stipop.delegate
 
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker

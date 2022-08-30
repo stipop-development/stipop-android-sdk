@@ -8,6 +8,9 @@ import androidx.fragment.app.FragmentManager
 import io.stipop.api.StipopApi
 import io.stipop.custom.StipopImageView
 import io.stipop.data.ConfigRepository
+import io.stipop.delegate.SPComponentLifeCycleDelegate
+import io.stipop.delegate.StipopDelegate
+import io.stipop.delegate.StipopKeyboardHeightDelegate
 import io.stipop.event.SAuthDelegate
 import io.stipop.models.SPSticker
 import io.stipop.models.StipopApiEnum
@@ -39,6 +42,7 @@ class Stipop(
 
         internal var sAuthDelegate: SAuthDelegate? = null
         internal var keyboardHeightDelegate: StipopKeyboardHeightDelegate? = null
+        internal var spComponentLifeCycleDelegate: SPComponentLifeCycleDelegate? = null
 
         private val mainScope = CoroutineScope(Job() + Dispatchers.Main)
 
@@ -273,6 +277,10 @@ class Stipop(
         fun setCustomPopupWindowYAndHeightValue(y: Int, height: Int){
             this.pickerViewPopupWindowYValue = y
             this.pickerViewPopupWindowHeight = height
+        }
+
+        fun setComponentLifeCycleDelegate(delegate: SPComponentLifeCycleDelegate){
+            spComponentLifeCycleDelegate = delegate
         }
     }
 

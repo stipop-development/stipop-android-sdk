@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.Stipop
+import io.stipop.Stipop.Companion.spComponentLifeCycleDelegate
 import io.stipop.StipopUtils
 import io.stipop.adapter.PagingMyPackAdapter
 import io.stipop.adapter.StickerDefaultAdapter
@@ -25,6 +26,8 @@ import io.stipop.custom.HorizontalDecoration
 import io.stipop.databinding.ViewPickerBinding
 import io.stipop.event.MyPackEventDelegate
 import io.stipop.event.PreviewDelegate
+import io.stipop.models.ComponentEnum
+import io.stipop.models.LifeCycleEnum
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import io.stipop.s_auth.SPVGetMyStickersReRequestDelegate
@@ -335,6 +338,7 @@ internal class StickerPickerViewClass(
     private fun showPickerViewCommonFunction(){
         refreshData()
         Stipop.stickerPickerViewModel?.trackSpv()
+        spComponentLifeCycleDelegate?.spComponentLifeCycle(ComponentEnum.PICKER_VIEW, LifeCycleEnum.CREATED)
         delegate?.onSpvVisibleState(true)
     }
 
@@ -365,6 +369,7 @@ internal class StickerPickerViewClass(
     private fun dismissCommonFunction(){
         stickerPickerViewPreview?.dismiss()
         packAdapter.updateSelected()
+        spComponentLifeCycleDelegate?.spComponentLifeCycle(ComponentEnum.PICKER_VIEW, LifeCycleEnum.DESTROYED)
         delegate?.onSpvVisibleState(false)
     }
 
