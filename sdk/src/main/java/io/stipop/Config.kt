@@ -86,8 +86,8 @@ internal object Config {
     private var previewFavoritesOffIconName = ""
     private var previewCloseIconName = ""
 
-    internal fun configure(context: Context, callback: ((isSuccess: Boolean) -> Unit)) {
-        val jsonString = getJsonDataFromAsset(context) ?: return
+    internal fun configure(context: Context, configFileName: String, callback: ((isSuccess: Boolean) -> Unit)) {
+        val jsonString = getJsonDataFromAsset(configFileName, context) ?: return
         try {
             val json = JSONObject(jsonString)
             stipopConfigData = Gson().fromJson(jsonString, StipopConfigData::class.java)
@@ -104,10 +104,10 @@ internal object Config {
         }
     }
 
-    private fun getJsonDataFromAsset(context: Context): String? {
+    private fun getJsonDataFromAsset(fileName: String, context: Context): String? {
         val jsonString: String
         try {
-            jsonString = context.assets.open(Constants.KEY.ASSET_NAME).bufferedReader()
+            jsonString = context.assets.open(fileName).bufferedReader()
                 .use { it.readText() }
         } catch (ioException: IOException) {
             ioException.printStackTrace()

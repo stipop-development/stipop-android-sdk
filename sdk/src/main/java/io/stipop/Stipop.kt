@@ -86,11 +86,16 @@ class Stipop(
             SAuthManager.setAccessToken(accessToken)
         }
 
-        fun configure(context: Context, sAuthDelegate: SAuthDelegate? = null, callback: ((isSuccess: Boolean) -> Unit)? = null) {
+        fun configure(
+            context: Context,
+            sAuthDelegate: SAuthDelegate? = null,
+            configFileName: String = Constants.KEY.ASSET_NAME,
+            callback: ((isSuccess: Boolean) -> Unit)? = null,
+        ) {
             sAuthDelegate?.let {
                 this.sAuthDelegate = it
             }
-            Config.configure(context, callback = { result ->
+            Config.configure(context, configFileName, callback = { result ->
                 mainScope.launch {
                     configRepository.isConfigured = result
                     callback?.let { callback -> callback(result) }
@@ -115,7 +120,7 @@ class Stipop(
             if (!configRepository.isConfigured) {
                 if(canRetryIfConnectFailed){
                     Log.w("STIPOP-SDK", "Stipop SDK not connected. Because 'canRetryIfConnectFailed' is True, SDK calls 'configure(context)' automatically just once.")
-                    configure(activity, callback = {
+                    configure(activity, null, Constants.KEY.ASSET_NAME, callback = {
                         if(it) connect(activity, userId, delegate, stipopButton, stickerPickerFragment, locale, taskCallBack)
                         canRetryIfConnectFailed = false
                     })
