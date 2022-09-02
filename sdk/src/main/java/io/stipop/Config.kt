@@ -74,6 +74,8 @@ internal object Config {
     var gifPrice: Double = 0.0
     var stickerDoubleTap = false
     var pickerViewSearchIsActive = true
+    var pickerViewSettingIsActive = true
+    var pickerViewStoreIsActive = true
     private var viewPickerViewType = "PopupWindow"
     var pickerViewLayoutOnKeyboard = true
     var sAuthIsActive = false
@@ -207,6 +209,8 @@ internal object Config {
             }
             iconConfig.let {
                 pickerViewSearchIsActive = it.pickerView.search.isActive
+                pickerViewSettingIsActive = it.pickerView.setting.isActive
+                pickerViewStoreIsActive = it.pickerView.store.isActive
             }
             viewConfig.let {
                 viewPickerViewType = if(it.pickerView.type == "PopupWindow" || it.pickerView.type == "Fragment") (it.pickerView.type) else "PopupWindow"

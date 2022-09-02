@@ -6,7 +6,7 @@
     android:layout_gravity="right"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <io.stipop.custom.StipopImageView
         android:id="@+id/my_sticker"
         android:layout_width="120dp"
         android:layout_height="120dp"

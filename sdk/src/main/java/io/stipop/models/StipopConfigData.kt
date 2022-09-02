@@ -185,10 +185,22 @@ data class StipopConfigData(
     ) {
         @Keep
         data class PickerViewConfig(
-            @SerializedName("Search") var search: SearchConfig = SearchConfig()
+            @SerializedName("Search") var search: SearchConfig = SearchConfig(),
+            @SerializedName("Setting") var setting: SettingConfig = SettingConfig(),
+            @SerializedName("Store") var store: StoreConfig = StoreConfig()
         ) {
             @Keep
             data class SearchConfig(
+                @SerializedName("isActive") var isActive: Boolean = false
+            )
+
+            @Keep
+            data class SettingConfig(
+                @SerializedName("isActive") var isActive: Boolean = false
+            )
+
+            @Keep
+            data class StoreConfig(
                 @SerializedName("isActive") var isActive: Boolean = false
             )
         }

@@ -14,9 +14,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import io.stipop.*
 import io.stipop.Config
 import io.stipop.Constants
-import io.stipop.Stipop
 import io.stipop.Stipop.Companion.spComponentLifeCycleDelegate
 import io.stipop.StipopUtils
 import io.stipop.adapter.PagingMyPackAdapter
@@ -165,6 +165,22 @@ internal class StickerPickerViewClass(
             true -> pickerView.searchImageView.visibility = View.VISIBLE
             false -> pickerView.searchImageView.visibility = View.GONE
         }
+        when(Config.pickerViewSettingIsActive){
+            true -> {
+                pickerView.settingImageView.visibility = View.VISIBLE
+            }
+            false -> {
+                pickerView.settingImageView.visibility = View.GONE
+            }
+        }
+        when(Config.pickerViewStoreIsActive){
+            true -> {
+                pickerView.storeImageView.visibility = View.VISIBLE
+            }
+            false -> {
+                pickerView.storeImageView.visibility = View.GONE
+            }
+        }
     }
 
     internal fun setDelegate(visibleDelegate: VisibleStateListener){
@@ -183,8 +199,8 @@ internal class StickerPickerViewClass(
                 settingImageView.setIconDefaultsColor()
                 storeImageView.setImageResource(io.stipop.Config.getKeyboardStoreResourceId(activity))
                 storeImageView.setIconDefaultsColor()
-//            smallFavorite.setImageResource(R.mipmap.ic_favorites_active)
-//            smallRecently.setImageResource(R.mipmap.ic_recents_active)
+                smallFavorite.setImageResource(R.mipmap.ic_favorites_active)
+                smallRecently.setImageResource(R.mipmap.ic_recents_active)
                 recentFavoriteContainer.tag = io.stipop.Constants.Tag.RECENT
                 recentStickerImageView.isVisible = !Config.showPreview
                 smallRecently.isVisible = Config.showPreview
