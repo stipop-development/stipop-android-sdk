@@ -196,12 +196,12 @@ data class StipopConfigData(
 
             @Keep
             data class SettingConfig(
-                @SerializedName("isActive") var isActive: Boolean = false
+                @SerializedName("isActive") var isActive: Boolean = true
             )
 
             @Keep
             data class StoreConfig(
-                @SerializedName("isActive") var isActive: Boolean = false
+                @SerializedName("isActive") var isActive: Boolean = true
             )
         }
     }

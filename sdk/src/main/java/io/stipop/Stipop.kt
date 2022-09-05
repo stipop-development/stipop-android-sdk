@@ -98,6 +98,20 @@ class Stipop(
             })
         }
 
+        fun configureWithConfigFileName(context: Context, sAuthDelegate: SAuthDelegate? = null, configFileName: String, callback: ((isSuccess: Boolean) -> Unit)? = null) {
+            sAuthDelegate?.let {
+                this.sAuthDelegate = it
+            }
+            Config.configure(context,
+                configFileName = configFileName,
+                callback = { result ->
+                mainScope.launch {
+                    configRepository.isConfigured = result
+                    callback?.let { callback -> callback(result) }
+                }
+            })
+        }
+
         fun connect(
             activity: FragmentActivity,
             userId: String,

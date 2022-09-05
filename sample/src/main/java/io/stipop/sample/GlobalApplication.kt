@@ -1,22 +1,18 @@
 package io.stipop.sample
 
-import android.content.res.Configuration
 import android.util.Log
 import androidx.multidex.MultiDexApplication
 import io.stipop.Stipop
-import io.stipop.event.SAuthDelegate
-import io.stipop.models.StipopApiEnum
-import io.stipop.s_auth.SAuthManager
-import io.stipop.sample.stipop_auth.SAuthRepository
 import kotlinx.coroutines.*
-import retrofit2.HttpException
 
-class GlobalApplication : MultiDexApplication(), SAuthDelegate {
+class GlobalApplication : MultiDexApplication()
+//    , SAuthDelegate   // If you use SAuth, implement this delegate.
+{
 
     override fun onCreate() {
         super.onCreate()
         Stipop.configure(this,
-            sAuthDelegate = this,   // If you do not use SAuth, type null
+            sAuthDelegate = null,   // If you use SAuth, type this.
             callback = {
                 Log.d(this.javaClass.name, "Use callback if you need.")
             })
@@ -32,6 +28,7 @@ class GlobalApplication : MultiDexApplication(), SAuthDelegate {
      * @param api: Where HttpException occurred.
      * @param exception: HttpException occurred.
      */
+    /*
     override fun httpException(api: StipopApiEnum, exception: HttpException) {
         when(exception.code()){
             401 -> {
@@ -46,4 +43,5 @@ class GlobalApplication : MultiDexApplication(), SAuthDelegate {
             }
         }
     }
+     */
 }

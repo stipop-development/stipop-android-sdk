@@ -73,7 +73,7 @@ internal object Config {
     var pngPrice: Double = 0.0
     var gifPrice: Double = 0.0
     var stickerDoubleTap = false
-    var pickerViewSearchIsActive = true
+    var pickerViewSearchIsActive = false
     var pickerViewSettingIsActive = true
     var pickerViewStoreIsActive = true
     private var viewPickerViewType = "PopupWindow"
@@ -88,8 +88,8 @@ internal object Config {
     private var previewFavoritesOffIconName = ""
     private var previewCloseIconName = ""
 
-    internal fun configure(context: Context, callback: ((isSuccess: Boolean) -> Unit)) {
-        val jsonString = getJsonDataFromAsset(context) ?: return
+    internal fun configure(context: Context, configFileName: String? = null, callback: ((isSuccess: Boolean) -> Unit)) {
+        val jsonString = getJsonDataFromAsset(context, configFileName ?: Constants.KEY.ASSET_NAME) ?: return
         try {
             val json = JSONObject(jsonString)
             stipopConfigData = Gson().fromJson(jsonString, StipopConfigData::class.java)
@@ -106,10 +106,10 @@ internal object Config {
         }
     }
 
-    private fun getJsonDataFromAsset(context: Context): String? {
+    private fun getJsonDataFromAsset(context: Context, confieFileName: String): String? {
         val jsonString: String
         try {
-            jsonString = context.assets.open(Constants.KEY.ASSET_NAME).bufferedReader()
+            jsonString = context.assets.open(confieFileName).bufferedReader()
                 .use { it.readText() }
         } catch (ioException: IOException) {
             ioException.printStackTrace()

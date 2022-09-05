@@ -57,27 +57,10 @@ How do I use Stipop SDK?
 1. Move **Stipop.json** into the assets folder you created.
 2. Make or update your application class. (This operation initializes the SDK from 'Stipop.json' file)
 ```kotlin
-class MyApplication : Application(), SAuthDelegate {
+class MyApplication : Application() {
    override fun onCreate() {
       super.onCreate()
-      Stipop.configure(this,
-         sAuthDelegate = this   // If you do not use SAuth, type null
-      )
-   }
-   /* If you use SAuth, implement this function and refresh accessToken when authorization error occured. */
-   override fun httpException(api: StipopApiEnum, exception: HttpException) {
-      when(exception.code()){
-         401 -> {
-            CoroutineScope(Job() + Dispatchers.IO).launch {
-               while(SAuthRepository.getIsSAuthWorking()){
-                  delay(50)
-               }
-               val accessToken = SAuthRepository.getAccessTokenIfOverExpiryTime(userId = userId)
-               Stipop.setAccessToken(accessToken = accessToken)
-               SAuthManager.reRequest(api)
-            }
-         }
-      }
+      Stipop.configure(this)
    }
 }
 ```
