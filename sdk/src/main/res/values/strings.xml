@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <public name="sticker_cannot_download_msg" type="string" />
     <string name="downloaded">Download Complete</string>
     <string name="download">Download</string>
     <string name="search">Search</string>
