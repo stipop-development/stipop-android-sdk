@@ -346,47 +346,47 @@ internal object Config {
     fun getSelectableTextColor(context: Context, selected: Boolean): Int {
         return if (selected) {
             if (!themeUseLightMode) {
-                ContextCompat.getColor(context, R.color.c_f3f4f5)
+                ContextCompat.getColor(context, R.color.sp_f3f4f5)
             } else {
-                ContextCompat.getColor(context, R.color.c_374553)
+                ContextCompat.getColor(context, R.color.sp_374553)
             }
         } else {
             if (!themeUseLightMode) {
-                ContextCompat.getColor(context, R.color.c_646f7c)
+                ContextCompat.getColor(context, R.color.sp_646f7c)
             } else {
-                ContextCompat.getColor(context, R.color.c_c6c8cf)
+                ContextCompat.getColor(context, R.color.sp_c6c8cf)
             }
         }
     }
 
     fun getTitleTextColor(context: Context): Int {
-        var color = ContextCompat.getColor(context, R.color.c_646f7c)
+        var color = ContextCompat.getColor(context, R.color.sp_646f7c)
         if (!themeUseLightMode) {
-            color = ContextCompat.getColor(context, R.color.c_c6c8cf)
+            color = ContextCompat.getColor(context, R.color.sp_c6c8cf)
         }
         return color
     }
 
     fun getAllStickerPackageNameTextColor(context: Context): Int {
-        var color = ContextCompat.getColor(context, R.color.c_374553)
+        var color = ContextCompat.getColor(context, R.color.sp_374553)
         if (!themeUseLightMode) {
-            color = ContextCompat.getColor(context, R.color.c_f7f8f9)
+            color = ContextCompat.getColor(context, R.color.sp_f7f8f9)
         }
         return color
     }
 
     fun getMyStickerHiddenPackageNameTextColor(context: Context): Int {
-        var color = ContextCompat.getColor(context, R.color.black)
+        var color = ContextCompat.getColor(context, R.color.sp_black)
         if (!themeUseLightMode) {
-            color = ContextCompat.getColor(context, R.color.black)
+            color = ContextCompat.getColor(context, R.color.sp_black)
         }
         return color
     }
 
     fun getMyStickerHiddenArtistNameTextColor(context: Context): Int {
-        var color = ContextCompat.getColor(context, R.color.c_8f8f8f)
+        var color = ContextCompat.getColor(context, R.color.sp_8f8f8f)
         if (!themeUseLightMode) {
-            color = ContextCompat.getColor(context, R.color.c_646f7c)
+            color = ContextCompat.getColor(context, R.color.sp_646f7c)
         }
         return color
     }
@@ -402,39 +402,39 @@ internal object Config {
     }
 
     fun getHiddenStickerBackgroundColor(context: Context): Int {
-        var color = ContextCompat.getColor(context, R.color.c_eaebee)
+        var color = ContextCompat.getColor(context, R.color.sp_eaebee)
         if (!themeUseLightMode) {
-            color = ContextCompat.getColor(context, R.color.c_2e363a)
+            color = ContextCompat.getColor(context, R.color.sp_2e363a)
         }
         return color
     }
 
     fun getActiveHiddenStickerTextColor(context: Context): Int {
-        var color = ContextCompat.getColor(context, R.color.c_374553)
+        var color = ContextCompat.getColor(context, R.color.sp_374553)
         if (!themeUseLightMode) {
-            color = ContextCompat.getColor(context, R.color.white)
+            color = ContextCompat.getColor(context, R.color.sp_white)
         }
         return color
     }
 
     fun getDetailPackageNameTextColor(context: Context): Int {
-        var color = ContextCompat.getColor(context, R.color.black)
+        var color = ContextCompat.getColor(context, R.color.sp_black)
         if (!themeUseLightMode) {
-            color = ContextCompat.getColor(context, R.color.c_f7f8f9)
+            color = ContextCompat.getColor(context, R.color.sp_f7f8f9)
         }
         return color
     }
 
     fun getSearchTitleTextColor(context: Context): Int {
-        var color = ContextCompat.getColor(context, R.color.c_374553)
+        var color = ContextCompat.getColor(context, R.color.sp_374553)
         if (!themeUseLightMode) {
-            color = ContextCompat.getColor(context, R.color.c_c6c8cf)
+            color = ContextCompat.getColor(context, R.color.sp_c6c8cf)
         }
         return color
     }
 
     fun setStoreTrendingBackground(context: Context, drawable: GradientDrawable): Int {
-        var color = ContextCompat.getColor(context, R.color.c_eeeeee)
+        var color = ContextCompat.getColor(context, R.color.sp_eeeeee)
 
         if (storeTrendingUseBackgroundColor) {
             color = Color.parseColor(storeTrendingBackgroundColor)

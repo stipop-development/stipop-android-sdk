@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="sp_default_reverse_color">#FFFFFF</color>
+    <public name="sp_stipop" type="string"/>
 </resources>

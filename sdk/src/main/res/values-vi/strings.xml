@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="downloaded">Tải về</string>
-    <string name="download">Tải xuống</string>
-    <string name="search">Tìm kiếm</string>
-    <string name="home_tab">Nhà</string>
-    <string name="new_tab">Mới</string>
-    <string name="my_stickers_tab">Của tôi</string>
-    <string name="view_hidden_stickers">Xem Nhãn dán Ẩn</string>
-    <string name="view_active_stickers">Xem Nhãn dán Hiện hoạt</string>
-    <string name="no_result">Không có kết quả</string>
-    <string name="trending">Nhãn dán xu hướng</string>
-    <string name="stickers">Nhãn dán</string>
-    <string name="recent_search">Tìm kiếm Gần đây</string>
-    <string name="download_done">Gói nhãn dán được tải xuống!</string>
-    <string name="can_not_open_package">Không thể mở gói nhãn dán này</string>
-    <string name="empty_recent">Các nhãn dán được sử dụng gần đây được hiển thị.\nHãy thử gửi nhãn dán</string>
-    <string name="okay">Xác nhận</string>
-    <string name="sticker_cannot_download_msg">Download error. Please try again.</string>
+    <string name="sp_downloaded">Tải về</string>
+    <string name="sp_download">Tải xuống</string>
+    <string name="sp_search">Tìm kiếm</string>
+    <string name="sp_home_tab">Nhà</string>
+    <string name="sp_new_tab">Mới</string>
+    <string name="sp_my_stickers_tab">Của tôi</string>
+    <string name="sp_view_hidden_stickers">Xem Nhãn dán Ẩn</string>
+    <string name="sp_view_active_stickers">Xem Nhãn dán Hiện hoạt</string>
+    <string name="sp_no_result">Không có kết quả</string>
+    <string name="sp_trending">Nhãn dán xu hướng</string>
+    <string name="sp_stickers">Nhãn dán</string>
+    <string name="sp_recent_search">Tìm kiếm Gần đây</string>
+    <string name="sp_download_done">Gói nhãn dán được tải xuống!</string>
+    <string name="sp_cannot_open_package">Không thể mở gói nhãn dán này</string>
+    <string name="sp_empty_recent">Các nhãn dán được sử dụng gần đây được hiển thị.\nHãy thử gửi nhãn dán</string>
+    <string name="sp_okay">Xác nhận</string>
+    <string name="sp_sticker_cannot_download_msg">Download error. Please try again.</string>
 </resources>

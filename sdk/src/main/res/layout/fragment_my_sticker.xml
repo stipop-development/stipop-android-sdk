@@ -13,9 +13,9 @@
         android:tag="1"
         android:gravity="center"
         android:background="@drawable/my_page_toggle_background"
-        android:textColor="#374553"
+        android:textColor="@color/sp_374553"
         android:textStyle="bold"
-        android:text="@string/view_hidden_stickers"/>
+        android:text="@string/sp_view_hidden_stickers"/>
 
     <LinearLayout
         android:id="@+id/listLL"
@@ -38,8 +38,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="@string/no_result"
-        android:textColor="@color/c_374553"
+        android:text="@string/sp_no_result"
+        android:textColor="@color/sp_374553"
         android:textStyle="bold"
         android:visibility="gone"/>
 

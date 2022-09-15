@@ -85,7 +85,7 @@
                 android:layout_marginTop="8.5dp"
                 android:gravity="center"
                 android:text=""
-                android:textColor="#000000"
+                android:textColor="@color/sp_black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -96,7 +96,7 @@
                 android:layout_marginTop="0.5dp"
                 android:gravity="center"
                 android:text=""
-                android:textColor="@color/c_bababa"
+                android:textColor="@color/sp_bababa"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -107,7 +107,7 @@
                 android:layout_marginTop="11dp"
                 android:background="@drawable/detail_download_btn_background_disable"
                 android:gravity="center"
-                android:text="@string/downloaded"
+                android:text="@string/sp_downloaded"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold" />

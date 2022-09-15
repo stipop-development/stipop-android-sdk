@@ -165,7 +165,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate, SMS
             stickerVisibleToggleTextView.isSelected = !stickerVisibleToggleTextView.isSelected
             when (stickerVisibleToggleTextView.isSelected) {
                 true -> {
-                    stickerVisibleToggleTextView.text = getString(R.string.view_hidden_stickers)
+                    stickerVisibleToggleTextView.text = getString(R.string.sp_view_hidden_stickers)
                     stickerVisibleToggleTextView.setBackgroundColor(
                         Config.getHiddenStickerBackgroundColor(
                             requireContext()
@@ -173,7 +173,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate, SMS
                     )
                 }
                 false -> {
-                    stickerVisibleToggleTextView.text = getString(R.string.view_active_stickers)
+                    stickerVisibleToggleTextView.text = getString(R.string.sp_view_active_stickers)
                     stickerVisibleToggleTextView.setBackgroundColor(
                         Config.getActiveStickerBackgroundColor(
                             requireContext()

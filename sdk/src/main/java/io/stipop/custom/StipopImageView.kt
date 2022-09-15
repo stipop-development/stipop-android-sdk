@@ -6,9 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
-import android.util.Log
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -97,7 +95,7 @@ class StipopImageView : AppCompatImageView {
 
     fun loadImage(resUrl: String?, usePlaceHolder: Boolean = false) {
         when(usePlaceHolder){
-            true -> Glide.with(context).load(resUrl).placeholder(R.color.b0_c7c7c7).into(this)
+            true -> Glide.with(context).load(resUrl).placeholder(R.color.sp_b0c7c7c7).into(this)
             false -> Glide.with(context).load(resUrl).into(this)
         }
 

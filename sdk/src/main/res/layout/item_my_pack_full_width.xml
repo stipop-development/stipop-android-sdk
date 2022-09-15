@@ -32,7 +32,7 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:textSize="14sp"
-                android:textColor="#000000"
+                android:textColor="@color/sp_black"
                 android:textStyle="bold"
                 android:lineHeight="22sp"
                 android:text=""/>
@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:textColor="#8f8f8f"
+                android:textColor="@color/sp_8f8f8f"
                 android:lineHeight="20sp"
                 android:text=""/>
 

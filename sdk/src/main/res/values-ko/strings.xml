@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="downloaded">다운로드 완료</string>
-    <string name="download">다운로드</string>
-    <string name="search">검색</string>
-    <string name="home_tab">홈</string>
-    <string name="new_tab">신규</string>
-    <string name="my_stickers_tab">내 이모티콘</string>
-    <string name="view_hidden_stickers">숨긴 이모티콘 보기</string>
-    <string name="view_active_stickers">내 이모티콘 보기</string>
-    <string name="no_result">검색 결과가 없습니다.</string>
-    <string name="trending">인기 이모티콘</string>
-    <string name="stickers">이모티콘</string>
-    <string name="recent_search">최근 검색</string>
-    <string name="download_done">다운로드가 완료되었습니다.</string>
-    <string name="can_not_open_package">잠시 오류가 발생했습니다. 다시 시도해주세요.</string>
-    <string name="empty_recent">최근에 전송된 이모티콘이 없습니다.</string>
-    <string name="okay">확인</string>
-    <string name="sticker_cannot_download_msg">다운로드 오류가 발생했습니다. 다시 시도해주세요.</string>
+    <string name="sp_downloaded">다운로드 완료</string>
+    <string name="sp_download">다운로드</string>
+    <string name="sp_search">검색</string>
+    <string name="sp_home_tab">홈</string>
+    <string name="sp_new_tab">신규</string>
+    <string name="sp_my_stickers_tab">내 이모티콘</string>
+    <string name="sp_view_hidden_stickers">숨긴 이모티콘 보기</string>
+    <string name="sp_view_active_stickers">내 이모티콘 보기</string>
+    <string name="sp_no_result">검색 결과가 없습니다.</string>
+    <string name="sp_trending">인기 이모티콘</string>
+    <string name="sp_stickers">이모티콘</string>
+    <string name="sp_recent_search">최근 검색</string>
+    <string name="sp_download_done">다운로드가 완료되었습니다.</string>
+    <string name="sp_cannot_open_package">잠시 오류가 발생했습니다. 다시 시도해주세요.</string>
+    <string name="sp_empty_recent">최근에 전송된 이모티콘이 없습니다.</string>
+    <string name="sp_okay">확인</string>
+    <string name="sp_sticker_cannot_download_msg">다운로드 오류가 발생했습니다. 다시 시도해주세요.</string>
 </resources>

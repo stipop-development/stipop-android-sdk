@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="downloaded">Download Complete</string>
-    <string name="download">Download</string>
-    <string name="search">Search</string>
-    <string name="home_tab">Home</string>
-    <string name="new_tab">New</string>
-    <string name="my_stickers_tab">My Stickers</string>
-    <string name="view_hidden_stickers">View Hidden Stickers</string>
-    <string name="view_active_stickers">View My Stickers</string>
-    <string name="no_result">No results</string>
-    <string name="trending">Trending</string>
-    <string name="stickers">Stickers</string>
-    <string name="recent_search">Recent Search</string>
-    <string name="download_done">Download Complete</string>
-    <string name="can_not_open_package">Cannot open sticker page. Please try again.</string>
-    <string name="empty_recent">No stickers sent recently.</string>
-    <string name="okay">OK</string>
-    <string name="sticker_cannot_download_msg">Download error. Please try again.</string>
+    <string name="sp_stipop" translatable="false">Stipop</string>
+    <string name="sp_downloaded">Download Complete</string>
+    <string name="sp_download">Download</string>
+    <string name="sp_search">Search</string>
+    <string name="sp_home_tab">Home</string>
+    <string name="sp_new_tab">New</string>
+    <string name="sp_my_stickers_tab">My Stickers</string>
+    <string name="sp_view_hidden_stickers">View Hidden Stickers</string>
+    <string name="sp_view_active_stickers">View My Stickers</string>
+    <string name="sp_no_result">No results</string>
+    <string name="sp_trending">Trending</string>
+    <string name="sp_stickers">Stickers</string>
+    <string name="sp_recent_search">Recent Search</string>
+    <string name="sp_download_done">Download Complete</string>
+    <string name="sp_cannot_open_package">Cannot open sticker page. Please try again.</string>
+    <string name="sp_empty_recent">No stickers sent recently.</string>
+    <string name="sp_okay">OK</string>
+    <string name="sp_sticker_cannot_download_msg">Download error. Please try again.</string>
 </resources>

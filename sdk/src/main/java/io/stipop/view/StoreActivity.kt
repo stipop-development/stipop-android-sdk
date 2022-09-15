@@ -40,13 +40,13 @@ internal class StoreActivity : BaseFragmentActivity() {
                     TabLayoutMediator(storeTabLayout, storeViewPager) { tab, position ->
                         when (position) {
                             StorePagerAdapter.POSITION_ALL_STICKERS -> {
-                                tab.text = getString(R.string.home_tab)
+                                tab.text = getString(R.string.sp_home_tab)
                             }
                             StorePagerAdapter.POSITION_NEW_STICKERS -> {
-                                tab.text = getString(R.string.new_tab)
+                                tab.text = getString(R.string.sp_new_tab)
                             }
                             StorePagerAdapter.POSITION_MY_STICKERS -> {
-                                tab.text = getString(R.string.my_stickers_tab)
+                                tab.text = getString(R.string.sp_my_stickers_tab)
                             }
                         }
                     }.attach()
@@ -66,7 +66,7 @@ internal class StoreActivity : BaseFragmentActivity() {
             }
         }
         PackageDownloadEvent.liveData.observe(this) {
-            Toast.makeText(this, getString(R.string.download_done), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.sp_download_done), Toast.LENGTH_SHORT).show()
         }
     }
 

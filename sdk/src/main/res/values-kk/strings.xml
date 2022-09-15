@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="downloaded">Жүктеп алу аяқталды</string>
-    <string name="download">Жүктеп алу</string>
-    <string name="search">Іздеу</string>
-    <string name="home_tab">Негізгі</string>
-    <string name="new_tab">Жаңа</string>
-    <string name="my_stickers_tab">Менің стикерлерім</string>
-    <string name="view_hidden_stickers">Жасырын стикерлер</string>
-    <string name="view_active_stickers">Менің стикерлерім</string>
-    <string name="no_result">Іздеу нәтижелері жоқ</string>
-    <string name="trending">Танымал стикерлер</string>
-    <string name="stickers">Стикерлер</string>
-    <string name="recent_search">Соңғы іздеу</string>
-    <string name="download_done">Жүктеп алу аяқталды</string>
-    <string name="can_not_open_package">Қате бар. Қайталап көріңіз.</string>
-    <string name="empty_recent">Көрсетілетін стикерлер жоқ</string>
-    <string name="okay">Жақсы</string>
-    <string name="sticker_cannot_download_msg">Қате бар. Қайталап көріңіз.</string>
+    <string name="sp_downloaded">Жүктеп алу аяқталды</string>
+    <string name="sp_download">Жүктеп алу</string>
+    <string name="sp_search">Іздеу</string>
+    <string name="sp_home_tab">Негізгі</string>
+    <string name="sp_new_tab">Жаңа</string>
+    <string name="sp_my_stickers_tab">Менің стикерлерім</string>
+    <string name="sp_view_hidden_stickers">Жасырын стикерлер</string>
+    <string name="sp_view_active_stickers">Менің стикерлерім</string>
+    <string name="sp_no_result">Іздеу нәтижелері жоқ</string>
+    <string name="sp_trending">Танымал стикерлер</string>
+    <string name="sp_stickers">Стикерлер</string>
+    <string name="sp_recent_search">Соңғы іздеу</string>
+    <string name="sp_download_done">Жүктеп алу аяқталды</string>
+    <string name="sp_cannot_open_package">Қате бар. Қайталап көріңіз.</string>
+    <string name="sp_empty_recent">Көрсетілетін стикерлер жоқ</string>
+    <string name="sp_okay">Жақсы</string>
+    <string name="sp_sticker_cannot_download_msg">Қате бар. Қайталап көріңіз.</string>
 </resources>

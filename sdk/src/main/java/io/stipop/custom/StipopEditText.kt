@@ -22,11 +22,11 @@ class StipopEditText : AppCompatEditText {
 
     private fun setFont() {
 
-        setHintTextColor(ContextCompat.getColor(context, R.color.edittext_hint))
+        setHintTextColor(ContextCompat.getColor(context, R.color.sp_edittext_hint))
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            setTextCursorDrawable(R.drawable.edittext_cursor)
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//            setTextCursorDrawable(R.drawable.edittext_cursor)
+//        }
 
         if (Config.FontStyle.fontFace != null) {
             this.typeface = Config.FontStyle.fontFace

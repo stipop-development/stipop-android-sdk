@@ -17,7 +17,7 @@
             android:layout_marginTop="20.5dp"
             android:textSize="16sp"
             android:textColor="#646f7c"
-            android:text="@string/trending"/>
+            android:text="@string/sp_trending"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/packageThumbRecyclerView"
@@ -44,6 +44,6 @@
         android:layout_marginTop="11dp"
         android:textSize="16sp"
         android:textColor="#646f7c"
-        android:text="@string/stickers"/>
+        android:text="@string/sp_stickers"/>
 
 </LinearLayout>

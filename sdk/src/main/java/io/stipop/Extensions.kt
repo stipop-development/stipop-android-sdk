@@ -19,7 +19,7 @@ fun View.setStipopUnderlineColor() {
     setBackgroundColor(
         ContextCompat.getColor(
             context,
-            if (Config.themeUseLightMode) io.stipop.R.color.c_f7f8f9 else io.stipop.R.color.c_2e363a
+            if (Config.themeUseLightMode) io.stipop.R.color.sp_f7f8f9 else io.stipop.R.color.sp_2e363a
         )
     )
 }
@@ -34,12 +34,12 @@ fun TabLayout.setTabLayoutStyle() {
         intArrayOf(
             if (Config.themeUseLightMode) ContextCompat.getColor(
                 context,
-                io.stipop.R.color.c_374553
-            ) else ContextCompat.getColor(context, io.stipop.R.color.c_f3f4f5),
+                io.stipop.R.color.sp_374553
+            ) else ContextCompat.getColor(context, io.stipop.R.color.sp_f3f4f5),
             if (Config.themeUseLightMode) ContextCompat.getColor(
                 context,
-                io.stipop.R.color.c_c6c8cf
-            ) else ContextCompat.getColor(context, io.stipop.R.color.c_646f7c)
+                io.stipop.R.color.sp_c6c8cf
+            ) else ContextCompat.getColor(context, io.stipop.R.color.sp_646f7c)
         )
     ).let {
         tabTextColors = it
@@ -47,8 +47,8 @@ fun TabLayout.setTabLayoutStyle() {
     setSelectedTabIndicatorColor(
         if (Config.themeUseLightMode) ContextCompat.getColor(
             context,
-            io.stipop.R.color.c_292929
-        ) else ContextCompat.getColor(context, io.stipop.R.color.c_f7f8f9)
+            io.stipop.R.color.sp_292929
+        ) else ContextCompat.getColor(context, io.stipop.R.color.sp_f7f8f9)
     )
 }
 

@@ -104,7 +104,7 @@ class PackDetailFragment : BottomSheetDialogFragment() {
             } ?: run {
                 Toast.makeText(
                     context,
-                    getString(R.string.can_not_open_package),
+                    getString(R.string.sp_cannot_open_package),
                     Toast.LENGTH_SHORT
                 ).show()
                 dismiss()
@@ -112,7 +112,7 @@ class PackDetailFragment : BottomSheetDialogFragment() {
         }
         PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
             binding?.run {
-                downloadTV.text = getString(R.string.downloaded)
+                downloadTV.text = getString(R.string.sp_downloaded)
                 downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
             }
         }
@@ -171,10 +171,10 @@ class PackDetailFragment : BottomSheetDialogFragment() {
             artistNameTV.text = stickerPackage.artistName
             if (stickerPackage.isDownloaded()) {
                 downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
-                downloadTV.text = getString(R.string.downloaded)
+                downloadTV.text = getString(R.string.sp_downloaded)
             } else {
                 downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background)
-                downloadTV.text = getString(R.string.download)
+                downloadTV.text = getString(R.string.sp_download)
                 val drawable2 = downloadTV.background as GradientDrawable
                 drawable2.setColor(Color.parseColor(Config.themeMainColor)) // solid  color
             }

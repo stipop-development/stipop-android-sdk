@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="downloaded">Завершение скачивания</string>
-    <string name="download">Скачать</string>
-    <string name="search">Поиск</string>
-    <string name="home_tab">Главный</string>
-    <string name="new_tab">Новый</string>
-    <string name="my_stickers_tab">Мои стикеров</string>
-    <string name="view_hidden_stickers">Смотреть скрытые стикеров</string>
-    <string name="view_active_stickers">Смотреть мои стикеров</string>
-    <string name="no_result">Результатов поиска нет.</string>
-    <string name="trending">Популярные стикеров</string>
-    <string name="stickers">Cтикеров</string>
-    <string name="recent_search">Последние поиски</string>
-    <string name="download_done">Скачивание завершено.</string>
-    <string name="can_not_open_package">Произошла ошибка. Попробуйте снова.</string>
-    <string name="empty_recent">Нет недавно отправленных стикеров.</string>
-    <string name="okay">Подтвердить</string>
-    <string name="sticker_cannot_download_msg">Произошла ошибка скачивания. Попробуйте снова.</string>
+    <string name="sp_downloaded">Завершение скачивания</string>
+    <string name="sp_download">Скачать</string>
+    <string name="sp_search">Поиск</string>
+    <string name="sp_home_tab">Главный</string>
+    <string name="sp_new_tab">Новый</string>
+    <string name="sp_my_stickers_tab">Мои стикеров</string>
+    <string name="sp_view_hidden_stickers">Смотреть скрытые стикеров</string>
+    <string name="sp_view_active_stickers">Смотреть мои стикеров</string>
+    <string name="sp_no_result">Результатов поиска нет.</string>
+    <string name="sp_trending">Популярные стикеров</string>
+    <string name="sp_stickers">Cтикеров</string>
+    <string name="sp_recent_search">Последние поиски</string>
+    <string name="sp_download_done">Скачивание завершено.</string>
+    <string name="sp_cannot_open_package">Произошла ошибка. Попробуйте снова.</string>
+    <string name="sp_empty_recent">Нет недавно отправленных стикеров.</string>
+    <string name="sp_okay">Подтвердить</string>
+    <string name="sp_sticker_cannot_download_msg">Произошла ошибка скачивания. Попробуйте снова.</string>
 </resources>

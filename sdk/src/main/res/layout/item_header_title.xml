@@ -10,8 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20.5dp"
-        android:text="@string/trending"
-        android:textColor="#646f7c"
+        android:text="@string/sp_trending"
+        android:textColor="@color/sp_646f7c"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

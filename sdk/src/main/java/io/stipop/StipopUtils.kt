@@ -284,7 +284,7 @@ internal object StipopUtils {
     fun alert(context: Context?, msg: String?) {
         val builder = AlertDialog.Builder(context)
         builder.setMessage(msg).setCancelable(false).setPositiveButton(
-            context?.getString(R.string.okay)
+            context?.getString(R.string.sp_okay)
         ) { dialog: DialogInterface, id: Int -> dialog.cancel() }
         val alert = builder.create()
         alert.show()
