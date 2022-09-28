@@ -76,6 +76,8 @@ internal class StickerPickerViewClass(
 
     var delegate: VisibleStateListener? = null
 
+    var isRefreshFirst = true
+
     init {
         try {
             StickerPickerViewClass.spvRecentStickerAdapterReRequestDelegate = this
@@ -303,12 +305,17 @@ internal class StickerPickerViewClass(
         packAdapter.updateSelected()
         packAdapter.refresh()
     }
+
     private fun initialize(isFirst: Boolean? = false) {
         if (isFirst == true) {
             Stipop.stickerPickerViewModel?.let {
                 if (it.recentStickers.isEmpty() && !packAdapter.isSelectedItemExist()) {
                     packAdapter.getItemByPosition(0)?.let {
-                        onPackageClick(0, it)
+                        if(this.isRefreshFirst){
+                            isRefreshFirst = false
+                        } else {
+                            onPackageClick(0, it)
+                        }
                     }
                 }
             }
