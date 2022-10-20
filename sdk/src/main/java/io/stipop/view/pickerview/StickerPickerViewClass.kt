@@ -421,9 +421,10 @@ internal class StickerPickerViewClass(
         ) { result ->
             try {
                 if (result) {
-                    Stipop.instance?.delegate?.onStickerSingleTapped(spSticker)
-                    Stipop.stickerPickerViewModel?.saveRecent(spSticker)
-                    stickerPickerViewPreview?.dismiss()
+                    if(Stipop.instance?.delegate?.onStickerSingleTapped(spSticker) == true) {
+                        Stipop.stickerPickerViewModel?.saveRecent(spSticker)
+                        stickerPickerViewPreview?.dismiss()
+                    }
                 }
             } catch(exception: Exception){
                 Stipop.trackError(exception)
@@ -464,8 +465,8 @@ internal class StickerPickerViewClass(
             Constants.Point.SEARCH_VIEW
         ) { result ->
             if (result) {
-                Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker)
-                dismiss()
+                if(Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker) == true)
+                    dismiss()
             }
         }
     }

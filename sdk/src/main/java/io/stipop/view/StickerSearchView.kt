@@ -226,8 +226,8 @@ class StickerSearchView : BottomSheetDialogFragment(),
             Constants.Point.SEARCH_VIEW
         ) { result ->
             if (result) {
-                Stipop.instance?.delegate?.onStickerSingleTapped(spSticker)
-                dismiss()
+                if (Stipop.instance?.delegate?.onStickerSingleTapped(spSticker) == true)
+                    dismiss()
             }
         }
     }
@@ -239,8 +239,8 @@ class StickerSearchView : BottomSheetDialogFragment(),
             Constants.Point.SEARCH_VIEW
         ) { result ->
             if (result) {
-                Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker)
-                dismiss()
+                if (Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker) == true)
+                    dismiss()
             }
         }
     }
