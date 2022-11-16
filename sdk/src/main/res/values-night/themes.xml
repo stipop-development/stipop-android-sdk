@@ -1,0 +1,21 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Stipop" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/c_ff774a</item>
+        <item name="colorPrimaryVariant">@color/c_ff855b</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/black</item>
+        <item name="colorSecondaryVariant">@color/black</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="tabStyle">@style/StipopSdkTab</item>
+    </style>
+
+    <style name="StipopSdkTab" parent="Widget.MaterialComponents.TabLayout">
+        <item name="minHeight">?actionBarSize</item>
+        <item name="tabIndicatorFullWidth">true</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabMode">fixed</item>1
+        <item name="android:textSize">16sp</item>
+    </style>
+</resources>

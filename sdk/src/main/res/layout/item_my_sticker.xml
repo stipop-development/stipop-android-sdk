@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/containerLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="19dp"
+        android:gravity="center">
+
+        <io.stipop.custom.StipopImageView
+            android:id="@+id/packageIV"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="centerCrop"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:orientation="vertical">
+
+            <io.stipop.custom.StipopTextView
+                android:id="@+id/packageNameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textSize="14sp"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:lineHeight="22sp"
+                android:text=""/>
+
+            <io.stipop.custom.StipopTextView
+                android:id="@+id/artistNameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="#8f8f8f"
+                android:lineHeight="20sp"
+                android:text=""/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/isViewLL"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:gravity="right">
+
+            <LinearLayout
+                android:id="@+id/hideLL"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:gravity="center">
+
+                <io.stipop.custom.StipopImageView
+                    android:id="@+id/hideIV"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:maxWidth="50dp"
+                    android:adjustViewBounds="true"
+                    android:src="@mipmap/ic_hide" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/moveLL"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="3dp"
+                android:padding="5dp"
+                android:gravity="center">
+
+                <io.stipop.custom.StipopImageView
+                    android:id="@+id/moveIV"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:maxWidth="50dp"
+                    android:adjustViewBounds="true"
+                    android:src="@mipmap/ic_move_border_3" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/addLL"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="3dp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <io.stipop.custom.StipopImageView
+                android:id="@+id/addIV"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:maxWidth="50dp"
+                android:adjustViewBounds="true"
+                android:src="@mipmap/ic_add_border_3" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

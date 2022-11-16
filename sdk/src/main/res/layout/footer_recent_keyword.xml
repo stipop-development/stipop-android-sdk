@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <io.stipop.custom.StipopTextView
+            android:id="@+id/emptyTextView"
+            android:layout_width="match_parent"
+            android:layout_height="177dp"
+            android:gravity="center"
+            android:text="No results"
+            android:textColor="@color/c_374553"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EAEBEE"
+            android:layout_marginTop="13dp"
+            android:layout_marginBottom="6dp"/>
+
+        <LinearLayout
+            android:id="@+id/popularStickerLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="12dp"
+            android:paddingBottom="30dp"
+            android:orientation="vertical">
+
+            <io.stipop.custom.StipopTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#c6c8cf"
+                android:textStyle="bold"
+                android:text="@string/popular_stickers"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/popularStickerRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/recommendedTagLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="12dp"
+            android:paddingBottom="30dp"
+            android:orientation="vertical">
+
+            <io.stipop.custom.StipopTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#c6c8cf"
+                android:textStyle="bold"
+                android:text="@string/recommended_tag"/>
+
+            <io.stipop.custom.TagLayout
+                android:id="@+id/recommendedTagsTL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="150dp"
+                android:layout_marginTop="17dp"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

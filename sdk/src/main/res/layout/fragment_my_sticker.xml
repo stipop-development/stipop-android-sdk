@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <io.stipop.custom.StipopTextView
+        android:id="@+id/stickerVisibleToggleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="12dp"
+        android:tag="1"
+        android:gravity="center"
+        android:background="@drawable/my_page_toggle_background"
+        android:textColor="#374553"
+        android:textStyle="bold"
+        android:text="@string/view_hidden_stickers"/>
+
+    <LinearLayout
+        android:id="@+id/listLL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/myStickersRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:scrollbars="none"/>
+
+    </LinearLayout>
+
+    <io.stipop.custom.StipopTextView
+        android:id="@+id/emptyTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_result"
+        android:textColor="@color/c_374553"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+
+</LinearLayout>

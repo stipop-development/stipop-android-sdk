@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/containerLL"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="40dp"
+    android:paddingVertical="20dp"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_alert_background">
+
+    <io.stipop.custom.StipopTextView
+        android:id="@+id/titleTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#d3d3d3"
+        android:text="@string/bottom_alert_title"/>
+
+    <io.stipop.custom.StipopTextView
+        android:id="@+id/contentsTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#d3d3d3"
+        android:text="@string/bottom_alert_contents"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <io.stipop.custom.StipopTextView
+            android:id="@+id/cancelTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="7dp"
+            android:gravity="center"
+            android:textColor="#2d8cbf"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:text="@string/cancel"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="10dp"
+            android:background="#eeeeee"/>
+
+        <io.stipop.custom.StipopTextView
+            android:id="@+id/hideTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="7dp"
+            android:gravity="center"
+            android:textColor="#2d8cbf"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:text="@string/hide"/>
+
+    </LinearLayout>
+
+</LinearLayout>

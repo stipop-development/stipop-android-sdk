@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/backgroundLL"
+        android:layout_width="84dp"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:background="@drawable/trending_background">
+
+        <io.stipop.custom.StipopImageView
+            android:id="@+id/imageIV"
+            android:layout_width="69dp"
+            android:layout_height="69dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

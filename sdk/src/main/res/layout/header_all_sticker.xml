@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/titleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <io.stipop.custom.StipopTextView
+            android:id="@+id/trendingTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20.5dp"
+            android:textSize="16sp"
+            android:textColor="#646f7c"
+            android:text="@string/trending"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/packageThumbRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <View
+            android:id="@+id/underLineV"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="25dp"
+            android:background="#eaebee"/>
+
+    </LinearLayout>
+
+    <io.stipop.custom.StipopTextView
+        android:id="@+id/stickersTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:textSize="16sp"
+        android:textColor="#646f7c"
+        android:text="@string/stickers"/>
+
+</LinearLayout>
