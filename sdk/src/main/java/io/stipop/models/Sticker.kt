@@ -18,7 +18,7 @@ data class Sticker(
             stickerId = stickerId,
             stickerImg = stickerImg ?: "",
             favoriteYN = favoriteYN,
-            keyword = keyword,
+            keyword = keyword ?: "",
         )
     }
 
