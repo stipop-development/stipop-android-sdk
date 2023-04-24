@@ -196,6 +196,7 @@ class StickerSearchView : BottomSheetDialogFragment(),
         with(binding!!) {
 //            val drawable = containerLL.background as GradientDrawable
 //            drawable.setColor(Color.parseColor(Config.themeBackgroundColor))
+            containerLL.setBackgroundColor(Color.parseColor(Config.themeBackgroundColor))
 
             val drawable2 = searchBarContainer.background as GradientDrawable
             drawable2.setColor(Color.parseColor(Config.themeGroupedContentBackgroundColor)) // solid  color
