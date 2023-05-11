@@ -31,7 +31,7 @@ class SplashActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
 
             val bundle = Bundle()
-            bundle.putString("user_id", "someone_user_id")
+            bundle.putString("user_id", "-1")
             intent.putExtras(bundle)
 
             startActivity(intent)

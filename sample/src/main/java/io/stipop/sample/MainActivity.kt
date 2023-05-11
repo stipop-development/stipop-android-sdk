@@ -12,10 +12,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatEditText
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -84,7 +81,7 @@ class MainActivity : AppCompatActivity(),
     private fun bundleInit(){
         val bundle = intent.extras
 
-        userId = bundle!!.getString("user_id", "someone_user_id")
+        userId = bundle!!.getString("user_id", "-1")
 
     }
 
@@ -167,7 +164,7 @@ class MainActivity : AppCompatActivity(),
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         when(userId){
-            "someone_user_id" -> nameTextView.text = "Common user"
+            "-1" -> nameTextView.text = "Common user"
             else -> nameTextView.text = "Random user"
         }
 
@@ -220,7 +217,6 @@ class MainActivity : AppCompatActivity(),
             input.hideSoftInputFromWindow(p0?.windowToken, 0)
             false
         }
-
     }
 
     private fun toggleSendButton(isActivate: Boolean) {

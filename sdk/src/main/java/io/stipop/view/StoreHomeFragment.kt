@@ -85,6 +85,7 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
     }
 
     override fun onDestroyView() {
+        StoreHomeFragment.smfGetTrendingStickerPackagesDelegate = null
         super.onDestroyView()
         backPressCallback.remove()
         binding = null

@@ -62,6 +62,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate, SMS
     }
 
     override fun onDestroyView() {
+        StoreMyStickerFragment.smsfGetMyStickersReRequestDelegate = null
         super.onDestroyView()
         binding = null
         Stipop.storeMyStickerViewModel = null

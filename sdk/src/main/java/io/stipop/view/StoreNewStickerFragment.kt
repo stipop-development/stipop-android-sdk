@@ -48,6 +48,7 @@ internal class StoreNewStickerFragment : BaseFragment(), SNSFGetNewStickerPackag
     }
 
     override fun onDestroyView() {
+        StoreNewStickerFragment.snsfGetNewStickerPackagesReRequestDelegate = null
         super.onDestroyView()
         PackageDownloadEvent.onDestroy()
         binding = null
