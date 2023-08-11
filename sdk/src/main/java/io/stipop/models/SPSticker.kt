@@ -25,13 +25,13 @@ class SPSticker() {
         stickerId: Int,
         stickerImg: String,
         favoriteYN: String,
-        keyword: String,
+        keyword: String?,
     ) : this() {
         this.packageId = packageId
         this.stickerId = stickerId
         this.stickerImg = stickerImg
         this.favoriteYN = favoriteYN
-        this.keyword = keyword
+        this.keyword = keyword ?: ""
     }
 
     constructor(json: JSONObject) : this() {
