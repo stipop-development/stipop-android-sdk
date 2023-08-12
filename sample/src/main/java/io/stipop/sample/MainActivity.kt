@@ -119,8 +119,8 @@ class MainActivity : AppCompatActivity(),
     /**
      * onStickerSingleTapped
      * @param sticker: the SPSticker item on clicked to be Downloaded
-     * @return true : if the sticker item was once clicked
-     *         false: if the sticker is not enabled to perform select operation
+     * @return true : the sticker item was once clicked and we can dismiss/close stipop view.
+     *         false: the sticker is not enabled to perform select operation and we shouldn't dismiss/close stipop view.
      *
      */
     override fun onStickerSingleTapped(sticker: SPSticker): Boolean {
@@ -131,8 +131,8 @@ class MainActivity : AppCompatActivity(),
     /**
      * onStickerDoubleTapped
      * @param sticker: the SPSticker item on clicked to be Downloaded
-     * @return true : if the sticker item was twice clicked
-     *         false: if the sticker is not enabled to perform select operation
+     * @return true : the sticker item was once clicked and we can dismiss/close stipop view.
+     *         false: the sticker is not enabled to perform select operation and we shouldn't dismiss/close stipop view.
      *
      */
     override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {

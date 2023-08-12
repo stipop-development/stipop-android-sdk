@@ -26,6 +26,8 @@ import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentSearchViewBinding
 import io.stipop.event.KeywordClickDelegate
+import io.stipop.models.ComponentEnum
+import io.stipop.models.LifeCycleEnum
 import io.stipop.models.SPSticker
 import io.stipop.s_auth.SSVAdapterReRequestDelegate
 import io.stipop.s_auth.SSVOnStickerTapReRequestDelegate
@@ -59,8 +61,20 @@ class StickerSearchView : BottomSheetDialogFragment(),
         setStyle(DialogFragment.STYLE_NORMAL, R.style.StipopBottomSheetTheme)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Stipop.spComponentLifeCycleDelegate?.spComponentLifeCycle(
+            ComponentEnum.SEARCH_VIEW,
+            LifeCycleEnum.DESTROYED
+        )
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Stipop.spComponentLifeCycleDelegate?.spComponentLifeCycle(
+            ComponentEnum.SEARCH_VIEW,
+            LifeCycleEnum.CREATED
+        )
         try {
             applyTheme()
             ssvOnStickerTapReRequestDelegate = this
@@ -227,8 +241,8 @@ class StickerSearchView : BottomSheetDialogFragment(),
             Constants.Point.SEARCH_VIEW
         ) { result ->
             if (result) {
-                Stipop.instance?.delegate?.onStickerSingleTapped(spSticker)
-                dismiss()
+                if (Stipop.instance?.delegate?.onStickerSingleTapped(spSticker) == true)
+                    dismiss()
             }
         }
     }
@@ -240,8 +254,8 @@ class StickerSearchView : BottomSheetDialogFragment(),
             Constants.Point.SEARCH_VIEW
         ) { result ->
             if (result) {
-                Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker)
-                dismiss()
+                if (Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker) == true)
+                    dismiss()
             }
         }
     }
