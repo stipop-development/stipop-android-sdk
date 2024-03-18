@@ -12,13 +12,13 @@ data class StipopConfigData(
     @SerializedName("LiteStore") var liteStoreConfig: LiteStoreConfig = LiteStoreConfig(),
     @SerializedName("MySticker") var myStickerConfig: MyStickerConfig = MyStickerConfig(),
     @SerializedName("Keyboard") var keyboardConfig: KeyboardConfig = KeyboardConfig(),
-    @SerializedName("StorePolicy") var policyConfig: StorePolicyConfig = StorePolicyConfig(),
     @SerializedName("Sticker") var stickerConfig: StickerConfig = StickerConfig(),
     @SerializedName("Send") var previewConfig: PreviewConfig = PreviewConfig(),
     @SerializedName("Function") var functionConfig: FunctionConfig = FunctionConfig(),
     @SerializedName("Icon") var iconConfig: IconConfig = IconConfig(),
     @SerializedName("View") var viewConfig: ViewConfig = ViewConfig(),
     @SerializedName("Layout") var layoutConfig: LayoutConfig = LayoutConfig(),
+    @SerializedName("Mode") var modeConfig: ModeConfig = ModeConfig(),
     @SerializedName("SAuth") var sAuthConfig: SAuthConfig = SAuthConfig()
 ) {
     @Keep
@@ -130,18 +130,6 @@ data class StipopConfigData(
     )
 
     @Keep
-    data class StorePolicyConfig(
-        @SerializedName("allowPremium") var allowPremium: String = "N",
-        @SerializedName("price") var price: PricingConfig = PricingConfig(),
-    ) {
-        @Keep
-        data class PricingConfig(
-            @SerializedName("png") var png: Double = 0.99,
-            @SerializedName("gif") var gif: Double = 1.99
-        )
-    }
-
-    @Keep
     data class StickerConfig(
         @SerializedName("backIcon") var backIcon: String = "ic_back_border_3",
         @SerializedName("closeIcon") var closeIcon: String = "ic_close_border_3",
@@ -223,6 +211,10 @@ data class StipopConfigData(
             @SerializedName("onKeyboard") var onKeyboard: Boolean = true
         )
     }
+    @Keep
+    data class ModeConfig(
+        @SerializedName("PackPurchase") var packPurchase: Boolean = false,
+    )
     @Keep
     data class SAuthConfig(
         @SerializedName("isActive") var isActive: Boolean = false,

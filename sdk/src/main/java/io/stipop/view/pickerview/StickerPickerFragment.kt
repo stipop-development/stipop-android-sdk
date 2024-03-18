@@ -23,13 +23,13 @@ class StickerPickerFragment : BaseFragment() {
     ): View {
         try {
             return createView(inflater, container)
-        } catch(exception: Exception) {
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
             return createView(inflater, container)
         }
     }
 
-    private fun createView(inflater: LayoutInflater, container: ViewGroup?): View{
+    private fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         binding = ViewPickerBinding.inflate(inflater, container, false)
         binding.containerLL.visibility = View.GONE
         return binding!!.root
@@ -40,8 +40,8 @@ class StickerPickerFragment : BaseFragment() {
         pickerFragmentInit()
     }
 
-    private fun pickerFragmentInit(){
-        if(Config.getViewPickerViewType() == ViewPickerViewType.FRAGMENT) {
+    private fun pickerFragmentInit() {
+        if (Config.getViewPickerViewType() == ViewPickerViewType.FRAGMENT) {
             Stipop.stickerPickerViewClass = StickerPickerViewClass(
                 PickerViewType.CUSTOM,
                 null,
@@ -52,25 +52,41 @@ class StickerPickerFragment : BaseFragment() {
         }
     }
 
-    internal fun setDelegate(visibleDelegate: VisibleStateListener){
+    internal fun setDelegate(visibleDelegate: VisibleStateListener) {
         Stipop.stickerPickerViewClass?.setDelegate(visibleDelegate)
     }
 
-    internal fun isShowing(): Boolean{
+    internal fun isShowing(): Boolean {
         return binding.containerLL.isVisible
     }
 
-    internal fun show() {
-        Stipop.stickerPickerViewClass?.show()
-    }
-
-    internal fun dismiss(){
-        Stipop.stickerPickerViewClass?.dismiss()
+    override fun onDestroy() {
+        super.onDestroy()
+        Stipop.stickerPickerViewClass?.setDelegate(null)
     }
 
     override fun applyTheme() {
-        if(!Config.pickerViewLayoutOnKeyboard) {
+        if (!Config.pickerViewLayoutOnKeyboard) {
             Stipop.stickerPickerViewClass?.applyTheme()
+        }
+    }
+
+    internal fun show(viewPickerBinding: ViewPickerBinding) {
+        if (isShowing()) {
+            return
+        }
+
+        setPickerCustomViewVisibility(viewPickerBinding, true)
+    }
+
+    internal fun dismiss(viewPickerBinding: ViewPickerBinding) {
+        setPickerCustomViewVisibility(viewPickerBinding, false)
+    }
+
+    private fun setPickerCustomViewVisibility(viewPickerBinding: ViewPickerBinding, visibilityBool: Boolean) {
+        when (visibilityBool) {
+            true -> viewPickerBinding.containerLL.visibility = View.VISIBLE
+            false -> viewPickerBinding.containerLL.visibility = View.GONE
         }
     }
 }

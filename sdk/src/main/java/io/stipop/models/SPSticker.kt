@@ -3,6 +3,7 @@ package io.stipop.models
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import io.stipop.StipopUtils
+import io.stipop.models.enums.SPPriceTier
 import org.json.JSONObject
 
 @Keep
@@ -19,6 +20,10 @@ class SPSticker() {
     var favoriteYN: String = ""
     @SerializedName("keyword")
     var keyword: String = ""
+    @SerializedName("isDownload")
+    var isDownload: String? = ""
+    @SerializedName("price")
+    var price: String? = ""
 
     constructor(
         packageId: Int,
@@ -26,12 +31,16 @@ class SPSticker() {
         stickerImg: String,
         favoriteYN: String,
         keyword: String?,
+        isDownload: String?,
+        price: String?,
     ) : this() {
         this.packageId = packageId
         this.stickerId = stickerId
         this.stickerImg = stickerImg
         this.favoriteYN = favoriteYN
         this.keyword = keyword ?: ""
+        this.isDownload = isDownload ?: "N"
+        this.price = price ?: ""
     }
 
     constructor(json: JSONObject) : this() {
@@ -48,5 +57,9 @@ class SPSticker() {
 
     fun getStickerThumbUrl(): String?{
         return "$stickerImg${Density.STICKER_THUMB}"
+    }
+
+    fun getPriceTier(): SPPriceTier? {
+        return SPPriceTier.getPriceTier(this.price?.uppercase())
     }
 }

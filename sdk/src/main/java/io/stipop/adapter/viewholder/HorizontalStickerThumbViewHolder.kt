@@ -5,13 +5,13 @@ import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.stipop.*
 import io.stipop.Config
 import io.stipop.Constants
+import io.stipop.R
 import io.stipop.StipopUtils
 import io.stipop.databinding.ItemHorizontalStickerThumbBinding
-import io.stipop.models.StickerPackage
 import io.stipop.event.PackClickDelegate
+import io.stipop.models.StickerPackage
 
 internal class HorizontalStickerThumbViewHolder(private val binding: ItemHorizontalStickerThumbBinding, val delegate: PackClickDelegate?) :
     RecyclerView.ViewHolder(binding.root) {

@@ -2,6 +2,7 @@ package io.stipop.delegate
 
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
+import io.stipop.models.enums.SPPriceTier
 
 interface StipopDelegate {
 
@@ -33,4 +34,12 @@ interface StipopDelegate {
      * @return if the sticker package is available or has permission to download
      */
     fun onStickerPackRequested(spPackage: SPPackage): Boolean
+
+    /**
+     * @author Stipop
+     *
+     * @param packageId: The package's id what user try to purchase
+     * @param finishCallback: When the user finishes purchasing, return the package they purchased.
+     */
+    fun executePaymentForPackDownload(priceTier: SPPriceTier, packageId: Int, finishCallback: ((Int) -> Unit))
 }

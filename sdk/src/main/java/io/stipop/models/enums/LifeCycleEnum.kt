@@ -1,4 +1,4 @@
-package io.stipop.models
+package io.stipop.models.enums
 
 enum class LifeCycleEnum {
     CREATED,

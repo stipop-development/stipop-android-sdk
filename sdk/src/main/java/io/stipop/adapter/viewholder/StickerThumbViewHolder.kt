@@ -2,19 +2,22 @@ package io.stipop.adapter.viewholder
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.stipop.Config
 import io.stipop.R
+import io.stipop.StipopUtils
 import io.stipop.adapter.StickerDefaultAdapter
 import io.stipop.databinding.ItemStickerThumbBinding
 import io.stipop.models.SPSticker
+import kotlinx.android.synthetic.main.item_sticker_thumb.view.*
 
 internal class StickerThumbViewHolder(
     private val binding: ItemStickerThumbBinding,
-    val delegate: StickerDefaultAdapter.OnStickerClickListener? = null
+    val delegate: StickerDefaultAdapter.OnStickerClickListener? = null,
+    private val isLockable: Boolean
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
@@ -29,7 +32,8 @@ internal class StickerThumbViewHolder(
     private fun singleTapSetup(){
         itemView.setOnClickListener {
             spSticker?.let {
-                delegate?.onStickerSingleTap(absoluteAdapterPosition, it)
+                val isLocked = itemView.lockImageView.visibility == View.VISIBLE
+                delegate?.onStickerSingleTap(absoluteAdapterPosition, it, isLocked)
             }
         }
     }
@@ -59,7 +63,8 @@ internal class StickerThumbViewHolder(
                 if (singleTap) {
                     if (singleCount % 3 == 0) {
                         spSticker?.let {
-                            delegate?.onStickerSingleTap(absoluteAdapterPosition, it)
+                            val isLocked = itemView.lockImageView.visibility == View.VISIBLE
+                            delegate?.onStickerSingleTap(absoluteAdapterPosition, it, isLocked)
                         }
                     } else {
                         singleCount += 1
@@ -67,7 +72,8 @@ internal class StickerThumbViewHolder(
                 } else if (doubleTap) {
                     if (doubleCount == 1) {
                         spSticker?.let {
-                            delegate?.onStickerDoubleTap(absoluteAdapterPosition, it)
+                            val isLocked = itemView.lockImageView.visibility == View.VISIBLE
+                            delegate?.onStickerDoubleTap(absoluteAdapterPosition, it, isLocked)
                         }
                         doubleCount = 0
                     } else {
@@ -81,18 +87,40 @@ internal class StickerThumbViewHolder(
 
     fun bind(sticker: SPSticker) {
         spSticker = sticker
+        val isDownload = sticker.isDownload == "Y"
+        val priceTier = sticker.getPriceTier()
+        val isLocked = StipopUtils.isLocked(isLockable = this.isLockable,
+            isDownload = isDownload,
+            priceTier = priceTier)
+        setLock(isLocked)
         binding.imageView.loadImage(sticker.stickerImgLocalFilePath ?: sticker.stickerImg, false)
+    }
+
+    private fun setLock(isLocked: Boolean) {
+        when(isLocked) {
+            true -> {
+                binding.lockImageView.visibility = View.VISIBLE
+
+                binding.imageView.alpha = 0.4F
+            }
+            false -> {
+                binding.lockImageView.visibility = View.GONE
+
+                binding.imageView.alpha = 1.0F
+            }
+        }
     }
 
     companion object {
         fun create(
             parent: ViewGroup,
-            delegate: StickerDefaultAdapter.OnStickerClickListener? = null
+            delegate: StickerDefaultAdapter.OnStickerClickListener? = null,
+            isLockable: Boolean
         ): StickerThumbViewHolder {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_sticker_thumb, parent, false)
             val binding = ItemStickerThumbBinding.bind(view)
-            return StickerThumbViewHolder(binding, delegate)
+            return StickerThumbViewHolder(binding, delegate, isLockable)
         }
     }
 }

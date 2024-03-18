@@ -3,9 +3,9 @@ package io.stipop.adapter
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import io.stipop.models.StickerPackage
 import io.stipop.adapter.viewholder.PackFullWidthViewHolder
 import io.stipop.event.PackClickDelegate
+import io.stipop.models.StickerPackage
 
 internal class PagingPackageAdapter(private val delegate: PackClickDelegate, private val clickPoint: String) :
     PagingDataAdapter<StickerPackage, PackFullWidthViewHolder>(REPO_COMPARATOR){

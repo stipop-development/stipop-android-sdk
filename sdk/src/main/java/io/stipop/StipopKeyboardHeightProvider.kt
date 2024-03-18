@@ -79,6 +79,7 @@ internal class StipopKeyboardHeightProvider(private val activity: Activity) : Po
     }
 
     private fun onGlobalLayoutFromTopToVisibleFramePx(){
+        SPLogger.log("KeyboardHeight Start")
         val screenSize = Point()
         activity.windowManager.defaultDisplay.getSize(screenSize)
         val rect = Rect()
@@ -87,9 +88,11 @@ internal class StipopKeyboardHeightProvider(private val activity: Activity) : Po
 
         val keyboardHeight = screenSize.y + topCutoutHeight - rect.bottom
         KeyboardInfo.keyboardState = if (keyboardHeight > 0) KeyboardInfo.STATE_OPENED else KeyboardInfo.STATE_CLOSED
+
         if (keyboardHeight > 0) {
             KeyboardInfo.keyboardHeight = keyboardHeight
         }
+
         if (keyboardHeight != lastKeyboardHeight) {
             if(listener != null) {
                 if(screenSize.y/2 > keyboardHeight) {

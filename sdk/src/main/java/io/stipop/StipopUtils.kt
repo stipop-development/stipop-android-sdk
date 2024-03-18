@@ -22,6 +22,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
+import io.stipop.models.enums.SPPriceTier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -433,6 +434,19 @@ internal object StipopUtils {
             }
         } else {
             return manger.activeNetworkInfo?.isConnected ?: false
+        }
+    }
+
+    fun isLocked(isLockable: Boolean, isDownload: Boolean, priceTier: SPPriceTier?): Boolean {
+        val isPackPurchaseMode = Config.isPackPurchaseMode
+
+        if(isPackPurchaseMode && isLockable){
+            when(priceTier) {
+                SPPriceTier.FREE, null -> return false
+                SPPriceTier.TIER1, SPPriceTier.TIER2, SPPriceTier.TIER3 -> return !isDownload
+            }
+        } else {
+            return false
         }
     }
 }

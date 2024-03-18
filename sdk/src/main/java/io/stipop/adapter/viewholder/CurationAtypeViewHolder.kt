@@ -9,8 +9,8 @@ import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
 import io.stipop.databinding.ItemCuratedCardTypeABinding
-import io.stipop.models.StickerPackage
 import io.stipop.event.PackClickDelegate
+import io.stipop.models.StickerPackage
 
 internal class CurationAtypeViewHolder(
     private val binding: ItemCuratedCardTypeABinding,

@@ -2,7 +2,6 @@ package io.stipop.models.response
 
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
-import io.stipop.models.StickerPackage
 
 @Keep
 internal data class GetNewAccessTokenResponse(

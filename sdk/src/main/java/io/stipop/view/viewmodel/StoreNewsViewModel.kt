@@ -4,14 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import io.stipop.Config
 import io.stipop.Stipop
+import io.stipop.ViewPickerViewType
 import io.stipop.data.PkgRepository
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
-import io.stipop.models.StipopApiEnum
+import io.stipop.models.enums.StipopApiEnum
 import io.stipop.s_auth.PostDownloadStickersEnum
 import io.stipop.s_auth.SAuthManager
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -24,6 +26,9 @@ internal class StoreNewsViewModel(private val repository: PkgRepository) : ViewM
                     it?.let { response ->
                         if (response.header.isSuccess()) {
                             PackageDownloadEvent.publishEvent(stickerPackage.packageId)
+                            if(Config.getViewPickerViewType() == ViewPickerViewType.FRAGMENT){
+                                Stipop.stickerPickerViewClass?.packAdapter?.refresh()
+                            }
                         }
                     }
                 }

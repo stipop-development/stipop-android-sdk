@@ -1,8 +1,6 @@
 package io.stipop.adapter.viewholder
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -12,9 +10,9 @@ import io.stipop.StipopUtils
 import io.stipop.adapter.PackageHorizontalAdapter
 import io.stipop.custom.HorizontalDecoration
 import io.stipop.databinding.ItemHorizontalStickerThumbContainerBinding
+import io.stipop.event.PackClickDelegate
 import io.stipop.models.CuratedCard
 import io.stipop.setStipopUnderlineColor
-import io.stipop.event.PackClickDelegate
 
 internal class CurationCardContainerViewHolder(
     private val binding: ItemHorizontalStickerThumbContainerBinding,

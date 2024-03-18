@@ -5,7 +5,7 @@ import androidx.paging.PagingState
 import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.Sticker
-import io.stipop.models.StipopApiEnum
+import io.stipop.models.enums.StipopApiEnum
 import io.stipop.models.response.StickersResponse
 import retrofit2.HttpException
 
@@ -51,14 +51,14 @@ internal class PagingStickerSource(private val query: String? = null) : PagingSo
                 prevKey = if (pageNumber == STARTING_PAGE_INDEX) null else pageNumber - 1,
                 nextKey = nextKey
             )
-        } catch(exception: HttpException){
-            when(exception.code()){
+        } catch (exception: HttpException) {
+            when (exception.code()) {
                 401 -> {
                     Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_STICKERS, exception)
                 }
             }
             return LoadResult.Error(exception)
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
             return LoadResult.Error(exception)
         }

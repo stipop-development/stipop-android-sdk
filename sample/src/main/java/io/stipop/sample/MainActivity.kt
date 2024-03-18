@@ -20,17 +20,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import io.stipop.Stipop
-import io.stipop.delegate.StipopDelegate
-import io.stipop.delegate.StipopKeyboardHeightDelegate
 import io.stipop.custom.StipopImageView
 import io.stipop.delegate.SPComponentLifeCycleDelegate
-import io.stipop.models.ComponentEnum
-import io.stipop.models.LifeCycleEnum
+import io.stipop.delegate.StipopDelegate
+import io.stipop.delegate.StipopKeyboardHeightDelegate
 import io.stipop.models.SPPackage
 import io.stipop.models.SPSticker
+import io.stipop.models.enums.ComponentEnum
+import io.stipop.models.enums.LifeCycleEnum
+import io.stipop.models.enums.SPPriceTier
 import io.stipop.sample.adapter.ChatAdapter
 import io.stipop.sample.models.ChatItem
 import io.stipop.view.pickerview.StickerPickerFragment
+import kotlinx.coroutines.*
 import java.util.*
 
 /**
@@ -64,9 +66,10 @@ class MainActivity : AppCompatActivity(),
     private val stipopPickerImageView: StipopImageView by lazy { findViewById(R.id.stickerPickerImageView) }
     private val sendImageView: AppCompatImageView by lazy { findViewById(R.id.sendImageView) }
     private val chatsAdapter: ChatAdapter by lazy { ChatAdapter(this) }
-    private val typingViewLayoutBackgroundView: LinearLayout by lazy {findViewById(R.id.typingViewLayoutBackgroundView)}
+    private val typingViewLayoutBackgroundView: LinearLayout by lazy { findViewById(R.id.typingViewLayoutBackgroundView) }
 
     var userId = "-1"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,14 +81,19 @@ class MainActivity : AppCompatActivity(),
         listenerInit()
     }
 
-    private fun bundleInit(){
+    override fun onDestroy() {
+        super.onDestroy()
+        // If you have used the keyboardHeightDelegate, please release the delegate when leaving this activity
+        Stipop.releaseDelegates()
+    }
+
+    private fun bundleInit() {
         val bundle = intent.extras
 
         userId = bundle!!.getString("user_id", "-1")
-
     }
 
-    private fun stipopInit(){
+    private fun stipopInit() {
         // IMPORTANT :: This method must be called to use STIPOP SDK in the activity.
 
         // If you want to custom your PickerView's position, add StickerPickerCustomFragment. or not, set stickerPickerCustomFragment to null.
@@ -124,6 +132,7 @@ class MainActivity : AppCompatActivity(),
      *
      */
     override fun onStickerSingleTapped(sticker: SPSticker): Boolean {
+        Toast.makeText(applicationContext, "Sticker is single tapped", Toast.LENGTH_SHORT).show()
         sendSticker(sticker)
         return true
     }
@@ -137,6 +146,7 @@ class MainActivity : AppCompatActivity(),
      */
     override fun onStickerDoubleTapped(sticker: SPSticker): Boolean {
         Toast.makeText(applicationContext, "Sticker is double tapped", Toast.LENGTH_SHORT).show()
+        sendSticker(sticker)
         return true
     }
 
@@ -154,6 +164,20 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
+     * executePaymentForPackDownload
+     * @param priceTier The price tier of the package being purchased.
+     * @param packageId The ID of the package being purchased.
+     * @param finishCallback Callback to be invoked when the purchase is completed, returning the purchased package.
+     *
+     */
+    override fun executePaymentForPackDownload(priceTier: SPPriceTier, packageId: Int, finishCallback: (Int) -> Unit) {
+        // 1. Proceed with payment process
+        Toast.makeText(this, "executePaymentForPackDownload", Toast.LENGTH_LONG).show()
+        // 2. Return packageId in the completion parameter
+        finishCallback(packageId)
+    }
+
+    /**
      * initSampleUi
      * @sample configure the sample app
      */
@@ -163,7 +187,7 @@ class MainActivity : AppCompatActivity(),
         setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        when(userId){
+        when (userId) {
             "-1" -> nameTextView.text = "Common user"
             else -> nameTextView.text = "Random user"
         }
@@ -173,7 +197,7 @@ class MainActivity : AppCompatActivity(),
         recyclerViewInit()
     }
 
-    private fun recyclerViewInit(){
+    private fun recyclerViewInit() {
         chatRecyclerview.apply {
             chatsAdapter.setHasStableIds(true)
             adapter = chatsAdapter
@@ -189,9 +213,9 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun listenerInit(){
+    private fun listenerInit() {
         chatRecyclerview.setOnTouchListener { view, motionEvent ->
-            when(motionEvent.action){
+            when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> Stipop.hide()
             }
             false
@@ -288,11 +312,12 @@ class MainActivity : AppCompatActivity(),
         return super.onOptionsItemSelected(item)
     }
 
+    // This is for adjustNothing
     override fun onHeightChanged(keyboardHeight: Int) {
-        Log.e("Stipop onHeightChanged","Keyboard height is changed -> $keyboardHeight")
+        Log.e("Stipop onHeightChanged", "Keyboard height is changed -> $keyboardHeight")
     }
 
     override fun spComponentLifeCycle(componentEnum: ComponentEnum, lifeCycleEnum: LifeCycleEnum) {
-        Log.e("Stipop spComponentLifeCycle","${componentEnum.name}'s state is changed -> ${lifeCycleEnum.name}")
+        Log.e("Stipop spComponentLifeCycle", "${componentEnum.name}'s state is changed -> ${lifeCycleEnum.name}")
     }
 }

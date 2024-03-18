@@ -1,6 +1,5 @@
 package io.stipop.sample.stipop_auth.model
 
-import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 internal data class GetAccessTokenAPIBody(

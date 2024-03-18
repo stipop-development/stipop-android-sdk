@@ -72,7 +72,7 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
         try {
             binding = FragmentStoreHomeBinding.inflate(inflater, container, false)
             return binding!!.root
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
             binding = FragmentStoreHomeBinding.inflate(inflater, container, false)
             return binding!!.root
@@ -134,7 +134,7 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
                 StipopUtils.hideKeyboard(requireActivity(), binding!!.searchEditText)
                 false
             }
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
         }
     }
@@ -161,7 +161,7 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
                 this.searchIconIV.setIconDefaultsColor()
                 this.clearSearchImageView.setIconDefaultsColor()
             }
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
         }
     }
@@ -183,6 +183,7 @@ internal class StoreHomeFragment : BaseFragment(), PackClickDelegate,
             clearFocus()
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         Stipop.storeHomeViewModel = null

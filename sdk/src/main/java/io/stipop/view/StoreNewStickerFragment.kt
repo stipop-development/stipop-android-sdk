@@ -40,7 +40,7 @@ internal class StoreNewStickerFragment : BaseFragment(), SNSFGetNewStickerPackag
         return try {
             binding = FragmentNewStickerBinding.inflate(inflater, container, false)
             binding!!.root
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
             binding = FragmentNewStickerBinding.inflate(inflater, container, false)
             binding!!.root
@@ -72,12 +72,12 @@ internal class StoreNewStickerFragment : BaseFragment(), SNSFGetNewStickerPackag
             PackageDownloadEvent.liveData.observe(viewLifecycleOwner) {
                 pagingPackageAdapter.refresh()
             }
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
         }
     }
 
-    private fun loadPackages(){
+    private fun loadPackages() {
         lifecycleScope.launch {
             Stipop.storeNewsViewModel?.loadsPackages()?.collectLatest {
                 pagingPackageAdapter.submitData(it)

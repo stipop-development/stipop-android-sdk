@@ -11,7 +11,7 @@ import io.stipop.base.BaseFragmentActivity
 import io.stipop.databinding.ActivityStoreBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.body.UserIdBody
-import io.stipop.models.StipopApiEnum
+import io.stipop.models.enums.StipopApiEnum
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,7 +30,7 @@ internal class StoreActivity : BaseFragmentActivity() {
         try {
             binding = ActivityStoreBinding.inflate(layoutInflater)
             setContentView(binding.root)
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
         }
         mainScope.launch {
@@ -61,7 +61,7 @@ internal class StoreActivity : BaseFragmentActivity() {
                         )
                     }
                 }
-            } catch(exception: Exception){
+            } catch (exception: Exception) {
                 Stipop.trackError(exception)
             }
         }
@@ -77,10 +77,11 @@ internal class StoreActivity : BaseFragmentActivity() {
                 dividingLine.setStipopUnderlineColor()
                 storeTabLayout.setTabLayoutStyle()
             }
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         PackageDownloadEvent.onDestroy()
@@ -103,40 +104,40 @@ internal class StoreActivity : BaseFragmentActivity() {
         }
     }
 
-    internal fun trackViewStore(){
+    internal fun trackViewStore() {
         scope.launch {
             try {
                 val response = StipopApi.create().trackViewStore(userIdBody = UserIdBody(userId = Stipop.userId))
                 if (response.code() == 401) {
                     Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_STORE, HttpException(response))
                 }
-            } catch (exception: Exception){
+            } catch (exception: Exception) {
                 Stipop.trackError(exception)
             }
         }
     }
 
-    internal fun trackViewNew(){
+    internal fun trackViewNew() {
         scope.launch {
             try {
                 val response = StipopApi.create().trackViewNew(userIdBody = UserIdBody(userId = Stipop.userId))
-                if(response.code() == 401){
+                if (response.code() == 401) {
                     Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_NEW, HttpException(response))
                 }
-            } catch (exception: Exception){
+            } catch (exception: Exception) {
                 Stipop.trackError(exception)
             }
         }
     }
 
-    internal fun trackViewSticker(){
+    internal fun trackViewSticker() {
         scope.launch {
             try {
                 val response = StipopApi.create().trackViewMySticker(userIdBody = UserIdBody(userId = Stipop.userId))
-                if(response.code() == 401){
+                if (response.code() == 401) {
                     Stipop.sAuthDelegate?.httpException(StipopApiEnum.TRACK_VIEW_MY_STICKER, HttpException(response))
                 }
-            } catch(exception: Exception){
+            } catch (exception: Exception) {
                 Stipop.trackError(exception)
             }
         }

@@ -2,9 +2,9 @@ package io.stipop.sample
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 
 class SplashActivity : AppCompatActivity() {

@@ -11,6 +11,8 @@ data class Sticker(
     @SerializedName("stickerImgLocalFilePath") var stickerImgLocalFilePath: String? = null,
     @SerializedName("favoriteYN") var favoriteYN: String = "",
     @SerializedName("keyword") var keyword: String? = "",
+    @SerializedName("isDownload") var isDownload: String? = "",
+    @SerializedName("price") var price: String? = "",
 ) {
     fun toSPSticker(): SPSticker {
         return SPSticker(
@@ -19,6 +21,8 @@ data class Sticker(
             stickerImg = stickerImg ?: "",
             favoriteYN = favoriteYN,
             keyword = keyword ?: "",
+            isDownload = isDownload ?: "N",
+            price = price ?: "",
         )
     }
 

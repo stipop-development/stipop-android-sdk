@@ -5,16 +5,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.savedstate.SavedStateRegistryOwner
-import io.stipop.api.StipopApi
-import io.stipop.data.PkgRepository
 import io.stipop.data.MyStickerRepository
+import io.stipop.data.PkgRepository
 import io.stipop.data.SearchingRepository
 import io.stipop.data.StickerDetailRepository
-import io.stipop.view.viewmodel.StoreMyStickerViewModel
-import io.stipop.view.viewmodel.StoreNewsViewModel
-import io.stipop.view.viewmodel.PackDetailViewModel
-import io.stipop.view.viewmodel.SsvModel
-import io.stipop.view.viewmodel.StoreHomeViewModel
+import io.stipop.view.viewmodel.*
 
 internal object Injection {
 

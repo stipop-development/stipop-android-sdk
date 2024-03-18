@@ -5,7 +5,7 @@ import io.stipop.api.StipopApi
 import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import io.stipop.models.body.UserIdBody
-import io.stipop.models.StipopApiEnum
+import io.stipop.models.enums.StipopApiEnum
 import io.stipop.view.StickerSearchView
 import io.stipop.view.StoreHomeFragment
 import io.stipop.view.StoreMyStickerFragment
@@ -353,12 +353,14 @@ class SAuthManager {
                 when (trackUsingStickerEnum) {
                     TrackUsingStickerEnum.STICKER_PICKER_VIEW_CLASS_SINGLE_TAP -> Stipop.stickerPickerViewClass?.onStickerSingleTap(
                         -1,
-                        it
+                        it,
+                        false
                     )
 
                     TrackUsingStickerEnum.STICKER_PICKER_VIEW_CLASS_DOUBLE_TAP -> Stipop.stickerPickerViewClass?.onStickerDoubleTap(
                         -1,
-                        it
+                        it,
+                        false
                     )
                     TrackUsingStickerEnum.STICKER_SEARCH_VIEW_SINGLE_TAP -> StickerSearchView.ssvOnStickerTapReRequestDelegate?.ssvOnStickerSingleTapReRequest(-1, it)
                     TrackUsingStickerEnum.STICKER_SEARCH_VIEW_DOUBLE_TAP -> StickerSearchView.ssvOnStickerTapReRequestDelegate?.ssvOnStickerDoubleTapReRequest(-1, it)

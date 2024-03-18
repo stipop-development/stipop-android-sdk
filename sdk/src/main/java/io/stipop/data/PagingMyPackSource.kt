@@ -3,10 +3,9 @@ package io.stipop.data
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import io.stipop.Stipop
-import io.stipop.StipopUtils
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
-import io.stipop.models.StipopApiEnum
+import io.stipop.models.enums.StipopApiEnum
 import io.stipop.models.response.MyStickerResponse
 import retrofit2.HttpException
 
@@ -20,6 +19,7 @@ internal class PagingMyPackSource(private val wantVisibleSticker: Boolean) : Pag
             currentVisibleSetting = wantVisibleSticker
             return null
         }
+
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
@@ -40,8 +40,8 @@ internal class PagingMyPackSource(private val wantVisibleSticker: Boolean) : Pag
                         limit = limit,
                         pageNumber = pageNumber
                     )
-                } catch(exception: HttpException){
-                    when(exception.code()){
+                } catch (exception: HttpException) {
+                    when (exception.code()) {
                         401 -> {
                             Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_MY_STICKERS, exception)
                             return LoadResult.Error(exception)
@@ -55,8 +55,8 @@ internal class PagingMyPackSource(private val wantVisibleSticker: Boolean) : Pag
                         limit = limit,
                         pageNumber = pageNumber
                     )
-                } catch(exception: HttpException){
-                    when(exception.code()){
+                } catch (exception: HttpException) {
+                    when (exception.code()) {
                         401 -> {
                             Stipop.sAuthDelegate?.httpException(StipopApiEnum.GET_MY_HIDDEN_STICKERS, exception)
                             return LoadResult.Error(exception)
@@ -75,7 +75,7 @@ internal class PagingMyPackSource(private val wantVisibleSticker: Boolean) : Pag
                 prevKey = if (pageNumber == STARTING_PAGE_INDEX) null else pageNumber - 1,
                 nextKey = nextKey
             )
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
             return LoadResult.Error(exception)
         }

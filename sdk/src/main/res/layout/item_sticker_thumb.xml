@@ -17,5 +17,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@tools:sample/avatars"/>
+    
+    <ImageView
+        android:id="@+id/lockImageView"
+        android:layout_width="9.5dp"
+        android:layout_height="13.7dp"
+        android:src="@mipmap/ic_image_lock"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/imageView"
+        app:layout_constraintBottom_toBottomOf="@id/imageView"
+        app:layout_constraintStart_toStartOf="@id/imageView"
+        app:layout_constraintEnd_toEndOf="@id/imageView"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

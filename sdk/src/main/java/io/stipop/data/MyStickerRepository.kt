@@ -7,7 +7,7 @@ import io.stipop.Stipop
 import io.stipop.api.StipopApi
 import io.stipop.models.StickerPackage
 import io.stipop.models.body.OrderChangeBody
-import io.stipop.models.StipopApiEnum
+import io.stipop.models.enums.StipopApiEnum
 import io.stipop.models.response.MyStickerOrderChangedResponse
 import io.stipop.models.response.StipopResponse
 import io.stipop.s_auth.GetMyStickerEnum
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import retrofit2.HttpException
 
-internal class MyStickerRepository(): BaseRepository() {
+internal class MyStickerRepository() : BaseRepository() {
 
     private val packageOrderChangedResult = MutableSharedFlow<MyStickerOrderChangedResponse>()
     val packageVisibilityUpdateResult = MutableSharedFlow<Triple<StipopResponse, Int, Int>>()
@@ -47,7 +47,7 @@ internal class MyStickerRepository(): BaseRepository() {
                 SAuthManager.setPutMyStickersOrdersData(PutMyStickersOrdersEnum.STORE_MY_STICKER_VIEW_MODEL, fromStickerPackage, toStickerPackage)
                 Stipop.sAuthDelegate?.httpException(StipopApiEnum.PUT_MY_STICKERS_ORDERS, exception)
             }
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
         }
     }
@@ -63,7 +63,7 @@ internal class MyStickerRepository(): BaseRepository() {
                 SAuthManager.setPutMyStickerVisibilityData(packageId, position)
                 Stipop.sAuthDelegate?.httpException(StipopApiEnum.PUT_MY_STICKER_VISIBILITY, exception)
             }
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
         }
     }

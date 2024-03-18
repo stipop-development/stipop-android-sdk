@@ -54,7 +54,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate, SMS
         return try {
             binding = FragmentMyStickerBinding.inflate(inflater, container, false)
             binding!!.root
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
             binding = FragmentMyStickerBinding.inflate(inflater, container, false)
             binding!!.root
@@ -96,7 +96,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate, SMS
                 pagingMyPackAdapter.refresh()
                 binding?.myStickersRecyclerView?.scrollToPosition(0)
             }
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
         }
     }
@@ -113,7 +113,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate, SMS
                     requireContext()
                 )
             )
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
         }
     }
@@ -204,6 +204,7 @@ internal class StoreMyStickerFragment : BaseFragment(), MyPackEventDelegate, SMS
     override fun getMyVisibleStickersRetry() {
         pagingMyPackAdapter.retry()
     }
+
     override fun getMyHiddenStickersRetry() {
         pagingMyPackAdapter.retry()
     }

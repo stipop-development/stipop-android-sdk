@@ -171,7 +171,7 @@ internal interface StipopApi {
         @Query("isPurchase") isPurchase: String,
         @Query("countryCode") countryCode: String,
         @Query("lang") lang: String,
-        @Query("price") price: Double? = null,
+        @Query("price") price: String? = null,
         @Query("entrance_point") entrancePoint: String? = null,
         @Query("event_point") eventPoint: String? = null,
     ): StipopResponse

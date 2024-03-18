@@ -14,8 +14,8 @@ import io.stipop.Config
 import io.stipop.Constants
 import io.stipop.R
 import io.stipop.custom.StipopImageView
-import io.stipop.models.StickerPackage
 import io.stipop.event.MyPackEventDelegate
+import io.stipop.models.StickerPackage
 
 internal class MyPackFullWidthViewHolder(view: View, private val delegate: MyPackEventDelegate?) : RecyclerView.ViewHolder(view) {
 

@@ -1,5 +1,6 @@
 package io.stipop.view
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -22,6 +23,7 @@ import io.stipop.base.Injection
 import io.stipop.databinding.FragmentPackDetailBinding
 import io.stipop.event.PackageDownloadEvent
 import io.stipop.models.StickerPackage
+import io.stipop.models.enums.SPPriceTier
 import io.stipop.view.viewmodel.PackDetailViewModel
 import kotlinx.coroutines.launch
 
@@ -29,7 +31,7 @@ class PackDetailFragment : BottomSheetDialogFragment() {
 
     private var binding: FragmentPackDetailBinding? = null
 
-    private val gridAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter() }
+    private val gridAdapter: StickerDefaultAdapter by lazy { StickerDefaultAdapter(isLockable = false) }
 
     companion object {
         fun newInstance(packageId: Int, entrancePoint: String) =
@@ -117,8 +119,10 @@ class PackDetailFragment : BottomSheetDialogFragment() {
             }
         }
         applyTheme()
+        var packageId: Int = -1
         arguments?.let {
-            val packageId = it.getInt(Constants.IntentKey.PACKAGE_ID, -1)
+            packageId = it.getInt(Constants.IntentKey.PACKAGE_ID, -1)
+
             val entrancePoint = it.getString(Constants.IntentKey.ENTRANCE_POINT)
             val gridLayoutManager = GridLayoutManager(requireContext(), Config.detailNumOfColumns)
             binding?.recyclerView?.layoutManager = gridLayoutManager
@@ -140,7 +144,24 @@ class PackDetailFragment : BottomSheetDialogFragment() {
                 dismiss()
             }
             downloadTV.setOnClickListener {
-                Stipop.packDetailViewModel?.requestDownloadPackage()
+                val isPackPurchaseMode = Config.isPackPurchaseMode
+                val priceTier = Stipop.packDetailViewModel?.stickerPackage?.value?.getPriceTier()
+                when (isPackPurchaseMode && priceTier != SPPriceTier.FREE) {
+                    true -> {
+                        priceTier?.let {
+                            Stipop.stipopDelegate?.executePaymentForPackDownload(
+                                priceTier = it,
+                                packageId = packageId,
+                                finishCallback = {
+                                    Stipop.packDetailViewModel?.requestDownloadPackage()
+                                }
+                            )
+                        }
+                    }
+                    false -> {
+                        Stipop.packDetailViewModel?.requestDownloadPackage()
+                    }
+                }
             }
         }
     }
@@ -164,11 +185,18 @@ class PackDetailFragment : BottomSheetDialogFragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateUi(stickerPackage: StickerPackage) {
         binding?.run {
             Glide.with(requireContext()).load(stickerPackage.packageImg).into(packageIV)
             packageNameTV.text = stickerPackage.packageName
-            artistNameTV.text = stickerPackage.artistName
+            val isPackPurchaseMode = Config.isPackPurchaseMode
+
+            when (isPackPurchaseMode) {
+                true -> artistNameTV.text = (stickerPackage.artistName ?: "-") + " • " + (stickerPackage.getPriceTier()?.price ?: "-")
+                false -> artistNameTV.text = stickerPackage.artistName
+            }
+
             if (stickerPackage.isDownloaded()) {
                 downloadTV.setBackgroundResource(R.drawable.detail_download_btn_background_disable)
                 downloadTV.text = getString(R.string.sp_downloaded)

@@ -23,10 +23,14 @@ import io.stipop.*
 import io.stipop.adapter.HomeTabAdapter
 import io.stipop.adapter.PagingStickerAdapter
 import io.stipop.adapter.StickerDefaultAdapter
+import io.stipop.api.StipopApi
 import io.stipop.base.Injection
 import io.stipop.databinding.FragmentSearchViewBinding
 import io.stipop.event.KeywordClickDelegate
 import io.stipop.models.SPSticker
+import io.stipop.models.enums.SPPriceTier
+import io.stipop.models.enums.SPTapType
+import io.stipop.models.response.StipopResponse
 import io.stipop.s_auth.SSVAdapterReRequestDelegate
 import io.stipop.s_auth.SSVOnStickerTapReRequestDelegate
 import io.stipop.s_auth.TrackUsingStickerEnum
@@ -45,7 +49,7 @@ class StickerSearchView : BottomSheetDialogFragment(),
     private var binding: FragmentSearchViewBinding? = null
     internal var viewModel: SsvModel? = null
     private var searchJob: Job? = null
-    private val stickerAdapter: PagingStickerAdapter by lazy { PagingStickerAdapter(this) }
+    private val stickerAdapter: PagingStickerAdapter by lazy { PagingStickerAdapter(this, true) }
     private val keywordsAdapter: HomeTabAdapter by lazy { HomeTabAdapter(null, this) }
 
     companion object {
@@ -102,7 +106,7 @@ class StickerSearchView : BottomSheetDialogFragment(),
                 StipopUtils.hideKeyboard(requireActivity(), binding?.searchEditText)
                 false
             }
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
         }
     }
@@ -125,7 +129,7 @@ class StickerSearchView : BottomSheetDialogFragment(),
         try {
             binding = FragmentSearchViewBinding.inflate(inflater, container, false)
             return binding!!.root
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
             binding = FragmentSearchViewBinding.inflate(inflater, container, false)
             return binding!!.root
@@ -135,16 +139,19 @@ class StickerSearchView : BottomSheetDialogFragment(),
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        StickerSearchView.ssvOnStickerTapReRequestDelegate = null
+        StickerSearchView.ssvAdapterReRequestDelegate = null
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return try {
             createDialog(savedInstanceState)
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
             createDialog(savedInstanceState)
         }
     }
+
     private fun createDialog(savedInstanceState: Bundle?): Dialog {
         val dialog: Dialog = super.onCreateDialog(savedInstanceState)
         dialog.setOnShowListener { dialogInterface ->
@@ -182,7 +189,7 @@ class StickerSearchView : BottomSheetDialogFragment(),
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 }
             })
-        } catch(exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
         }
     }
@@ -220,37 +227,113 @@ class StickerSearchView : BottomSheetDialogFragment(),
         binding?.searchEditText?.clearFocus()
     }
 
-    override fun onStickerSingleTap(position: Int, spSticker: SPSticker) {
-        Stipop.send(
-            TrackUsingStickerEnum.STICKER_SEARCH_VIEW_SINGLE_TAP,
-            spSticker,
-            Constants.Point.SEARCH_VIEW
-        ) { result ->
-            if (result) {
-                Stipop.instance?.delegate?.onStickerSingleTapped(spSticker)
-                dismiss()
+    override fun onStickerSingleTap(position: Int, spSticker: SPSticker, isLockable: Boolean) {
+        val priceTier = spSticker.getPriceTier()
+        val isLocked = StipopUtils.isLocked(
+            isLockable = isLockable,
+            isDownload = spSticker.isDownload == "Y",
+            priceTier = priceTier
+        )
+
+        when (isLocked) {
+            true -> {
+                if ((spSticker.packageId != -1) && (priceTier != null)) {
+                    Stipop.stipopDelegate?.executePaymentForPackDownload(
+                        priceTier = priceTier,
+                        packageId = spSticker.packageId,
+                        finishCallback = {
+                            Stipop.mainScope.launch {
+                                // 팩 구입 처리(다운로드)
+                                postDownloadStickers(
+                                    packageId = spSticker.packageId,
+                                    priceTier = priceTier
+                                ) {
+                                    // Tap 이벤트 발생
+                                    stickerTappedEvent(SPTapType.SINGLE, position, spSticker)
+                                    // 팩 추가
+                                    if (Config.getViewPickerViewType() == ViewPickerViewType.FRAGMENT) {
+                                        Stipop.stickerPickerViewClass?.packAdapter?.refresh()
+                                    }
+                                }
+                            }
+                        })
+                }
+            }
+            false -> {
+                stickerTappedEvent(SPTapType.SINGLE, position, spSticker)
             }
         }
     }
 
-    override fun onStickerDoubleTap(position: Int, spSticker: SPSticker) {
-        Stipop.send(
-            TrackUsingStickerEnum.STICKER_SEARCH_VIEW_DOUBLE_TAP,
-            spSticker,
-            Constants.Point.SEARCH_VIEW
-        ) { result ->
-            if (result) {
-                Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker)
-                dismiss()
+    override fun onStickerDoubleTap(position: Int, spSticker: SPSticker, isLockable: Boolean) {
+        val priceTier = spSticker.getPriceTier()
+        val isLocked = StipopUtils.isLocked(
+            isLockable = isLockable,
+            isDownload = spSticker.isDownload == "Y",
+            priceTier = priceTier
+        )
+
+        when (isLocked) {
+            true -> {
+                if ((spSticker.packageId != -1) && (priceTier != null)) {
+                    Stipop.stipopDelegate?.executePaymentForPackDownload(
+                        priceTier = priceTier,
+                        packageId = spSticker.packageId,
+                        finishCallback = {
+                            Stipop.mainScope.launch {
+                                // 팩 구입 처리(다운로드)
+                                postDownloadStickers(
+                                    packageId = spSticker.packageId,
+                                    priceTier = priceTier
+                                ) {
+                                    // Tap 이벤트 발생
+                                    stickerTappedEvent(SPTapType.DOUBLE, position, spSticker)
+                                }
+                            }
+                        })
+                }
+            }
+            false -> {
+                stickerTappedEvent(SPTapType.DOUBLE, position, spSticker)
             }
         }
     }
+
+    private fun stickerTappedEvent(tapType: SPTapType, position: Int, spSticker: SPSticker) {
+        when (tapType) {
+            SPTapType.SINGLE -> {
+                Stipop.send(
+                    TrackUsingStickerEnum.STICKER_SEARCH_VIEW_SINGLE_TAP,
+                    spSticker,
+                    Constants.Point.SEARCH_VIEW
+                ) { result ->
+                    if (result) {
+                        Stipop.instance?.delegate?.onStickerSingleTapped(spSticker)
+                        dismiss()
+                    }
+                }
+            }
+            SPTapType.DOUBLE -> {
+                Stipop.send(
+                    TrackUsingStickerEnum.STICKER_SEARCH_VIEW_DOUBLE_TAP,
+                    spSticker,
+                    Constants.Point.SEARCH_VIEW
+                ) { result ->
+                    if (result) {
+                        Stipop.instance?.delegate?.onStickerDoubleTapped(spSticker)
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+
     override fun ssvOnStickerSingleTapReRequest(position: Int, spSticker: SPSticker) {
-        onStickerSingleTap(position, spSticker)
+        onStickerSingleTap(position, spSticker, true)
     }
 
     override fun ssvOnStickerDoubleTapReRequest(position: Int, spSticker: SPSticker) {
-        onStickerDoubleTap(position, spSticker)
+        onStickerDoubleTap(position, spSticker, true)
     }
 
     override fun stickerAdapterRetry() {
@@ -259,5 +342,46 @@ class StickerSearchView : BottomSheetDialogFragment(),
 
     override fun keywordAdapterRefresh() {
         viewModel?.getKeywords()
+    }
+
+    suspend fun <T : Any> safeCall(
+        call: suspend () -> T,
+        onCompletable: (data: T?) -> Unit,
+    ) {
+        val result = call.invoke()
+        onCompletable(result)
+    }
+
+    private suspend fun postDownloadStickers(
+        packageId: Int,
+        priceTier: SPPriceTier,
+        onSuccess: (data: StipopResponse?) -> Unit
+    ) {
+        val isPurchaseMode = if (Config.isPackPurchaseMode) {
+            "Y"
+        } else {
+            "N"
+        }
+        val priceQueryValue = if (Config.isPackPurchaseMode) {
+            priceTier?.price
+        } else {
+            null
+        }
+
+        safeCall(
+            call = {
+                StipopApi.create().postDownloadStickers(
+                    packageId = packageId,
+                    isPurchase = isPurchaseMode,
+                    userId = Stipop.userId,
+                    lang = Stipop.lang,
+                    countryCode = Stipop.countryCode,
+                    price = priceQueryValue,
+                    entrancePoint = Constants.Point.STORE,
+                    eventPoint = Constants.Point.STORE
+                )
+            }, onCompletable = {
+                onSuccess(it)
+            })
     }
 }

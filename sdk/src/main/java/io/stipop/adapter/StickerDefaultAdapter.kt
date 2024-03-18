@@ -3,27 +3,28 @@ package io.stipop.adapter
 import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import io.stipop.adapter.viewholder.StickerThumbViewHolder
 import io.stipop.models.SPSticker
 import io.stipop.models.Sticker
 import io.stipop.models.StickerPackage
-import io.stipop.adapter.viewholder.StickerThumbViewHolder
 
 internal class StickerDefaultAdapter(
     val delegate: OnStickerClickListener? = null,
-    private val dataSet: ArrayList<SPSticker> = ArrayList()
+    private val dataSet: ArrayList<SPSticker> = ArrayList(),
+    private val isLockable: Boolean
 ) :
     RecyclerView.Adapter<StickerThumbViewHolder>() {
 
     interface OnStickerClickListener {
-        fun onStickerSingleTap(position: Int, spSticker: SPSticker)
-        fun onStickerDoubleTap(position: Int, spSticker: SPSticker)
+        fun onStickerSingleTap(position: Int, spSticker: SPSticker, isLocked: Boolean)
+        fun onStickerDoubleTap(position: Int, spSticker: SPSticker, isLocked: Boolean)
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): StickerThumbViewHolder {
-        return StickerThumbViewHolder.create(parent, delegate)
+        return StickerThumbViewHolder.create(parent, delegate, isLockable)
     }
 
     override fun onBindViewHolder(holder: StickerThumbViewHolder, position: Int) {

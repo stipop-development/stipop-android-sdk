@@ -45,12 +45,16 @@ internal class PackFullWidthViewHolder(private val binding: ItemPackageFullWidth
             artistNameTextView.text = stickerPackage.artistName
             newLabel.isVisible = stickerPackage.getIsNew()
 
-            if (stickerPackage.isDownloaded()) {
-                downloadImageView.setImageResource(Config.getCompleteIconResourceId(itemView.context))
-                downloadImageView.setIconDefaultsColor()
-            } else {
-                downloadImageView.setImageResource(Config.getDownloadIconResourceId(itemView.context))
-                downloadImageView.setTint()
+            val isPackPurchaseMode = Config.isPackPurchaseMode
+            downloadImageView.isVisible = !isPackPurchaseMode
+            if (!isPackPurchaseMode) {
+                if (stickerPackage.isDownloaded()) {
+                    downloadImageView.setImageResource(Config.getCompleteIconResourceId(itemView.context))
+                    downloadImageView.setIconDefaultsColor()
+                } else {
+                    downloadImageView.setImageResource(Config.getDownloadIconResourceId(itemView.context))
+                    downloadImageView.setTint()
+                }
             }
         }
     }

@@ -70,15 +70,13 @@ internal object Config {
     private var hideIconName = "ic_hide_border_3"
     private var keyboardStoreIconName = ""
     var keyboardNumOfColumns = 3
-    lateinit var allowPremium: String
-    var pngPrice: Double = 0.0
-    var gifPrice: Double = 0.0
     var stickerDoubleTap = false
     var pickerViewSearchIsActive = false
     var pickerViewSettingIsActive = true
     var pickerViewStoreIsActive = true
     private var viewPickerViewType = "PopupWindow"
     var pickerViewLayoutOnKeyboard = true
+    var isPackPurchaseMode = false
     var sAuthIsActive = false
     private var detailBackIconName = "ic_back_border_3"
     private var detailCloseIconName = "ic_close_border_3"
@@ -206,12 +204,6 @@ internal object Config {
                 keyboardStoreIconName = it.liteStoreIcon
             }
 
-            policyConfig.let {
-                allowPremium = it.allowPremium
-                pngPrice = it.price.png
-                gifPrice = it.price.gif
-            }
-
             functionConfig.let {
                 stickerDoubleTap = it.sticker.doubleTap
             }
@@ -225,6 +217,9 @@ internal object Config {
             }
             layoutConfig.let {
                 pickerViewLayoutOnKeyboard = it.pickerView.onKeyboard
+            }
+            modeConfig.let {
+                isPackPurchaseMode = it.packPurchase
             }
             sAuthConfig.let {
                 sAuthIsActive = it.isActive
@@ -463,7 +458,7 @@ internal object Config {
     }
 
     internal fun isPickerViewPopupWindow(): Boolean{
-        return pickerViewLayoutOnKeyboard || (!pickerViewLayoutOnKeyboard && getViewPickerViewType() == ViewPickerViewType.POPUP_WINDOW)
+        return getViewPickerViewType() == ViewPickerViewType.POPUP_WINDOW
     }
 
 

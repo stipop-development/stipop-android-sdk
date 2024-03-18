@@ -8,13 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import io.stipop.*
 import io.stipop.Config
 import io.stipop.Constants
+import io.stipop.R
 import io.stipop.StipopUtils
 import io.stipop.databinding.ItemCuratedCardTypeBBinding
-import io.stipop.models.StickerPackage
 import io.stipop.event.PackClickDelegate
+import io.stipop.models.StickerPackage
 
 internal class CurationBtypeViewHolder(
     private val binding: ItemCuratedCardTypeBBinding,

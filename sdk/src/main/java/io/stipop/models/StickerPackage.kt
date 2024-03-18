@@ -2,6 +2,7 @@ package io.stipop.models
 
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
+import io.stipop.models.enums.SPPriceTier
 
 @Keep
 data class StickerPackage(
@@ -39,7 +40,9 @@ data class StickerPackage(
     @SerializedName("lightBackgroundCode")
     val lightBackgroundCode: String? = null,
     @SerializedName("darkBackgroundCode")
-    val darkBackgroundCode: String? = null
+    val darkBackgroundCode: String? = null,
+    @SerializedName("price")
+    val price: String? = null,
 ) {
     fun getIsNew(): Boolean {
         return this.new == "Y"
@@ -51,6 +54,10 @@ data class StickerPackage(
 
     fun isDownloaded(): Boolean {
         return this.download == "Y"
+    }
+
+    fun getPriceTier(): SPPriceTier? {
+        return SPPriceTier.getPriceTier((this.price ?: "").uppercase())
     }
 
     fun toSPPackage(): SPPackage {

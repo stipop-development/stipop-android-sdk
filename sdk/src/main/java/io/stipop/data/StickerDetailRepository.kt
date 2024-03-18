@@ -25,28 +25,34 @@ internal class StickerDetailRepository() : BaseRepository() {
         stickerPackage: StickerPackage,
         onSuccess: (data: StipopResponse?) -> Unit
     ) {
-        var price: Double? = null
-        if (Config.allowPremium == "Y") {
-            price = if (stickerPackage.packageAnimated == "Y") {
-                Config.gifPrice
-            } else {
-                Config.pngPrice
-            }
+        val isPurchaseMode = if (Config.isPackPurchaseMode) {
+            "Y"
+        } else {
+            "N"
         }
-        safeCall(
-            call = {
-                StipopApi.create().postDownloadStickers(
-                    packageId = stickerPackage.packageId,
-                    isPurchase = Config.allowPremium,
-                    userId = Stipop.userId,
-                    lang = Stipop.lang,
-                    countryCode = Stipop.countryCode,
-                    price = price,
-                    entrancePoint = Constants.Point.STORE,
-                    eventPoint = Constants.Point.STORE
-                )
-            }, onCompletable = {
-                onSuccess(it)
-            })
+        val priceTier = stickerPackage.getPriceTier()
+        val priceQueryValue = if (Config.isPackPurchaseMode) {
+            priceTier?.price
+        } else {
+            null
+        }
+
+        priceTier?.let {
+            safeCall(
+                call = {
+                    StipopApi.create().postDownloadStickers(
+                        packageId = stickerPackage.packageId,
+                        isPurchase = isPurchaseMode,
+                        userId = Stipop.userId,
+                        lang = Stipop.lang,
+                        countryCode = Stipop.countryCode,
+                        price = priceQueryValue,
+                        entrancePoint = Constants.Point.STORE,
+                        eventPoint = Constants.Point.STORE
+                    )
+                }, onCompletable = {
+                    onSuccess(it)
+                })
+        }
     }
 }

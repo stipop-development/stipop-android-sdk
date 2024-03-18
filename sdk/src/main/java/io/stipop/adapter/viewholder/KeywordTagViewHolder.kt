@@ -1,19 +1,16 @@
 package io.stipop.adapter.viewholder
 
-import android.app.Activity
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import io.stipop.Config
 import io.stipop.R
-import io.stipop.StipopUtils
 import io.stipop.databinding.ItemChipKeywordsBinding
-import io.stipop.models.response.KeywordListResponse
 import io.stipop.event.KeywordClickDelegate
+import io.stipop.models.response.KeywordListResponse
 
 internal class KeywordTagViewHolder(
     private val binding: ItemChipKeywordsBinding,

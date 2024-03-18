@@ -11,7 +11,7 @@ import io.stipop.data.SearchingRepository
 import io.stipop.delayedTextFlow
 import io.stipop.models.Sticker
 import io.stipop.models.body.UserIdBody
-import io.stipop.models.StipopApiEnum
+import io.stipop.models.enums.StipopApiEnum
 import io.stipop.s_auth.GetRecommendedKeywordsEnum
 import io.stipop.s_auth.SAuthManager
 import kotlinx.coroutines.*

@@ -3,12 +3,12 @@ package io.stipop.adapter
 import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.stipop.models.CuratedCard
-import io.stipop.models.response.KeywordListResponse
 import io.stipop.adapter.viewholder.CurationCardContainerViewHolder
 import io.stipop.adapter.viewholder.KeywordTagViewHolder
 import io.stipop.event.KeywordClickDelegate
 import io.stipop.event.PackClickDelegate
+import io.stipop.models.CuratedCard
+import io.stipop.models.response.KeywordListResponse
 
 internal class HomeTabAdapter(
     private val packClickDelegate: PackClickDelegate? = null,

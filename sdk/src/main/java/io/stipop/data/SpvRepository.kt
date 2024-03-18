@@ -9,7 +9,7 @@ import io.stipop.models.SPSticker
 import io.stipop.models.StickerPackage
 import io.stipop.models.body.FavoriteBody
 import io.stipop.models.body.OrderChangeBody
-import io.stipop.models.StipopApiEnum
+import io.stipop.models.enums.StipopApiEnum
 import io.stipop.models.response.FavoriteListResponse
 import io.stipop.models.response.StickerListResponse
 import io.stipop.models.response.StickerPackageResponse
@@ -42,7 +42,7 @@ internal class SpvRepository() : BaseRepository() {
                 SAuthManager.setPutMyStickersOrdersData(PutMyStickersOrdersEnum.STICKER_PICKER_VIEW_MODEL, fromStickerPackage, toStickerPackage)
                 Stipop.sAuthDelegate?.httpException(StipopApiEnum.PUT_MY_STICKERS_ORDERS, exception)
             }
-        } catch (exception: Exception){
+        } catch (exception: Exception) {
             Stipop.trackError(exception)
         }
     }
